@@ -49,6 +49,4 @@ test-output
 sounds/
 *.docx
 *.txt
-*.xlsx
-*.wav
 *.mp3
