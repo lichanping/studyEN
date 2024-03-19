@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple UI Page</title>
+    <!-- Include SweetAlert2 CSS and JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script type="module" src="./commonFunctions.js"></script>
+    <script type="module" src="./scriptTiyan.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
+
+    <style>
+        input[type="radio"] {
+            display: inline-block;
+            margin-right: 5px; /* Add spacing between radio buttons and labels */
+        }
+
+        /* Add a class to the radio button labels for styling */
+        .radio-label {
+            display: inline-block;
+            margin-right: 15px; /* Adjust the margin for spacing */
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            text-align: left; /* Change to left alignment */
+            margin: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Align items to the left */
+        }
+
+        label {
+            margin-right: 10px; /* Add margin to labels for better spacing */
+        }
+
+        button, input, select {
+            margin: 5px;
+            font-size: 16px; /* Adjust the font size as needed */
+
+        }
+
+        #userName {
+            width: 100px; /* Adjust the width as needed */
+        }
+
+        #forgetWords {
+            width: 400px; /* Adjust the width as needed */
+            height: 60px; /* Adjust the height as needed */
+            font-size: 18px; /* Adjust the font size as needed */
+        }
+
+        /* Style for the button container */
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start; /* Align buttons to the left */
+            margin-top: 10px; /* Add margin for separation from radio buttons */
+        }
+
+        /* Style for individual buttons in the container */
+        .button-container button {
+            margin: 5px;
+        }
+
+
+    </style>
+
+
+</head>
+<body>
+
+<h1 style="font-size: 24px;">Trial Class UI Page</h1>
+
+<label for="userName">User Name:</label>
+<select id="userName">
+    <option value="路首成">路首成</option>
+    <option value="常子凡">常子凡</option>
+</select>
+
+<label for="teacherName">Teacher's Name:</label>
+<input type="text" id="teacherName" value="李教练">
+
+<button id="groupGreetingButton">入群招呼语</button>
+<!-- Add an input field for date and time -->
+<label for="classDateTime">Class Date and Time:</label>
+<input type="datetime-local" id="classDateTime" value="2024-02-28T21:30">
+<button id="scheduleNotificationButton">排课通知</button>
+<button id="preMeetingReminderButton" style="font-weight: bold; color: red;">15分钟前提醒（发会议链接）</button>
+<button id="onTimeReminderButton">准点提醒</button>
+
+<!-- Add an input field for vocabulary count -->
+<label for="vocabularyCount">词汇量数字:</label>
+<input type="text" id="vocabularyCount" value="4000">
+
+<!-- Add a button for vocabulary result -->
+<button id="vocabularyResultButton" style="font-weight: bold; color: red;">词汇量检测结果（截图2张）</button>
+<!-- Add an input field for 新学单词 -->
+<label for="newWord">新学单词:</label>
+<input type="text" id="newWord" placeholder="Enter new words" value="30">
+
+<!-- Add an input field for 遗忘单词 -->
+<label for="forgetWord">遗忘单词:</label>
+<input type="text" id="forgetWord" placeholder="Enter forgotten words" value="0">
+
+<!-- Add an input field for 学习时间 -->
+<label for="studyTime" style="font-weight: bold; color: red;">学习时间 (从开始识记到学后检测，计时器):</label>
+<input type="text" id="studyTime" placeholder="Enter study time" value="35">
+
+<button id="classFeedbackButton">课堂反馈</button>
+<!-- Add buttons for 开场话术 and 了解概况 -->
+<button id="openingSpeechButton">开场话术</button>
+<!-- Add a radio button for student level on one line -->
+<label for="studentLevel" style="font-weight: bold; color: red;">学生级别:（初二前总分100）</label>
+<!-- Replace the radio buttons for student level with a dropdown -->
+<select id="studentLevel" name="studentLevel">
+    <option value="primary" selected>小学生</option>
+    <option value="middleHigh">初高中</option>
+</select>
+<button id="understandSituationButton">了解概况</button>
+<button id="startVocabularyTestButton">开始词汇量检测</button>
+<!-- Add input boxes for 抗遗忘复习单词 and 抗遗忘遗忘单词 -->
+<label for="antiForgettingReviewWord">抗遗忘复习单词:</label>
+<input type="text" id="antiForgettingReviewWord" value="15">
+
+<label for="antiForgettingForgetWord">抗遗忘遗忘单词:</label>
+<input type="text" id="antiForgettingForgetWord" value="0">
+<label for="forgetWords" style="font-weight: bold; color: red;">遗忘词 (英文+中文):</label>
+<textarea id="forgetWords">drop in顺便走访（某人）
+go for主张
+discuss讨论
+steam蒸(食物)
+Asia亚洲
+Bangkok曼谷
+million百万</textarea>
+<button id="antiForgettingFeedbackButton" style="font-weight: bold; color: red;">抗遗忘课堂反馈</button>
+
+<script type="module">
+    import * as script from './scriptTiyan.js';
+    import * as commonFunctions from './commonFunctions.js';
+
+    document.addEventListener("keydown", function (event) {
+        const focusedElement = document.activeElement;
+
+        // Check if the focused element is the textarea with id 'forgetWords'
+        if (focusedElement && focusedElement.id === "forgetWords") {
+            return; // Do nothing if the focused element is the textarea
+        }
+
+        if (event.key === "Enter" || event.keyCode === 13) {
+            if (!Swal.isVisible()) {
+                event.preventDefault();
+                document.getElementById("openingSpeechButton").click();
+            }
+        }
+    });
+    const buttonIds = [
+        "groupGreetingButton",
+        "scheduleNotificationButton",
+        "preMeetingReminderButton",
+        "onTimeReminderButton",
+        "vocabularyResultButton",
+        "classFeedbackButton",
+        "openingSpeechButton",
+        "understandSituationButton",
+        "startVocabularyTestButton",
+        "antiForgettingFeedbackButton"
+    ];
+
+    buttonIds.forEach((buttonId, index) => {
+        const buttonText = `${index + 1}.${document.getElementById(buttonId).textContent}`;
+        document.getElementById(buttonId).textContent = buttonText;
+    });
+    document.getElementById("groupGreetingButton").addEventListener("click", commonFunctions.handleGroupGreetingClick);
+    document.getElementById("scheduleNotificationButton").addEventListener("click", script.handleScheduleNotificationClick);
+    document.getElementById("preMeetingReminderButton").addEventListener("click", script.handlePreMeetingReminderClick);
+    document.getElementById("onTimeReminderButton").addEventListener("click", script.handleOnTimeReminderClick);
+    document.getElementById("vocabularyResultButton").addEventListener("click", script.handleVocabularyResultClick);
+    document.getElementById("classFeedbackButton").addEventListener("click", script.handleClassFeedbackClick);
+    document.getElementById("openingSpeechButton").addEventListener("click", script.handleOpeningSpeechClick);
+    document.getElementById("understandSituationButton").addEventListener("click", script.handleUnderstandSituationClick);
+    document.getElementById("startVocabularyTestButton").addEventListener("click", script.startVocabularyTest);
+    document.getElementById("antiForgettingFeedbackButton").addEventListener("click", commonFunctions.handleAntiForgettingFeedbackClick);
+
+</script>
+
+</body>
+</html>
