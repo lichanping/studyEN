@@ -10,12 +10,15 @@ export function handleGroupGreetingClick() {
 export function handleAntiForgettingFeedbackClick() {
     // Get values from input boxes
     const antiForgettingReviewWord = document.getElementById('antiForgettingReviewWord').value;
-    const forgetWords = document.getElementById('forgetWords').value;
+    let forgetWords = document.getElementById('forgetWords').value;
+    let pronounceWords = document.getElementById('pronounceWords').value;
+
     const userName = document.getElementById("userName").value;
     const randomFeedback = getRandomFeedback();
 
     // Count the number of English words
     const numberOfEnglishWords = countEnglishWords(forgetWords);
+    const numberOfWrongWords = countEnglishWords(pronounceWords);
 
     // Get the input element to display the result
     const inputAntiForgettingForgetWord = document.getElementById("antiForgettingForgetWord");
@@ -24,17 +27,27 @@ export function handleAntiForgettingFeedbackClick() {
     inputAntiForgettingForgetWord.value = numberOfEnglishWords;
     const antiForgettingForgetWord = document.getElementById('antiForgettingForgetWord').value;
 
+    if (forgetWords.trim().length == 0){
+        forgetWords=" 无!" ;
+    }
+    else{forgetWords=`<br>${forgetWords}`;
+    }
+    if (pronounceWords.trim().length == 0){
+        pronounceWords=" 无!" ;
+    }
+    else{pronounceWords=`<br>${pronounceWords}`;
+    }
+
     // Generate the message
     let message = `【${userName} 今日抗遗忘复习反馈】<br>
-1. 今日复习 ${antiForgettingReviewWord} 词，遗忘 ${antiForgettingForgetWord} 词。<br>
-2. 遗忘词（其中包括发音不标准的单词）:<br>${forgetWords}<br>
-3. ${userName} ${randomFeedback}`;
+1. 今日复习 ${antiForgettingReviewWord} 词，遗忘 ${antiForgettingForgetWord} 词， 发音不标准 ${numberOfWrongWords} 词。<br>
+2. 遗忘词:${forgetWords}<br>
+3. 发音不标准的词:${pronounceWords}<br>
+4. ${userName} ${randomFeedback}`;
 
     // Add line breaks
     message = message.replace(/\n/g, '<br>');
-    if (userName === "蔡青青"){
-        message += `<br><br>${userName}课下继续加强发音哦!`
-    }
+    message += `<br><br>${userName}课下继续加强发音哦!`
     // Append random motto
     message += `<br><br>"${getRandomMotto()}" 💖✨`;
     // Copy the message to clipboard
@@ -129,12 +142,12 @@ export function getRandomMotto() {
 
 function countEnglishWords(text) {
     const wordsArray = extractEnglishWords(text)
-    return wordsArray.length;
+    const len = wordsArray.length;
+    return len;
 }
 
 function extractEnglishWords(text) {
-    console.log(text);
-    const wordsArray = text.split('\n');
+    const wordsArray = text.split(/\r?\n/).filter(element => element);
     return wordsArray;
 }
 
