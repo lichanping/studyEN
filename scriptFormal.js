@@ -98,7 +98,7 @@ export function handleScheduleNotificationClick() {
 export function handleLateMeetingReminderClick() {
     const userName = document.getElementById("userName").value;
     // Create the reminder message
-    const reminderMessage = `我们的语言陪练服务已经开始了，这是本次的会议链接，请 ⭐  ${userName} 同学抓紧时间及时进入会议室哦。🔥`
+    const reminderMessage = `我们的在线课程已经开始了，请 ⭐  ${userName} 同学抓紧时间及时进入会议室哦。🔥`
     copyToClipboard(reminderMessage);
     alert(`${reminderMessage}`);
 }
