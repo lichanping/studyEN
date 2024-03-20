@@ -10,15 +10,23 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: left; /* Align text to the left */
+            text-align: left;
             margin: 20px;
             display: flex;
             flex-direction: column;
-            align-items: flex-start; /* Align items to the left */
-            background-color: #f2f2f2; /* Set background color to a light gray */
+            align-items: flex-start;
+            background-color: #f2f2f2;
         }
 
-        #forgetWords,#pronounceWords {
+        h1 {
+            font-size: 32px; /* Increase font size */
+            color: #333; /* Darken the color */
+            text-transform: uppercase; /* Convert text to uppercase */
+            letter-spacing: 2px; /* Add letter spacing for emphasis */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Add a subtle shadow effect */
+        }
+
+        #forgetWords, #pronounceWords {
             width: 400px; /* Adjust the width as needed */
             height: 60px; /* Adjust the height as needed */
             font-size: 18px; /* Adjust the font size as needed */
@@ -49,8 +57,8 @@
 </head>
 <body>
 
-<h1 style="font-size: 24px;">Formal Class UI Page</h1>
-
+<h1>Formal Class UI Page</h1>
+<button id="navigateToTiyanClass">Go to Tiyan Class Page</button>
 <label for="userName">User Name:</label>
 <select id="userName">
     <option value="蔡青青">蔡青青</option>
@@ -142,6 +150,7 @@ hate讨厌</textarea>
         const buttonText = `${index + 1}. ${document.getElementById(buttonId).textContent}`;
         document.getElementById(buttonId).textContent = buttonText;
     });
+    document.getElementById("navigateToTiyanClass").addEventListener("click", commonFunctions.navigateToTiyanClass);
     document.getElementById("userName").addEventListener("change", script.updateLabel);
     document.getElementById("groupGreetingButton").addEventListener("click", commonFunctions.handleGroupGreetingClick);
     document.getElementById("scheduleNotificationButton").addEventListener("click", script.handleScheduleNotificationClick);

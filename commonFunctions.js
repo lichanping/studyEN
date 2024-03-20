@@ -1,4 +1,12 @@
 // JavaScript code for the button click functions
+export function navigateToTiyanClass(){
+    window.location.href = "tiyanClass.html";
+}
+
+export function navigateToFormalClass(){
+    window.location.href = "index.html";
+}
+
 export function handleGroupGreetingClick() {
     const teacherName = document.getElementById("teacherName").value;
     const greetingMessage = `您好！我是${teacherName}，很⾼兴你们加⼊语⾔集训营，接下来让我们⼀起开启快乐、⾼效的语⾔训练之旅! 在此过程中，我会全程陪伴孩⼦的学习和复习过程，从短暂记忆到永久记忆，从被动接收到主动参与，让我们⼀起⻅证孩⼦的蜕变吧!🌟🌟🌟`;
