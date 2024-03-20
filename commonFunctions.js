@@ -1,6 +1,6 @@
 // JavaScript code for the button click functions
 export function navigateToTiyanClass(){
-    window.location.href = "tiyanClass.html";
+    window.location.href = "https://lichanping.github.io/studyEN/tiyanClass.html";
 }
 
 export function navigateToFormalClass(){
