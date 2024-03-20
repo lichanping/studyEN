@@ -76,7 +76,7 @@
 <label for="classDateTime">Class Date and Time:</label>
 <input type="datetime-local" id="classDateTime" value="">
 <button id="scheduleNotificationButton" style="font-weight: bold; color: red;">排课通知（提前15分钟及准点提醒)发会议链接</button>
-<button id="preMeetingReminderButton" style="font-weight: bold; color: red;">迟到10分钟后</button>
+<button id="lateMeetingReminderButton" style="font-weight: bold; color: red;">迟到10分钟后</button>
 
 <!-- Add an input field for 复习单词 -->
 <label for="reviewWord">复习单词:</label>
@@ -138,7 +138,7 @@ hate讨厌</textarea>
     const buttonIds = [
         "groupGreetingButton",
         "scheduleNotificationButton",
-        "preMeetingReminderButton",
+        "lateMeetingReminderButton",
         "classFeedbackButton",
         "managementGroupTemplateButton",
         "openingSpeechButton",
@@ -154,7 +154,7 @@ hate讨厌</textarea>
     document.getElementById("userName").addEventListener("change", script.updateLabel);
     document.getElementById("groupGreetingButton").addEventListener("click", commonFunctions.handleGroupGreetingClick);
     document.getElementById("scheduleNotificationButton").addEventListener("click", script.handleScheduleNotificationClick);
-    document.getElementById("preMeetingReminderButton").addEventListener("click", script.handleLateMeetingReminderClick);
+    document.getElementById("lateMeetingReminderButton").addEventListener("click", script.handleLateMeetingReminderClick);
     document.getElementById("classFeedbackButton").addEventListener("click", script.handleClassFeedbackClick);
     document.getElementById("openingSpeechButton").addEventListener("click", script.handleOpeningSpeechClick);
     document.getElementById("understandSituationButton").addEventListener("click", script.handleUnderstandSituationClick);
