@@ -108,6 +108,7 @@ export function showAlert(message) {
 export function getRandomMotto() {
     // Replace the following array with your own collection of mottos
     const mottos = [
+        "Children are able to learn more quickly and retain more knowledge than adults. 加油！",
         "知识改变命运",
         "坚持就是胜利",
         "学无止境",
