@@ -109,6 +109,7 @@ export function getRandomMotto() {
     // Replace the following array with your own collection of mottos
     const mottos = [
         "Children are able to learn more quickly and retain more knowledge than adults. 加油！",
+        "Such a nice kid!",
         "知识改变命运",
         "坚持就是胜利",
         "学无止境",
@@ -128,7 +129,6 @@ export function getRandomMotto() {
         "天行健，君子以自强不息",
         "莫问前程有多远，道路漫漫谁执鞭",
         "勿以善小而不为，勿以恶小而为之",
-        "抛弃时光的人，时光亦抛弃他",
         "少壮不努力，老大徒伤悲",
         "踏遍青山人未老，风景这边独好",
         "夙愿必胜，坚持不懈",
