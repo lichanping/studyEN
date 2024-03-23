@@ -61,9 +61,6 @@
 <button id="navigateToFormalClass">Go to Formal Class Page</button>
 <label for="userName">User Name:</label>
 <select id="userName">
-    <option value="蔡青青">蔡青青</option>
-    <option value="夏启程">夏启程</option>
-    <option value="戴韶珺">戴韶珺</option>
 </select>
 <label id="courseLabel" style="font-weight: bold; color: red;"></label>
 <div class="scheduleLabels"></div>
@@ -120,7 +117,7 @@ hate讨厌</textarea>
 <button id="antiForgettingFeedbackButton" style="font-weight: bold; color: red;">抗遗忘课堂反馈</button>
 
 <script type="module">
-    import * as script from './scriptFormal.js';
+    // import * as script from './scriptFormal.js';
     import * as scriptR from './scriptRead.js';
     import * as commonFunctions from './commonFunctions.js';
 
@@ -148,14 +145,14 @@ hate讨厌</textarea>
         document.getElementById(buttonId).textContent = buttonText;
     });
     document.getElementById("navigateToFormalClass").addEventListener("click", commonFunctions.navigateToFormalClass);
-    document.getElementById("userName").addEventListener("change", script.updateLabel);
+    document.getElementById("userName").addEventListener("change", scriptR.updateLabel2);
     document.getElementById("groupGreetingButton").addEventListener("click", commonFunctions.handleGroupGreetingClick);
-    document.getElementById("scheduleNotificationButton").addEventListener("click", script.handleScheduleNotificationClick);
-    document.getElementById("lateMeetingReminderButton").addEventListener("click", script.handleLateMeetingReminderClick);
+    document.getElementById("scheduleNotificationButton").addEventListener("click", scriptR.handleScheduleNotificationClick);
+    document.getElementById("lateMeetingReminderButton").addEventListener("click", scriptR.handleLateMeetingReminderClick);
     document.getElementById("classFeedbackButton").addEventListener("click", scriptR.handleReadClassFeedbackClick);
-    document.getElementById("openingSpeechButton").addEventListener("click", script.handleOpeningSpeechClick);
-    document.getElementById("understandSituationButton").addEventListener("click", script.handleUnderstandSituationClick);
-    document.getElementById("managementGroupTemplateButton").addEventListener("click", script.handleManagementGroupTemplateClick);
+    document.getElementById("openingSpeechButton").addEventListener("click", scriptR.handleOpeningSpeechClick);
+    document.getElementById("understandSituationButton").addEventListener("click", scriptR.handleUnderstandSituationClick);
+    document.getElementById("managementGroupTemplateButton").addEventListener("click", scriptR.handleManagementGroupTemplateClick);
     document.getElementById("antiForgettingFeedbackButton").addEventListener("click", commonFunctions.handleAntiForgettingFeedbackClick);
 </script>
 
