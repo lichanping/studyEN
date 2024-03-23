@@ -57,9 +57,8 @@
 </head>
 <body>
 
-<h1>正式课（词汇）</h1>
-<button id="navigateToTiyanClass">Go to Tiyan Class Page</button>
-<button id="navigateToReadClass">Go to 阅读课</button>
+<h1>阅读课</h1>
+<button id="navigateToFormalClass">Go to Formal Class Page</button>
 <label for="userName">User Name:</label>
 <select id="userName">
     <option value="蔡青青">蔡青青</option>
@@ -151,8 +150,7 @@ hate讨厌</textarea>
         const buttonText = `${index + 1}. ${document.getElementById(buttonId).textContent}`;
         document.getElementById(buttonId).textContent = buttonText;
     });
-    document.getElementById("navigateToTiyanClass").addEventListener("click", commonFunctions.navigateToTiyanClass);
-    document.getElementById("navigateToReadClass").addEventListener("click", commonFunctions.navigateToReadClass);
+    document.getElementById("navigateToFormalClass").addEventListener("click", commonFunctions.navigateToFormalClass);
     document.getElementById("userName").addEventListener("change", script.updateLabel);
     document.getElementById("groupGreetingButton").addEventListener("click", commonFunctions.handleGroupGreetingClick);
     document.getElementById("scheduleNotificationButton").addEventListener("click", script.handleScheduleNotificationClick);
