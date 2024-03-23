@@ -78,17 +78,13 @@
 <button id="scheduleNotificationButton" style="font-weight: bold; color: red;">排课通知（提前15分钟及准点提醒)发会议链接</button>
 <button id="lateMeetingReminderButton" style="font-weight: bold; color: red;">迟到10分钟后</button>
 
-<!-- Add an input field for 复习单词 -->
-<label for="reviewWord">复习单词:</label>
-<input type="text" id="reviewWord" placeholder="Enter review words" value="15">
-<!-- Add an input field for 新学单词 -->
-<label for="newWord">新学单词:</label>
-<input type="text" id="newWord" placeholder="Enter new words" value="30">
 
-<!-- Add an input field for 遗忘单词 -->
-<label for="forgetWord">遗忘单词:</label>
-<input type="text" id="forgetWord" placeholder="Enter forgotten words" value="0">
-
+<label for="newWord">生词:(不超过15个）</label>
+<input type="text" id="newWord" placeholder="Enter new words" value="10">
+<label for="test">习题:</label>
+<input type="text" id="test" placeholder="Enter test questions" value="5">
+<label for="mistake">错误:</label>
+<input type="text" id="mistake" placeholder="Enter mistake questions" value="0">
 <button id="classFeedbackButton">课堂反馈</button>
 
 <label for="reviewTime">复习时间:</label>
@@ -125,6 +121,7 @@ hate讨厌</textarea>
 
 <script type="module">
     import * as script from './scriptFormal.js';
+    import * as scriptR from './scriptRead.js';
     import * as commonFunctions from './commonFunctions.js';
 
     document.addEventListener("keydown", function (event) {
@@ -155,7 +152,7 @@ hate讨厌</textarea>
     document.getElementById("groupGreetingButton").addEventListener("click", commonFunctions.handleGroupGreetingClick);
     document.getElementById("scheduleNotificationButton").addEventListener("click", script.handleScheduleNotificationClick);
     document.getElementById("lateMeetingReminderButton").addEventListener("click", script.handleLateMeetingReminderClick);
-    document.getElementById("classFeedbackButton").addEventListener("click", script.handleClassFeedbackClick);
+    document.getElementById("classFeedbackButton").addEventListener("click", scriptR.handleReadClassFeedbackClick);
     document.getElementById("openingSpeechButton").addEventListener("click", script.handleOpeningSpeechClick);
     document.getElementById("understandSituationButton").addEventListener("click", script.handleUnderstandSituationClick);
     document.getElementById("managementGroupTemplateButton").addEventListener("click", script.handleManagementGroupTemplateClick);
