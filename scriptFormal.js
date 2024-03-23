@@ -17,8 +17,8 @@ const setInitialDateTime = () => {
 
 // Attach the function to the "load" event of the window
 window.addEventListener("load", setInitialDateTime);
-window.addEventListener("load", updateLabel);
 window.addEventListener('load', createUsers);
+window.addEventListener("load", updateLabel);
 // Define user data
 const userData = {
     "蔡青青": {
