@@ -22,8 +22,7 @@ window.addEventListener("load", updateLabel);
 const userData = {
     "蔡青青": {
         schedule: "每周一 19:30 蔡青青 (6年级)",
-        // course: "乱序版上海市初中",
-        course: "牛津上海版英语七年级下册",
+        course: "初中高级",
         // course: "牛津上海版英语七年级上册",
         hours: [19, 30]
     },
@@ -103,22 +102,17 @@ export function handleLateMeetingReminderClick() {
     alert(`${reminderMessage}`);
 }
 
-export function handleClassFeedbackClick() {
+export function handleReadClassFeedbackClick() {
     const userName = document.getElementById("userName").value;
-    const newWord = parseInt(document.getElementById("newWord").value);
-    const reviewWordCount = document.getElementById("reviewWord").value;
-    const forgetWord = parseInt(document.getElementById("forgetWord").value) || 0; // Default to 0 if no value entered or invalid
-    // Calculate correct rate
-    const correctRate = ((newWord - forgetWord) / newWord * 100).toFixed(0);
-    // Get course label
     const courseLabel = document.getElementById("courseLabel").textContent.trim();
+    const newWord = parseInt(document.getElementById("newWord").value);
+    const test = document.getElementById("test").value;
+    const mistake = parseInt(document.getElementById("mistake").value)
     // Generate feedback message
-    const feedbackMessage = `【${userName}今日学习反馈】<br><br>1.今日复习单词 ${reviewWordCount}个，遗忘 0个；今日新学单词 ${newWord}个，遗忘${forgetWord}个, 正确率 ${correctRate}%。<br><br>2.陪伴 ⭐ ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} "${getRandomMotto()}”，认真且努力的${userName}一定能抵达梦想的彼岸。<br><br>3.${userName}目前学习：${courseLabel}<br><br>4.严格按照 21 天抗遗忘复习表来复习哟! 🚀🚀🚀`
+    const feedbackMessage = `【${userName}今日阅读课学习反馈】<br><br>1.今日学习${courseLabel}阅读理解1篇<br><br>2.生词 ${newWord}个，习题 ${test}个，错误 ${mistake}个<br><br>3.今天 ⭐ ${userName} 表现很不错，上课非常认真~大部分句子的翻译没有问题，对文章的理解也比较准确！很棒~课上积累的单词和短语要下去多多巩固哦，然后需要注意部分单词的发音，下去多读一读文章，不断提升阅读的流畅度哦，个别题目注意一下细节哦 <br><br>"${getRandomMotto()}” 🚀🚀🚀`
     copyToClipboard(feedbackMessage);
     showAlert(`${feedbackMessage}`);
 }
-
-
 
 export function handleManagementGroupTemplateClick() {
     const userName = document.getElementById("userName").value;
