@@ -17,28 +17,34 @@ const setInitialDateTime = () => {
 
 // Attach the function to the "load" event of the window
 window.addEventListener("load", setInitialDateTime);
-window.addEventListener("load", updateLabel);
+window.addEventListener('load', createUsers2);
+window.addEventListener("load", updateLabel2);
+
 // Define user data
-const userData = {
-    "蔡青青": {
-        schedule: "每周一 19:30 蔡青青 (6年级)",
+const userData2 = {
+    "阅读1": {
+        schedule: "每周一 19:30 阅读1 (6年级)",
         course: "初中高级",
         // course: "牛津上海版英语七年级上册",
         hours: [19, 30]
     },
-    "夏启程": {
-        schedule: "每周五、日 20:30 夏启程 (5年级)",
-//        course: "牛津上海版小学英语六年级",
-        course: "小学考纲词汇",
+    "阅读2": {
+        schedule: "每周五、日 20:30 阅读2 (5年级)",
+        course: "初中中级",
         hours: [20, 30]
-    },
-    "戴韶珺": {
-        schedule: "每周二 19:50 戴韶珺 (4年级)",
-        course: "相关课程：",
-        hours: [19, 50]
     }
 };
-export function updateLabel() {
+export function createUsers2() {
+    const userNameSelect = document.getElementById("userName");
+    Object.keys(userData2).forEach(userName => {
+        const option = document.createElement("option");
+        option.value = userName;
+        option.textContent = userName;
+        userNameSelect.appendChild(option);
+    });
+}
+
+export function updateLabel2() {
     var userName = document.getElementById("userName").value;
     var labels = document.getElementsByClassName("scheduleLabel");
     var courseLabel = document.getElementById("courseLabel");
@@ -47,8 +53,8 @@ export function updateLabel() {
     // Clear existing labels
     scheduleLabels.innerHTML = "";
     // Create labels for each user
-    Object.keys(userData).forEach(userName => {
-        const userInfo = userData[userName];
+    Object.keys(userData2).forEach(userName => {
+        const userInfo = userData2[userName];
         const label = document.createElement("label");
         label.textContent = userInfo.schedule;
         label.className = "scheduleLabel";
@@ -56,7 +62,7 @@ export function updateLabel() {
         scheduleLabels.appendChild(document.createElement("br"));
     });
 
-    const userDataForSelectedUser = userData[userName];
+    const userDataForSelectedUser = userData2[userName];
     const currentDate = new Date();
     for (var i = 0; i < labels.length; i++) {
         if (labels[i].textContent.includes(userName)) {
@@ -80,7 +86,6 @@ export function updateLabel() {
     document.getElementById("reviewTime").value = formattedCurrentDate;
 }
 
-// JavaScript code for the button click functions
 export function handleScheduleNotificationClick() {
     const userName = document.getElementById("userName").value;
 
@@ -108,8 +113,21 @@ export function handleReadClassFeedbackClick() {
     const newWord = parseInt(document.getElementById("newWord").value);
     const test = document.getElementById("test").value;
     const mistake = parseInt(document.getElementById("mistake").value)
+    const feedbacks = [
+    "今天的表现相当不错！上课非常投入，对文章的理解也相当透彻，翻译也十分流畅。词汇和短语的积累有所提升，但还有改进的空间。发音方面要多加练习，多读文章，提高阅读的流畅度，继续努力哦！",
+    "你的表现今天相当出色！上课态度非常专注，对文章的理解很到位，翻译也相当自然。词汇和短语的积累有所提升，但还需更多练习。发音方面需要多加注意，多读文章，提高阅读的流畅度，继续加油！",
+    "今天的表现相当棒！上课非常认真，对文章的理解也十分透彻，翻译也很流畅。词汇和短语的积累有所提升，但还需努力。发音方面要多加练习，多读文章，提高阅读的流畅度，继续保持！",
+    "你今天的表现相当亮眼！上课态度非常积极，对文章的理解很透彻，翻译也相当自然。词汇和短语的积累有所提升，但还需更多练习。发音方面需要多加注意，多读文章，提高阅读的流畅度，继续加油哦！",
+    "今天你的表现相当出色！上课非常用心，对文章的理解也相当深入，翻译也很自然。词汇和短语的积累有所增加，但还需继续努力。发音方面要多加注意，多读文章，提高阅读的流畅度，继续保持下去！",
+    "你的表现今天相当不错！上课非常专注，对文章的理解也很透彻，翻译也十分流畅。词汇和短语的积累有所提升，但还有提升空间。发音方面要多加练习，多读文章，提高阅读的流畅度，继续努力！",
+    "今天你的表现相当优秀！上课态度非常认真，对文章的理解很到位，翻译也相当自然。词汇和短语的积累有所提升，但还需加强。发音方面需要更多练习，多读文章，提高阅读的流畅度，继续加油！",
+    "你的表现今天相当出色！上课非常投入，对文章的理解也很深入，翻译也很流畅。词汇和短语的积累有所提升，但仍需努力。发音方面需要多加练习，多读文章，提高阅读的流畅度，继续保持！",
+    "今天你的表现相当优秀！上课态度非常积极，对文章的理解很深入，翻译也十分自然。词汇和短语的积累有所增加，但还需更多努力。发音方面要多加注意，多读文章，提高阅读的流畅度，继续加油哦！",
+    "你今天的表现相当不错！上课态度十分认真，对文章的理解也相当到位，翻译也很自然。词汇和短语的积累有所提升，但仍需加强。发音方面需要多加练习，多读文章，提高阅读的流畅度，继续努力！"
+];
+    let feedback = feedbacks[Math.floor(Math.random() * feedbacks.length)]
     // Generate feedback message
-    const feedbackMessage = `【${userName}今日阅读课学习反馈】<br><br>1.今日学习${courseLabel}阅读理解1篇<br><br>2.生词 ${newWord}个，习题 ${test}个，错误 ${mistake}个<br><br>3.今天 ⭐ ${userName} 表现很不错，上课非常认真~大部分句子的翻译没有问题，对文章的理解也比较准确！很棒~课上积累的单词和短语要下去多多巩固哦，然后需要注意部分单词的发音，下去多读一读文章，不断提升阅读的流畅度哦，个别题目注意一下细节哦 <br><br>"${getRandomMotto()}” 🚀🚀🚀`
+    const feedbackMessage = `【${userName}今日阅读课学习反馈】<br><br>1.今日学习${courseLabel}阅读理解1篇<br><br>2.生词 ${newWord}个，习题 ${test}个，错误 ${mistake}个<br><br>3.⭐ ${userName} ${feedback} <br><br>"${getRandomMotto()}” 🚀🚀🚀`
     copyToClipboard(feedbackMessage);
     showAlert(`${feedbackMessage}`);
 }

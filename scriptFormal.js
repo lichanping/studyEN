@@ -18,6 +18,7 @@ const setInitialDateTime = () => {
 // Attach the function to the "load" event of the window
 window.addEventListener("load", setInitialDateTime);
 window.addEventListener("load", updateLabel);
+window.addEventListener('load', createUsers);
 // Define user data
 const userData = {
     "蔡青青": {
@@ -32,13 +33,19 @@ const userData = {
 //        course: "牛津上海版小学英语六年级",
         course: "小学考纲词汇",
         hours: [20, 30]
-    },
-    "戴韶珺": {
-        schedule: "每周二 19:50 戴韶珺 (4年级)",
-        course: "相关课程：",
-        hours: [19, 50]
     }
 };
+
+export function createUsers() {
+    const userNameSelect = document.getElementById("userName");
+    Object.keys(userData).forEach(userName => {
+        const option = document.createElement("option");
+        option.value = userName;
+        option.textContent = userName;
+        userNameSelect.appendChild(option);
+    });
+}
+
 export function updateLabel() {
     var userName = document.getElementById("userName").value;
     var labels = document.getElementsByClassName("scheduleLabel");
@@ -117,7 +124,6 @@ export function handleClassFeedbackClick() {
     copyToClipboard(feedbackMessage);
     showAlert(`${feedbackMessage}`);
 }
-
 
 
 export function handleManagementGroupTemplateClick() {
