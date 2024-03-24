@@ -2,7 +2,7 @@ import {copyToClipboard, getRandomMotto, showAlert, getRandomFeedback} from './c
 
 const setInitialDateTime = () => {
     const currentDate = new Date();
-    currentDate.setHours(19, 40, 0, 0); // Set the time to 21:00 (9 PM)
+    currentDate.setHours(19, 50, 0, 0); // Set the time to 21:00 (9 PM)
 
     const year = currentDate.getFullYear();
     const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Months are zero-based
@@ -83,7 +83,7 @@ export function updateLabel2() {
 
     const formattedCurrentDate = `${year}-${month}-${day}T${hours}:${minutes}`;
     document.getElementById("classDateTime").value = formattedCurrentDate;
-    document.getElementById("reviewTime").value = formattedCurrentDate;
+    // document.getElementById("reviewTime").value = formattedCurrentDate;
 }
 
 export function handleScheduleNotificationClick() {
@@ -111,6 +111,8 @@ export function handleReadClassFeedbackClick() {
     const userName = document.getElementById("userName").value;
     const courseLabel = document.getElementById("courseLabel").textContent.trim();
     const newWord = parseInt(document.getElementById("newWord").value);
+    const mistakeWords = parseInt(document.getElementById("mistakeWords").value);
+
     const test = document.getElementById("test").value;
     const mistake = parseInt(document.getElementById("mistake").value)
     const feedbacks = [
@@ -127,7 +129,7 @@ export function handleReadClassFeedbackClick() {
 ];
     let feedback = feedbacks[Math.floor(Math.random() * feedbacks.length)]
     // Generate feedback message
-    const feedbackMessage = `【${userName}今日阅读课学习反馈】<br><br>1.今日学习${courseLabel}阅读理解1篇<br><br>2.生词 ${newWord}个，习题 ${test}个，错误 ${mistake}个<br><br>3.⭐ ${userName} ${feedback} <br><br>"${getRandomMotto()}” 🚀🚀🚀`
+    const feedbackMessage = `【${userName}今日阅读课学习反馈】<br><br>1.今日学习${courseLabel}阅读理解1篇<br><br>2.生词 ${newWord}个，错误词数：${mistakeWords}个，习题 ${test}个，错误习题数 ${mistake}个<br><br>3.⭐ ${userName} ${feedback} <br><br>"${getRandomMotto()}” 🚀🚀🚀`
     copyToClipboard(feedbackMessage);
     showAlert(`${feedbackMessage}`);
 }
