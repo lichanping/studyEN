@@ -1,16 +1,17 @@
 // JavaScript code for the button click functions
-export function navigateToTiyanClass(){
+export function navigateToTiyanClass() {
     window.location.href = "tiyanClass.html";
     // window.location.href = "https://lichanping.github.io/studyEN/tiyanClass.html";
 }
 
-export function navigateToFormalClass(){
+export function navigateToFormalClass() {
     window.location.href = "index.html";
 }
 
-export function navigateToReadClass(){
+export function navigateToReadClass() {
     window.location.href = "readClass.html";
 }
+
 export function handleGroupGreetingClick() {
     const teacherName = document.getElementById("teacherName").value;
     const greetingMessage = `您好！我是${teacherName}，很⾼兴你们加⼊语⾔集训营，接下来让我们⼀起开启快乐、⾼效的语⾔训练之旅! 在此过程中，我会全程陪伴孩⼦的学习和复习过程，从短暂记忆到永久记忆，从被动接收到主动参与，让我们⼀起⻅证孩⼦的蜕变吧!🌟🌟🌟`;
@@ -39,15 +40,15 @@ export function handleAntiForgettingFeedbackClick() {
     inputAntiForgettingForgetWord.value = numberOfEnglishWords;
     const antiForgettingForgetWord = document.getElementById('antiForgettingForgetWord').value;
 
-    if (forgetWords.trim().length == 0){
-        forgetWords=" 无!" ;
+    if (forgetWords.trim().length == 0) {
+        forgetWords = " 无!";
+    } else {
+        forgetWords = `<br>${forgetWords}`;
     }
-    else{forgetWords=`<br>${forgetWords}`;
-    }
-    if (pronounceWords.trim().length == 0){
-        pronounceWords=" 无!" ;
-    }
-    else{pronounceWords=`<br>${pronounceWords}`;
+    if (pronounceWords.trim().length == 0) {
+        pronounceWords = " 无!";
+    } else {
+        pronounceWords = `<br>${pronounceWords}`;
     }
 
     // Generate the message
@@ -59,7 +60,9 @@ export function handleAntiForgettingFeedbackClick() {
 
     // Add line breaks
     message = message.replace(/\n/g, '<br>');
-    message += `<br><br>${userName}课下继续加强发音哦!`
+    if (numberOfWrongWords > 0) {
+        message += `<br><br>${userName}课下继续加强发音哦!`
+    }
     // Append random motto
     message += `<br><br>"${getRandomMotto()}" 💖✨`;
     // Copy the message to clipboard
@@ -101,7 +104,7 @@ export function copyToClipboard(text) {
 
 export function showAlert(message) {
     Swal.fire({
-        html: `<div style="height: 420px; overflow: hidden; text-align: left;">${message}</div>`,
+        html: `<div style="height: 500px; overflow-y: auto; text-align: left;">${message}</div>`, // Adjust the height as needed
         confirmButtonText: 'OK',
         allowOutsideClick: false,
         heightAuto: false,  // Prevent auto height adjustment
@@ -150,7 +153,6 @@ export function getRandomMotto() {
     const randomIndex = Math.floor(Math.random() * mottos.length);
     return mottos[randomIndex];
 }
-
 
 
 function countEnglishWords(text) {
