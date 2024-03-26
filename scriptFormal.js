@@ -96,7 +96,7 @@ export function handleScheduleNotificationClick() {
     const classDateTime = document.getElementById("classDateTime").value;
     const formattedDateTime = formatDateTimeWeekly(classDateTime);
     const thisDateTime = formatDateTime(classDateTime);
-    const notificationMessage = `亲爱的 ⭐ ${userName} 用户您好! 我们的语言陪练服务时间安排在：${formattedDateTime}；<br><br>本次课程在：${thisDateTime}；<br><br>这是本次课程的上课地址，请学员及家长准时进入会议室上课。`;
+    const notificationMessage = `亲爱的 ⭐ ${userName} 用户您好! 我们的语言陪练服务时间安排在${formattedDateTime}。<br><br>本次课程时间为${thisDateTime}；<br><br>上课地址如下：<br><br>#腾讯会议：573-215-9639<br><br>请学员及家长准时进入会议室上课。`;
 
     copyToClipboard(notificationMessage);
     showAlert(`${notificationMessage}`);
@@ -133,7 +133,7 @@ export function handleManagementGroupTemplateClick() {
     var selectedDateTime = new Date(reviewTime);
     var hour = selectedDateTime.getHours();
     var minute = selectedDateTime.getMinutes()
-    const outputMessage = `经过与学员及家长的时间安排，根据 21天抗遗忘复习的要求，${userName}同学的复习时间定为 ${hour}:${minute}；<br><br>21 天抗遗忘复习排课表已生成，请学员准时进入会议室进行抗遗忘复习。🚀🚀🚀`;
+    const outputMessage = `${userName}同学的复习时间定为 ${hour}:${minute}；<br><br>21天抗遗忘复习排课表已生成，请学员准时进入会议室进行抗遗忘复习。🚀🚀<br><br>上课地址如下：<br><br>#腾讯会议：573-215-9639`;
     copyToClipboard(outputMessage);
     // Display the output message
     showAlert(outputMessage);
