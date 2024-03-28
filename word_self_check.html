@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="word.css">
+</head>
+<body>
+<div id="container">
+    <div id="file-and-button">
+        <select id="file">
+            <option value="蔡青青">蔡青青</option>
+        </select>
+        <button id="renderQuestion">Ready Go!</button>
+    </div>
+    <div id="english-word">
+        <input type="text" id="englishWordTextBox" readonly>
+    </div>
+    <div id="options-line">
+        <div class="banner" id="banner1"></div>
+        <div class="banner" id="banner2"></div>
+        <div class="banner" id="banner3"></div>
+    </div>
+    <input type="hidden" id="correctIndexValue">
+</div>
+<script type="module">
+    import * as script from './getWordsFromTxt.js';
+
+    document.getElementById("renderQuestion").addEventListener("click", script.renderQuestion);
+    document.getElementById("banner1").addEventListener("click", script.compareOptionIndex);
+    document.getElementById("banner2").addEventListener("click", script.compareOptionIndex);
+    document.getElementById("banner3").addEventListener("click", script.compareOptionIndex);
+
+</script>
+</body>
+</html>

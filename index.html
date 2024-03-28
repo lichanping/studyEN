@@ -80,7 +80,7 @@ avenue大街
 price价格
 hate讨厌</textarea>
 <button id="antiForgettingFeedbackButton" style="font-weight: bold; color: red;">抗遗忘课堂反馈</button>
-
+<button id="wordSelfCheckButton" onclick="window.location.href='word_self_check.html'">单词自检</button>
 <script type="module">
     import * as script from './scriptFormal.js';
     import * as commonFunctions from './commonFunctions.js';
@@ -101,7 +101,8 @@ hate讨厌</textarea>
         "managementGroupTemplateButton",
         "openingSpeechButton",
         "understandSituationButton",
-        "antiForgettingFeedbackButton"
+        "antiForgettingFeedbackButton",
+        "wordSelfCheckButton"
     ];
 
     buttonIds.forEach((buttonId, index) => {
