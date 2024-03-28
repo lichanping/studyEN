@@ -3,6 +3,21 @@ body {
     font-size: 16px; /* Base font size */
 }
 
+#score-container,
+#error-count-container {
+    display: inline-block;
+    margin-left: 20px; /* Add margin between score and error count */
+}
+
+#score, #errorCount {
+    display: inline-block;
+    margin-left: 5px; /* Add margin between label and value */
+}
+
+#errorCount {
+    background-color: #ffcccc; /* Set background color to red */
+}
+
 #container {
     width: 600px; /* Fixed width for the container */
     text-align: left;
@@ -14,31 +29,50 @@ body {
     align-items: center; /* Center align items vertically */
 }
 
+#file {
+    margin-right: 10px; /* Add margin to the right side */
+}
+
 #file,
 #renderQuestion,
 #englishWordTextBox {
     font-size: inherit; /* Inherit font size from the body */
-    height: 30px; /* Match height to the button */
+    height: 40px; /* Match height to the button */
 }
 
 #englishWordTextBox {
-    height: 34px; /* Match height to the button */
+    height: 44px; /* Match height to the button */
     font-size: 24px; /* Adjust the font size for the English word */
     display: inline-block;
     vertical-align: middle;
-    width: 200px; /* Set width to auto */
-    text-align: justify;
-
+    width: 400px; /* Set width to auto */
+    text-align: center;
 }
 
 .banner {
-    height: 30px; /* Match height to the button */
-    /*font-size: 24px; !* Adjust the font size for the English word *!*/
+    height: 40px; /* Match height to the button */
     margin: 5px;
     padding: 5px;
     border: 1px solid #000;
     text-align: center;
-    vertical-align: middle;
+    display: flex; /* Use flexbox */
+    align-items: center; /* Vertically center content */
+    justify-content: center; /* Horizontally center content */
+    width: 390px; /* Set width to auto */
+    word-wrap: break-word; /* Allow text to wrap within the div */
+    background-color: #f0f0f0; /* Light gray background color */
+}
 
-    width: 190px; /* Set width to auto */
+#score {
+    display: inline-block; /* Display as inline block */
+    margin-left: 10px; /* Add some spacing between the label and the score */
+}
+
+#error-count-container {
+    display: inline-block; /* Display as inline block */
+    margin-bottom: 10px; /* Add bottom margin */
+}
+
+#incorrectWords {
+    display: block; /* Display as block to force new line */
 }
