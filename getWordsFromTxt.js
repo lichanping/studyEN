@@ -51,16 +51,22 @@ export async function renderQuestion() {
     const fileName = document.getElementById("file").value + ".txt";
     try {
         const globalWordsData = await GetWordsFromTxt.readText(fileName);
-        const { currentEnglishWord, options, correctIndex } = GetWordsFromTxt.generateOptions(globalWordsData);
+        const {currentEnglishWord, options, correctIndex} = GetWordsFromTxt.generateOptions(globalWordsData);
         let englishWordInput = document.getElementById("englishWordTextBox");
         englishWordInput.value = currentEnglishWord;
         const bannerElements = document.querySelectorAll('.banner');
         options.forEach((option, index) => {
-            bannerElements[index].innerText = option;
+            if (option.length > 25) {
+                // Truncate the text if it exceeds 25 characters
+                bannerElements[index].innerText = option.substring(0, 20) + '...';
+            } else {
+                // Otherwise, display the full text
+                bannerElements[index].innerText = option;
+            }
         });
         // Store correctIndex value in the hidden input
         document.getElementById("correctIndexValue").value = correctIndex;
-        return { currentEnglishWord, options, correctIndex };
+        return {currentEnglishWord, options, correctIndex};
     } catch (error) {
         console.error("Error:", error);
         return null;
@@ -72,12 +78,30 @@ export function compareOptionIndex(event) {
     const correctIndex = parseInt(document.getElementById('correctIndexValue').value);
     const englishWordTextBox = document.getElementById('englishWordTextBox');
     const english = englishWordTextBox.value;
+    const score = parseInt(document.getElementById('score').innerText);
+    const errorCount = parseInt(document.getElementById('errorCount').innerText);
+    const correctOption = document.querySelectorAll('.banner')[correctIndex].innerText;
+    document.querySelectorAll('.banner')[correctIndex].style.backgroundColor = 'lightgreen';
+    const incorrectWordsSpan = document.getElementById('incorrectWords');
 
     // Compare the selected option index with the correct index
     if (selectedOptionIndex === correctIndex) {
         englishWordTextBox.value = english + " " + event.target.innerText;
         englishWordTextBox.style.backgroundColor = 'lightgreen';
+        document.getElementById('score').innerText = score + 1
+
     } else {
-        // Handle incorrect selection if needed
+        incorrectWordsSpan.innerText += `${english} ${correctOption}\n`;
+        document.getElementById('errorCount').innerText = errorCount + 1;
+        englishWordTextBox.style.backgroundColor = 'red';
     }
+
+    // Automatically perform action of renderQuestion after 3 seconds
+    englishWordTextBox.value = english + " " + correctOption;
+    setTimeout(() => {
+        renderQuestion();
+        // Reset the background color of the English word text box after 3 seconds
+        document.getElementById('englishWordTextBox').style.backgroundColor = '';
+        document.querySelectorAll('.banner')[correctIndex].style.backgroundColor = '#f0f0f0';
+    }, 3000);
 }
