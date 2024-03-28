@@ -56,7 +56,7 @@ export async function renderQuestion() {
         englishWordInput.value = currentEnglishWord;
         const bannerElements = document.querySelectorAll('.banner');
         options.forEach((option, index) => {
-            if (option.length > 25) {
+            if (option.length > 30) {
                 // Truncate the text if it exceeds 25 characters
                 bannerElements[index].innerText = option.substring(0, 20) + '...';
             } else {
