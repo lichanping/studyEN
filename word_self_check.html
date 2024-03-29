@@ -19,7 +19,7 @@
             <option value="吉李辰">吉李辰</option>
             <option value="蔡青青">蔡青青</option>
         </select>
-        <button id="renderQuestion">Ready Go!</button>
+        <button id="renderQuestion">播放</button>
     </div>
     <div id="english-word">
         <input type="text" id="englishWordTextBox" readonly>
@@ -61,10 +61,27 @@
     document.getElementById("goBackButton").addEventListener("click", commonFunctions.navigateToFormalClass);
     document.addEventListener("DOMContentLoaded", script.renderQuestion);
     document.getElementById("file").addEventListener("change", script.renderQuestion);
-    document.getElementById("renderQuestion").addEventListener("click", () => {
-        script.renderQuestion();
-        setInterval(script.renderQuestion, 3000);
+    // document.getElementById("renderQuestion").addEventListener("click", () => {
+    //     script.renderQuestion();
+    //     setInterval(script.renderQuestion, 3000);
+    // });
+    let autoRenderInterval; // Variable to hold the interval ID
+    const renderButton = document.getElementById("renderQuestion");
+    document.getElementById("renderQuestion").addEventListener("click", function () {
+        if (autoRenderInterval) {
+            clearInterval(autoRenderInterval); // Stop auto-rendering
+            autoRenderInterval = null; // Reset the interval variable
+            renderButton.innerText = "播放";
+        } else {
+            startAutoRender(); // Start auto-rendering
+            renderButton.innerText = "停止";
+        }
     });
+    function startAutoRender() {
+        autoRenderInterval = setInterval(function () {
+            script.renderQuestion();
+        }, 2000);
+    }
 
     document.getElementById("playWord").addEventListener("click", script.play_audio);
     document.getElementById("checkSpellingButton").addEventListener("click", script.checkSpelling);
