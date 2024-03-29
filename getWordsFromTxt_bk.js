@@ -38,22 +38,23 @@ class GetWordsFromTxt {
         const correctOption = randomElement["释意"];
         const otherWords = globalWordsData.filter(word => word !== randomElement);
         const wrongOptions = [];
-        for (let i = 0; i < 4; i++) {
+        const chosenIndexes = new Set(); // Keep track of chosen indexes
+
+        for (let i = 0; i < 5; i++) {
             let randomWrongWord;
             do {
                 randomWrongWord = this.getRandomElement(otherWords)["释意"];
-            } while (wrongOptions.includes(randomWrongWord));
+            } while (wrongOptions.includes(randomWrongWord) || chosenIndexes.has(otherWords.indexOf(randomWrongWord)));
 
             wrongOptions.push(randomWrongWord);
+            chosenIndexes.add(otherWords.indexOf(randomWrongWord));
         }
-        // Combine correct and wrong options
         const options = [correctOption, ...wrongOptions];
         const shuffledOptions = this.shuffleArray(options);
         const correctIndex = shuffledOptions.indexOf(correctOption);
         return {currentEnglishWord, options: shuffledOptions, correctIndex};
     }
 }
-
 export async function renderQuestion() {
     const fileName = document.getElementById("file").value + ".txt";
     const optionsLine = document.getElementById("options-line");
@@ -81,7 +82,7 @@ export async function renderQuestion() {
         const soundFilePath = `sounds/${soundFileName}`;
         const audio = new Audio(soundFilePath);
         audio.onerror = () => {
-            const msg = `Sound of '${currentEnglishWord}' failed to load!`;
+            const msg = `Failed to load sound file: ${currentEnglishWord}`;
             console.error(msg);
             displayToast(msg);
         };
