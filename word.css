@@ -1,7 +1,10 @@
 /* Define a common font size */
 body {
     font-size: 16px; /* Base font size */
+    background-color: #f0f0f0; /* Light gray */
+    color: #333; /* Dark gray text for good readability */
 }
+
 .toast {
     position: fixed;
     bottom: 20px; /* Adjust as needed */
@@ -13,6 +16,7 @@ body {
     border-radius: 5px;
     z-index: 9999; /* Ensure it appears above other content */
 }
+
 #score-container,
 #error-count-container {
     display: inline-block;
@@ -37,31 +41,36 @@ body {
 }
 
 #file-and-button {
-    margin-bottom: 10px;
     display: flex;
     align-items: center; /* Center align items vertically */
     flex-wrap: wrap; /* Allow items to wrap to the next line */
 }
 
 #file {
-    margin-right: 10px; /* Add margin to the right side */
+    margin: 0 10px; /* Add margin on both left and right sides */
 }
 
-#file,
-#renderQuestion,
-#englishWordTextBox {
+#renderQuestion {
     font-size: inherit; /* Inherit font size from the body */
-    height: 40px; /* Match height to the button */
 }
 
 #englishWordTextBox {
-    height: 44px; /* Match height to the button */
+    height: 40px; /* Match height to the button */
     font-size: 24px; /* Adjust the font size for the English word */
     display: inline-block;
     vertical-align: middle;
     width: calc(100% - 130px); /* Set width to auto */
-    max-width: 400px; /* Maximum width for larger screens */
+    max-width: 380px; /* Maximum width for larger screens */
     text-align: center;
+    border: none;
+    background-color: #f0f0f0; /* Light gray */
+    margin: 10px 0; /* Add margin above and below */
+    margin-right: 5px; /* Add margin to the right of the textbox */
+}
+
+.speaker-icon {
+    font-size: 24px; /* Adjust the size of the speaker icon */
+    vertical-align: middle; /* Align the icon vertically with the text */
 }
 
 .banner {
@@ -76,7 +85,7 @@ body {
     width: calc(100% - 130px); /* Set width to auto */
     max-width: 400px; /* Maximum width for larger screens */
     word-wrap: break-word; /* Allow text to wrap within the div */
-    background-color: #f0f0f0; /* Light gray background color */
+    background-color: #f5f5f5; /* Lighter gray */
 }
 
 #score {
