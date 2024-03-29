@@ -1,25 +1,36 @@
 class GetWordsFromTxt {
     static async readText(fileName) {
-        const filePath = `user_data/${fileName}`; // Assuming the files are in a 'user_data' directory in your web server
-        const response = await fetch(filePath);
-        const text = await response.text();
-        const data = [];
-        const pattern = /^([a-zA-Z\s\-\/.]+)\s*(.*)$/;
+        const filePath = `user_data/${fileName}`;
+        const cachedData = localStorage.getItem(filePath);
 
-        text.split('\n').forEach(line => {
-            const match = line.trim().match(pattern);
-            if (match) {
-                const [_, englishWord, translation] = match;
-                // Filter out if either "单词" or "释意" is null or empty string
-                if (englishWord && translation) {
-                    data.push({"单词": englishWord, "释意": translation});
-                } else {
-                    console.log("Translation missing or empty for English word:", englishWord);
+        if (cachedData) {
+            console.log("If cached data exists, parse and return it, good optimization!");
+            // If cached data exists, parse and return it
+            return JSON.parse(cachedData);
+        } else {
+            const response = await fetch(filePath);
+            const text = await response.text();
+            const data = [];
+            const pattern = /^([a-zA-Z\s\-\/.]+)\s*(.*)$/;
+
+            text.split('\n').forEach(line => {
+                const match = line.trim().match(pattern);
+                if (match) {
+                    const [_, englishWord, translation] = match;
+                    if (englishWord && translation) {
+                        data.push({"单词": englishWord, "释意": translation});
+                    } else {
+                        console.log("Translation missing or empty for English word:", englishWord);
+                    }
                 }
-            }
-        });
-        return data;
+            });
+
+            // Cache the fetched data
+            localStorage.setItem(filePath, JSON.stringify(data));
+            return data;
+        }
     }
+
 
     static shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
@@ -217,7 +228,7 @@ function displayToast(message) {
 
 const spellingInput = document.getElementById('spellingInput');
 // Add event listener for keydown event
-spellingInput.addEventListener('keydown', function(event) {
+spellingInput.addEventListener('keydown', function (event) {
     // Check if the pressed key is Enter
     if (event.key === 'Enter') {
         // Prevent the default action of the Enter key (form submission)
@@ -226,3 +237,13 @@ spellingInput.addEventListener('keydown', function(event) {
         checkSpelling();
     }
 });
+
+function clearCachedData() {
+    const fileName = document.getElementById("file").value + ".txt";
+    const filePath = `user_data/${fileName}`; // Adjust the file name accordingly
+    localStorage.removeItem(filePath); // Remove cached data
+}
+// Call the function to clear cached data when the page loads
+window.onload = function () {
+    clearCachedData();
+};

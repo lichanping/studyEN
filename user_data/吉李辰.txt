@@ -86,7 +86,7 @@ another再一；另一；别的；
 answer［C］回答；答复；答案；回（信）vt.& vi.回答；答复；回（信）
 apologize道歉，它相当于 say sorry to sb. for sth.
 appear出现
-disappear消失
+disappear消失，不见
 apple［C］ 苹果
 apply申请；应用
 area［C］ 面积；范围；地区
@@ -435,3 +435,41 @@ direction ［U,C］ 方向；趋势；用法说明n.
 direct 直接的adj. ；V.指导；管理
 directly 直接地adv.
 director  导演n.
+the disabled残疾人；伤残者
+disadvantage不利，劣势，短处
+go out of sight消失，不见，相当于disappear
+disappointed失望的，沮丧的（形容词）
+disappointing使人失望的或扫兴的
+be disappointed with对。。。失望
+disaster灾难；灾祸【U,C】
+discover发现；看出（vt)
+cover覆盖
+find相当于discover
+be aware of相当于discover，意识到
+discussion讨论，discuss的名词
+talk about讨论，相当于discuss
+dishonest不诚实的，欺骗性的
+dishonesty不诚实的行为
+honesty诚实（名词）
+honest诚实的，正直的
+distance距离【U，C】
+disturb扰乱，打扰（及物）
+divide分，划分；除（算数用语）
+doctor医生（可数）
+dollar美元
+downstairs在楼下；到楼下
+come downstairs下楼
+draw拉，拖；绘画（变形：drew，drawn）
+drink喝，饮（drank，drunk）；饮料；喝酒【U，C】
+During在。。。期间；在。。。过程中
+duties责任（复数）【U，C】
+eager渴望的，热切的【形容词】
+be eager to do something渴望做某事
+early早的，早地
+earthquake地震【C】
+easily容易地
+easy容易的，不费力的
+east东方的，东部的；东方【U】
+economy经济【U，C】
+education教育【U】
+educational教育的
