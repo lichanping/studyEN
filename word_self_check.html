@@ -20,7 +20,7 @@
     </div>
     <div id="english-word">
         <input type="text" id="englishWordTextBox" readonly>
-        <span class="fas fa-volume-up speaker-icon"></span>
+        <span class="fas fa-volume-up speaker-icon" id="playWord"></span>
     </div>
     <div id="options-line">
     </div>
@@ -43,6 +43,7 @@
     document.addEventListener("DOMContentLoaded", script.renderQuestion);
     document.getElementById("file").addEventListener("change", script.renderQuestion);
     document.getElementById("renderQuestion").addEventListener("click", script.renderQuestion);
+    document.getElementById("playWord").addEventListener("click", script.play_audio)
     document.getElementById("options-line").addEventListener("click", (event) => {
         if (event.target.classList.contains("banner")) {
             script.compareOptionIndex(event);
