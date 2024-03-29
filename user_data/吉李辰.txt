@@ -19,7 +19,7 @@ Actor男演员
 Actress女演员
 Act out把。。。表演出来
 Active相当于be always ready to do something
-activities复数
+activities复数活动
 actresses女演员（复数）
 actually实际上；现实地（副词）
 actual实际的；真实的
@@ -28,7 +28,7 @@ addition增加（不可数）
 add to加上
 in addition to除。。。以外，相当于besides/what’s more)
 address地址（可数）
-addresses复数
+addresses复数地址
 advantage有利条件；优势；优点（可数）
 disadvantage不利条件；劣势；缺点（反义词）
 adventure冒险；冒险经历；冒险精神（可数/不可数）；（vt，vi）冒险
@@ -232,11 +232,11 @@ break down损坏；衰弱下来
 break into 闯人；破门而人
 break out 爆发；突发
 have a break休息一下
-take a break
+take a break休息一下
 have a rest休息一下
 breakfast  [U,C]早餐
 breath 呼吸，一口气；气息 n.［U, C］([pl. ]
-breaths
+breaths呼吸（复数）
 breathe  呼吸v.（vt. & vi.）
 out of breath 喘不过气来；上气不接下气
 bridge ［C］桥n.
@@ -246,7 +246,7 @@ broadcast  ［U,C］广播节目/bro:dkast/n.
 brother 【C］兄；弟/n.
 brown 褐色；棕色n. adj.褐色的；棕色的
 brush 刷；擦 vi vt；n. ［C］刷子（［pl. ］ brushes）
-brushes
+brushes刷子，画笔（复数）
 build   建筑；建造/bild/vt.& vi.（built, built）
 rebuild重建；改造V.
 builder 建筑工人；建立者n.
@@ -254,7 +254,7 @@ building  建筑物；大楼n.［C］
 bund  外滩（the Bund） n.
 burn  燃烧；着火；使烧焦 vt. & vi. （burned, burned 或 burnt，burnt）
 bus ［C］ 公共汽车 n. （［pl. ］ buses）
-buses
+buses公共汽车（复数）
 by bus 乘公共汽车
 business 生意，事业，商业n.［U,C］
 businessman 商人n.
@@ -280,8 +280,8 @@ calm 镇静的；沉着的adj.；vt. 使平静，安静
 camera 照相机n.【C］
 camp （夏令）营；野营n.【U,C］
 can 可能；能够；可以；会（助词）. v.（could）
-could
-cannot
+could可以，能；可能，也许；差点就，本能够（表示未发生）
+cannot不能，无法
 can［C］（美）罐头；罐子
 cancel  取消vt.
 capital  [C] 首都 n.
@@ -289,7 +289,7 @@ captain  船长，队长n.【C］
 car  小汽车 n. ［C］
 card卡片【c】
 care ［U］ 照料，保护；小心/kea（r）/n. vi. 介意；在乎；关心
-look after
+look after照顾，照料；照看，监视
 careful  小心的；仔细的 adj .
 look out小心，当心
 carefully  小心地；仔细地 adv.
@@ -301,17 +301,17 @@ case  情况；案件；箱；盒/keis/ n.［C］
 cat  猫 n.[C］
 catch 接住；捉住； vt. （caught, caught）赶上（车辆等）；染上（疾病）；弄清楚；领会；理解
 catch a cold 着凉；伤风它相当于
-get a cold
+get a cold感冒。I always get a cold in the winter.
 cause  原因，起因/koz/n.［C］；vt.促使，引起，使发生
 cave 洞，穴；地窖n.［C］
 celebrate  庆祝vt. & vi.
 cent  美分 (100 cents = 1 dollar)/ sent/ n. [C]
 centre （美 center）中心，中央 n.［C］
-center
+center中心，中央
 century  世纪，百年（［pl.］n.［C］相当于 a period of 100 years。
-centuries
+centuries世纪；一百年；（板球中运动员所得）一百分（century的复数）
 certainly 当然，是的；一定，无疑用于回答问题时相当于 of course。/'satnl:/adv.
-of course
+of course当然，是的；一定，相当于certainly
 challenge 挑战；质疑n.［C］
 chance机会n. [C]
 change 改变，变化；更换；兑换（零钱）vt. &vi. n.［C］零钱；找头；变化
@@ -321,16 +321,16 @@ channel （电视）频道n.［C］
 character 性格，特性；特征，特点 n.［C］
 charge 主管；掌管n.［U］；
 in charge of 主管，负责
-take charge of
+take charge of担任；负责；照顾；承担责任并掌控某事
 charity  慈善 n. ［U］
 chemical化学品；化学物质n.【C］；adj. 化学的
 chemistry 化学n.
 chicken ［U,C］ 鸡；鸡肉 n.
 chief  主要的；首要的/tji:f/adj.；n.［C］领导，头（［pl.］ chiefs）
-chiefs
+chiefs首领（chief的复数）
 childhood  ［U,C］幼年时代，童年n.
 chopstick ［C］，通常为［pl）筷子n.
-chopsticks
+chopsticks筷子（chopstick的复数）
 Christmas圣诞节n.［U,C］
 on Christmas Day 在圣诞节那天
 Christmas Eve 平安夜；圣诞夜
@@ -348,13 +348,13 @@ comfortably舒服地adv.
 communicate交流；交际；传达（感情、信息等）vi.
 communication通讯；交流；沟通n.
 community [C] 社区([pl.]n.
-communities
+communities社区；团体，群体；群落（community的复数）
 company ［C]公司（［pl.］n.
-companies
+companies公司，企业；演出团，歌舞团；连队（company复数）
 compare 比较，对照vt.
 competition ［C］比赛，竞赛n.
 complain  抱怨；投诉vi.
-complain about
+complain about抱怨；People complain about how children spend so much time on computer games.
 complaint 抱怨；投诉；不满n.
 complete   完成的，完整的，完全的adj.; vt. 完成，结束
 whole相当于complete
@@ -427,8 +427,8 @@ difference  [U,C] 不同
 different 不同的，有差异的adj.
 difficult 困难的；费力的adj.
 difficult 相当于 hard/rough。
-hard
-rough
+hard硬的，困难的，艰苦的，费力的（adj、adv）She tried extra hard.
+rough粗糙的，不平的；粗暴的，猛烈的；多暴力的；粗暴地（非正式）Cathy did a rough calculation.
 difficulty  [U, C]困难
 difficulties复数困难
 direction ［U,C］ 方向；趋势；用法说明n.
