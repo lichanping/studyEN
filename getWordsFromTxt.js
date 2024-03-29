@@ -54,6 +54,32 @@ class GetWordsFromTxt {
     }
 }
 
+export function play_audio() {
+    const englishWordTextBox = document.getElementById('englishWordTextBox')
+    const audioIcon = document.getElementById("playWord")
+    englishWordTextBox.classList.add('playing-animation');
+    // Remove the shake animation class after the animation ends
+    setTimeout(function () {
+        englishWordTextBox.classList.remove('playing-animation');
+    }, 500);
+    // Add playing animation class to the audio icon
+    audioIcon.classList.add('playing-animation');
+    // Remove playing animation class after a delay (adjust as needed)
+    setTimeout(function () {
+        audioIcon.classList.remove('playing-animation');
+    }, 2000); // Remove the class after 2 seconds (adjust as needed)
+    // Play corresponding sound if available
+    const soundFileName = englishWordTextBox.value.trim().toLowerCase() + '.mp3';
+    const soundFilePath = `sounds/${soundFileName}`;
+    const audio = new Audio(soundFilePath);
+    audio.onerror = () => {
+        const msg = `Sound of '${englishWordTextBox.value.trim()}' failed to load!`;
+        console.error(msg);
+        displayToast(msg);
+    };
+    audio.play();
+}
+
 export async function renderQuestion() {
     const fileName = document.getElementById("file").value + ".txt";
     const optionsLine = document.getElementById("options-line");
@@ -76,16 +102,7 @@ export async function renderQuestion() {
         }
         // Store correctIndex value in the hidden input
         document.getElementById("correctIndexValue").value = correctIndex;
-        // Play corresponding sound if available
-        const soundFileName = currentEnglishWord.trim().toLowerCase() + '.mp3';
-        const soundFilePath = `sounds/${soundFileName}`;
-        const audio = new Audio(soundFilePath);
-        audio.onerror = () => {
-            const msg = `Sound of '${currentEnglishWord}' failed to load!`;
-            console.error(msg);
-            displayToast(msg);
-        };
-        audio.play();
+        play_audio();
         return {currentEnglishWord, options, correctIndex};
     } catch (error) {
         console.error("Error:", error);

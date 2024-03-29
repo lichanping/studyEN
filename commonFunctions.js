@@ -5,7 +5,15 @@ export function navigateToTiyanClass() {
 }
 
 export function navigateToFormalClass() {
-    window.location.href = "index.html";
+    const pin = prompt("Enter PIN code to proceed:");
+    // Check if the entered PIN matches the expected value
+    if (pin === "1234") {
+        // Navigate to the formal class page
+        window.location.href = "index.html";
+    } else {
+        // Display an error message if the PIN is incorrect
+        alert("Incorrect PIN. Please try again.");
+    }
 }
 
 export function navigateToReadClass() {
