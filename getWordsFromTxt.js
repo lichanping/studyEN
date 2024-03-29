@@ -13,6 +13,8 @@ class GetWordsFromTxt {
                 // Filter out if either "单词" or "释意" is null or empty string
                 if (englishWord && translation) {
                     data.push({"单词": englishWord, "释意": translation});
+                } else {
+                    console.log("Translation missing or empty for English word:", englishWord);
                 }
             }
         });
