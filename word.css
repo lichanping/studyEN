@@ -13,11 +13,13 @@ body {
     transform: translate(-50%, -50%);
     opacity: 0;
     font-size: 100px; /* Adjust the size of the icon */
-    color:  #007bff; /* Blue color for the icon */
+    color: #007bff; /* Blue color for the icon */
     transition: opacity 0.3s ease; /* Adding transition for smooth opacity change */
 }
 
-#goBackButton, #renderQuestion, #file {
+#goBackButton,
+#renderQuestion,
+#file {
     border-radius: 10px; /* Adjust the value as needed */
 }
 
@@ -107,6 +109,18 @@ body {
     vertical-align: middle; /* Align the icon vertically with the text */
 }
 
+#spellingInput,
+#checkSpellingButton {
+    font-size: 24px; /* Set font size */
+    height: 40px; /* Set height */
+    border-radius: 10px; /* Add border-radius */
+    margin: 0 10px;
+}
+
+#spellingInput {
+    width: calc(100% - 265px); /* Set width to auto */
+}
+
 .banner {
     height: 50px; /* Match height to the button */
     margin: 5px;
@@ -117,12 +131,12 @@ body {
     align-items: center; /* Vertically center content */
     justify-content: center; /* Horizontally center content */
     width: calc(100% - 130px); /* Set width to auto */
-    max-width: 400px; /* Maximum width for larger screens */
+    max-width: 500px; /* Maximum width for larger screens */
     word-wrap: break-word; /* Allow text to wrap within the div */
     background-color: #f5f5f5; /* Lighter gray */
     border-radius: 10px;
+    font-size: 20px;
 }
-
 
 #score {
     display: inline-block; /* Display as inline block */
@@ -137,7 +151,15 @@ body {
 #incorrectWords {
     display: block; /* Display as block to force new line */
 }
+#spelling-errors-container {
+    display: inline-block; /* Display as inline-block to keep elements on the same line */
+    margin-left: 20px; /* Add margin between previous container and this one */
+}
 
+#spellingErrors {
+    display: inline-block; /* Display as inline-block to keep elements on the same line */
+    margin-left: 5px; /* Add margin between label and count */
+}
 @media only screen and (max-width: 600px) {
     /* Adjustments for smaller screens */
     #container {

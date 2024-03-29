@@ -25,19 +25,30 @@
         <input type="text" id="englishWordTextBox" readonly>
         <span class="fas fa-volume-up speaker-icon" id="playWord"></span>
     </div>
+    <div id="spellingContainer">
+        <input type="text" id="spellingInput" placeholder="Spell the word..." style="margin-left: 10px;">
+        <button id="checkSpellingButton">Check</button>
+    </div>
     <div id="options-line">
     </div>
-    <div id="score-container">
-        <label for="score">最高分:</label>
-        <div id="score">
-            <span id="scoreNumber">0</span>
-            <i class="fas fa-arrow-up" id="scoreArrow"></i>
+    <div id="statistics-container">
+        <div id="score-container">
+            <label for="score">最高分:</label>
+            <div id="score">
+                <span id="scoreNumber">0</span>
+                <i class="fas fa-arrow-up" id="scoreArrow"></i>
+            </div>
+        </div>
+        <div id="error-count-container">
+            <label for="errorCount">选择错误次数:</label>
+            <div id="errorCount">0</div>
+        </div>
+        <div id="spelling-errors-container">
+            <label for="spellingErrors">拼写错误次数:</label>
+            <div id="spellingErrors">0</div>
         </div>
     </div>
-    <div id="error-count-container">
-        <label for="errorCount">错误数:</label>
-        <div id="errorCount">0</div>
-    </div>
+
     <span id="incorrectWords"></span>
     <input type="hidden" id="correctIndexValue">
 </div>
@@ -49,7 +60,8 @@
     document.addEventListener("DOMContentLoaded", script.renderQuestion);
     document.getElementById("file").addEventListener("change", script.renderQuestion);
     document.getElementById("renderQuestion").addEventListener("click", script.renderQuestion);
-    document.getElementById("playWord").addEventListener("click", script.play_audio)
+    document.getElementById("playWord").addEventListener("click", script.play_audio);
+    document.getElementById("checkSpellingButton").addEventListener("click", script.checkSpelling);
     document.getElementById("options-line").addEventListener("click", (event) => {
         if (event.target.classList.contains("banner")) {
             script.compareOptionIndex(event);
