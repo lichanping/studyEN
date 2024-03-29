@@ -61,7 +61,11 @@
     document.getElementById("goBackButton").addEventListener("click", commonFunctions.navigateToFormalClass);
     document.addEventListener("DOMContentLoaded", script.renderQuestion);
     document.getElementById("file").addEventListener("change", script.renderQuestion);
-    document.getElementById("renderQuestion").addEventListener("click", script.renderQuestion);
+    document.getElementById("renderQuestion").addEventListener("click", () => {
+        script.renderQuestion();
+        setInterval(script.renderQuestion, 3000);
+    });
+
     document.getElementById("playWord").addEventListener("click", script.play_audio);
     document.getElementById("checkSpellingButton").addEventListener("click", script.checkSpelling);
     document.getElementById("options-line").addEventListener("click", (event) => {
