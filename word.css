@@ -122,7 +122,7 @@ body {
 }
 
 .banner {
-    height: 50px; /* Match height to the button */
+    height: 50px; /* Set a fixed height */
     margin: 5px;
     padding: 5px;
     border: 1px solid #000;
@@ -135,7 +135,6 @@ body {
     word-wrap: break-word; /* Allow text to wrap within the div */
     background-color: #f5f5f5; /* Lighter gray */
     border-radius: 10px;
-    font-size: 16px;
 }
 
 #score {
@@ -151,6 +150,7 @@ body {
 #incorrectWords {
     display: block; /* Display as block to force new line */
 }
+
 #spelling-errors-container {
     display: inline-block; /* Display as inline-block to keep elements on the same line */
     margin-left: 20px; /* Add margin between previous container and this one */
@@ -160,14 +160,20 @@ body {
     display: inline-block; /* Display as inline-block to keep elements on the same line */
     margin-left: 5px; /* Add margin between label and count */
 }
+
 @media only screen and (max-width: 600px) {
     /* Adjustments for smaller screens */
     #container {
         padding: 0 20px; /* Increase padding for smaller screens */
     }
+
     #spellingInput,
     #checkSpellingButton {
         height: 50px; /* Adjust height for phone screens */
+    }
+
+    .banner {
+        width: 90%; /* Set width to 90% of the viewport width for phone screens */
     }
 }
 
