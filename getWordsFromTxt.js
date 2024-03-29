@@ -94,7 +94,7 @@ export async function renderQuestion() {
         optionsLine.innerHTML = '';
 
         for (let i = 0; i < options.length; i++) {
-            const banner = document.createElement("div");
+            const banner = document.createElement("button");
             banner.classList.add("banner");
             banner.id = `banner${i + 1}`;
             // Truncate the option text if it exceeds 30 characters
@@ -124,7 +124,10 @@ export function compareOptionIndex(event) {
     document.querySelectorAll('.banner')[correctIndex].style.backgroundColor = 'lightgreen';
     const incorrectWordsSpan = document.getElementById('incorrectWords');
     const thumb = document.getElementById('thumb');
-
+    const banners = document.querySelectorAll('.banner');
+    banners.forEach(banner => {
+        banner.disabled = true;
+    });
     // Compare the selected option index with the correct index
     if (selectedOptionIndex === correctIndex) {
         englishWordTextBox.value = english + " " + event.target.innerText;
@@ -144,6 +147,9 @@ export function compareOptionIndex(event) {
         // Reset the background color of the English word text box after 3 seconds
         document.getElementById('englishWordTextBox').style.backgroundColor = '';
         document.querySelectorAll('.banner')[correctIndex].style.backgroundColor = '#f0f0f0';
+        banners.forEach(banner => {
+            banner.disabled = false;
+        });
     }, 3000);
 }
 

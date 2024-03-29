@@ -108,7 +108,7 @@ body {
 }
 
 .banner {
-    height: 40px; /* Match height to the button */
+    height: 50px; /* Match height to the button */
     margin: 5px;
     padding: 5px;
     border: 1px solid #000;
@@ -122,6 +122,7 @@ body {
     background-color: #f5f5f5; /* Lighter gray */
     border-radius: 10px;
 }
+
 
 #score {
     display: inline-block; /* Display as inline block */
