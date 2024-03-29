@@ -121,7 +121,8 @@ body {
 }
 
 #spellingInput {
-    width: calc(100% - 265px); /* Set width to auto */
+    width: calc(100% - 220px); /* Set width to auto */
+
 }
 
 .banner {
