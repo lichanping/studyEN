@@ -1,0 +1,173 @@
+/* Define a common font size */
+body {
+    font-size: 16px; /* Base font size */
+    background-color: #f0f0f0; /* Light gray */
+    color: #333; /* Dark gray text for good readability */
+}
+
+/* Basic CSS for the thumb up icon */
+.thumb-up {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    font-size: 100px; /* Adjust the size of the icon */
+    color:  #007bff; /* Blue color for the icon */
+    transition: opacity 0.3s ease; /* Adding transition for smooth opacity change */
+}
+
+#goBackButton, #renderQuestion, #file {
+    border-radius: 10px; /* Adjust the value as needed */
+}
+
+.toast {
+    position: fixed;
+    bottom: 20px; /* Adjust as needed */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    z-index: 9999; /* Ensure it appears above other content */
+}
+
+#score-container,
+#error-count-container {
+    display: inline-block;
+    margin-left: 20px; /* Add margin between score and error count */
+}
+
+#errorCount {
+    display: inline-block;
+    margin-left: 5px; /* Add margin between label and value */
+}
+
+#score {
+    display: flex;
+    align-items: center; /* Align items vertically */
+    margin-left: 5px; /* Add margin between label and value */
+}
+
+#scoreNumber {
+    margin-right: 5px; /* Adjust margin as needed */
+}
+
+#errorCount {
+    background-color: #ffcccc; /* Set background color to red */
+}
+
+#container {
+    width: 100%; /* Set width to full width for smaller screens */
+    max-width: 600px; /* Maximum width for larger screens */
+    text-align: left;
+    margin: 0 auto; /* Center the container horizontally */
+    padding: 0 10px; /* Add some padding to the sides */
+}
+
+#file-and-button {
+    display: flex;
+    align-items: center; /* Center align items vertically */
+    flex-wrap: wrap; /* Allow items to wrap to the next line */
+}
+
+#file {
+    margin: 0 10px; /* Add margin on both left and right sides */
+    font-size: 20px; /* Make the file text bigger */
+}
+
+#goBackButton {
+    font-size: 18px; /* Increase font size */
+    padding: 10px 20px; /* Increase padding */
+    border: none;
+}
+
+#renderQuestion {
+    font-size: inherit; /* Inherit font size from the body */
+}
+
+#englishWordTextBox {
+    height: 40px; /* Match height to the button */
+    font-size: 24px; /* Adjust the font size for the English word */
+    display: inline-block;
+    vertical-align: middle;
+    width: calc(100% - 130px); /* Set width to auto */
+    max-width: 380px; /* Maximum width for larger screens */
+    text-align: center;
+    border: none;
+    background-color: #f0f0f0; /* Light gray */
+    margin: 10px 0; /* Add margin above and below */
+    margin-right: 5px; /* Add margin to the right of the textbox */
+    border-radius: 10px; /* Add border radius */
+}
+
+.speaker-icon {
+    font-size: 24px; /* Adjust the size of the speaker icon */
+    vertical-align: middle; /* Align the icon vertically with the text */
+}
+
+.banner {
+    height: 50px; /* Match height to the button */
+    margin: 5px;
+    padding: 5px;
+    border: 1px solid #000;
+    text-align: center;
+    display: flex; /* Use flexbox */
+    align-items: center; /* Vertically center content */
+    justify-content: center; /* Horizontally center content */
+    width: calc(100% - 130px); /* Set width to auto */
+    max-width: 400px; /* Maximum width for larger screens */
+    word-wrap: break-word; /* Allow text to wrap within the div */
+    background-color: #f5f5f5; /* Lighter gray */
+    border-radius: 10px;
+}
+
+
+#score {
+    display: inline-block; /* Display as inline block */
+    margin-left: 10px; /* Add some spacing between the label and the score */
+}
+
+#error-count-container {
+    display: inline-block; /* Display as inline block */
+    margin-bottom: 10px; /* Add bottom margin */
+}
+
+#incorrectWords {
+    display: block; /* Display as block to force new line */
+}
+
+@media only screen and (max-width: 600px) {
+    /* Adjustments for smaller screens */
+    #container {
+        padding: 0 20px; /* Increase padding for smaller screens */
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.playing-animation {
+    animation: pulse 0.5s infinite alternate; /* Adjust animation duration and properties as needed */
+}
+
+footer {
+    text-align: center; /* Center align the content */
+    padding: 20px 0; /* Add some padding for spacing */
+    background-color: #f0f0f0; /* Light gray background */
+    color: #555; /* Dark gray text color for footer */
+}
+
+footer p {
+    margin: 0; /* Remove default margin */
+}

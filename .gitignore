@@ -46,7 +46,4 @@ test-output
 *.dir
 *.bak
 *.dat
-sounds/
 *.docx
-*.txt
-*.mp3
