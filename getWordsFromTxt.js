@@ -180,7 +180,7 @@ export function compareOptionIndex(event) {
         banners.forEach(banner => {
             banner.disabled = false;
         });
-    }, 3000);
+    }, 2000);
 }
 
 function triggerAnimation() {
