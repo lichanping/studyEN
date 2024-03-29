@@ -86,10 +86,15 @@ export async function renderQuestion() {
     const fileName = document.getElementById("file").value + ".txt";
     const optionsLine = document.getElementById("options-line");
     try {
+        // Reset spelling input and its background color
+        const spellingInput = document.getElementById('spellingInput');
+        spellingInput.value = '';
+        spellingInput.style.backgroundColor = '';
         const globalWordsData = await GetWordsFromTxt.readText(fileName);
         const {currentEnglishWord, options, correctIndex} = GetWordsFromTxt.generateOptions(globalWordsData);
         let englishWordInput = document.getElementById("englishWordTextBox");
         englishWordInput.value = currentEnglishWord;
+        englishWordInput.style.visibility = 'hidden';
         // Clear previous options
         optionsLine.innerHTML = '';
 
@@ -110,6 +115,29 @@ export async function renderQuestion() {
         console.error("Error:", error);
         return null;
     }
+}
+
+export function checkSpelling() {
+    const englishWordTextBoxValue = document.getElementById('englishWordTextBox').value.trim().toLowerCase();
+    const spellingInputValue = document.getElementById('spellingInput').value.trim().toLowerCase();
+    const thumb = document.getElementById('thumb');
+    const incorrectWordsSpan = document.getElementById('incorrectWords');
+
+    if (englishWordTextBoxValue === spellingInputValue) {
+        // Correct spelling
+        document.getElementById('spellingInput').style.backgroundColor = 'lightgreen';
+        triggerAnimation(thumb);
+    } else {
+        // Incorrect spelling
+        document.getElementById('spellingInput').style.backgroundColor = 'red';
+        // Increment spelling errors count
+        const spellingErrorsCountElement = document.getElementById('spellingErrors');
+        let spellingErrorsCount = parseInt(spellingErrorsCountElement.innerText);
+        spellingErrorsCountElement.innerText = spellingErrorsCount + 1;
+        incorrectWordsSpan.innerText += `${document.getElementById('englishWordTextBox').value}\n`;
+    }
+    englishWordTextBox.style.visibility = 'visible';
+
 }
 
 export function compareOptionIndex(event) {
@@ -142,6 +170,8 @@ export function compareOptionIndex(event) {
 
     // Automatically perform action of renderQuestion after 3 seconds
     englishWordTextBox.value = english + " " + correctOption;
+    englishWordTextBox.style.visibility = 'visible';
+
     setTimeout(() => {
         renderQuestion();
         // Reset the background color of the English word text box after 3 seconds
@@ -184,3 +214,15 @@ function displayToast(message) {
         toast.remove();
     }, 3000);
 }
+
+const spellingInput = document.getElementById('spellingInput');
+// Add event listener for keydown event
+spellingInput.addEventListener('keydown', function(event) {
+    // Check if the pressed key is Enter
+    if (event.key === 'Enter') {
+        // Prevent the default action of the Enter key (form submission)
+        event.preventDefault();
+        // Perform the spelling check
+        checkSpelling();
+    }
+});
