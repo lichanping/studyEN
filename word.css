@@ -5,6 +5,22 @@ body {
     color: #333; /* Dark gray text for good readability */
 }
 
+/* Basic CSS for the thumb up icon */
+.thumb-up {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    font-size: 100px; /* Adjust the size of the icon */
+    color:  #007bff; /* Blue color for the icon */
+    transition: opacity 0.3s ease; /* Adding transition for smooth opacity change */
+}
+
+#goBackButton, #renderQuestion, #file {
+    border-radius: 10px; /* Adjust the value as needed */
+}
+
 .toast {
     position: fixed;
     bottom: 20px; /* Adjust as needed */
@@ -23,9 +39,19 @@ body {
     margin-left: 20px; /* Add margin between score and error count */
 }
 
-#score, #errorCount {
+#errorCount {
     display: inline-block;
     margin-left: 5px; /* Add margin between label and value */
+}
+
+#score {
+    display: flex;
+    align-items: center; /* Align items vertically */
+    margin-left: 5px; /* Add margin between label and value */
+}
+
+#scoreNumber {
+    margin-right: 5px; /* Adjust margin as needed */
 }
 
 #errorCount {
@@ -50,11 +76,13 @@ body {
     margin: 0 10px; /* Add margin on both left and right sides */
     font-size: 20px; /* Make the file text bigger */
 }
+
 #goBackButton {
     font-size: 18px; /* Increase font size */
     padding: 10px 20px; /* Increase padding */
     border: none;
 }
+
 #renderQuestion {
     font-size: inherit; /* Inherit font size from the body */
 }
@@ -71,6 +99,7 @@ body {
     background-color: #f0f0f0; /* Light gray */
     margin: 10px 0; /* Add margin above and below */
     margin-right: 5px; /* Add margin to the right of the textbox */
+    border-radius: 10px; /* Add border radius */
 }
 
 .speaker-icon {
@@ -91,6 +120,7 @@ body {
     max-width: 400px; /* Maximum width for larger screens */
     word-wrap: break-word; /* Allow text to wrap within the div */
     background-color: #f5f5f5; /* Lighter gray */
+    border-radius: 10px;
 }
 
 #score {
@@ -115,14 +145,21 @@ body {
 }
 
 @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
 .playing-animation {
     animation: pulse 0.5s infinite alternate; /* Adjust animation duration and properties as needed */
 }
+
 footer {
     text-align: center; /* Center align the content */
     padding: 20px 0; /* Add some padding for spacing */
