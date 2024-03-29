@@ -409,7 +409,7 @@ delicious  美味的，可口的adj.
 deliver投递（信件，邮包等）；传送
 dentist ［C］牙科医生/'dentist/n.
 departure  ［U］离开n。
-depend /di'pend/v. 依靠，依赖；取决于
+depend 依靠，依赖；取决于/di'pend/v.
 depend on 依靠，依赖它相当于 rely on。
 describe  描写，叙述vt.
 deserve  应得，应受vt.

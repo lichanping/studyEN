@@ -117,18 +117,20 @@ export function compareOptionIndex(event) {
     const correctIndex = parseInt(document.getElementById('correctIndexValue').value);
     const englishWordTextBox = document.getElementById('englishWordTextBox');
     const english = englishWordTextBox.value;
-    const score = parseInt(document.getElementById('score').innerText);
+    const scoreElement = document.getElementById('scoreNumber')
+    const score = parseInt(scoreElement.innerText);
     const errorCount = parseInt(document.getElementById('errorCount').innerText);
     const correctOption = document.querySelectorAll('.banner')[correctIndex].innerText;
     document.querySelectorAll('.banner')[correctIndex].style.backgroundColor = 'lightgreen';
     const incorrectWordsSpan = document.getElementById('incorrectWords');
+    const thumb = document.getElementById('thumb');
 
     // Compare the selected option index with the correct index
     if (selectedOptionIndex === correctIndex) {
         englishWordTextBox.value = english + " " + event.target.innerText;
         englishWordTextBox.style.backgroundColor = 'lightgreen';
-        document.getElementById('score').innerText = score + 1
-
+        scoreElement.innerText = score + 1;
+        triggerAnimation(thumb);
     } else {
         incorrectWordsSpan.innerText += `${english} ${correctOption}\n`;
         document.getElementById('errorCount').innerText = errorCount + 1;
@@ -143,6 +145,23 @@ export function compareOptionIndex(event) {
         document.getElementById('englishWordTextBox').style.backgroundColor = '';
         document.querySelectorAll('.banner')[correctIndex].style.backgroundColor = '#f0f0f0';
     }, 3000);
+}
+
+function triggerAnimation() {
+    const thumb = document.createElement('i');
+    thumb.classList.add('fas', 'fa-thumbs-up', 'thumb-up');
+    document.body.appendChild(thumb);
+    thumb.style.opacity = '1'; // Set opacity to make it visible
+    thumb.style.transform = 'scale(1.2)'; // Adjust the scale for the desired effect
+    setTimeout(() => {
+        thumb.style.transform = 'scale(1)';
+        setTimeout(() => {
+            thumb.style.opacity = '0'; // Set opacity to make it invisible
+            setTimeout(() => {
+                thumb.remove(); // Remove the thumb-up icon after animation
+            }, 300); // Adjust the timing of removal as needed (300 milliseconds in this case)
+        }, 3000); // Adjust the timing of opacity change as needed (3000 milliseconds in this case)
+    }, 300); // Adjust the timing of animation as needed (300 milliseconds in this case)
 }
 
 function displayToast(message) {

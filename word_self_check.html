@@ -2,8 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WordWise: Your English Learning Hub</title>
     <link rel="stylesheet" href="word.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+          integrity="sha384-4jyxlJMI6IazG++WDjSlbSz/0qbSjoRxWzf4Jov4vhGJRO8/ndXw+ByMIvXCFj5Y" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
           integrity="sha512-xxxxxx" crossorigin="anonymous"/>
@@ -26,7 +29,10 @@
     </div>
     <div id="score-container">
         <label for="score">最高分:</label>
-        <div id="score">0</div>
+        <div id="score">
+            <span id="scoreNumber">0</span>
+            <i class="fas fa-arrow-up" id="scoreArrow"></i>
+        </div>
     </div>
     <div id="error-count-container">
         <label for="errorCount">错误数:</label>
