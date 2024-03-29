@@ -113,17 +113,7 @@ body {
         padding: 0 20px; /* Increase padding for smaller screens */
     }
 }
-/*@keyframes shake {*/
-/*    0% { transform: translateX(0); }*/
-/*    25% { transform: translateX(-5px); }*/
-/*    50% { transform: translateX(5px); }*/
-/*    75% { transform: translateX(-5px); }*/
-/*    100% { transform: translateX(0); }*/
-/*}*/
 
-/*.shake-animation {*/
-/*    animation: shake 0.5s ease-in-out;*/
-/*}*/
 @keyframes pulse {
     0% { transform: scale(1); }
     50% { transform: scale(1.1); }
@@ -132,4 +122,14 @@ body {
 
 .playing-animation {
     animation: pulse 0.5s infinite alternate; /* Adjust animation duration and properties as needed */
+}
+footer {
+    text-align: center; /* Center align the content */
+    padding: 20px 0; /* Add some padding for spacing */
+    background-color: #f0f0f0; /* Light gray background */
+    color: #555; /* Dark gray text color for footer */
+}
+
+footer p {
+    margin: 0; /* Remove default margin */
 }
