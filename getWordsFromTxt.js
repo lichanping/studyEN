@@ -175,6 +175,7 @@ export function compareOptionIndex(event) {
     if (selectedOptionIndex === correctIndex) {
         englishWordTextBox.value = english + " " + event.target.innerText;
         englishWordTextBox.style.backgroundColor = 'lightgreen';
+        displayToast(event.target.innerText);
         scoreElement.innerText = score + 1;
         triggerAnimation(thumb);
     } else {
