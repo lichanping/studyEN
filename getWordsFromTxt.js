@@ -19,7 +19,7 @@ class GetWordsFromTxt {
                     const [_, englishWord, translation] = match;
                     if (englishWord && translation) {
                         if (encounteredWords.has(englishWord)) {
-                            console.error("Duplicate English word found:", englishWord, "Translation:", translation);
+                            console.error("Duplicate: ", englishWord);
                         } else {
                             encounteredWords.add(englishWord);
                             data.push({"单词": englishWord, "释意": translation});
@@ -100,6 +100,10 @@ export function play_audio() {
 export async function renderQuestion() {
     const fileName = document.getElementById("file").value + ".txt";
     const optionsLine = document.getElementById("options-line");
+    const renderQuestionButton = document.getElementById("renderQuestion");
+    const buttonText = renderQuestionButton.innerText;
+    const isPlayButton = buttonText == "播放";
+
     try {
         // Reset spelling input and its background color
         const spellingInput = document.getElementById('spellingInput');
@@ -109,7 +113,11 @@ export async function renderQuestion() {
         const {currentEnglishWord, options, correctIndex} = GetWordsFromTxt.generateOptions(globalWordsData);
         let englishWordInput = document.getElementById("englishWordTextBox");
         englishWordInput.value = currentEnglishWord;
-        englishWordInput.style.visibility = 'hidden';
+        if (isPlayButton) {
+            englishWordInput.style.visibility = 'hidden';
+        } else {
+            englishWordInput.style.visibility = 'visible';
+        }
         // Clear previous options
         optionsLine.innerHTML = '';
 
