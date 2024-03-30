@@ -51,7 +51,7 @@ class GetWordsFromTxt {
         const correctOption = randomElement["释意"];
         const otherWords = globalWordsData.filter(word => word !== randomElement);
         const wrongOptions = [];
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 3; i++) {
             let randomWrongWord;
             do {
                 randomWrongWord = this.getRandomElement(otherWords)["释意"];
