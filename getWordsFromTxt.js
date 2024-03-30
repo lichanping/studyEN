@@ -12,15 +12,20 @@ class GetWordsFromTxt {
             const text = await response.text();
             const data = [];
             const pattern = /^([a-zA-Z\s\-\/.]+)\s*(.*)$/;
-
+            const encounteredWords = new Set();
             text.split('\n').forEach(line => {
                 const match = line.trim().match(pattern);
                 if (match) {
                     const [_, englishWord, translation] = match;
                     if (englishWord && translation) {
-                        data.push({"单词": englishWord, "释意": translation});
+                        if (encounteredWords.has(englishWord)) {
+                            console.error("Duplicate English word found:", englishWord, "Translation:", translation);
+                        } else {
+                            encounteredWords.add(englishWord);
+                            data.push({"单词": englishWord, "释意": translation});
+                        }
                     } else {
-                        console.log("Translation missing or empty for English word:", englishWord);
+                        console.error("Translation missing or empty for English word:", englishWord);
                     }
                 }
             });
@@ -30,7 +35,6 @@ class GetWordsFromTxt {
             return data;
         }
     }
-
 
     static shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
@@ -243,6 +247,7 @@ function clearCachedData() {
     const filePath = `user_data/${fileName}`; // Adjust the file name accordingly
     localStorage.removeItem(filePath); // Remove cached data
 }
+
 // Call the function to clear cached data when the page loads
 window.onload = function () {
     clearCachedData();
