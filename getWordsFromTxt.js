@@ -211,7 +211,7 @@ function triggerAnimation() {
     }, 300); // Adjust the timing of animation as needed (300 milliseconds in this case)
 }
 
-function displayToast(message) {
+export function displayToast(message) {
     // Create a toast element
     const toast = document.createElement('div');
     toast.classList.add('toast');
