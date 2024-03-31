@@ -7,7 +7,7 @@ export function navigateToTiyanClass() {
 export function navigateToFormalClass() {
     const pin = prompt("Enter PIN code to proceed:");
     // Check if the entered PIN matches the expected value
-    if (pin === "1234") {
+    if (pin === "111") {
         // Navigate to the formal class page
         window.location.href = "index.html";
     } else {
