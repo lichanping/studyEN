@@ -129,7 +129,7 @@ export async function renderQuestion() {
             // Truncate the option text if it exceeds 30 characters
             // const truncatedOption = options[i].length > 30 ? options[i].substring(0, 28) + '..' : options[i];
             const truncatedOption = options[i];
-            if (truncatedOption.length > 20) { // You can adjust this threshold as per your requirement
+            if (truncatedOption.length > 36) { // You can adjust this threshold as per your requirement
                 banner.style.height = "auto";
             }
             banner.innerText = truncatedOption;
