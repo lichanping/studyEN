@@ -11,7 +11,7 @@ class GetWordsFromTxt {
             const response = await fetch(filePath);
             const text = await response.text();
             const data = [];
-            const pattern = /^([a-zA-Z\s\-\/.]+)\s*(.*)$/;
+            const pattern = /^([a-zA-Z'\s-\/.]+)\s*(.*)$/;
             const encounteredWords = new Set();
             text.split('\n').forEach(line => {
                 const match = line.trim().match(pattern);
@@ -32,6 +32,7 @@ class GetWordsFromTxt {
 
             // Cache the fetched data
             localStorage.setItem(filePath, JSON.stringify(data));
+            console.log(JSON.stringify(data));
             return data;
         }
     }
@@ -126,7 +127,11 @@ export async function renderQuestion() {
             banner.classList.add("banner");
             banner.id = `banner${i + 1}`;
             // Truncate the option text if it exceeds 30 characters
-            const truncatedOption = options[i].length > 30 ? options[i].substring(0, 28) + '..' : options[i];
+            // const truncatedOption = options[i].length > 30 ? options[i].substring(0, 28) + '..' : options[i];
+            const truncatedOption = options[i];
+            if (truncatedOption.length > 20) { // You can adjust this threshold as per your requirement
+                banner.style.height = "auto";
+            }
             banner.innerText = truncatedOption;
             optionsLine.appendChild(banner);
         }
