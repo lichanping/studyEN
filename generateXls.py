@@ -34,13 +34,13 @@ class TxtToXLSX:
         self.generate_file = os.path.join(self.data_folder, file_name.split('.')[0] + "_抗遗忘单词.xlsx")
         file_path = os.path.join(self.data_folder, file_name)
         data = []
-        pattern = re.compile(r'([a-zA-Z\-\s\.\/]+)\s*(.*)')
+        pattern = re.compile(r'([a-zA-Z\'\s\-\.\/]+)\s*(.*)')
         with open(file_path, 'r', encoding='utf-8') as file:
             for line in file:
                 match = pattern.match(line.strip())
                 if match:
                     english_word, translation = match.groups()
-                    media = os.path.join(self.sound_folder, f"{english_word}.mp3")
+                    media = os.path.join(self.sound_folder, f"{english_word.strip()}.mp3")
                     exist = os.path.exists(media)
                     print(f"English: {english_word}, Translation: {translation}, Sound: {exist}")
                     data.append({"单词": english_word, "释意": translation, "音频": str(exist)})
@@ -59,4 +59,4 @@ class TxtToXLSX:
 
 if __name__ == "__main__":
     tool = TxtToXLSX()
-    tool.convert('吉李辰K.txt')
+    tool.convert('吉李辰A-J.txt')
