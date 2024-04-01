@@ -21,6 +21,7 @@ def get_sub_folder_path(sub_dir_name='user_data'):
 class TxtToXLSX:
     def __init__(self):
         self.data_folder = get_sub_folder_path()
+        self.sound_folder = get_sub_folder_path('sounds')
         self.ori_file = None
         self.generate_file = None
 
@@ -39,9 +40,10 @@ class TxtToXLSX:
                 match = pattern.match(line.strip())
                 if match:
                     english_word, translation = match.groups()
-                    print(f"English: {english_word}, Translation: {translation}")
-                    data.append({"单词": english_word, "释意": translation})
-
+                    media = os.path.join(self.sound_folder, f"{english_word}.mp3")
+                    exist = os.path.exists(media)
+                    print(f"English: {english_word}, Translation: {translation}, Sound: {exist}")
+                    data.append({"单词": english_word, "释意": translation, "音频": str(exist)})
                 else:
                     print(f"Invalid format in line: {line.strip()}")
         return data
@@ -49,7 +51,7 @@ class TxtToXLSX:
     def create_excel(self, data):
         df = pd.DataFrame(data)
         df.insert(0, '序号', range(1, len(df) + 1))
-        df.insert(3, '词频', 1)
+        # df.insert(3, '词频', 1)
 
         df.to_excel(self.generate_file, index=False)
         print(f"Excel file '{self.generate_file}' created successfully.")
@@ -57,4 +59,4 @@ class TxtToXLSX:
 
 if __name__ == "__main__":
     tool = TxtToXLSX()
-    tool.convert('蔡青青.txt')
+    tool.convert('吉李辰K.txt')
