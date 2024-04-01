@@ -1,57 +1,41 @@
 class GetWordsFromTxt {
     static async readText(fileName) {
-    const filePath = `user_data/${fileName}`;
-    const cachedData = localStorage.getItem(filePath);
+        const filePath = `user_data/${fileName}`;
+        const cachedData = localStorage.getItem(filePath);
 
-    if (cachedData) {
-        console.log("If cached data exists, parse and return it, good optimization!");
-        // If cached data exists, parse and return it
-        return JSON.parse(cachedData);
-    } else {
-        const response = await fetch(filePath);
-        const text = await response.text();
-        const data = [];
-        const pattern = /^([a-zA-Z'\s-\/.]+)\s*(.*)$/;
-        const encounteredWords = new Set();
-        text.split('\n').forEach(line => {
-            const match = line.trim().match(pattern);
-            if (match) {
-                const [_, englishWord, translation] = match;
-                if (englishWord && translation) {
-                    if (encounteredWords.has(englishWord)) {
-                        console.error("Duplicate: ", englishWord);
+        if (cachedData) {
+            console.log("If cached data exists, parse and return it, good optimization!");
+            // If cached data exists, parse and return it
+            return JSON.parse(cachedData);
+        } else {
+            const response = await fetch(filePath);
+            const text = await response.text();
+            const data = [];
+            const pattern = /^([a-zA-Z'\s-\/.]+)\s*(.*)$/;
+            const encounteredWords = new Set();
+            text.split('\n').forEach(line => {
+                const match = line.trim().match(pattern);
+                if (match) {
+                    const [_, englishWord, translation] = match;
+                    if (englishWord && translation) {
+                        if (encounteredWords.has(englishWord)) {
+                            console.error("Duplicate: ", englishWord);
+                        } else {
+                            encounteredWords.add(englishWord);
+                            data.push({"单词": englishWord, "释意": translation});
+                        }
                     } else {
-                        encounteredWords.add(englishWord);
-                        const soundFilePath = `sounds/${englishWord}.mp3`; // Sound file path
-                        // Check if the sound file exists
-                        fetch(soundFilePath)
-                            .then(response => {
-                                if (response.ok) {
-                                    // console.log("Sound file exists for", englishWord);
-                                    // If sound file exists, add it to the data
-                                    data.push({"单词": englishWord, "释意": translation, "音频路径": soundFilePath});
-                                } else {
-                                    console.warn("Sound file does not exist for", englishWord);
-                                    // If sound file does not exist, add data without sound path
-                                    data.push({"单词": englishWord, "释意": translation});
-                                }
-                            })
-                            .catch(error => {
-                                console.error("Error checking sound file for", englishWord, ":", error);
-                            });
+                        console.error("Translation missing or empty for English word:", englishWord);
                     }
-                } else {
-                    console.error("Translation missing or empty for English word:", englishWord);
                 }
-            }
-        });
+            });
 
-        // Cache the fetched data
-        localStorage.setItem(filePath, JSON.stringify(data));
-        console.log(JSON.stringify(data));
-        return data;
+            // Cache the fetched data
+            localStorage.setItem(filePath, JSON.stringify(data));
+            console.log(JSON.stringify(data));
+            return data;
+        }
     }
-}
 
     static shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
