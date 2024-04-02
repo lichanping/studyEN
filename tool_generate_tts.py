@@ -18,7 +18,7 @@ def read_texts_from_file(file_path):
 
 
 # Path to the text file under user_data directory
-text_file_path = os.path.join(get_sub_folder_path(), '吉李辰K-no sound.txt')
+text_file_path = os.path.join(get_sub_folder_path(), 'MissingSound.txt')
 
 # Generate the TEXT_LIST from the text file
 TEXT_LIST = read_texts_from_file(text_file_path)
@@ -27,33 +27,38 @@ TEXT_LIST = read_texts_from_file(text_file_path)
 sound_folder = get_sub_folder_path('sounds')
 
 
-# Async function to process a single text and convert it to speech
-async def process_text(text):
-    # Create output file path for each text
-    output_file = os.path.join(sound_folder, f"{text}.mp3")
+# Async function to process a batch of texts and convert them to speech
+async def process_text_batch(texts):
+    for text in texts:
+        # Create output file path for each text
+        output_file = os.path.join(sound_folder, f"{text}.mp3")
 
-    # Create VoicesManager instance
-    voices = await VoicesManager.create()
+        # Create VoicesManager instance
+        voices = await VoicesManager.create()
 
-    # Choose voice from the voice library
-    voice = voices.find(Gender="Female", Language="en")
+        # Choose voice from the voice library
+        voice = voices.find(Gender="Female", Language="en")
 
-    # Use Edge TTS API to convert text to speech and save as MP3 file
-    communicate = edge_tts.Communicate(text, random.choice(voice)["Name"])
-    await communicate.save(output_file)
+        # Use Edge TTS API to convert text to speech and save as MP3 file
+        communicate = edge_tts.Communicate(text, random.choice(voice)["Name"])
+        await communicate.save(output_file)
 
 
-# Main function to process the entire TEXT_LIST
+# Main function to process the entire TEXT_LIST in batches
 async def _main() -> None:
     start_time = time.time()  # Record start time
-    # Create a list of tasks for processing each text
-    tasks = [process_text(text) for text in TEXT_LIST]
+    batch_size = 10  # Define the batch size
+    # Split the TEXT_LIST into batches
+    batches = [TEXT_LIST[i:i + batch_size] for i in range(0, len(TEXT_LIST), batch_size)]
 
-    # Concurrently execute all tasks
-    await asyncio.gather(*tasks)
+    # Process each batch sequentially
+    for batch in batches:
+        await process_text_batch(batch)
+
     end_time = time.time()  # Record end time
     elapsed_time = end_time - start_time  # Calculate elapsed time
     print(f"Total elapsed time: {elapsed_time:.2f} seconds")
+
 
 if __name__ == "__main__":
     # Execute the main function
