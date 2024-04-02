@@ -1,41 +1,60 @@
-import asyncio
 import os
+import asyncio
 import random
+import time
 
 import edge_tts
 from edge_tts import VoicesManager
 
 from generateXls import get_sub_folder_path
 
-# 要处理的文本列表
-TEXT_LIST = ["error message 1", "error message 2", "error message 3"]
 
-# 获取声音文件夹路径
+# Function to read texts from a text file
+def read_texts_from_file(file_path):
+    with open(file_path, 'r', encoding='utf-8') as file:
+        # Read each line and remove leading/trailing whitespace
+        texts = [line.strip() for line in file.readlines() if line.strip()]
+    return texts
+
+
+# Path to the text file under user_data directory
+text_file_path = os.path.join(get_sub_folder_path(), '吉李辰K-no sound.txt')
+
+# Generate the TEXT_LIST from the text file
+TEXT_LIST = read_texts_from_file(text_file_path)
+
+# Get the sound folder path
 sound_folder = get_sub_folder_path('sounds')
 
-# 异步函数，用于处理单个文本并转换为语音
+
+# Async function to process a single text and convert it to speech
 async def process_text(text):
-    # 为每个文本创建输出文件路径
+    # Create output file path for each text
     output_file = os.path.join(sound_folder, f"{text}.mp3")
 
-    # 创建 VoicesManager 实例
+    # Create VoicesManager instance
     voices = await VoicesManager.create()
 
-    # 从语音库中选择语音
+    # Choose voice from the voice library
     voice = voices.find(Gender="Female", Language="en")
 
-    # 使用 Edge TTS API 将文本转换为语音并保存为 MP3 文件
+    # Use Edge TTS API to convert text to speech and save as MP3 file
     communicate = edge_tts.Communicate(text, random.choice(voice)["Name"])
     await communicate.save(output_file)
 
-# 主函数，用于处理整个文本列表
+
+# Main function to process the entire TEXT_LIST
 async def _main() -> None:
-    # 创建任务列表
+    start_time = time.time()  # Record start time
+    # Create a list of tasks for processing each text
     tasks = [process_text(text) for text in TEXT_LIST]
 
-    # 并发执行所有任务
+    # Concurrently execute all tasks
     await asyncio.gather(*tasks)
+    end_time = time.time()  # Record end time
+    elapsed_time = end_time - start_time  # Calculate elapsed time
+    print(f"Total elapsed time: {elapsed_time:.2f} seconds")
 
 if __name__ == "__main__":
-    # 执行主函数
+    # Execute the main function
     asyncio.run(_main())
