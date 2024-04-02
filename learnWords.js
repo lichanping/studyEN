@@ -168,10 +168,12 @@ export function checkSpelling() {
         incorrectWordsSpan.innerText += `${document.getElementById('englishWordTextBox').value}\n`;
     }
     englishWordTextBox.style.visibility = 'visible';
-
 }
 
 export function compareOptionIndex(event) {
+    // const passColor = "#AFEEEE";
+    const passColor = "#87CEFA";
+
     const selectedOptionIndex = Array.from(event.target.parentNode.children).indexOf(event.target);
     const correctIndex = parseInt(document.getElementById('correctIndexValue').value);
     const englishWordTextBox = document.getElementById('englishWordTextBox');
@@ -180,7 +182,7 @@ export function compareOptionIndex(event) {
     const score = parseInt(scoreElement.innerText);
     const errorCount = parseInt(document.getElementById('errorCount').innerText);
     const correctOption = document.querySelectorAll('.banner')[correctIndex].innerText;
-    document.querySelectorAll('.banner')[correctIndex].style.backgroundColor = 'lightgreen';
+    document.querySelectorAll('.banner')[correctIndex].style.backgroundColor = passColor;
     const incorrectWordsSpan = document.getElementById('incorrectWords');
     const thumb = document.getElementById('thumb');
     const banners = document.querySelectorAll('.banner');
@@ -190,7 +192,7 @@ export function compareOptionIndex(event) {
     // Compare the selected option index with the correct index
     if (selectedOptionIndex === correctIndex) {
         englishWordTextBox.value = english + " " + event.target.innerText;
-        englishWordTextBox.style.backgroundColor = 'lightgreen';
+        englishWordTextBox.style.backgroundColor = passColor;
         displayToast(event.target.innerText);
         scoreElement.innerText = score + 1;
         triggerAnimation(thumb);
