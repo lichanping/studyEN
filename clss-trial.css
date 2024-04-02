@@ -1,0 +1,55 @@
+input[type="radio"] {
+    display: inline-block;
+    margin-right: 5px; /* Add spacing between radio buttons and labels */
+}
+
+/* Add a class to the radio button labels for styling */
+.radio-label {
+    display: inline-block;
+    margin-right: 15px; /* Adjust the margin for spacing */
+}
+
+body {
+    font-family: Arial, sans-serif;
+    text-align: left; /* Change to left alignment */
+    margin: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align items to the left */
+    background-color: #f2f2f2; /* Set background color to a light gray */
+}
+
+label {
+    margin-right: 10px; /* Add margin to labels for better spacing */
+}
+
+button, input, select {
+    margin: 5px;
+    font-size: 16px; /* Adjust the font size as needed */
+
+}
+
+#userName {
+    width: 100px; /* Adjust the width as needed */
+}
+
+#forgetWords, #pronounceWords {
+    width: 400px; /* Adjust the width as needed */
+    height: 60px; /* Adjust the height as needed */
+    font-size: 18px; /* Adjust the font size as needed */
+}
+
+/* Style for the button container */
+.button-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start; /* Align buttons to the left */
+    margin-top: 10px; /* Add margin for separation from radio buttons */
+}
+
+/* Style for individual buttons in the container */
+.button-container button {
+    margin: 5px;
+}
+
+

@@ -1,4 +1,4 @@
-class GetWordsFromTxt {
+class LearnWords {
     static async readText(fileName) {
         const filePath = `user_data/${fileName}`;
         const cachedData = localStorage.getItem(filePath);
@@ -110,8 +110,11 @@ export async function renderQuestion() {
         const spellingInput = document.getElementById('spellingInput');
         spellingInput.value = '';
         spellingInput.style.backgroundColor = '';
-        const globalWordsData = await GetWordsFromTxt.readText(fileName);
-        const {currentEnglishWord, options, correctIndex} = GetWordsFromTxt.generateOptions(globalWordsData);
+        const globalWordsData = await LearnWords.readText(fileName);
+        // Update file count label
+        const fileCountLabel = document.getElementById('fileCountLabel');
+        fileCountLabel.textContent = `（${globalWordsData.length}个）`;
+        const {currentEnglishWord, options, correctIndex} = LearnWords.generateOptions(globalWordsData);
         let englishWordInput = document.getElementById("englishWordTextBox");
         englishWordInput.value = currentEnglishWord;
         if (isPlayButton) {

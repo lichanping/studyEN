@@ -59,7 +59,6 @@ little小的（less，least）；很少的，稍许adv；一点，没有多少�
 alive活着的
 living活的
 locate坐落于；确定。。。的地方vt --location
-location位置，地点n
 be located坐落于be located in/on/at=lie in/on/at
 location位置；场所【C】
 look at看（强调动作）
