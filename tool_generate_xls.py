@@ -59,4 +59,4 @@ class TxtToXLSX:
 
 if __name__ == "__main__":
     tool = TxtToXLSX()
-    tool.convert('吉李辰K.txt')
+    tool.convert('吉李辰A-J.txt')
