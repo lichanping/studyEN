@@ -1,0 +1,45 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: left;
+    margin: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background-color: #f2f2f2;
+}
+
+h1 {
+    font-size: 32px; /* Increase font size */
+    color: #333; /* Darken the color */
+    text-transform: uppercase; /* Convert text to uppercase */
+    letter-spacing: 2px; /* Add letter spacing for emphasis */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Add a subtle shadow effect */
+}
+
+#forgetWords, #pronounceWords {
+    width: 400px; /* Adjust the width as needed */
+    height: 60px; /* Adjust the height as needed */
+    font-size: 18px; /* Adjust the font size as needed */
+}
+
+label {
+    margin-right: 10px; /* Add margin to labels for better spacing */
+}
+
+button, input, select {
+    margin: 5px;
+    font-size: 16px; /* Adjust the font size as needed */
+}
+
+/* Style for the button container */
+.button-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start; /* Align buttons to the left */
+    margin-top: 10px; /* Add margin for separation from radio buttons */
+}
+
+/* Style for individual buttons in the container */
+.button-container button {
+    margin: 5px;
+}

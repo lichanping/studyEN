@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WordWise: Your English Learning Hub</title>
-    <link rel="stylesheet" href="word.css">
+    <link rel="stylesheet" href="learn-words.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
           integrity="sha384-4jyxlJMI6IazG++WDjSlbSz/0qbSjoRxWzf4Jov4vhGJRO8/ndXw+ByMIvXCFj5Y" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -14,13 +14,14 @@
 <body>
 <div id="container">
     <div id="file-and-button">
-        <button id="goBackButton"><i class="fas fa-arrow-left"></i> Go</button>
+        <button id="goBackButton"><i class="fas fa-arrow-left"></i></button>
         <select id="file">
             <option value="吉李辰K">吉李辰K</option>
             <option value="吉李辰A-J">吉李辰A-J</option>
             <option value="蔡青青">蔡青青</option>
             <option value="夏启程">夏启程</option>
         </select>
+        <span id="fileCountLabel"></span>
         <button id="renderQuestion">播放</button>
     </div>
     <div id="english-word">
@@ -57,7 +58,7 @@
     <input type="hidden" id="correctIndexValue">
 </div>
 <script type="module">
-    import * as script from './getWordsFromTxt.js';
+    import * as script from './learnWords.js';
     import * as commonFunctions from './commonFunctions.js';
 
     document.getElementById("goBackButton").addEventListener("click", commonFunctions.navigateToFormalClass);

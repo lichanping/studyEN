@@ -6,7 +6,7 @@
     <title>Simple UI Page</title>
     <!-- Include SweetAlert2 CSS and JS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10">
-    <link rel="stylesheet" href="styles_index.css">
+    <link rel="stylesheet" href="index.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <style>
 
@@ -82,9 +82,9 @@ avenue大街
 price价格
 hate讨厌</textarea>
 <button id="antiForgettingFeedbackButton" style="font-weight: bold; color: red;">抗遗忘课堂反馈</button>
-<button id="wordSelfCheckButton" onclick="window.location.href='word_self_check.html'">单词自检</button>
+<button id="wordSelfCheckButton">单词自检</button>
 <script type="module">
-    import * as script from './scriptFormal.js';
+    import * as script from './classFormal.js';
     import * as commonFunctions from './commonFunctions.js';
 
     document.addEventListener("keydown", function (event) {
@@ -122,6 +122,7 @@ hate讨厌</textarea>
     document.getElementById("understandSituationButton").addEventListener("click", script.handleUnderstandSituationClick);
     document.getElementById("managementGroupTemplateButton").addEventListener("click", script.handleManagementGroupTemplateClick);
     document.getElementById("antiForgettingFeedbackButton").addEventListener("click", commonFunctions.handleAntiForgettingFeedbackClick);
+    document.getElementById("wordSelfCheckButton").addEventListener('click', commonFunctions.navigateToLearnWords)
 </script>
 
 </body>

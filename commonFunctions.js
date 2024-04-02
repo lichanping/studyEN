@@ -1,15 +1,32 @@
 // JavaScript code for the button click functions
 export function navigateToTiyanClass() {
-    window.location.href = "tiyanClass.html";
-    // window.location.href = "https://lichanping.github.io/studyEN/tiyanClass.html";
+    window.location.href = "class-trial.html";
 }
 
 export function navigateToFormalClass() {
+    // Check if the current page is learn-words.html
+    if (window.location.pathname.includes("learn-words.html")) {
+        const pin = prompt("Enter PIN code to proceed:");
+        // Check if the entered PIN matches the expected value
+        if (pin === "111") {
+            // Navigate to the formal class page
+            window.location.href = "index.html";
+        } else {
+            // Display an error message if the PIN is incorrect
+            alert("Incorrect PIN. Please try again.");
+        }
+    } else {
+        // Navigate to the formal class page directly without asking for PIN
+        window.location.href = "index.html";
+    }
+}
+
+export function navigateToLearnWords() {
     const pin = prompt("Enter PIN code to proceed:");
     // Check if the entered PIN matches the expected value
     if (pin === "111") {
         // Navigate to the formal class page
-        window.location.href = "index.html";
+        window.location.href = "learn-words.html";
     } else {
         // Display an error message if the PIN is incorrect
         alert("Incorrect PIN. Please try again.");
@@ -17,7 +34,7 @@ export function navigateToFormalClass() {
 }
 
 export function navigateToReadClass() {
-    window.location.href = "readClass.html";
+    window.location.href = "class-read.html";
 }
 
 export function handleGroupGreetingClick() {
