@@ -18,6 +18,7 @@
 <div id="button-container">
     <button id="navigateToTiyanClass">体验课</button>
     <button id="navigateToReadClass">阅读课</button>
+    <button id="wordSelfCheckButton">单词自检</button>
 </div>
 <div class="form-group">
     <label for="userName">User Name:</label>
@@ -29,88 +30,73 @@
     <input type="text" id="teacherName" value="李教练">
     <button id="groupGreetingButton">入群招呼语</button>
 </div>
+<div>
+    <label for="classDateTime">新课时间:</label> <input type="datetime-local" id="classDateTime" value="">
+</div>
+<div>
+    <button id="scheduleNotificationButton">排课通知</button>
+    <button id="lateMeetingReminderButton">迟到10分钟后</button>
+</div>
 
-<!-- Add an input field for date and time -->
-<label for="classDateTime">Class Date and Time:</label>
-<input type="datetime-local" id="classDateTime" value="">
-<button id="scheduleNotificationButton" style="font-weight: bold; color: red;">排课通知（提前15分钟及准点提醒)发会议链接</button>
-<button id="lateMeetingReminderButton" style="font-weight: bold; color: red;">迟到10分钟后</button>
+<div>
+    <label for="reviewWord">复习单词:</label>
+    <input type="text" id="reviewWord" placeholder="Enter review words" value="15">
+    <label for="newWord">新学单词:</label>
+    <input type="text" id="newWord" placeholder="Enter new words" value="30">
+</div>
+<div>
+    <!-- Add an input field for 遗忘单词 -->
+    <label for="forgetWord">遗忘单词:</label>
+    <input type="text" id="forgetWord" value="0">
+    <button id="classFeedbackButton">课堂反馈</button>
+</div>
+<div>
+    <label for="reviewTime">复习时间:</label>
+    <input type="datetime-local" id="reviewTime" value="2024-02-28T18:00">
+</div>
+<div>
+    <button id="managementGroupTemplateButton">抗遗忘通知</button>
+    <button id="openingSpeechButton">开场话术</button>
+</div>
 
-<!-- Add an input field for 复习单词 -->
-<label for="reviewWord">复习单词:</label>
-<input type="text" id="reviewWord" placeholder="Enter review words" value="15">
-<!-- Add an input field for 新学单词 -->
-<label for="newWord">新学单词:</label>
-<input type="text" id="newWord" placeholder="Enter new words" value="30">
+<div>
+    <label for="studentLevel">学生级别:</label>
+    <select id="studentLevel" name="studentLevel">
+        <option value="primary" selected>小学生</option>
+        <option value="middleHigh">初高中</option>
+    </select>
+    <button id="understandSituationButton">了解概况</button>
+</div>
 
-<!-- Add an input field for 遗忘单词 -->
-<label for="forgetWord">遗忘单词:</label>
-<input type="text" id="forgetWord" placeholder="Enter forgotten words" value="0">
+<div>
+    <!-- Add input boxes for 抗遗忘复习单词 and 抗遗忘遗忘单词 -->
+    <label for="antiForgettingReviewWord">抗遗忘复习单词:</label>
+    <input type="text" id="antiForgettingReviewWord" value="15">
 
-<button id="classFeedbackButton">课堂反馈</button>
+    <label for="antiForgettingForgetWord">抗遗忘遗忘单词:</label>
+    <input type="text" id="antiForgettingForgetWord" value="0">
+</div>
 
-<label for="reviewTime">复习时间:</label>
-<input type="datetime-local" id="reviewTime" value="2024-02-28T18:00">
-<button id="managementGroupTemplateButton">学员管理群模版</button>
-<!-- Add buttons for 开场话术 and 了解概况 -->
-<button id="openingSpeechButton">开场话术</button>
-<!-- Add a radio button for student level on one line -->
-<label for="studentLevel">学生级别:</label>
-<!-- Replace the radio buttons for student level with a dropdown -->
-<select id="studentLevel" name="studentLevel">
-    <option value="primary" selected>小学生</option>
-    <option value="middleHigh">初高中</option>
-</select>
-<button id="understandSituationButton">了解概况</button>
-<!-- Add input boxes for 抗遗忘复习单词 and 抗遗忘遗忘单词 -->
-<label for="antiForgettingReviewWord">抗遗忘复习单词:</label>
-<input type="text" id="antiForgettingReviewWord" value="15">
-
-<label for="antiForgettingForgetWord">抗遗忘遗忘单词:</label>
-<input type="text" id="antiForgettingForgetWord" value="0">
-<label for="forgetWords" style="font-weight: bold; color: red;">遗忘词 (英文+中文):</label>
+<label for="forgetWords">遗忘词 (英文+中文):</label>
 <textarea id="forgetWords">drop in顺便走访（某人）
 go for主张
 discuss讨论
 steam蒸(食物)</textarea>
-<label for="pronounceWords" style="font-weight: bold; color: red;">发音不标准的词:</label>
+<label for="pronounceWords">发音不标准的词:</label>
 <textarea id="pronounceWords">duration持续时间
 circus马戏团
 avenue大街
 price价格
 hate讨厌</textarea>
-<button id="antiForgettingFeedbackButton" style="font-weight: bold; color: red;">抗遗忘课堂反馈</button>
-<button id="wordSelfCheckButton">单词自检</button>
+<button id="antiForgettingFeedbackButton">抗遗忘课堂反馈</button>
+
 <script type="module">
     import * as script from './classFormal.js';
     import * as commonFunctions from './commonFunctions.js';
 
-    document.addEventListener("keydown", function (event) {
-        if (event.key === "Enter" || event.keyCode === 13) {
-            if (!Swal.isVisible()) {
-                event.preventDefault(); // Prevent default Enter key behavior (e.g., form submission)
-                document.getElementById("openingSpeechButton").click();
-            }
-        }
-    });
-    const buttonIds = [
-        "groupGreetingButton",
-        "scheduleNotificationButton",
-        "lateMeetingReminderButton",
-        "classFeedbackButton",
-        "managementGroupTemplateButton",
-        "openingSpeechButton",
-        "understandSituationButton",
-        "antiForgettingFeedbackButton",
-        "wordSelfCheckButton"
-    ];
-
-    buttonIds.forEach((buttonId, index) => {
-        const buttonText = `${index + 1}. ${document.getElementById(buttonId).textContent}`;
-        document.getElementById(buttonId).textContent = buttonText;
-    });
     document.getElementById("navigateToTiyanClass").addEventListener("click", commonFunctions.navigateToTiyanClass);
     document.getElementById("navigateToReadClass").addEventListener("click", commonFunctions.navigateToReadClass);
+    document.getElementById("wordSelfCheckButton").addEventListener('click', commonFunctions.navigateToLearnWords);
     document.getElementById("userName").addEventListener("change", script.updateLabel);
     document.getElementById("groupGreetingButton").addEventListener("click", commonFunctions.handleGroupGreetingClick);
     document.getElementById("scheduleNotificationButton").addEventListener("click", script.handleScheduleNotificationClick);
@@ -120,7 +106,6 @@ hate讨厌</textarea>
     document.getElementById("understandSituationButton").addEventListener("click", script.handleUnderstandSituationClick);
     document.getElementById("managementGroupTemplateButton").addEventListener("click", script.handleManagementGroupTemplateClick);
     document.getElementById("antiForgettingFeedbackButton").addEventListener("click", commonFunctions.handleAntiForgettingFeedbackClick);
-    document.getElementById("wordSelfCheckButton").addEventListener('click', commonFunctions.navigateToLearnWords)
 </script>
 
 </body>

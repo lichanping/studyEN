@@ -1,4 +1,4 @@
-import {copyToClipboard, getRandomMotto, showAlert} from './commonFunctions.js'
+import {copyToClipboard, getRandomMotto, showAlert, showLongText} from './commonFunctions.js'
 // Attach the function when the page loads
 // window.addEventListener("load", copyToClipboard);
 const setInitialDateTime = () => {
@@ -29,7 +29,7 @@ export function handleScheduleNotificationClick() {
     const notificationMessage = `亲爱的 ${userName} 用户您好! 语言体验服务课程时间安排在(${formatDateTime(classDateTime)}) 请提前安排好时间，以下是会议室链接。注意! 请提前下载好【腾讯会议】，我们一起开启语言学习体验之旅! 电脑🖥️、笔记本💻、平板📱都可使用。<br><br>(请提前检查好摄像头，检测好音频。笔记本电脑和平板无需佩戴耳机，台式电脑须佩戴耳机和音响)`;
 
     copyToClipboard(notificationMessage);
-    showAlert(`${notificationMessage}`);
+    showLongText(`${notificationMessage}`);
     // Add your function logic here
 }
 
@@ -40,7 +40,7 @@ export function handlePreMeetingReminderClick() {
     const classDateTime = document.getElementById("classDateTime").value;
 
     // Create the reminder message
-    const reminderMessage = `亲爱的 ${userName} 用户和家长，我们的体验服务时间为: ${formatDateTime(classDateTime)}。这是本次的会议链接，请 ${userName} 同学准时进入会议室哦。🎉🎉🎉<br><br>
+    const reminderMessage = `亲爱的 ${userName} 用户和家长，我们的体验服务时间为: ${formatDateTime(classDateTime)}。请 ${userName} 同学准时进入会议室哦。🎉🎉🎉<br><br>
 同时我们需要做好以下陪练前准备:
 - 给孩子准备平板或者电脑，适当的屏幕和距离有利于保护孩子的眼睛和提升专注力;
 - 请提前提前下载好腾讯会议APP，检查好摄像头，检测好音频。笔记本电脑和平板无需佩戴耳机，台式电脑须佩戴耳机和音响;
@@ -50,7 +50,7 @@ export function handlePreMeetingReminderClick() {
 #腾讯会议：573-215-9639`;
 
     copyToClipboard(reminderMessage);
-    showAlert(`${reminderMessage}`);
+    showLongText(`${reminderMessage}`);
 }
 
 export function handleOnTimeReminderClick() {
@@ -58,7 +58,7 @@ export function handleOnTimeReminderClick() {
     const onTimeReminderMessage = `亲爱的${userName}用户和家长，我们的体验服务马上开始了，请做好准备，及时进入会议室哦~⏰🚀`;
 
     copyToClipboard(onTimeReminderMessage);
-    showAlert(`${onTimeReminderMessage}`);
+    showLongText(`${onTimeReminderMessage}`);
     // Add your function logic here
 }
 
@@ -68,8 +68,7 @@ export function handleVocabularyResultClick() {
     const vocabularyCount = document.getElementById("vocabularyCount").value;
     const resultMessage = `${userName}的词汇量检测结果：${vocabularyCount} 🎉🎉🎉`;
     copyToClipboard(resultMessage);
-    showAlert(`${resultMessage}`);
-    // Add your function logic here
+    showLongText(`${resultMessage}`);
 }
 
 // JavaScript code for the button click functions
@@ -93,7 +92,7 @@ export function handleClassFeedbackClick() {
 
 
     copyToClipboard(feedbackMessage);
-    showAlert(`${feedbackMessage}`);
+    showLongText(`${feedbackMessage}`);
     // Add your function logic here
 }
 

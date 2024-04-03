@@ -1,4 +1,4 @@
-import {copyToClipboard, getRandomMotto, showAlert, getRandomFeedback} from './commonFunctions.js'
+import {copyToClipboard, getRandomMotto, showAlert, getRandomFeedback, showLongText} from './commonFunctions.js'
 
 const setInitialDateTime = () => {
     const currentDate = new Date();
@@ -99,7 +99,7 @@ export function handleScheduleNotificationClick() {
     const notificationMessage = `亲爱的 ✨ ${userName} 用户您好! 我们的语言陪练服务时间安排在${formattedDateTime}。<br><br>本次课程时间为${thisDateTime}；<br><br>上课地址如下：<br><br>#腾讯会议：573-215-9639<br><br>请学员及家长准时进入会议室上课。`;
 
     copyToClipboard(notificationMessage);
-    showAlert(`${notificationMessage}`);
+    showLongText(`${notificationMessage}`);
 }
 
 export function handleLateMeetingReminderClick() {
@@ -107,7 +107,7 @@ export function handleLateMeetingReminderClick() {
     // Create the reminder message
     const reminderMessage = `我们的在线课程已经开始了，请 ✨  ${userName} 同学抓紧时间及时进入会议室哦。🔥`
     copyToClipboard(reminderMessage);
-    alert(`${reminderMessage}`);
+    showLongText(`${reminderMessage}`);
 }
 
 export function handleClassFeedbackClick() {
@@ -122,7 +122,7 @@ export function handleClassFeedbackClick() {
     // Generate feedback message
     const feedbackMessage = `【${userName}今日学习反馈】<br><br>1.今日复习单词 ${reviewWordCount}个，遗忘 0个；今日新学单词 ${newWord}个，遗忘${forgetWord}个, 正确率 ${correctRate}%。<br><br>2.陪伴 ✨ ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} "${getRandomMotto()}”，认真且努力的${userName}一定能抵达梦想的彼岸。<br><br>3.${userName}目前学习：${courseLabel}<br><br>4.严格按照 21 天抗遗忘复习表来复习哟! 🚀🚀🚀`
     copyToClipboard(feedbackMessage);
-    showAlert(`${feedbackMessage}`);
+    showLongText(`${feedbackMessage}`);
 }
 
 export function handleManagementGroupTemplateClick() {
@@ -135,7 +135,7 @@ export function handleManagementGroupTemplateClick() {
     const outputMessage = `${userName}同学的复习时间定为 ${hour}:${minute}；<br><br>21天抗遗忘复习排课表已生成，请学员准时进入会议室进行抗遗忘复习。🚀🚀<br><br>上课地址如下：<br><br>#腾讯会议：573-215-9639`;
     copyToClipboard(outputMessage);
     // Display the output message
-    showAlert(outputMessage);
+    showLongText(outputMessage);
 }
 
 export function handleOpeningSpeechClick() {
@@ -147,7 +147,6 @@ export function handleOpeningSpeechClick() {
 
     copyToClipboard(openingSpeechMessage);
     showAlert(`${openingSpeechMessage}`);
-    // Add your function logic here
 }
 
 export function handleUnderstandSituationClick() {

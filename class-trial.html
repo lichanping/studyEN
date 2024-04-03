@@ -16,60 +16,66 @@
 <body>
 
 <h1 style="font-size: 24px;">Trial Class UI Page</h1>
-<button id="navigateToFormalClass">Go to Formal Class Page</button>
-<label for="userName">User Name:</label>
-<select id="userName">
-    <option value="路首成">路首成</option>
-    <option value="常子凡">常子凡</option>
-</select>
+<div id="button-container">
+    <button id="navigateToFormalClass">正式课</button>
+    <button id="navigateToReadClass">阅读课</button>
+    <button id="wordSelfCheckButton">单词自检</button>
+</div>
+<div>
+    <label for="userName">User Name:</label>
+    <select id="userName">
+        <option value="路首成">路首成</option>
+        <option value="常子凡">常子凡</option>
+    </select>
+    <button id="openingSpeechButton">开场话术</button>
+</div>
+<div class="form-group">
+    <label for="teacherName">教师名称:</label>
+    <input type="text" id="teacherName" value="李教练">
+    <button id="groupGreetingButton">入群招呼语</button>
+</div>
+<div>
+    <label for="classDateTime">新课时间:</label> <input type="datetime-local" id="classDateTime" value="">
+</div>
+<div>
+    <button id="scheduleNotificationButton">排课通知</button>
+    <button id="preMeetingReminderButton">15分钟前提醒</button>
+    <button id="onTimeReminderButton">准点提醒</button>
+</div>
 
-<label for="teacherName">Teacher's Name:</label>
-<input type="text" id="teacherName" value="李教练">
+<div>
+    <label for="studentLevel">学生级别:</label>
+    <select id="studentLevel" name="studentLevel">
+        <option value="primary" selected>小学生</option>
+        <option value="middleHigh">初高中</option>
+    </select>
+    <button id="understandSituationButton">了解概况</button>
+</div>
+<div>
+    <button id="startVocabularyTestButton">词汇量检测</button>
+    <label for="vocabularyCount">词汇量数字:</label>
+    <input type="text" id="vocabularyCount" value="4000">
+    <button id="vocabularyResultButton">结果（截图2张）</button>
+</div>
 
-<button id="groupGreetingButton">入群招呼语</button>
-<!-- Add an input field for date and time -->
-<label for="classDateTime">Class Date and Time:</label>
-<input type="datetime-local" id="classDateTime" value="2024-02-28T21:30">
-<button id="scheduleNotificationButton">排课通知</button>
-<button id="preMeetingReminderButton" style="font-weight: bold; color: red;">15分钟前提醒（发会议链接）</button>
-<button id="onTimeReminderButton">准点提醒</button>
+<div>
+    <label for="newWord">新学单词:</label>
+    <input type="text" id="newWord" placeholder="Enter new words" value="30">
+    <label for="forgetWord">遗忘单词:</label>
+    <input type="text" id="forgetWord" placeholder="Enter forgotten words" value="0">
+</div>
 
-<!-- Add an input field for vocabulary count -->
-<label for="vocabularyCount">词汇量数字:</label>
-<input type="text" id="vocabularyCount" value="4000">
-
-<!-- Add a button for vocabulary result -->
-<button id="vocabularyResultButton" style="font-weight: bold; color: red;">词汇量检测结果（截图2张）</button>
-<!-- Add an input field for 新学单词 -->
-<label for="newWord">新学单词:</label>
-<input type="text" id="newWord" placeholder="Enter new words" value="30">
-
-<!-- Add an input field for 遗忘单词 -->
-<label for="forgetWord">遗忘单词:</label>
-<input type="text" id="forgetWord" placeholder="Enter forgotten words" value="0">
-
-<!-- Add an input field for 学习时间 -->
 <label for="studyTime" style="font-weight: bold; color: red;">学习时间 (从开始识记到学后检测，计时器):</label>
-<input type="text" id="studyTime" placeholder="Enter study time" value="35">
-
-<button id="classFeedbackButton">课堂反馈</button>
-<!-- Add buttons for 开场话术 and 了解概况 -->
-<button id="openingSpeechButton">开场话术</button>
-<!-- Add a radio button for student level on one line -->
-<label for="studentLevel" style="font-weight: bold; color: red;">学生级别:（初二前总分100）</label>
-<!-- Replace the radio buttons for student level with a dropdown -->
-<select id="studentLevel" name="studentLevel">
-    <option value="primary" selected>小学生</option>
-    <option value="middleHigh">初高中</option>
-</select>
-<button id="understandSituationButton">了解概况</button>
-<button id="startVocabularyTestButton">开始词汇量检测</button>
-<!-- Add input boxes for 抗遗忘复习单词 and 抗遗忘遗忘单词 -->
-<label for="antiForgettingReviewWord">抗遗忘复习单词:</label>
-<input type="text" id="antiForgettingReviewWord" value="15">
-
-<label for="antiForgettingForgetWord">抗遗忘遗忘单词:</label>
-<input type="text" id="antiForgettingForgetWord" value="0">
+<div>
+  <input type="text" id="studyTime" placeholder="Enter study time" value="35">
+  <button id="classFeedbackButton">课堂反馈</button>
+</div>
+<div>
+  <label for="antiForgettingReviewWord">抗遗忘复习单词:</label>
+  <input type="text" id="antiForgettingReviewWord" value="15">
+  <label for="antiForgettingForgetWord">抗遗忘遗忘单词:</label>
+  <input type="text" id="antiForgettingForgetWord" value="0">
+</div>
 <label for="forgetWords" style="font-weight: bold; color: red;">遗忘词 (英文+中文):</label>
 <textarea id="forgetWords">drop in顺便走访（某人）
 go for主张
@@ -105,24 +111,9 @@ hate讨厌</textarea>
             }
         }
     });
-    const buttonIds = [
-        "groupGreetingButton",
-        "scheduleNotificationButton",
-        "preMeetingReminderButton",
-        "onTimeReminderButton",
-        "vocabularyResultButton",
-        "classFeedbackButton",
-        "openingSpeechButton",
-        "understandSituationButton",
-        "startVocabularyTestButton",
-        "antiForgettingFeedbackButton"
-    ];
-
-    buttonIds.forEach((buttonId, index) => {
-        const buttonText = `${index + 1}.${document.getElementById(buttonId).textContent}`;
-        document.getElementById(buttonId).textContent = buttonText;
-    });
     document.getElementById("navigateToFormalClass").addEventListener("click", commonFunctions.navigateToFormalClass);
+    document.getElementById("navigateToReadClass").addEventListener("click", commonFunctions.navigateToReadClass);
+    document.getElementById("wordSelfCheckButton").addEventListener('click', commonFunctions.navigateToLearnWords)
     document.getElementById("groupGreetingButton").addEventListener("click", commonFunctions.handleGroupGreetingClick);
     document.getElementById("scheduleNotificationButton").addEventListener("click", script.handleScheduleNotificationClick);
     document.getElementById("preMeetingReminderButton").addEventListener("click", script.handlePreMeetingReminderClick);

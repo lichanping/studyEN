@@ -1,3 +1,6 @@
+import {displayToast} from './commonFunctions.js'
+
+
 class LearnWords {
     static async readText(fileName) {
         const filePath = `user_data/${fileName}`;
@@ -253,20 +256,7 @@ function triggerAnimation() {
     }, 300); // Adjust the timing of animation as needed (300 milliseconds in this case)
 }
 
-export function displayToast(message) {
-    // Create a toast element
-    const toast = document.createElement('div');
-    toast.classList.add('toast');
-    toast.textContent = message;
 
-    // Append toast to the document body
-    document.body.appendChild(toast);
-
-    // Automatically remove toast after 3 seconds
-    setTimeout(() => {
-        toast.remove();
-    }, 3000);
-}
 
 const spellingInput = document.getElementById('spellingInput');
 // Add event listener for keydown event

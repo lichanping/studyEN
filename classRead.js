@@ -1,4 +1,4 @@
-import {copyToClipboard, getRandomMotto, showAlert, getRandomFeedback} from './commonFunctions.js'
+import {copyToClipboard, getRandomMotto, showAlert, getRandomFeedback, showLongText} from './commonFunctions.js'
 
 const setInitialDateTime = () => {
     const currentDate = new Date();
@@ -95,7 +95,7 @@ export function handleScheduleNotificationClick() {
     const thisDateTime = formatDateTime(classDateTime);
     const notificationMessage = `亲爱的 ⭐ ${userName} 用户您好! 我们的语言陪练服务时间安排在${formattedDateTime}。<br><br>本次课程时间为${thisDateTime}；<br><br>上课地址如下：<br><br>#腾讯会议：573-215-9639<br><br>请学员及家长准时进入会议室上课。`;
     copyToClipboard(notificationMessage);
-    showAlert(`${notificationMessage}`);
+    showLongText(`${notificationMessage}`);
 }
 
 export function handleLateMeetingReminderClick() {
@@ -103,7 +103,7 @@ export function handleLateMeetingReminderClick() {
     // Create the reminder message
     const reminderMessage = `我们的在线课程已经开始了，请 ⭐  ${userName} 同学抓紧时间及时进入会议室哦。🔥`
     copyToClipboard(reminderMessage);
-    alert(`${reminderMessage}`);
+    showLongText(`${reminderMessage}`);
 }
 
 export function handleReadClassFeedbackClick() {
@@ -130,7 +130,7 @@ export function handleReadClassFeedbackClick() {
     // Generate feedback message
     const feedbackMessage = `【${userName}今日阅读课学习反馈】<br><br>1.今日学习${courseLabel}阅读理解1篇<br><br>2.生词 ${newWord}个，错误词数：${mistakeWords}个，习题 ${test}个，错误习题数 ${mistake}个<br><br>3.⭐ ${userName} ${feedback} <br><br>"${getRandomMotto()}” 🚀🚀🚀`
     copyToClipboard(feedbackMessage);
-    showAlert(`${feedbackMessage}`);
+    showLongText(`${feedbackMessage}`);
 }
 
 export function handleManagementGroupTemplateClick() {
@@ -143,7 +143,7 @@ export function handleManagementGroupTemplateClick() {
     const outputMessage = `${userName}同学的复习时间定为 ${hour}:${minute}；<br><br>21天抗遗忘复习排课表已生成，请学员准时进入会议室进行抗遗忘复习。🚀🚀<br><br>上课地址如下：<br><br>#腾讯会议：573-215-9639`;
     copyToClipboard(outputMessage);
     // Display the output message
-    showAlert(outputMessage);
+    showLongText(outputMessage);
 }
 
 export function handleOpeningSpeechClick() {
