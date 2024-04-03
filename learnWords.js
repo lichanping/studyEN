@@ -50,8 +50,8 @@ class LearnWords {
         return shuffledArray[0];
     }
 
-    static generateOptions(globalWordsData) {
-        const randomElement = this.getRandomElement(globalWordsData);
+    static generateOptions(globalWordsData, index = null) {
+        const randomElement = index !== null ? globalWordsData[index] : this.getRandomElement(globalWordsData);
         const currentEnglishWord = randomElement["单词"];
         const correctOption = randomElement["释意"];
         const otherWords = globalWordsData.filter(word => word !== randomElement);
@@ -104,6 +104,7 @@ export async function renderQuestion() {
     const renderQuestionButton = document.getElementById("renderQuestion");
     const buttonText = renderQuestionButton.innerText;
     const isPlayButton = buttonText == "播放";
+    const isRandom = document.getElementById("random-toggle").checked;
 
     try {
         // Reset spelling input and its background color
@@ -114,7 +115,25 @@ export async function renderQuestion() {
         // Update file count label
         const fileCountLabel = document.getElementById('fileCountLabel');
         fileCountLabel.textContent = `（${globalWordsData.length}个）`;
-        const {currentEnglishWord, options, correctIndex} = LearnWords.generateOptions(globalWordsData);
+
+        let currentEnglishWord, options, correctIndex;
+        let currentIndex = parseInt(sessionStorage.getItem('currentIndex')) || 0;
+        if (isRandom) {
+            const generatedOptions = LearnWords.generateOptions(globalWordsData);
+            currentEnglishWord = generatedOptions.currentEnglishWord;
+            options = generatedOptions.options;
+            correctIndex = generatedOptions.correctIndex;
+        } else {
+            const generatedOptions = LearnWords.generateOptions(globalWordsData, currentIndex);
+            currentEnglishWord = generatedOptions.currentEnglishWord;
+            options = generatedOptions.options;
+            correctIndex = generatedOptions.correctIndex;
+
+            // Increment index for next question
+            currentIndex = (currentIndex + 1) % globalWordsData.length;
+            sessionStorage.setItem('currentIndex', currentIndex);
+        }
+
         let englishWordInput = document.getElementById("englishWordTextBox");
         englishWordInput.value = currentEnglishWord;
         if (isPlayButton) {
