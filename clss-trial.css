@@ -19,6 +19,44 @@ body {
     background-color: #f2f2f2; /* Set background color to a light gray */
 }
 
+.long-text {
+    position: fixed;
+    top: 50%;
+    left: 0; /* Align to the left */
+    transform: translateY(-50%);
+    max-width: 40%; /* Adjust the maximum width as needed */
+    background-color: #fff; /* Background color */
+    padding: 10px; /* Padding */
+    border: 1px solid #ccc; /* Border */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Box shadow */
+    z-index: 9999; /* Ensure it's on top */
+}
+
+#teacherName {
+    width: 80px; /* Adjust the width as needed */
+}
+#vocabularyCount,#studyTime {
+    width: 40px; /* Adjust the width as needed */
+}
+#reviewWord,
+#newWord, #forgetWord,#antiForgettingReviewWord,#antiForgettingForgetWord {
+    width: 40px; /* Specify the width in pixels */
+}
+button {
+    background-color: #D0F0C0;
+    margin: 5px;
+    font-size: 16px; /* Adjust the font size as needed */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Enhanced 3D effect */
+    border: none; /* Remove default button border */
+    padding: 5px 10px; /* Adjust padding as needed */
+    transition: all 0.3s ease; /* Add transition for smooth effect */
+}
+
+button:hover {
+    transform: translateY(-2px); /* Add slight upward movement on hover */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.5); /* Further enhance shadow effect on hover */
+}
+
 label {
     margin-right: 10px; /* Add margin to labels for better spacing */
 }

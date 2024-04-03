@@ -14,53 +14,69 @@
 <body>
 
 <h1>完型填空课（练、评、复：学新、逐句解读、概括）</h1>
-<button id="navigateToFormalClass">Go to Formal Class Page</button>
-<label for="userName">User Name:</label>
-<select id="userName">
-</select>
+<div id="button-container">
+    <button id="navigateToFormalClass">正式课</button>
+    <button id="navigateToTiyanClass">体验课</button>
+    <button id="wordSelfCheckButton">单词自检</button>
+</div>
+<div>
+    <label for="userName">User Name:</label>
+    <select id="userName">
+    </select>
+</div>
+
 <label id="courseLabel" style="font-weight: bold; color: red;"></label>
 <div class="scheduleLabels"></div>
-<label for="teacherName">Teacher's Name:</label>
-<input type="text" id="teacherName" value="李教练">
 
-<button id="groupGreetingButton">入群招呼语</button>
+<div class="form-group">
+    <label for="teacherName">教师名称:</label>
+    <input type="text" id="teacherName" value="李教练">
+    <button id="groupGreetingButton">入群招呼语</button>
+</div>
 
-<!-- Add an input field for date and time -->
-<label for="classDateTime">Class Date and Time:</label>
-<input type="datetime-local" id="classDateTime" value="">
-<button id="scheduleNotificationButton" style="font-weight: bold; color: red;">排课通知（提前15分钟及准点提醒)发会议链接</button>
-<button id="lateMeetingReminderButton" style="font-weight: bold; color: red;">迟到10分钟后</button>
+<div>
+    <label for="classDateTime">新课时间:</label> <input type="datetime-local" id="classDateTime" value="">
+</div>
+<div>
+    <button id="scheduleNotificationButton">排课通知</button>
+    <button id="lateMeetingReminderButton">迟到10分钟后</button>
+    <button id="classFeedbackButton">课堂反馈</button>
+</div>
+<div>
+    <label for="newWord">生词:(<15个）</label>
+    <input type="text" id="newWord" value="10">
+    <label for="mistakeWords">错误词数:</label>
+    <input type="text" id="mistakeWords" name="mistakeWords" value="0">
+    <label for="test">习题:</label>
+    <input type="text" id="test" value="10">
+    <label for="mistake">错误:</label>
+    <input type="text" id="mistake" value="0">
+</div>
 
-
-<label for="newWord">生词:(不超过15个）</label>
-<input type="text" id="newWord" value="10">
-<label for="mistakeWords">错误词数:</label>
-<input type="number" id="mistakeWords" name="mistakeWords" value="0">
-<label for="test">习题:</label>
-<input type="text" id="test" placeholder="Enter test questions" value="10">
-<label for="mistake">错误:</label>
-<input type="text" id="mistake" placeholder="Enter mistake questions" value="0">
-<button id="classFeedbackButton">课堂反馈</button>
-
-<label for="reviewTime">复习时间:</label>
-<input type="datetime-local" id="reviewTime" value="2024-02-28T18:00">
-<button id="managementGroupTemplateButton">学员管理群模版</button>
-<!-- Add buttons for 开场话术 and 了解概况 -->
-<button id="openingSpeechButton">开场话术</button>
-<!-- Add a radio button for student level on one line -->
-<label for="studentLevel">学生级别:</label>
-<!-- Replace the radio buttons for student level with a dropdown -->
-<select id="studentLevel" name="studentLevel">
+<div>
+    <label for="reviewTime">复习时间:</label>
+    <input type="datetime-local" id="reviewTime" value="2024-02-28T18:00">
+</div>
+<div>
+    <button id="managementGroupTemplateButton">抗遗忘通知</button>
+    <button id="openingSpeechButton">开场话术</button>
+</div>
+<div>
+  <label for="studentLevel">学生级别:</label>
+  <select id="studentLevel" name="studentLevel">
     <option value="primary">小学生</option>
     <option value="middleHigh" selected>初高中</option>
-</select>
-<button id="understandSituationButton">了解概况</button>
-<!-- Add input boxes for 抗遗忘复习单词 and 抗遗忘遗忘单词 -->
-<label for="antiForgettingReviewWord">抗遗忘复习单词:</label>
-<input type="text" id="antiForgettingReviewWord" value="15">
+  </select>
+  <button id="understandSituationButton">了解概况</button>
+</div>
 
-<label for="antiForgettingForgetWord">抗遗忘遗忘单词:</label>
-<input type="text" id="antiForgettingForgetWord" value="0">
+<div>
+  <label for="antiForgettingReviewWord">抗遗忘复习单词:</label>
+  <input type="text" id="antiForgettingReviewWord" value="15">
+  <label for="antiForgettingForgetWord">抗遗忘遗忘单词:</label>
+  <input type="text" id="antiForgettingForgetWord" value="0">
+</div>
+
 <label for="forgetWords" style="font-weight: bold; color: red;">遗忘词 (英文+中文):</label>
 <textarea id="forgetWords">drop in顺便走访（某人）
 go for主张
@@ -86,22 +102,10 @@ hate讨厌</textarea>
             }
         }
     });
-    const buttonIds = [
-        "groupGreetingButton",
-        "scheduleNotificationButton",
-        "lateMeetingReminderButton",
-        "classFeedbackButton",
-        "managementGroupTemplateButton",
-        "openingSpeechButton",
-        "understandSituationButton",
-        "antiForgettingFeedbackButton"
-    ];
 
-    buttonIds.forEach((buttonId, index) => {
-        const buttonText = `${index + 1}. ${document.getElementById(buttonId).textContent}`;
-        document.getElementById(buttonId).textContent = buttonText;
-    });
     document.getElementById("navigateToFormalClass").addEventListener("click", commonFunctions.navigateToFormalClass);
+    document.getElementById("navigateToTiyanClass").addEventListener("click", commonFunctions.navigateToTiyanClass);
+    document.getElementById("wordSelfCheckButton").addEventListener('click', commonFunctions.navigateToLearnWords);
     document.getElementById("userName").addEventListener("change", scriptR.updateLabel2);
     document.getElementById("groupGreetingButton").addEventListener("click", commonFunctions.handleGroupGreetingClick);
     document.getElementById("scheduleNotificationButton").addEventListener("click", scriptR.handleScheduleNotificationClick);

@@ -42,7 +42,7 @@ export function handleGroupGreetingClick() {
     const greetingMessage = `您好！我是${teacherName}，很⾼兴你们加⼊语⾔集训营，接下来让我们⼀起开启快乐、⾼效的语⾔训练之旅! 在此过程中，我会全程陪伴孩⼦的学习和复习过程，从短暂记忆到永久记忆，从被动接收到主动参与，让我们⼀起⻅证孩⼦的蜕变吧!🌟🌟🌟`;
 
     copyToClipboard(greetingMessage);
-    showAlert(`${greetingMessage}`);
+    showLongText(`${greetingMessage}`);
 }
 
 export function handleAntiForgettingFeedbackClick() {
@@ -93,7 +93,7 @@ export function handleAntiForgettingFeedbackClick() {
     // Copy the message to clipboard
     copyToClipboard(message);
     // Show alert with the generated message
-    showAlert(`${message}`);
+    showLongText(`${message}`);
 }
 
 export function getRandomFeedback() {
@@ -134,6 +134,18 @@ export function showAlert(message) {
         allowOutsideClick: false,
         heightAuto: false,  // Prevent auto height adjustment
     });
+}
+export function showLongText(longText) {
+  const textElement = document.createElement('div');
+  textElement.innerHTML = longText;
+  textElement.classList.add('long-text');
+  document.body.appendChild(textElement);
+  setTimeout(() => {
+    textElement.style.opacity = '0'; // Set opacity to make it invisible
+    setTimeout(() => {
+      textElement.remove(); // Remove the text after hiding
+    }, 300); // Adjust the timing of removal as needed (300 milliseconds in this case)
+  }, 2000); // Adjust the timing of visibility as needed (2000 milliseconds in this case)
 }
 
 export function getRandomMotto() {
@@ -191,4 +203,17 @@ function extractEnglishWords(text) {
     return wordsArray;
 }
 
+export function displayToast(message) {
+    // Create a toast element
+    const toast = document.createElement('div');
+    toast.classList.add('toast');
+    toast.textContent = message;
 
+    // Append toast to the document body
+    document.body.appendChild(toast);
+
+    // Automatically remove toast after 3 seconds
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
