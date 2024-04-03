@@ -175,7 +175,12 @@ export function checkSpelling() {
     const spellingInputValue = document.getElementById('spellingInput').value.trim().toLowerCase();
     const thumb = document.getElementById('thumb');
     const incorrectWordsSpan = document.getElementById('incorrectWords');
-
+    const englishWordTextBox = document.getElementById('englishWordTextBox');
+    if (spellingInputValue === '') {
+        // Empty spelling input value, just show visibility
+        englishWordTextBox.style.visibility = 'visible';
+        return; // Exit the function
+    }
     if (englishWordTextBoxValue === spellingInputValue) {
         // Correct spelling
         document.getElementById('spellingInput').style.backgroundColor = 'lightgreen';
