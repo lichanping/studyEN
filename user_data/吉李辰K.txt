@@ -193,3 +193,34 @@ museum博物馆【C】
 mushroom蘑菇【C】
 music音乐；乐曲【U]
 must必须；需要；应当；必定是；一定 v&aux
+name名字，姓名，名称【C】；命名，名叫vt
+narrow狭窄的（narrower，narrowest）--反义：wide
+wide宽的
+nation民族；国家【C】
+national全国性的；国家的；民族的adj
+nationality国籍n --复数：nationalities
+nationalities国籍n 【复数】
+international国际的adj
+on National Day在国庆节那天
+native本地的，本国的，当地的adj；本地人，本国人【C】
+natural自然的，天然的adj --nature自然，本质n
+nature自然，本质n【U】
+by nature本性上，生性
+naughty顽皮的（naughtier，naughtiest）
+near在。。附近prep；附近的adj；临近adv
+nearby附近的adj；在附近adv
+nearly将近；几乎；差不多adv
+necessary必须的，必要的adj
+need需要；必须【v /aux】；需求；必要【U，C】
+it is necessary for somebody to do某人有必要做。。。
+it is necessary that从句。。。是必要的
+make it necessary for somebody to do使某人必须做
+meet the needs of满足。。。的需要，needs可用单数或复数
+neighbour（美neighbor）邻居【C】
+neighbourhood（美neighborhood）临近地区，街坊【C】
+neither（两者）都不pron；adj；也不adv；conj
+neither A nor B  （A或B）都不
+nervous紧张的adj
+be nervous about。。。紧张不安，担心 = be nervous at
+be nervous at。。。紧张不安，担心 = be nervous about
+net网

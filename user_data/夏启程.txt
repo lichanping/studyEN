@@ -6,4 +6,4 @@ branch树枝
 awake醒着
 rug小地毯
 durian榴莲果
-score得分
+Score得分
