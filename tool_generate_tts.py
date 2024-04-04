@@ -58,7 +58,7 @@ async def _main() -> None:
 
     end_time = time.time()  # Record end time
     elapsed_time = end_time - start_time  # Calculate elapsed time
-    print(f"Total elapsed time: {elapsed_time:.2f} seconds")
+    print(f"Total elapsed time for processing {len(TEXT_LIST)} texts: {elapsed_time:.2f} seconds")
 
 
 if __name__ == "__main__":
