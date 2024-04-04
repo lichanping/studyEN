@@ -136,7 +136,6 @@ medium中间的，中等的adj
 of medium height中等身高
 meet遇见，见到；会见；迎接；满足vt（met，met）；会，集会【U】
 meeting会议，集会【U】；会见
-meet the needs of满足。。的需求
 at the meeting在会上
 attend a meeting参加会议
 member成员，会员【C】
@@ -223,4 +222,29 @@ neither A nor B  （A或B）都不
 nervous紧张的adj
 be nervous about。。。紧张不安，担心 = be nervous at
 be nervous at。。。紧张不安，担心 = be nervous about
-net网
+net网[C]
+surf the net上网浏览
+network网络；网络系统【C】
+build up a network建立网络
+create a network建立网络
+set up a network建立网络
+never绝不；从来没有adv
+never mind没关系
+news新闻；消息【U】
+a piece of news一则新闻
+news conference记者（招待）会
+newspaper报纸【C】
+read a newspaper看报纸
+in a newspaper在报上
+next最近的；紧挨着的；隔壁的；下一次的adj；最近地，然后；下一步
+next to在。。。旁边；紧挨着
+next time下次
+next year明年
+the next year第二年
+at night在夜里
+during the night在夜间=in the night
+day and night夜以继日 = night and day
+last night昨天晚上
+good night晚安
+a good night's sleep一夜好觉
+nobody没有人，谁也不pron
