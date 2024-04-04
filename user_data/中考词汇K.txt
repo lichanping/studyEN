@@ -600,3 +600,24 @@ relative亲属【C】
 relax使放松，轻松vi
 relaxed轻松的，自在的adj
 relaxing令人轻松的
+release释放，排放；发行，发表【C，u】vt
+rely依靠vi
+rely on依靠 =depend on
+remember记得；想起 vt vi
+remember doing something记得做过的事
+remember to do something记得去做某事
+remind提醒vt == cause somebody to remember to do
+remind somebody of doing something提醒某人做某事
+remind somebody to do something 提醒某人做某事
+remind somebody that提醒某人+从句
+repair修理 【U，C】vt vi == fix、mend
+repeat重复 vt vi == say or do again
+reply回答，答复【U，C】vt vi（replied）
+reply to答复
+report报道；报告；成绩单【C】报告；汇报；（新闻）报道；调查报告【vt vi】
+reporter记者【C】
+republic共和国【C】
+require需求；要求vt vi == need
+require somebody to do要求某人做某事
+require doing something需要做某事
+research调查；研究【C】
