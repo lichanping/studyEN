@@ -32,8 +32,10 @@ class TxtToXLSX:
     def read_text(self, file_name):
         self.ori_file = file_name
         self.generate_file = os.path.join(self.data_folder, file_name.split('.')[0] + "_抗遗忘单词.xlsx")
+        missing_sound_file = os.path.join(self.data_folder, "MissingSound.txt")  # Path to store missing sound words
         file_path = os.path.join(self.data_folder, file_name)
         data = []
+        missing_words = []  # List to store missing sound words
         pattern = re.compile(r'([a-zA-Z\'\s\-\.\/]+)\s*(.*)')
         with open(file_path, 'r', encoding='utf-8') as file:
             for line in file:
@@ -43,9 +45,15 @@ class TxtToXLSX:
                     media = os.path.join(self.sound_folder, f"{english_word.strip()}.mp3")
                     exist = os.path.exists(media)
                     print(f"English: {english_word}, Translation: {translation}, Sound: {exist}")
-                    data.append({"单词": english_word, "释意": translation, "音频": str(exist)})
+                    data.append({"单词": english_word.strip(), "释意": translation, "音频": str(exist)})
+                    if not exist:
+                        missing_words.append(english_word.strip())
                 else:
                     print(f"Invalid format in line: {line.strip()}")
+        # Write missing words to MissingSound.txt
+        with open(missing_sound_file, 'w', encoding='utf-8') as missing_file:
+            missing_file.write("\n".join(missing_words))
+
         return data
 
     def create_excel(self, data):
