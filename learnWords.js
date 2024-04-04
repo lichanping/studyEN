@@ -103,12 +103,12 @@ export function play_audio() {
 
 export async function renderQuestion() {
     const fileName = document.getElementById("file").value + ".txt";
+    const key = fileName.replace('.txt', '');
     const optionsLine = document.getElementById("options-line");
     const renderQuestionButton = document.getElementById("renderQuestion");
     const buttonText = renderQuestionButton.innerText;
     const isPlayButton = buttonText == "播放";
     const isRandom = document.getElementById("random-toggle").checked;
-
     try {
         // Reset spelling input and its background color
         const spellingInput = document.getElementById('spellingInput');
@@ -120,7 +120,7 @@ export async function renderQuestion() {
         fileCountLabel.textContent = `（${globalWordsData.length}个）`;
 
         let currentEnglishWord, options, correctIndex;
-        let currentIndex = parseInt(sessionStorage.getItem('currentIndex')) || 0;
+        let currentIndex = parseInt(sessionStorage.getItem(`${key}_currentIndex`)) || 0;
         if (isRandom) {
             const generatedOptions = LearnWords.generateOptions(globalWordsData);
             currentEnglishWord = generatedOptions.currentEnglishWord;
@@ -134,7 +134,8 @@ export async function renderQuestion() {
 
             // Increment index for next question
             currentIndex = (currentIndex + 1) % globalWordsData.length;
-            sessionStorage.setItem('currentIndex', currentIndex);
+            fileCountLabel.textContent = `（${currentIndex}/${globalWordsData.length}个）`;
+            sessionStorage.setItem(`${key}_currentIndex`, currentIndex);
         }
 
         let englishWordInput = document.getElementById("englishWordTextBox");
@@ -260,7 +261,6 @@ function triggerAnimation() {
         }, 3000); // Adjust the timing of opacity change as needed (3000 milliseconds in this case)
     }, 300); // Adjust the timing of animation as needed (300 milliseconds in this case)
 }
-
 
 
 const spellingInput = document.getElementById('spellingInput');
