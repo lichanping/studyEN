@@ -174,3 +174,22 @@ monitor班长；监视器【C】
 monkey猴子【C】
 month月份【C】--复数：months
 mood心情，语气，气氛【C】
+in a bad mood心情坏 --反义：in a good mood
+in the mood兴致勃勃
+more （much 或 many）的比较级；较多的；更大的；更多的；再，更adj；更多的量【U】
+in the morning在早上、上午
+most（much 或 many）的最高级；最大的，最多的，大多数的，大部分的；最adv；大部分，大多数【U】
+motorcycle摩托车【C】
+mountain山脉【C】
+mouse老鼠【C】；鼠标 --复数：mice
+mice 复数的老鼠；鼠标
+mouths 复数：嘴，口【C】
+move移动；搬动；搬家；感动vt vi
+movie电影C
+Mr先生
+Mrs夫人，太太
+much（修饰不可能名词）许多的，大量的adj；非常；更加adv；许多；大量【U】
+museum博物馆【C】
+mushroom蘑菇【C】
+music音乐；乐曲【U]
+must必须；需要；应当；必定是；一定 v&aux
