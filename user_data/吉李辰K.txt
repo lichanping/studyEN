@@ -49,6 +49,7 @@ lift举起vt；电梯【C】--elevator
 dislike不喜欢 --反义：like
 unlike不像
 like to do喜欢做 --like doing
+like doing喜欢做
 likely很可能的adj；很可能地adv
 time limit限期
 speed limit限速
@@ -78,3 +79,12 @@ luckily幸运地；侥幸地
 unluckily不幸地
 luggage行李
 lunch午餐【U】
+machine机器【C】
+washing machine洗衣机
+mad发疯的；生气的adj
+go mad发疯
+be mad at somebody about something因某事生某人的气 = be mad with somebody
+magazine杂志
+magic魔术；魔法【C】 --magic 有魔力的；有神奇力量的adj
+magician魔术师
+mail
