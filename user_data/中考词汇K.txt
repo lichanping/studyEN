@@ -647,3 +647,11 @@ right对；正确的；恰当的；右边的adj；正确地；恰恰；向右，
 ring打电话；铃声；环形物【U，C】；（钟、铃）响；摇铃；打电话【Vt vi】（rang，rung）
 rang过去式ring
 rung过去分词ring
+rise上升；上涨；起立vi（rose，risen）
+rose过去式rise
+risen过去分词rise
+river江；河【C】
+road路；道路【C】
+roast烤（肉）vt
+robot机器人【C】
+rock岩石【U，C】
