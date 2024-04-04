@@ -6,7 +6,7 @@ import time
 import edge_tts
 from edge_tts import VoicesManager
 
-from tool_generate_xls import get_sub_folder_path
+from tool_generate_xls import get_sub_folder_path, TxtToXLSX
 
 
 # Function to read texts from a text file
