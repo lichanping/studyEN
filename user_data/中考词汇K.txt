@@ -436,3 +436,22 @@ poem诗【C】
 poet诗人n
 point指；指向vi；点；分数；小数点【C】
 point out指出
+pole杆；极【C】
+policemen警察【复数】
+policewomen女警【复数】
+polite有礼貌的adj
+politely有礼貌地adv
+politics政治【U，C】
+pollute污染，弄脏vt
+pollution污染n【U，C】
+pool水塘，水池【U，C]
+poor贫穷的；可怜的；不好的adj
+popular流行的；大众的；受欢迎的adj = pop
+population人口，人数【U，C】
+pork猪肉【U，C】
+possible可能的，也许的adj
+possibly可能地，也许adv = maybe、perhaps、probably
+impossible不可能的adj
+post邮政，邮寄，邮件【U】投寄；邮寄【vt】=mail
+postcard明信片【C】
+poster海报【C】
