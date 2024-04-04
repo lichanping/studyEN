@@ -38,8 +38,8 @@ async def process_text_batch(texts):
 
         # Choose voice from the voice library
         # command:"edge-tts --list-voices"
-        # voice = voices.find(Gender="Female", Language="en")
-        voice = voices.find(Gender="Male", Language="en")
+        voice = voices.find(Gender="Female", Language="en")
+        # voice = voices.find(Gender="Male", Language="en")
         # Use Edge TTS API to convert text to speech and save as MP3 file
         communicate = edge_tts.Communicate(text, random.choice(voice)["Name"])
         await communicate.save(output_file)
