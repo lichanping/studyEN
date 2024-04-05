@@ -121,3 +121,19 @@ travel旅行【U】【vi】
 tree树【C】
 trick恶作剧；诡计，花招【C】
 play a trick on somebody戏耍某人
+trip旅行，旅程【C】
+trouble问题；烦恼；麻烦；困难【U，C】；使苦恼；使麻烦【vt】
+in trouble处于困境中
+trousers裤子，长裤【pl】
+a pair of trousers一条裤子
+truck卡车；货车n
+true真的，真实的adj
+truth真理；真相，实际情况n【U】
+trust信任，相信【U】【vt】
+try试；努力【C】；试图；努力【vt vi】
+have a try试一试
+try on试穿
+try doing something尝试做某事
+try to do something尽力做某事
+try one's best to do something尽某人最大努力做某事
+turkey火鸡【C】--复数：turkeys
