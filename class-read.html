@@ -7,6 +7,7 @@
     <!-- Include SweetAlert2 CSS and JS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10">
     <link rel="stylesheet" href="clss-read.css">
+    <link rel="icon" type="image/png" href="sounds/tick-mark.png">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <style>
     </style>
@@ -23,6 +24,7 @@
     <label for="userName">User Name:</label>
     <select id="userName">
     </select>
+    <button id="cameraWarningButton">未开启摄像头</button>
 </div>
 
 <label id="courseLabel" style="font-weight: bold; color: red;"></label>
@@ -62,19 +64,19 @@
     <button id="openingSpeechButton">开场话术</button>
 </div>
 <div>
-  <label for="studentLevel">学生级别:</label>
-  <select id="studentLevel" name="studentLevel">
-    <option value="primary">小学生</option>
-    <option value="middleHigh" selected>初高中</option>
-  </select>
-  <button id="understandSituationButton">了解概况</button>
+    <label for="studentLevel">学生级别:</label>
+    <select id="studentLevel" name="studentLevel">
+        <option value="primary">小学生</option>
+        <option value="middleHigh" selected>初高中</option>
+    </select>
+    <button id="understandSituationButton">了解概况</button>
 </div>
 
 <div>
-  <label for="antiForgettingReviewWord">抗遗忘复习单词:</label>
-  <input type="text" id="antiForgettingReviewWord" value="15">
-  <label for="antiForgettingForgetWord">抗遗忘遗忘单词:</label>
-  <input type="text" id="antiForgettingForgetWord" value="0">
+    <label for="antiForgettingReviewWord">抗遗忘复习单词:</label>
+    <input type="text" id="antiForgettingReviewWord" value="15">
+    <label for="antiForgettingForgetWord">抗遗忘遗忘单词:</label>
+    <input type="text" id="antiForgettingForgetWord" value="0">
 </div>
 
 <label for="forgetWords" style="font-weight: bold; color: red;">遗忘词 (英文+中文):</label>
@@ -102,12 +104,12 @@ hate讨厌</textarea>
             }
         }
     });
-
     document.getElementById("navigateToFormalClass").addEventListener("click", commonFunctions.navigateToFormalClass);
     document.getElementById("navigateToTiyanClass").addEventListener("click", commonFunctions.navigateToTiyanClass);
     document.getElementById("wordSelfCheckButton").addEventListener('click', commonFunctions.navigateToLearnWords);
     document.getElementById("userName").addEventListener("change", scriptR.updateLabel2);
     document.getElementById("groupGreetingButton").addEventListener("click", commonFunctions.handleGroupGreetingClick);
+    document.getElementById("cameraWarningButton").addEventListener("click", commonFunctions.handleCameraWarningClick);
     document.getElementById("scheduleNotificationButton").addEventListener("click", scriptR.handleScheduleNotificationClick);
     document.getElementById("lateMeetingReminderButton").addEventListener("click", scriptR.handleLateMeetingReminderClick);
     document.getElementById("classFeedbackButton").addEventListener("click", scriptR.handleReadClassFeedbackClick);

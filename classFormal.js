@@ -96,7 +96,7 @@ export function handleScheduleNotificationClick() {
     const classDateTime = document.getElementById("classDateTime").value;
     const formattedDateTime = formatDateTimeWeekly(classDateTime);
     const thisDateTime = formatDateTime(classDateTime);
-    const notificationMessage = `亲爱的 ✨ ${userName} 用户您好! 我们的语言陪练服务时间安排在${formattedDateTime}。<br><br>本次课程时间为${thisDateTime}；<br><br>上课地址如下：<br><br>#腾讯会议：573-215-9639<br><br>请学员及家长准时进入会议室上课。`;
+    const notificationMessage = `亲爱的 ✨ ${userName} 用户您好! 我们的语言陪练服务时间安排在${formattedDateTime}。<br><br>本次课程时间为${thisDateTime}；<br><br>上课地址如下：<br><br>#腾讯会议：573-215-9639<br><br>请学员及家长准时进入会议室上课，并且务必确保摄像头📷 📷 开启。感谢您的配合！`;
 
     copyToClipboard(notificationMessage);
     showLongText(`${notificationMessage}`);
@@ -105,7 +105,7 @@ export function handleScheduleNotificationClick() {
 export function handleLateMeetingReminderClick() {
     const userName = document.getElementById("userName").value;
     // Create the reminder message
-    const reminderMessage = `我们的在线课程已经开始了，请 ✨  ${userName} 同学抓紧时间及时进入会议室哦。🔥`
+    const reminderMessage = `我们的在线课程已经开始了，请 ✨  ${userName} 同学抓紧时间及时进入会议室，并且务必确保摄像头📷 📷 开启。感谢您的配合！🔥`
     copyToClipboard(reminderMessage);
     showLongText(`${reminderMessage}`);
 }
@@ -132,7 +132,7 @@ export function handleManagementGroupTemplateClick() {
     var selectedDateTime = new Date(reviewTime);
     var hour = selectedDateTime.getHours();
     var minute = selectedDateTime.getMinutes()
-    const outputMessage = `${userName}同学的复习时间定为 ${hour}:${minute}；<br><br>21天抗遗忘复习排课表已生成，请学员准时进入会议室进行抗遗忘复习。🚀🚀<br><br>上课地址如下：<br><br>#腾讯会议：573-215-9639`;
+    const outputMessage = `${userName}同学的复习时间定为 ${hour}:${minute}；<br><br>21天抗遗忘复习排课表已生成，请学员准时进入会议室进行抗遗忘复习，并且务必确保摄像头开启。感谢您的配合！📷 📷 📷 <br><br>上课地址如下：<br><br>#腾讯会议：573-215-9639<br><br>仅需在当天有提醒通知的情况下入会，如未收到请自行复习之前的内容。感谢您的理解与配合。😊`;
     copyToClipboard(outputMessage);
     // Display the output message
     showLongText(outputMessage);
