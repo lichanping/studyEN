@@ -722,3 +722,29 @@ secretaries秘书【复数】
 section部分；部门；栏目【C】
 see看见，看到；领会，理解；拜访，会见vt（saw，seen）
 see somebody doing something看见某人正在做某事
+see somebody do something看见某人做某事
+seed种子【C】
+seem似乎，好像vi
+seem to看上去好像做了某事
+seldom很少，不常adv
+select选择，挑选，选拔vt
+sell卖；销售vt（sold，sold）
+send打发，派遣；送，邮寄vt（sent，sent）
+senior年长的；高年级的；高级的adj
+senior school高中
+sense感觉；意识；感官【C】
+sentence句子【C】
+serious严肃的；严重的；认真的adj
+seriously严肃地；严重地；认真地adv
+serve招待（顾客等）；为。。。服务vt == work for
+service服务；公用事业n【C】
+servant仆人n
+set释放，安置；树立（榜样）；创造（记录）vi（set，set）
+settle安家，定居；解决vi
+settle down安置
+several几个adj
+shake握（手），摇（头）；使震动vt（shook，shaken）
+shall（表示将来）将要，会；（征求意见）。。。好吗？【v】【aux】（should）
+shame遗憾的事;羞愧【C】
+shape形状；外形；样子【C】
+share分享；共同使用vt
