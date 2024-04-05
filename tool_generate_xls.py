@@ -67,4 +67,4 @@ class TxtToXLSX:
 
 if __name__ == "__main__":
     tool = TxtToXLSX()
-    tool.convert('中考词汇K-S.txt')
+    tool.convert('中考词汇T-Z.txt')

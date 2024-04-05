@@ -134,7 +134,11 @@ export async function renderQuestion() {
 
             // Increment index for next question
             currentIndex = (currentIndex + 1) % globalWordsData.length;
-            fileCountLabel.textContent = `（${currentIndex}/${globalWordsData.length}个）`;
+            if (currentIndex === 0) {
+                fileCountLabel.textContent = `（${globalWordsData.length}/${globalWordsData.length}个）`;
+            } else {
+                fileCountLabel.textContent = `（${currentIndex}/${globalWordsData.length}个）`;
+            }
             sessionStorage.setItem(`${key}_currentIndex`, currentIndex);
         }
 
