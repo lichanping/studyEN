@@ -893,7 +893,7 @@ stolen【过去分词】steal
 steam蒸汽；水蒸气【U，C】
 step脚步，台阶【C】走，跨步【vi】
 stick木棒，枝条【C】粘住，钉住；坚持 vi（stuck，stuck）
-stuck 【过去式，过去分词】stick
+stuck 【过去式，过去分词】stick；被卡住的，被困住的adj
 chopsticks筷子n
 still仍然，还adv；不动的，平静的adj
 stocking长筒袜【C】 -- 复数：stockings
@@ -918,3 +918,30 @@ street街；街道【C】
 stress压力；紧张；强调【U，C】 --复数：stresses；加压力于；使紧张；强调 vt vi
 suffer from stress承受压力
 cause stress引起压力
+deal with stress应对压力
+reduce stress减轻压力
+relieve stress缓解压力
+be under stress承受压力
+strict严格的；严密的adj
+be strict in something对某事严格
+be strict with somebody对某人严格
+strike敲，打击，侵袭；（钟）鸣vt （struck，struck/stricken）
+strong强壮的；坚固的；强烈的；坚强的adj
+strength精力，体力
+student学生【C】
+study学习；研究vt；学习；研究；书房【C】
+stupid愚蠢的，笨的adj
+style风格；时尚；类型【U，C】
+in style流行；时髦
+I like the clothes with a natural style我喜欢民族风格的服装
+subject题目；主题；学科；主语；主体【C】
+succeed获得成功，达到目的vi
+success成功n【U，C】
+successful成功的adj
+successfully成功地adv
+such这样的，那样的adj；（泛指）人，事物pron
+such as例如
+suddenly突然地adv
+sudden突然的adj
+suffer受苦；遭受vi
+suffer from遭受
