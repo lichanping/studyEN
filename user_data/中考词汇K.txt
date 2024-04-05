@@ -522,7 +522,8 @@ prove证明vt --proof证明n
 proof证明n
 prove to be证实
 proverb谚语，格言【C】 = saying
-saying谚语，格言
+saying谚语，格言；俗语 【C】
+an old saying一句古老的谚语
 provide提供vt
 provide ...with提供；供应；给予
 public公共的，公众的adj；公众n
@@ -670,3 +671,54 @@ rule规则；规定【C】；统治vt
 run跑，奔跑；经营==manage，管理vt vi（ran，run）；奔跑【C】
 run away逃跑
 rush冲，奔跑vi
+sad悲伤的adj（sadder，saddest）
+sadly悲伤地adv，忧愁地，令人遗憾地；不幸地
+safe安全的；平安的adj；保险柜【C】
+safely安全地；平安地adv
+safety安全；平安n
+save挽救；节省vt
+save one's life救命
+salary薪金，薪水【C】
+salaries【复数】薪水
+sale卖，出售【C】
+sell卖，出售 V
+on sale 打折
+for sale出售
+be responsible for sales负责销售
+salt盐【U，C】
+salty咸的adj；含盐的
+salty water盐水
+same同样的adj；同样的事pron
+the same as和。。。一样
+sandwich三明治【C】
+satisfied满足的，满意的adj
+satisfying令人满意的，令人满足的adj
+be satisfied with对。。。感到满意 == be pleased with
+sauce酱汁；调味汁【U，C】
+say说，讲vt（said，said）
+schedule安排；预定；为。。。安排时间v；时间表；节目表；工作计划【C】
+ahead of schedule提前
+school学校【C】
+science科学，自然科学【U，C】
+scientist科学家n【C】
+score得分；分数【C】
+screen屏幕；荧光屏【C】
+sea海洋【C】
+seafood海鲜【U，C】
+search搜寻；搜查vi 【n】
+search for搜寻
+seaside海滨【C】
+season季节【C】
+seasonal季节的adj
+seasonal changes季节变化
+seat座位【C】
+sit坐vi
+second第二个；秒【C】；第二位的adj；其次，第二位地adv
+secondary中等的；第二的adj
+secondary school中学
+secret秘密【C】
+secretary秘书n【C】
+secretaries秘书【复数】
+section部分；部门；栏目【C】
+see看见，看到；领会，理解；拜访，会见vt（saw，seen）
+see somebody doing something看见某人正在做某事
