@@ -859,3 +859,89 @@ southern南面的，南部的
 space空间，太空【U，C】
 in space在太空
 spaceship宇宙飞船【C】
+spare空闲的；多余的，剩余的adj
+in one's spare time在某人的业余时间
+speak说，讲；谈话；发言vt（spoke，spoken）
+spoke【过去式】speak
+spoken【过去分词】speak
+speech演讲，说话n【C】
+special特别的，专门的adj
+give a speech作演讲
+speed速度【C】；使加速vi
+at the same speed以相同的速度
+spend度过；花费（钱、时间等）vt
+spoon调羹【C】
+sport体育运动；锻炼【C】
+spread延伸；展开；传播；扩散；散布 vt（spread， spread）
+spread your wings张开你的翅膀
+spring春天，春季【U，C】
+in spring在春天
+square广场【C】；平方的；方形的adj
+People's Square人民广场
+staff全体职员【C】
+stamp邮票【C】
+stand站；起立vi（stood，stood）
+star恒星，星【C】
+start开始；着手；出发vt；开端，开始【C】
+state状态；情形；国家，（美国的）州【C】
+station车站；电台【C】
+stay停留，逗留，呆【C】【vi】；保持【vi】
+steak牛排【C】
+steal偷，窃取vt（stole，stolen）
+stole【过去式】steal
+stolen【过去分词】steal
+steam蒸汽；水蒸气【U，C】
+step脚步，台阶【C】走，跨步【vi】
+stick木棒，枝条【C】粘住，钉住；坚持 vi（stuck，stuck）
+stuck 【过去式，过去分词】stick；被卡住的，被困住的adj
+chopsticks筷子n
+still仍然，还adv；不动的，平静的adj
+stocking长筒袜【C】 -- 复数：stockings
+stomachache胃疼【C】
+stone石头，石料【C】
+stop停止；阻止vt；停；（停车）站【C】
+stop doing something停止做某事
+stop to do something停下来去做某事
+at the bus stop在公交车站
+store商店【C】；储藏，储存vt
+a department store百货商店
+store the information存储信息
+storm风暴，暴（风）雨（雪）【C】
+story故事，小说【C】--复数：stories
+tell a story讲个故事
+straight一直的，直的adj；一直地adv
+go straight ahead笔直地往前走
+strange奇怪的，奇特的；陌生的adj
+stranger陌生人 n
+strawberry草莓【C】复数：strawberries
+street街；街道【C】
+stress压力；紧张；强调【U，C】 --复数：stresses；加压力于；使紧张；强调 vt vi
+suffer from stress承受压力
+cause stress引起压力
+deal with stress应对压力
+reduce stress减轻压力
+relieve stress缓解压力
+be under stress承受压力
+strict严格的；严密的adj
+be strict in something对某事严格
+be strict with somebody对某人严格
+strike敲，打击，侵袭；（钟）鸣vt （struck，struck/stricken）
+strong强壮的；坚固的；强烈的；坚强的adj
+strength精力，体力
+student学生【C】
+study学习；研究vt；学习；研究；书房【C】
+stupid愚蠢的，笨的adj
+style风格；时尚；类型【U，C】
+in style流行；时髦
+I like the clothes with a natural style我喜欢民族风格的服装
+subject题目；主题；学科；主语；主体【C】
+succeed获得成功，达到目的vi
+success成功n【U，C】
+successful成功的adj
+successfully成功地adv
+such这样的，那样的adj；（泛指）人，事物pron
+such as例如
+suddenly突然地adv
+sudden突然的adj
+suffer受苦；遭受vi
+suffer from遭受
