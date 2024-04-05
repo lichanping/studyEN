@@ -945,3 +945,35 @@ suddenly突然地adv
 sudden突然的adj
 suffer受苦；遭受vi
 suffer from遭受
+sugar糖【U，C】
+suggest建议；提议vt
+suggestion建议；提议n【C】
+suggest somebody do something建议某人做某事
+summer夏天，夏季【U，C】
+sun太阳；阳光【C】
+sunny阳光充足的，晴朗的adj
+in the sun在阳光下
+super超级的；极好的；特级的adj == wonderful
+supper晚餐，晚饭【U，C】
+support支持；赞助【U】【vt】
+suppose猜想，假定，料想vi
+sure确信的，肯定的，有把握的adj（surer，surest）【近义词】certain 肯定的，确定的adj
+surer【比较级】sure
+surest【最高级】sure
+be sure确信
+surface表面【C】
+on the surface在表面
+surprise惊奇，诧异【U，C】；使惊奇，使诧异vt
+surprised感到惊奇的adj
+surprising令人惊奇的adj
+survey调查vt 【C】
+survive幸存，活下来；存活；生还vt vi
+sweep扫除，扫vt（swept，swept）
+swept【过去式，过去分词】sweep
+sweet甜的；可爱的adj；甜食；糖果【C】
+swim游泳vi（swam，swum）【n】
+swam【过去式】swim
+swum【过去分词】swim
+go swimming去游泳
+symbol符号；象征【C】
+system体系；系统【C】
