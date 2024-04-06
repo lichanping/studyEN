@@ -1,8 +1,11 @@
 import asyncio
 import os
 import time
+import random
 
 import edge_tts
+from edge_tts import VoicesManager
+
 from tool_generate_xls import get_sub_folder_path
 
 
@@ -22,9 +25,10 @@ class TextToSpeechConverter:
         # Create output file path
         output_file_name = text_file_name.replace(".txt", "") + ".mp3"
         output_file = os.path.join(output_folder, output_file_name)
-
-        name = "Microsoft Server Speech Text to Speech Voice (en-US, MichelleNeural)"
-        communicate = edge_tts.Communicate(text_content, name)
+        # Create VoicesManager instance
+        voices = await VoicesManager.create()
+        voice = voices.find(Gender="Female", Language="en")
+        communicate = edge_tts.Communicate(text_content, random.choice(voice)["Name"])
         await communicate.save(output_file)
 
     async def convert_text_to_speech(self, text_file_names, output_folder):
