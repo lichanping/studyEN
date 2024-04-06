@@ -237,3 +237,5 @@ website网站【C】
 week星期【C】
 weekday工作日【C】
 on weekdays在工作日
+weekend周末【C】
+at weekends在周末
