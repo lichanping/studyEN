@@ -1,0 +1,26 @@
+The Rise of the Intelligent Monitoring System
+智能监测系统的崛起
+
+An intelligent monitoring system is helping bird protectors in Chenhu Lake Wetland of Wuhan, Hubei province, by collecting data and learning more about the birds' habits.
+
+智能监测系统正在帮助湖北省武汉市陈湖湿地的鸟类保护者收集数据，了解更多鸟类的习性。
+
+The wetland covers about 11, 600 hectares and is located in the area where the Yangtze River and Han River meet.Up to 86, 000 birds of 227 species inhabited the wetland last year, its figures showed.
+
+该湿地位于长江和汉江交汇处，占地约1.16万公顷。数据显示，去年有多达227种8.6万只鸟类栖息在这片湿地上。
+
+A limited number of bird-watchers and patrol guards may miss out counting some of the birds but the system can do it more accurately, according to the reserve.In July last year, the monitoring system, the first of its kind in Hubei, was put into trial(试验)operation in the wetland.It has since recorded real-time monitoring data and assisted with patrolling.The system can detect the type of birds arriving or leaving and which areas they prefer to move around, by identifying species through the sounds they make.It also monitors sounds in the wild and compares them with those in the database.
+
+根据保护区的说法，数量有限的观鸟者和巡逻警卫可能会错过一些鸟类的数量，但该系统可以做得更准确。去年7月，湖北省首个此类监测系统在湿地投入试运行。自那以后，它记录了实时监测数据并协助巡逻。该系统可以通过鸟类发出的声音来识别它们的种类，从而检测到到达或离开的鸟类类型，以及它们喜欢在哪些地区移动。它还可以监测野外的声音，并将它们与数据库中的声音进行比较。
+
+A video system tracks key protection areas all day.Photos of birds taken will be automatically compared with those in the database, with a combination of audio and video information increasing the recognition accuracy.The reserve's employees have also added tracking functions in the monitoring system by placing satellite trackers on bean geese —migrating bean geese have been found to fly from Russian areas.
+
+视频系统全天跟踪重点保护区。所拍摄的鸟类照片将自动与数据库中的照片进行比较，同时音频和视频信息的结合也提高了识别精度。保护区的工作人员还在监测系统中增加了跟踪功能，他们在豆鹅身上放置了卫星跟踪器——已经发现从俄罗斯地区飞来的迁徙豆鹅。
+
+Feng Jiang, an engineer of the Chenhu wetland nature reserve management bureau, said, “The tracking data has a positive effect on the protection of species globally.Since November last year, we have tried to clarify the migration routes of birds.We monitor where they stay and when they return to the reserve.The data tells us where birds come from and pass by.
+
+陈湖湿地自然保护区管理局工程师冯江表示:“追踪数据对全球物种保护具有积极作用。自去年11月起，我们一直致力厘清雀鸟的迁徙路线。我们监控它们在哪里停留以及何时返回保护区。数据告诉我们鸟从哪里来，从哪里经过。
+
+We can cooperate with international organizations or countries to better protect them.The monitoring system also uses digital technology to build a simulation(模拟)model.By simulating the flow of tourists, researchers can decide the maximum number of visitors in Chenhu Lake and prevent people from disturbing the birds.This can help researchers predict as well the possibility and scope(范围) of the environmental impact on the wetland through the growth of plants there and roll out targeted measures.
+
+我们可以与国际组织或国家合作，更好地保护他们。监测系统还使用数字技术建立了仿真模型。通过模拟游客流量，研究人员可以确定晨湖的最大游客数量，并防止人们打扰鸟类。这可以帮助研究人员预测通过植物生长对湿地环境影响的可能性和范围，并推出有针对性的措施。”
