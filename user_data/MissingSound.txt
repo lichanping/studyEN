@@ -1,46 +1,5 @@
-value
-traditional values
-increase in value
-decrease in value
-variety
-various
-vegetable
-victory
-video
-view
-village
-play the violin
-visit
-visitor
-an exchange visit
-pay a visit to
-volleyball
-play volleyball
-volunteer
-wait
-waitress
-wait for
-waitresses
-woke
-woken
-wake up
-walk
-want
-want to do something
-want somebody to do something
-war
-warm
-warn
-warn somebody not to do something
-wash
-waste
-watch
-wave
-in this way
-weak
-wealth
-wear
-weather
-web
-The world Wide Web
-website
+week
+weekday
+on weekdays
+weekend
+at weekends
