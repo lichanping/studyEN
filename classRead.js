@@ -28,10 +28,10 @@ const userData2 = {
         // course: "牛津上海版英语七年级上册",
         hours: [16, 0]
     },
-    "阅读2": {
-        schedule: "每周五、日 20:30 阅读2 (5年级)",
-        course: "初中中级",
-        hours: [20, 30]
+    "悠然": {
+        schedule: "每周六 11:00 高中阅读 (5年级)",
+        course: "高中中级",
+        hours: [11, 0]
     }
 };
 export function createUsers2() {
