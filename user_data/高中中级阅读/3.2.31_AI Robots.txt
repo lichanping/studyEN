@@ -1,0 +1,22 @@
+AI Robots
+智能机器人
+
+Walmart will soon use 360 robot cleaners across a few hundred of its stores.Using maps input by human employees, the AI-powered cleaners will travel in the store with no difficulty, sweeping the floor--just as human employees used to do.
+
+沃尔玛(Walmart)很快将在其数百家门店使用360台机器人清洁工。使用人类员工输入的地图，人工智能驱动的清洁工将毫不费力地在商店里走动，扫地——就像人类员工过去做的那样。
+
+Perhaps the most striking thing about these robot workers is how not-striking they are.Sci-fi movies suggest a future full of human-like robots who appear with horrible qualities.Now the future is coming into view, and it looks like a giant lie.It's easy to imagine walking past an Auto-C on a shopping trip without even noticing its presence.
+
+也许这些机器人工人最引人注目的事情是它们是多么的不引人注目。科幻电影描绘了一个充满人形机器人的未来，这些机器人有着可怕的品质。现在，未来映入眼帘，它看起来像一个巨大的谎言。很容易想象，当你在购物途中经过Auto-C时，你甚至没有注意到它的存在。
+
+AI has already started to become a part of our everyday life.In New Jersey this week, dozens of workers were hospitalized after a robot at an Amazon fulfillment centre accidentally broke a can and enveloped workers in eye-and-lung-damaging gas.Days earlier in California, an auto-piloted Tesla drove a drunk, sleeping driver down a highway, which no doubt did some potential risk to the other drivers on the road.Highway patrol officers figured out on the spot how to stop the AI car.
+
+人工智能已经开始成为我们日常生活的一部分。本周在新泽西州，亚马逊物流中心的一个机器人不小心打破了一个罐子，使工人们被眼睛和肺部受损的气体包围，数十名工人被送往医院。几天前，在加州，一辆自动驾驶的特斯拉在高速公路上载着一名醉酒的、睡着的司机，这无疑给路上的其他司机带来了一些潜在的风险。公路巡警当场想出了阻止人工智能汽车的方法。
+
+Of course, industrial accidents and drunk drivers existed well before AI.Tools with the power to release the burden of physical labor—horses, steam machines, self-driving cars—also come with the power to injure.And the presence of AI-powered machines just steps away from us is, for now, still a rare thing for most people.
+
+当然，工业事故和酒驾司机早在人工智能出现之前就已经存在了。能够减轻体力劳动负担的工具——马、蒸汽机、自动驾驶汽车——也有可能造成伤害。目前，对大多数人来说，距离我们仅几步之遥的人工智能机器仍然是一件罕见的事情。
+
+But the nature of robots coming into our daily life lives will make it harder to recognize—or object to—the bigger changes they bring later.Walmart insists that the robot cleaners give employees more time for customer service and other tasks.Critics point out that they could just as easily become an excuse to reduce staff and wages.
+
+但是，机器人进入我们日常生活的本质将使我们更难识别或反对它们以后带来的更大的变化。沃尔玛坚持认为，机器人清洁工给了员工更多的时间来做客户服务和其他任务。批评人士指出，这很容易成为削减员工和工资的借口。

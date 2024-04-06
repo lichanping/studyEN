@@ -1,0 +1,18 @@
+What Is the Zeigarnik Effect?
+什么是蔡格尼克效应？
+
+When you start working on something but don't finish it, thoughts of the unfinished work continue to jump into your mind even when you've moved on to other things.Psychologists refer to this psychological phenomenon as the Zeigarnik effect.The effect was first observed by a Russian psychologist named Bluma Zeigarnik.While sitting in a busy restaurant in Vienna, she noted the waiters had better memories of unpaid orders.Once the bill was paid, however, the waiters had difficulty remembering the exact details of the orders.
+
+当你开始做一件事但没有完成它时，即使你已经转移到其他事情上，未完成工作的想法仍会继续跳入你的脑海。心理学家将这种心理现象称为蔡格尼克效应。俄罗斯心理学家Bluma Zeigarnik首先观察到这种效应。当她坐在维也纳一家繁忙的餐厅里时，她注意到服务员对未付订单的记忆更好。然而，一旦付了账单，服务员就很难记住订单的确切细节了。
+
+In one of her studies, participants were asked to complete simple tasks such as putting together puzzles, or solving math problems.Half of the participants were interrupted halfway through these tasks.After an hour-long delay, Zeigarnik asked the participants to give an account of what they'd been working on.She discovered that those who had their work interrupted were twice as likely to remember what they had been doing as those who had actually completed the tasks.
+
+在她的一项研究中，参与者被要求完成简单的任务，如拼拼图或解决数学问题。一半的参与者在任务进行到一半时被打断。在一个小时的延迟之后，蔡格尼克让参与者描述一下他们在做什么。她发现，那些工作被打断的人记住自己所做事情的可能性是那些真正完成任务的人的两倍。
+
+We can use this effect to our advantage.For example, if you're struggling to memorize something important, momentary interruptions might actually work to your advantage.Rather than simply remember the information over and over again, review it several times and then take a break.While you're focusing on other things, you'll find yourself mentally returning to the information you were studying.
+
+我们可以利用这种效应。例如，如果你正在努力记住一些重要的东西，短暂的打断可能会对你有好处。与其一遍又一遍地记住信息，不如复习几遍，然后休息一下。当你专注于其他事情的时候，你会发现自己的思维又回到了你学习的信息上。
+
+We often put off tasks until the last moment, only completing them in a rush at the last possible moment.Unfortunately, this tendency can lead to heavy stress and even poor performance.One way to overcome this is to put the Zeigarnik effect to work.Start by taking the first step, no matter how small.Once you've begun，but not finished your work, you'll find yourself thinking of the task until, at last, you finish it.You might not finish it all at once, but each small step you take puts you closer to your final goal.
+
+我们经常把任务拖到最后一刻，只会在最后一刻匆忙完成。不幸的是，这种倾向会导致沉重的压力，甚至糟糕的表现。克服这一问题的一种方法是将蔡格尼克效应付诸实践。从迈出第一步开始，无论多小。一旦你开始了工作，但还没有完成，你会发现自己一直在想着任务，直到最后完成它。你可能无法一次性完成，但每迈出一小步都会让你更接近最终目标。
