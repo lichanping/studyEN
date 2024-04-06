@@ -29,8 +29,8 @@ const userData2 = {
         hours: [16, 0]
     },
     "悠然": {
-        schedule: "每周六 11:00 高中阅读 (5年级)",
-        course: "高中中级",
+        schedule: "每周六 11:00 悠然 (高二)",
+        course: "高中中级阅读理解",
         hours: [11, 0]
     }
 };
@@ -83,7 +83,7 @@ export function updateLabel2() {
 
     const formattedCurrentDate = `${year}-${month}-${day}T${hours}:${minutes}`;
     document.getElementById("classDateTime").value = formattedCurrentDate;
-    // document.getElementById("reviewTime").value = formattedCurrentDate;
+    document.getElementById("reviewTime").value = formattedCurrentDate;
 }
 
 export function handleScheduleNotificationClick() {
