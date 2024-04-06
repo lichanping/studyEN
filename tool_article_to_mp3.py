@@ -53,8 +53,8 @@ class TextToSpeechConverter:
 
 
 if __name__ == "__main__":
-    input_folder = "articles"  # Specify the input folder containing text files
-    output_folder = "article_to_mp3"  # Specify the output folder here
+    input_folder = "TEXT_SOURCE"  # Specify the input folder containing text files
+    output_folder = "VOICE_OUTPUT"  # Specify the output folder here
     output_folder_path = os.path.join(get_sub_folder_path(), output_folder)
 
     # Create the output folder if it doesn't exist
