@@ -28,7 +28,7 @@ sound_folder = get_sub_folder_path('sounds')
 
 
 # Async function to process a batch of texts and convert them to speech
-async def process_text_batch(texts):
+async def process_text_batch(texts,  use_michelle=True):
     for text in texts:
         # Create output file path for each text
         output_file = os.path.join(sound_folder, f"{text}.mp3")
@@ -36,13 +36,20 @@ async def process_text_batch(texts):
         # Create VoicesManager instance
         voices = await VoicesManager.create()
 
-        # Choose voice from the voice library
-        # command:"edge-tts --list-voices"
-        voice = voices.find(Gender="Female", Language="en")
-        # voice = voices.find(Gender="Male", Language="en")
-        # Use Edge TTS API to convert text to speech and save as MP3 file
-        communicate = edge_tts.Communicate(text, random.choice(voice)["Name"])
-        await communicate.save(output_file)
+        if use_michelle:
+            # Choose voice: specific Michelle voice
+            # voice = "en-US-MichelleNeural"
+            name = "Microsoft Server Speech Text to Speech Voice (en-US, MichelleNeural)"
+            communicate = edge_tts.Communicate(text, name)
+            await communicate.save(output_file)
+        else:
+            # Choose voice from the voice library
+            # command:"edge-tts --list-voices"
+            voice = voices.find(Gender="Female", Language="en")
+            # voice = voices.find(Gender="Male", Language="en")
+            # Use Edge TTS API to convert text to speech and save as MP3 file
+            communicate = edge_tts.Communicate(text, random.choice(voice)["Name"])
+            await communicate.save(output_file)
 
 
 # Main function to process the entire TEXT_LIST in batches
