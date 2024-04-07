@@ -72,11 +72,10 @@ class TextToSpeechConverter:
     def __init__(self, txt_to_xlsx):
         self.txt_to_xlsx = txt_to_xlsx
 
-    async def convert_text_to_audio(self, file_name, repeat=2, max_items=10):
+    async def convert_text_to_audio(self, file_name, repeat=2, max_items=None):
         extracted_data = self.txt_to_xlsx.read_text(file_name)
 
-        # 如果提取的数据长度超过了 max_items，那么随机选择 max_items 个项目
-        if len(extracted_data) > max_items:
+        if max_items is not None and 0 < max_items < len(extracted_data):
             extracted_data = random.sample(extracted_data, max_items)
 
         output_file = os.path.join(self.txt_to_xlsx.data_folder, file_name.split('.')[0] + ".mp3")
@@ -84,8 +83,8 @@ class TextToSpeechConverter:
         voices = await VoicesManager.create()
         english_voice = voices.find(Gender="Female", Language="en")
         chinese_voice = voices.find(Language='zh'
-                                    # , Gender="Male"
-                                    # , Locale="zh-CN"
+                                    , Gender="Female"
+                                    , Locale="zh-CN"
                                     )
 
         with open(output_file, "wb") as file:
@@ -112,14 +111,18 @@ class TextToSpeechConverter:
         print(f"Audio file '{output_file}' created successfully.")
 
 
+def en_and_cn(file, max_items):
+    start_time = time.time()  # Record start time
+    converter = TextToSpeechConverter(tool)
+    asyncio.run(converter.convert_text_to_audio(file, max_items=max_items))
+    end_time = time.time()  # Record end time
+    elapsed_time = end_time - start_time  # Calculate elapsed time
+    print(f"Time taken: {elapsed_time} seconds")
+
+
 if __name__ == "__main__":
     tool = TxtToXLSX()
-    tool.convert('中考词汇T-Z.txt')
+    tool.convert('中考考纲词组.txt')
 
     # TODO：Don't use except for needed
-    # start_time = time.time()  # Record start time
-    # converter = TextToSpeechConverter(tool)
-    # asyncio.run(converter.convert_text_to_audio('中考词汇T-Z.txt', max_items=2))
-    # end_time = time.time()  # Record end time
-    # elapsed_time = end_time - start_time  # Calculate elapsed time
-    # print(f"Time taken: {elapsed_time} seconds")
+    # en_and_cn('悠然.txt', max_items=None)
