@@ -22,17 +22,17 @@ window.addEventListener("load", updateLabel2);
 
 // Define user data
 const userData2 = {
+    "悠然": {
+        schedule: "每周6、7 11:00 悠然 (高二)",
+        course: "高中中级阅读理解",
+        hours: [11, 0]
+    },
     "陈敏珺": {
-        schedule: "每周日 16:00 陈敏珺 (7年级)",
+        schedule: "每周日 16:00 陈敏珺 (初一)",
         course: "初中中级完型填空",
         // course: "牛津上海版英语七年级上册",
         hours: [16, 0]
     },
-    "悠然": {
-        schedule: "每周六 11:00 悠然 (高二)",
-        course: "高中中级阅读理解",
-        hours: [11, 0]
-    }
 };
 export function createUsers2() {
     const userNameSelect = document.getElementById("userName");
