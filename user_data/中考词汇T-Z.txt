@@ -95,7 +95,6 @@ toothache牙痛【U，C】
 top顶部【C】，（物体的）上面；最上面的；居首位的adj
 topic题目，话题【C】
 touch触摸；接触；感动vi
-keep in touch with （与。。。）保持联系
 tour参观，观光，旅行【C】
 tourist游客，旅客，旅行者【C】
 towards向，朝，对于prep
@@ -297,3 +296,33 @@ wolves狼【复数】wolf
 wonder对。。。疑惑；想知道
 wonderful美好的，精彩的；太好了adj
 wood木头，木材;树林（复：woods）【U，C】
+wooden木质的adj
+in other words换句话说
+in a word总而言之
+worker工作者；工人
+work out做出；算出；制定出 == solve解答
+work as从事。。。工作
+all over the world遍布全世界 == throughout the world
+worry担心；烦恼vi；担忧【U，C】复数：worries
+worry about为。。。而担心
+worth有。。。的价值；值得。。。的adj
+be worth doing something值得做某事
+would愿意（will 的过去式）
+would like to 想要（表示喜欢，愿意），很想；很愿意 == would love to
+would rather宁愿，宁可
+wound创伤，伤口【U，C】
+wounded受伤的adj
+write写；写作；写信（wrote，written）vt vi
+writer作家n
+wrong错误的；不正常的；有病的adj
+go wrong出错 == make mistakes
+year年【C】
+yellow黄色的adj；黄色【U】
+yesterday昨天adv 【C】
+the day before yesterday前天
+yet尚，还，仍然adv
+yogurt酸奶【U】
+young年轻的adj
+zero零；零度；零点【C】
+zoo动物园【C】pl：zoos
+zoos复数zoo
