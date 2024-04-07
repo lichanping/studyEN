@@ -2,6 +2,7 @@ import asyncio
 import os
 import random
 import re
+import random
 import time
 from os.path import dirname, abspath
 
@@ -48,7 +49,7 @@ class TxtToXLSX:
                     english_word, translation = match.groups()
                     media = os.path.join(self.sound_folder, f"{english_word.strip()}.mp3")
                     exist = os.path.exists(media)
-                    print(f"English: {english_word}, Translation: {translation}, Sound: {exist}")
+                    # print(f"English: {english_word}, Translation: {translation}, Sound: {exist}")
                     data.append({"单词": english_word.strip(), "释意": translation, "音频": str(exist)})
                     if not exist:
                         missing_words.append(english_word.strip())
@@ -71,8 +72,13 @@ class TextToSpeechConverter:
     def __init__(self, txt_to_xlsx):
         self.txt_to_xlsx = txt_to_xlsx
 
-    async def convert_text_to_audio(self, file_name, repeat=2):
+    async def convert_text_to_audio(self, file_name, repeat=2, max_items=10):
         extracted_data = self.txt_to_xlsx.read_text(file_name)
+
+        # 如果提取的数据长度超过了 max_items，那么随机选择 max_items 个项目
+        if len(extracted_data) > max_items:
+            extracted_data = random.sample(extracted_data, max_items)
+
         output_file = os.path.join(self.txt_to_xlsx.data_folder, file_name.split('.')[0] + ".mp3")
 
         voices = await VoicesManager.create()
@@ -83,7 +89,7 @@ class TextToSpeechConverter:
             for item in extracted_data:
                 english_word = item['单词']
                 chinese_meaning = item['释意']
-
+                print(f"English: {english_word}, Translation: {chinese_meaning}")
                 english_voice_name = random.choice(english_voice)["Name"]
                 chinese_voice_name = random.choice(chinese_voice)["Name"]
 
@@ -111,7 +117,7 @@ if __name__ == "__main__":
     # Don't use except for needed
     start_time = time.time()  # Record start time
     converter = TextToSpeechConverter(tool)
-    asyncio.run(converter.convert_text_to_audio('中考词汇T-Z.txt'))
+    asyncio.run(converter.convert_text_to_audio('中考词汇T-Z.txt', max_items=5))
     end_time = time.time()  # Record end time
     elapsed_time = end_time - start_time  # Calculate elapsed time
     print(f"Time taken: {elapsed_time} seconds")
