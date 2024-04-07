@@ -30,6 +30,7 @@ sound_folder = get_sub_folder_path('sounds')
 # Async function to process a batch of texts and convert them to speech
 async def process_text_batch(texts,  use_michelle=False):
     for text in texts:
+        print(f"Processing text: {text}")
         # Create output file path for each text
         output_file = os.path.join(sound_folder, f"{text}.mp3")
 

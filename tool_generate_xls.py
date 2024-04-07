@@ -83,7 +83,10 @@ class TextToSpeechConverter:
 
         voices = await VoicesManager.create()
         english_voice = voices.find(Gender="Female", Language="en")
-        chinese_voice = voices.find(Gender="Male", Locale="zh-CN")
+        chinese_voice = voices.find(Language='zh'
+                                    # , Gender="Male"
+                                    # , Locale="zh-CN"
+                                    )
 
         with open(output_file, "wb") as file:
             for item in extracted_data:
@@ -116,7 +119,7 @@ if __name__ == "__main__":
     # TODO：Don't use except for needed
     # start_time = time.time()  # Record start time
     # converter = TextToSpeechConverter(tool)
-    # asyncio.run(converter.convert_text_to_audio('中考词汇T-Z.txt', max_items=5))
+    # asyncio.run(converter.convert_text_to_audio('中考词汇T-Z.txt', max_items=2))
     # end_time = time.time()  # Record end time
     # elapsed_time = end_time - start_time  # Calculate elapsed time
     # print(f"Time taken: {elapsed_time} seconds")
