@@ -239,3 +239,57 @@ weekday工作日【C】
 on weekdays在工作日
 weekend周末【C】
 at weekends在周末
+weigh称。。。的重量；重 vt
+weight重量n【U】
+welcome欢迎【U】；受欢迎的adj；欢迎vt；int(即感叹词）
+western西方的adj
+wet潮湿的；多雨的adj（wetter,wettest)
+what's more而且
+whether是否
+who谁pron
+whom谁【宾格】
+whose谁的（所有格）
+the whole world全世界
+why not do something为什么不做某事（表示建议）
+why don't you do something为什么不做某事（表示建议）
+how about doing something为什么不做某事（表示建议）
+what about doing something为什么不做某事（表示建议）
+wide宽的；广泛的adj（wider，widest）
+widely宽阔地；广泛地adv
+widen拓宽vt
+wife妻子【C】--复数：wives
+wild野生的，荒凉的adj
+will将，会；意愿；（提问）是否愿意；。。。好吗？；意志【C】
+win获胜；赢得vt vi（won，won）
+won【过去式，过去分词】win
+winner获胜者
+win the first place赢得第一名
+windy有风的，起风的adj --名词：wind
+wine葡萄酒【U】
+wing机翼；翅膀【C】
+winter冬天，冬季【C】
+wisdom智慧【U】
+wise明智的，聪明的adj
+wish愿望；祝愿【C】--复数：wishes；希望；想要；祝愿vt
+agree with somebody同意某人的意见
+be angry with生某人的气
+be busy with something忙于做某事  = be busy doing something
+be careful with 小心
+be connected to 与。。。有联系 == be connected with
+be covered with 被。。。覆盖
+be familiar with 对。。。熟悉；通晓 == be/get familiar to/with
+be pleased with对。。。满意
+be satisfied with对。。。满意
+be strict with对。。。严格
+communicate with与。。。交流
+compete with与。。。竞争
+deal with处理
+get along with进展；与。。相处 == get on with
+go on with something 继续做某事 == go on doing something
+keep in touch with 与。。。保持联系
+play with玩耍，摆弄
+provide...with...向。。。提供
+shake hands with与。。。握手
+with great care非常小心
+with pleasure愉快地
+with the help of在。。。的帮助下
