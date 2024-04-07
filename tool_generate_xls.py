@@ -111,13 +111,12 @@ class TextToSpeechConverter:
 
 if __name__ == "__main__":
     tool = TxtToXLSX()
-    # tool.convert('蔡青青.txt')
-    # tool.convert('中考词汇T-Z.txt')
+    tool.convert('中考词汇T-Z.txt')
 
-    # Don't use except for needed
-    start_time = time.time()  # Record start time
-    converter = TextToSpeechConverter(tool)
-    asyncio.run(converter.convert_text_to_audio('中考词汇T-Z.txt', max_items=5))
-    end_time = time.time()  # Record end time
-    elapsed_time = end_time - start_time  # Calculate elapsed time
-    print(f"Time taken: {elapsed_time} seconds")
+    # TODO：Don't use except for needed
+    # start_time = time.time()  # Record start time
+    # converter = TextToSpeechConverter(tool)
+    # asyncio.run(converter.convert_text_to_audio('中考词汇T-Z.txt', max_items=5))
+    # end_time = time.time()  # Record end time
+    # elapsed_time = end_time - start_time  # Calculate elapsed time
+    # print(f"Time taken: {elapsed_time} seconds")
