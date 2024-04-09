@@ -22,20 +22,13 @@ export function navigateToFormalClass() {
 }
 
 export function navigateToLearnWords() {
-    const pin = prompt("Enter PIN code to proceed:");
-    // Check if the entered PIN matches the expected value
-    if (pin === "111") {
-        // Navigate to the formal class page
-        window.location.href = "learn-words.html";
-    } else {
-        // Display an error message if the PIN is incorrect
-        alert("Incorrect PIN. Please try again.");
-    }
+    window.location.href = "learn-words.html";
 }
 
 export function navigateToReadClass() {
     window.location.href = "class-read.html";
 }
+
 export function handleCameraWarningClick() {
     const userName = document.getElementById("userName").value;
     const warningMessage = `尊敬的家长，我们注意到 ${userName} 在课堂上未按要求开启摄像头。为了确保学习效果和教学质量，请您督促 ${userName} 在课堂期间按要求操作。感谢您的理解与配合！⚠`;
@@ -142,17 +135,18 @@ export function showAlert(message) {
         heightAuto: false,  // Prevent auto height adjustment
     });
 }
+
 export function showLongText(longText) {
-  const textElement = document.createElement('div');
-  textElement.innerHTML = longText;
-  textElement.classList.add('long-text');
-  document.body.appendChild(textElement);
-  setTimeout(() => {
-    textElement.style.opacity = '0'; // Set opacity to make it invisible
+    const textElement = document.createElement('div');
+    textElement.innerHTML = longText;
+    textElement.classList.add('long-text');
+    document.body.appendChild(textElement);
     setTimeout(() => {
-      textElement.remove(); // Remove the text after hiding
-    }, 300); // Adjust the timing of removal as needed (300 milliseconds in this case)
-  }, 2000); // Adjust the timing of visibility as needed (2000 milliseconds in this case)
+        textElement.style.opacity = '0'; // Set opacity to make it invisible
+        setTimeout(() => {
+            textElement.remove(); // Remove the text after hiding
+        }, 300); // Adjust the timing of removal as needed (300 milliseconds in this case)
+    }, 2000); // Adjust the timing of visibility as needed (2000 milliseconds in this case)
 }
 
 export function getRandomMotto() {

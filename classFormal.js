@@ -124,10 +124,8 @@ export function handleClassFeedbackClick() {
     const forgetWord = parseInt(document.getElementById("forgetWord").value) || 0; // Default to 0 if no value entered or invalid
     // Calculate correct rate
     const correctRate = ((newWord - forgetWord) / newWord * 100).toFixed(0);
-    // Get course label
-    const courseLabel = document.getElementById("courseLabel").textContent.trim();
     // Generate feedback message
-    const feedbackMessage = `【${userName}今日学习反馈】<br><br>1.今日复习单词 ${reviewWordCount}个，遗忘 0个；今日新学单词 ${newWord}个，遗忘${forgetWord}个, 正确率 ${correctRate}%。<br><br>2.陪伴 ✨ ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} "${getRandomMotto()}”，认真且努力的${userName}一定能抵达梦想的彼岸。<br><br>3.${userName}目前学习：${courseLabel}<br><br>4.严格按照 21 天抗遗忘复习表来复习哟! 🚀🚀🚀`
+    const feedbackMessage = `【${userName}今日学习反馈】<br><br>1.今日复习单词 ${reviewWordCount}个，遗忘 0个；今日新学单词 ${newWord}个，遗忘${forgetWord}个, 正确率 ${correctRate}%。<br><br>2.陪伴 ✨ ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} "${getRandomMotto()}”，认真且努力的${userName}一定能抵达梦想的彼岸。<br><br>3.严格按照 21 天抗遗忘复习表来复习哟! 🚀🚀🚀`
     copyToClipboard(feedbackMessage);
     showLongText(`${feedbackMessage}`);
 }
