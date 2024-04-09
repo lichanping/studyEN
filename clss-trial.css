@@ -9,6 +9,10 @@ input[type="radio"] {
     margin-right: 15px; /* Adjust the margin for spacing */
 }
 
+#classFeedbackButton {
+    background-color: lightblue;
+}
+
 body {
     font-family: Arial, sans-serif;
     text-align: left; /* Change to left alignment */
@@ -35,13 +39,16 @@ body {
 #teacherName {
     width: 80px; /* Adjust the width as needed */
 }
-#vocabularyCount,#studyTime {
+
+#vocabularyCount, #studyTime {
     width: 40px; /* Adjust the width as needed */
 }
+
 #reviewWord,
-#newWord, #forgetWord,#antiForgettingReviewWord,#antiForgettingForgetWord {
+#newWord, #forgetWord, #antiForgettingReviewWord, #antiForgettingForgetWord {
     width: 40px; /* Specify the width in pixels */
 }
+
 button {
     background-color: #D0F0C0;
     margin: 5px;

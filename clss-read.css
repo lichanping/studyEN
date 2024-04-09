@@ -8,6 +8,10 @@ body {
     background-color: #f2f2f2;
 }
 
+#classFeedbackButton {
+    background-color: lightblue;
+}
+
 .long-text {
     position: fixed;
     top: 50%;
