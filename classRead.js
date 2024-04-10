@@ -30,7 +30,6 @@ const userData2 = {
     "陈敏珺": {
         schedule: "每周日 16:00 陈敏珺 (初一)",
         course: "初中中级完型填空",
-        // course: "牛津上海版英语七年级上册",
         hours: [16, 0]
     },
 };
