@@ -21,26 +21,24 @@ window.addEventListener('load', createUsers);
 window.addEventListener("load", updateLabel);
 // Define user data
 const userData = {
-     "悠然": {
-        schedule: "每周1、3、5 20:45 悠然 (高二)",
-        // course: "乱序版上海市初中",
-        course: "牛津上海版英语高中",
-        // course: "牛津上海版英语七年级上册",
-        hours: [20, 45]
-    },
     "蔡青青": {
         schedule: "每周一 19:30 蔡青青 (6年级)",
-        // course: "乱序版上海市初中",
         course: "牛津上海版英语七年级下册",
-        // course: "牛津上海版英语七年级上册",
         hours: [19, 30]
     },
     "夏启程": {
-        schedule: "每周五、日 19:40 夏启程 (5年级)",
-//        course: "牛津上海版小学英语六年级",
+        schedule: "每周五、日 19:35 夏启程 (5年级)",
         course: "小学考纲词汇",
+        hours: [19, 35]
+    }, "陈敏珺": {
+        schedule: "每周日 19:40 陈敏珺 (初一)",
+        course: "初中中级完型填空",
         hours: [19, 40]
-    }
+    }, "悠然": {
+        schedule: "每周1、3、5 19:45 悠然 (高二)",
+        course: "牛津上海版英语高中",
+        hours: [19, 45]
+    },
 };
 
 export function createUsers() {
