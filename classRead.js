@@ -92,7 +92,7 @@ export function handleScheduleNotificationClick() {
     const classDateTime = document.getElementById("classDateTime").value;
     const formattedDateTime = formatDateTimeWeekly(classDateTime);
     const thisDateTime = formatDateTime(classDateTime);
-    const notificationMessage = `亲爱的 ⭐ ${userName} 用户您好! 我们的语言陪练服务时间安排在${formattedDateTime}。<br><br>本次课程时间为${thisDateTime}；<br><br>上课地址如下：<br><br>#腾讯会议：573-215-9639<br><br>请学员及家长准时进入会议室上课，并且务必确保摄像头🎥🎥开启。感谢您的配合！`;
+    const notificationMessage = `亲爱的 ⭐ ${userName} 用户您好! 我们的英语学习时间安排在${formattedDateTime}。<br><br>本次课程时间为${thisDateTime}；<br><br>上课地址如下：<br><br>#腾讯会议：573-215-9639<br><br>请学员及家长准时进入会议室上课，并且务必确保摄像头🎥🎥开启。感谢您的配合！`;
     copyToClipboard(notificationMessage);
     showLongText(`${notificationMessage}`);
 }
@@ -203,7 +203,7 @@ function formatDateTimeWeekly(dateTimeString) {
         hour12: false
     };
     const formattedDateTime = new Date(dateTimeString).toLocaleString('zh-CN', options);
-    return `每周${formattedDateTime}`;
+    return `${formattedDateTime}`;
 }
 
 
