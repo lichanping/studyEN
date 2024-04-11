@@ -3,7 +3,9 @@ import os
 import random
 import re
 import random
+import shutil
 import time
+from datetime import datetime
 from os.path import dirname, abspath
 
 import edge_tts
@@ -35,6 +37,11 @@ class TxtToXLSX:
         self.create_excel(extracted_data)
 
     def read_text(self, file_name):
+        """
+        Generate MissingSound.txt if audio not exists
+        :param file_name:
+        :return:
+        """
         self.ori_file = file_name
         self.generate_file = os.path.join(self.data_folder, file_name.split('.')[0] + "_抗遗忘单词.xlsx")
         missing_sound_file = os.path.join(self.data_folder, "MissingSound.txt")  # Path to store missing sound words
@@ -120,9 +127,38 @@ def en_and_cn(file, max_items):
     print(f"Time taken: {elapsed_time} seconds")
 
 
+def copy_review_to_forgetting():
+    # Source and destination directories
+    source_dir = "/Users/cnShirLi/flaskStudy/data/review"
+    destination_dir = "/Users/cnShirLi/studyEN/user_data"
+
+    # Ensure the destination directory exists
+    if not os.path.exists(destination_dir):
+        os.makedirs(destination_dir)
+
+    # Get today's date in yyyy-mm-dd format
+    today = datetime.now().strftime("%Y-%m-%d")
+
+    # Find the review file for today
+    review_file = os.path.join(source_dir, f"{today}.txt")
+
+    # Check if the review file exists
+    if os.path.exists(review_file):
+        # Copy the contents of the review file to the destination forgetting file
+        forgetting_file = os.path.join(destination_dir, "抗遗忘.txt")
+        shutil.copyfile(review_file, forgetting_file)
+        print(f"Copied {review_file} to {forgetting_file}")
+    else:
+        print(f"No review file found for {today}")
+
+
 if __name__ == "__main__":
+    # Run the function
+    copy_review_to_forgetting()
+
     tool = TxtToXLSX()
-    tool.convert('中考考纲词组.txt')
+    # generate missing sounds
+    tool.convert('抗遗忘.txt')
 
     # TODO：Don't use except for needed
     # en_and_cn('悠然.txt', max_items=None)
