@@ -154,11 +154,11 @@ def copy_review_to_forgetting():
 
 if __name__ == "__main__":
     # Run the function
-    copy_review_to_forgetting()
+    # copy_review_to_forgetting()
 
     tool = TxtToXLSX()
     # generate missing sounds
-    tool.convert('抗遗忘.txt')
+    tool.convert('悠然.txt')
 
     # TODO：Don't use except for needed
     # en_and_cn('悠然.txt', max_items=None)
