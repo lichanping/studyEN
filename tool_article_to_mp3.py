@@ -30,14 +30,15 @@ class TextToSpeechConverter:
         input_file_path = os.path.join(get_sub_folder_path(), input_folder, text_file_name)
         text_content = await self.read_text_from_file(input_file_path)
 
-        # Create output file path
-        output_file_name = text_file_name.replace(".txt", "") + ".mp3"
-        output_file = os.path.join(output_folder, output_file_name)
-
         # Create VoicesManager instance
         voices = await VoicesManager.create()
         voice = voices.find(Gender="Female", Language="en")
-        communicate = edge_tts.Communicate(text_content, random.choice(voice)["Name"], rate="-10%")
+        voice_name = random.choice(voice)["Name"]
+        # voice_name = "Microsoft Server Speech Text to Speech Voice (en-US, MichelleNeural)"
+        # Create output file path
+        output_file_name = f"{voice_name}_{text_file_name}".replace(".txt", "") + ".mp3"
+        output_file = os.path.join(output_folder, output_file_name)
+        communicate = edge_tts.Communicate(text_content, voice_name, rate="-10%")
         await communicate.save(output_file)
 
     async def convert_text_to_speech(self, input_folder, output_folder):
