@@ -63,8 +63,9 @@ class TxtToXLSX:
                 else:
                     print(f"Invalid format in line: {line.strip()}")
         # Write missing words to MissingSound.txt
-        with open(missing_sound_file, 'w', encoding='utf-8') as missing_file:
-            missing_file.write("\n".join(missing_words))
+        if missing_words:
+            with open(missing_sound_file, 'w', encoding='utf-8') as missing_file:
+                missing_file.write("\n".join(missing_words))
 
         return data
 
