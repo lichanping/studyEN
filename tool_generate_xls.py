@@ -34,7 +34,7 @@ class TxtToXLSX:
 
     def convert(self, file_name):
         extracted_data = self.read_text(file_name)
-        self.create_excel(extracted_data)
+        # self.create_excel(extracted_data)
 
     def read_text(self, file_name):
         """
@@ -158,7 +158,7 @@ if __name__ == "__main__":
 
     tool = TxtToXLSX()
     # generate missing sounds
-    tool.convert('悠然.txt')
+    tool.convert('悠然.txt')  # commented the create_excel due to uselessness.
 
     # TODO：Don't use except for needed
     # en_and_cn('陈敏珺.txt', max_items=None)
