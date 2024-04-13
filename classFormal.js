@@ -35,10 +35,14 @@ const userData = {
         course: "初中中级完型填空",
         hours: [19, 40]
     }, "悠然": {
-        schedule: "每周1、3、5 19:45 悠然 (高二)",
+        schedule: "每周1 18:45、周5 19:45 悠然 (高二)",
         course: "牛津上海版英语高中",
         hours: [19, 45]
-    },
+    }, "杨家煜": {
+        schedule: "每周6 20:00、周日 13:00 杨家煜 (高二)",
+        course: "高中考纲单词",
+        hours: [20, 0]
+    }
 };
 
 export function createUsers() {
