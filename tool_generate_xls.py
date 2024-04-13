@@ -36,6 +36,35 @@ class TxtToXLSX:
         extracted_data = self.read_text(file_name)
         # self.create_excel(extracted_data)
 
+    def remove_duplicates_or_merge_translations(self, file_name):
+        """
+        Remove duplicate English words or merge their translations directly from the original text file.
+        """
+        file_path = os.path.join(self.data_folder, file_name)
+        english_words = {}  # Dictionary to store English words and their translations
+        with open(file_path, 'r', encoding='utf-8') as file:
+            for line in file:
+                match = re.match(r'([a-zA-Z\'\s\-\.\/]+)\s*(.*)', line.strip())
+                if match:
+                    english_word, translation = match.groups()
+                    english_word = english_word.strip()
+                    translation = translation.strip()
+                    if english_word not in english_words:
+                        # If the English word is encountered for the first time, initialize its translations as a list
+                        english_words[english_word] = [translation]
+                    else:
+                        # If the English word already exists, append the new translation to its list of translations
+                        existing_translation = english_words[english_word]
+                        if translation not in existing_translation:
+                            existing_translation.append(translation)
+
+        # Write the unique English words and their translations back to the original file
+        with open(file_path, 'w', encoding='utf-8') as file:
+            for english_word, translations in english_words.items():
+                # Merge translations into a single string, separated by semicolons
+                merged_translations = ';'.join(translations)
+                file.write(f"{english_word}\t{merged_translations}\n")
+
     def read_text(self, file_name):
         """
         Generate MissingSound.txt if audio not exists
@@ -158,8 +187,11 @@ if __name__ == "__main__":
     # copy_review_to_forgetting()
 
     tool = TxtToXLSX()
+
+    # remove duplicate words
+    tool.remove_duplicates_or_merge_translations('高中考纲单词.txt')
     # generate missing sounds
-    tool.convert('悠然.txt')  # commented the create_excel due to uselessness.
+    tool.convert('高中考纲单词.txt')  # commented the create_excel due to uselessness.
 
     # TODO：Don't use except for needed
     # en_and_cn('悠然.txt', max_items=None)
