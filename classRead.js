@@ -27,6 +27,11 @@ const userData2 = {
         course: "高中中级阅读理解",
         hours: [11, 0]
     },
+    "悠然同学": {
+        schedule: "每周6、7 11:00 悠然同学 (高二)",
+        course: "高中中级完型填空",
+        hours: [11, 0]
+    },
     "陈敏珺": {
         schedule: "每周日 16:00 陈敏珺 (初一)",
         course: "初中中级完型填空",
@@ -127,7 +132,7 @@ export function handleReadClassFeedbackClick() {
 ];
     let feedback = feedbacks[Math.floor(Math.random() * feedbacks.length)]
     // Generate feedback message
-    const feedbackMessage = `【${userName}今日阅读课学习反馈】<br><br>1.今日学习${courseLabel}阅读理解1篇<br><br>2.生词 ${newWord}个，错误词数：${mistakeWords}个，习题 ${test}个，错误习题数 ${mistake}个<br><br>3.⭐ ${userName} ${feedback} <br><br>"${getRandomMotto()}” 🚀🚀🚀`
+    const feedbackMessage = `【${userName}今日阅读课学习反馈】<br><br>1.今日学习${courseLabel}1篇<br><br>2.生词 ${newWord}个，错误词数：${mistakeWords}个，习题 ${test}个，错误习题数 ${mistake}个<br><br>3.⭐ ${userName} ${feedback} <br><br>"${getRandomMotto()}” 🚀🚀🚀`
     copyToClipboard(feedbackMessage);
     showLongText(`${feedbackMessage}`);
 }
