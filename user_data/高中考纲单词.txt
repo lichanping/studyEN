@@ -148,3 +148,8 @@ harbor	海港，庇护
 string	细绳
 neglect	忽视，疏忽
 airspace	领空
+victim	受害者
+parisians	巴黎人
+intellectualize	使…有理智
+homemakers	家庭主妇
+retirees	退休人员（retiree 的复数）
