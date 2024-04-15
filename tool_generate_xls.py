@@ -48,6 +48,8 @@ class TxtToXLSX:
                 if match:
                     english_word, translation = match.groups()
                     english_word = english_word.strip()
+                    # Replace "sb" with "somebody" and "sth" with "something" only in the English words part
+                    english_word = english_word.replace("sb", "somebody").replace("sth", "something")
                     translation = translation.strip()
                     if english_word not in english_words:
                         # If the English word is encountered for the first time, initialize its translations as a list
@@ -83,10 +85,14 @@ class TxtToXLSX:
                 match = pattern.match(line.strip())
                 if match:
                     english_word, translation = match.groups()
+                    english_word = english_word.strip()
+                    # Replace "sb" with "somebody" and "sth" with "something" only in the English words part
+                    english_word = english_word.replace("sb", "somebody").replace("sth", "something")
+                    translation = translation.strip()
                     media = os.path.join(self.sound_folder, f"{english_word.strip()}.mp3")
                     exist = os.path.exists(media)
                     # print(f"English: {english_word}, Translation: {translation}, Sound: {exist}")
-                    data.append({"单词": english_word.strip(), "释意": translation, "音频": str(exist)})
+                    data.append({"单词": english_word, "释意": translation, "音频": str(exist)})
                     if not exist:
                         missing_words.append(english_word.strip())
                 else:
@@ -189,9 +195,9 @@ if __name__ == "__main__":
     tool = TxtToXLSX()
 
     # remove duplicate words
-    tool.remove_duplicates_or_merge_translations('高中考纲单词.txt')
+    tool.remove_duplicates_or_merge_translations('高中考纲词组.txt')
     # generate missing sounds
-    tool.convert('高中考纲单词.txt')  # commented the create_excel due to uselessness.
+    tool.convert('高中考纲词组.txt')  # commented the create_excel due to uselessness.
 
     # TODO：Don't use except for needed
-    # en_and_cn('悠然.txt', max_items=None)
+    en_and_cn('高中考纲词组.txt', max_items=None)
