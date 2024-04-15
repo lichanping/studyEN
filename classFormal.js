@@ -135,7 +135,7 @@ export function handleManagementGroupTemplateClick() {
     var selectedDateTime = new Date(reviewTime);
     var hour = selectedDateTime.getHours();
     var minute = selectedDateTime.getMinutes()
-    const outputMessage = `【抗遗忘提醒】<br><br>${userName}同学的复习时间定为 ${hour}:${minute}；<br><br>21天抗遗忘复习排课表已生成，请学员准时进入会议室进行抗遗忘复习，并且务必确保摄像头开启。感谢您的配合！📷 📷 📷 <br><br>上课地址如下：<br><br>#腾讯会议：573-215-9639<br><br>仅需在当天有提醒通知的情况下入会，若未收到通知，请自行按需复习纸质内容。如有任何疑问，请随时与我们联系。😊`;
+    const outputMessage = `【抗遗忘提醒-${hour}:${minute}】<br><br>${userName}同学的复习时间定为 ${hour}:${minute}；<br><br>21天抗遗忘复习已安排，请准时参加会议，确保打开摄像头。谢谢配合！📷<br><br>#腾讯会议：573-215-9639<br><br>仅需在当天收到提醒通知时入会。未收到通知也可复习纸质内容。如有疑问，请联系我们。😊`;
     copyToClipboard(outputMessage);
     // Display the output message
     showLongText(outputMessage);
