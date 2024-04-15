@@ -195,9 +195,9 @@ if __name__ == "__main__":
     tool = TxtToXLSX()
 
     # remove duplicate words
-    tool.remove_duplicates_or_merge_translations('高中考纲词组.txt')
+    # tool.remove_duplicates_or_merge_translations('高中考纲单词.txt')
     # generate missing sounds
-    tool.convert('高中考纲词组.txt')  # commented the create_excel due to uselessness.
-
-    # TODO：Don't use except for needed
-    en_and_cn('高中考纲词组.txt', max_items=None)
+    tool.convert('高中考纲单词.txt')  # commented the create_excel due to uselessness.
+    #
+    # # TODO：Don't use except for needed
+    # en_and_cn('高中考纲单词.txt', max_items=None)
