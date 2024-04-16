@@ -11,6 +11,7 @@ from os.path import dirname, abspath
 import edge_tts
 import pandas as pd
 from edge_tts import VoicesManager
+from ptest.decorator import TestClass, Test
 
 
 def get_sub_folder_path(sub_dir_name='user_data'):
@@ -153,50 +154,31 @@ class TextToSpeechConverter:
         print(f"Audio file '{output_file}' created successfully.")
 
 
-def en_and_cn(file, max_items):
-    start_time = time.time()  # Record start time
-    converter = TextToSpeechConverter(tool)
-    asyncio.run(converter.convert_text_to_audio(file, max_items=max_items))
-    end_time = time.time()  # Record end time
-    elapsed_time = end_time - start_time  # Calculate elapsed time
-    print(f"Time taken: {elapsed_time} seconds")
+@TestClass(run_mode='singleline')
+class GenerateTool:
+    @Test()
+    def organize_words(self):
+        # remove duplicate words
+        tool = TxtToXLSX()
+        tool.remove_duplicates_or_merge_translations('高中考纲单词.txt')
+        tool.remove_duplicates_or_merge_translations('高中考纲词组.txt')
 
+    @Test()
+    def recog_missing_words(self):
+        tool = TxtToXLSX()
+        # generate missing sounds
+        tool.convert('高中考纲单词.txt')  # commented the create_excel due to uselessness.
+        # tool.convert('高中考纲词组.txt')
 
-def copy_review_to_forgetting():
-    # Source and destination directories
-    source_dir = "/Users/cnShirLi/flaskStudy/data/review"
-    destination_dir = "/Users/cnShirLi/studyEN/user_data"
+    @Test()
+    def generate_media_word_list(self):
+        def en_and_cn(file, max_items):
+            start_time = time.time()  # Record start time
+            converter = TextToSpeechConverter(tool)
+            asyncio.run(converter.convert_text_to_audio(file, max_items=max_items))
+            end_time = time.time()  # Record end time
+            elapsed_time = end_time - start_time  # Calculate elapsed time
+            print(f"Time taken: {elapsed_time} seconds")
 
-    # Ensure the destination directory exists
-    if not os.path.exists(destination_dir):
-        os.makedirs(destination_dir)
-
-    # Get today's date in yyyy-mm-dd format
-    today = datetime.now().strftime("%Y-%m-%d")
-
-    # Find the review file for today
-    review_file = os.path.join(source_dir, f"{today}.txt")
-
-    # Check if the review file exists
-    if os.path.exists(review_file):
-        # Copy the contents of the review file to the destination forgetting file
-        forgetting_file = os.path.join(destination_dir, "抗遗忘.txt")
-        shutil.copyfile(review_file, forgetting_file)
-        print(f"Copied {review_file} to {forgetting_file}")
-    else:
-        print(f"No review file found for {today}")
-
-
-if __name__ == "__main__":
-    # Run the function
-    # copy_review_to_forgetting()
-
-    tool = TxtToXLSX()
-
-    # remove duplicate words
-    # tool.remove_duplicates_or_merge_translations('高中考纲单词.txt')
-    # generate missing sounds
-    tool.convert('高中考纲单词.txt')  # commented the create_excel due to uselessness.
-    #
-    # # TODO：Don't use except for needed
-    # en_and_cn('高中考纲单词.txt', max_items=None)
+        tool = TxtToXLSX()
+        en_and_cn('高中考纲单词.txt', max_items=None)
