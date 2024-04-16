@@ -157,14 +157,14 @@ class TextToSpeechConverter:
 @TestClass(run_mode='singleline')
 class GenerateTool:
     @Test()
-    def organize_words(self):
+    def simplify_words(self):
         # remove duplicate words
         tool = TxtToXLSX()
         tool.remove_duplicates_or_merge_translations('高中考纲单词.txt')
         tool.remove_duplicates_or_merge_translations('高中考纲词组.txt')
 
     @Test()
-    def recog_missing_words(self):
+    def calculate_missing_words(self):
         tool = TxtToXLSX()
         # generate missing sounds
         tool.convert('高中考纲单词.txt')  # commented the create_excel due to uselessness.
@@ -181,4 +181,5 @@ class GenerateTool:
             print(f"Time taken: {elapsed_time} seconds")
 
         tool = TxtToXLSX()
-        en_and_cn('高中考纲单词.txt', max_items=None)
+        en_and_cn('敏珺.txt', max_items=None)
+        en_and_cn('悠然.txt', max_items=None)
