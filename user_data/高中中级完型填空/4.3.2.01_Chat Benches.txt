@@ -24,3 +24,41 @@ This effort is not just an attempt at being community minded-it’s also a crime
 The Chat Bench is a fantastic new project that encourages those of all ages to interact and get to know each other in the future. 
 
 聊天长椅是一个很棒的新项目，它鼓励所有年龄段的人在未来进行互动并相互了解。
+
+聊天长椅
+主旨大意：文章主要讲了艾什莉·琼斯警探在英国的一个警察局工作。他最近有了一项重大发现——孤独是一个严重的社会问题，它会导致抑郁
+甚至犯罪，但它可以用一种聪明的方法加以阻止。琼斯警探通过设置”聊天长椅”，帮助打破了人们打招呼的无形的社会障碍。”聊天长椅”是一个
+很棒的新项目，它不仅仅是一种社区意识的尝试，也是一种减少犯罪的措施。
+长难句：
+1. He has recently made a significant discovery—loneliness is a serious social problem that can contribute to depression and even crimes, but it can be
+prevented in a clever way。
+在这句话中，主句是He has recently made a significant discovery，破折号引导的部分为discovery的补充说明，loneliness is a serious social problem
+that can contribute to depression and even crimes, but it can be prevented in a clever way ，that引导限制性定语从句，修饰先行词social problem。
+2. The lady would get a call from a stranger every morning who eventually made her believe that he was her friend, and then she lent him about £31,000 .
+在这句中，主干是The lady would get a call from a stranger every morning and then she lent him about £31,000，其中and引导并列句，who引导定语从
+句，修饰先行词a stranger，在定语从句中who eventually made her believe that he was her friend，that引导宾语从句。
+3. This led Jones to the conclusion that there are too many extremely lonely people in his community, who are easy targets of cheating.
+在这句话中，主句是This led Jones to the conclusion，其中 that 引导同位语从句，补充说明conclusion，who引导非限制性定语从句修饰先行词
+lonely people 。
+4. Jones' idea has been fully realized -the “HAPPY TO CHAT” benches help break down the invisible social barrier that keeps people from saying hello.
+在这句话中，主干是Jones' idea has been fully realized，其中the “HAPPY TO CHAT” benches help break down the invisible social barrier that keeps
+people from saying hello是同位语从句，that引导定语从句修饰social barrier。
+
+语法点：
+1. 限制性定语从句：that引导
+在这句话loneliness is a serious social problem that can contribute to depression and even crimes中，that引导定语从句，修饰先行词social problem，其
+在定语从句中作主语。
+2. 现在完成时
+在句子He has recently made a significant discovery中，出现现在完成时，其结构式have/has done，表示过去发生或已经完成的动作对现在造成的影
+响或结果，或从过去已经开始，持续到现在的动作或状态。
+3. 过去完成时
+在句子Jones got the idea after he had talked with an elderly lady who had been cheated of her money，出现了过去完成时，其结构式had done，表示过
+去某一时间或动作之前已经完成的动作，称为“过去的过去”
+。
+4. 含蓄虚拟：otherwise
+在这句中Otherwise, I would never speak to another person for weeks on end，通过otherwise表达含蓄虚拟，含蓄虚拟是指在很多情况下，在表示假设
+的虚拟语气中，有时假设的条件并不以条件从句的形式表达，而是通过上下文或句中内在的逻辑关系，或用其它形式表达出来。
+
+5. 非谓语动词：doing作宾补
+在句子he found people sitting there and engaging in active and joyful conversations.中，sitting, engaging为非谓语动词现在分词形式，在句中作find的
+宾补。find sb. doing，表示发现某人一直在做某事。
