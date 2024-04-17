@@ -22,20 +22,16 @@ In 1897, the state of Michigan passed a law prohibiting the killing of passenger
 1897年，密歇根州通过了一项禁止捕杀旅鸽的法律，但到那时，该州已经有10年没有看到大规模的旅鸽群了。美国最后一只被证实的野鸽是1900年由俄亥俄州派克县的一个男孩射杀的。有一段时间，一些鸟类在人类的照料下存活了下来。1914年9月1日，最后一只被亲切地称为玛莎的旅鸽在辛辛那提动物园去世。
 
 旅鸽
-主旨大意：旅鸽曾经以令人难以置信的数量飞过美国的大部分地区，但是由于人类的掠杀，旅鸽的数量急速下降，后面洲政府出台了法律保护
-旅鸽，但是他们还是灭绝了。
+主旨大意：旅鸽曾经以令人难以置信的数量飞过美国的大部分地区，但是由于人类的掠杀，旅鸽的数量急速下降，后面洲政府出台了法律保护旅鸽，但是他们还是灭绝了。
 长难句：
-1. It was calculated that when its population reach its highest point, there were more than 3 billion passenger pigeons – a number equal to 24 to 40 percent of
-the total bird population in the United States, making it perhaps the most abundant birds in the world.
-本句为“It be+过去分词+that从句”结构。从句中含有when引导的时间状语从句。3 billion passenger pigeons和 a number equal...是同位语关系。此
-外,making...作结果状语。
+1. It was calculated that when its population reach its highest point, there were more than 3 billion passenger pigeons – a number equal to 24 to 40 percent of the total bird population in the United States, making it perhaps the most abundant birds in the world.
+本句为“It be+过去分词+that从句”结构。从句中含有when引导的时间状语从句。
+3 billion passenger pigeons和 a number equal...是同位语关系。此外,making...作结果状语。
 
-2. By the closing decades of the 19th century, the hardwood forests where passenger pigeons nested had been damaged by Americans’ need for wood, which
-scattered the flocks and forced the birds to go farther north, where cold temperatures and spring storms contributed to their decline.
-在这句话中，by the...of the 19th century作时间状语，主句是the hardwood forests had been damaged by American's need for food。其中在the
-hardwood forests where ...中，where引导一个限制性定语从句，修饰forests,而后面的which引导一个非限制性定语从句，修饰前面的句子the
-hardwood forests where passenger pigeons nested had been damaged by Americans’ need for wood。第二个where也引导了一个非限制性定语从句，先
+2. By the closing decades of the 19th century, the hardwood forests where passenger pigeons nested had been damaged by Americans’ need for wood, which scattered the flocks and forced the birds to go farther north, where cold temperatures and spring storms contributed to their decline.
+在这句话中，by the...of the 19th century作时间状语，主句是the hardwood forests had been damaged by American's need for food。其中在the hardwood forests where ...中，where引导一个限制性定语从句，修饰forests,而后面的which引导一个非限制性定语从句，修饰前面的句子the hardwood forests where passenger pigeons nested had been damaged by Americans' need for wood。第二个where也引导了一个非限制性定语从句，先
 行词是farther north。
+
 语法点：
 1. 非谓语动词：现在分词做状语
 句子...threw large nets over them, taking hundreds at a time.中，由于take与主语commercial hunters构成逻辑上的主动关系，因此用现在分词taking，
