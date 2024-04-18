@@ -32,6 +32,7 @@ class TxtToXLSX:
         self.sound_folder = get_sub_folder_path('sounds')
         self.ori_file = None
         self.generate_file = None
+        self.missing_words = []
 
     def convert(self, file_name):
         extracted_data = self.read_text(file_name)
@@ -95,12 +96,12 @@ class TxtToXLSX:
                     # print(f"English: {english_word}, Translation: {translation}, Sound: {exist}")
                     data.append({"单词": english_word, "释意": translation, "音频": str(exist)})
                     if not exist:
-                        missing_words.append(english_word.strip())
+                        self.missing_words.append(english_word.strip())
                 else:
                     print(f"Invalid format in line: {line.strip()}")
         # Write missing words to MissingSound.txt
         with open(missing_sound_file, 'w', encoding='utf-8') as missing_file:
-            missing_file.write("\n".join(missing_words))
+            missing_file.write("\n".join(self.missing_words))
 
         return data
 
@@ -167,7 +168,7 @@ class GenerateTool:
     def calculate_missing_words(self):
         tool = TxtToXLSX()
         # generate missing sounds
-        # tool.convert('高中考纲单词.txt')  # commented the create_excel due to uselessness.
+        tool.convert('高中考纲单词.txt')  # commented the create_excel due to uselessness.
         tool.convert('高中考纲词组.txt')
 
     @Test()
