@@ -168,3 +168,10 @@ album	相册
 coarse	粗的，粗劣的
 disaster	灾难
 directory	号码簿
+downsize	裁员，精简
+effect	影响
+figure	弄清楚
+lit	点亮
+lamps	灯具
+repaint	重画
+skinny	极瘦的

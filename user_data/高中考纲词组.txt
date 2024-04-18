@@ -1,4 +1,4 @@
-in one's mind 在某人的心目中
+in one's mind	在某人的心目中
 make a significant discovery	重大发现
 social problem	社会问题
 contribute to	导致
@@ -38,7 +38,7 @@ in reality	事实上
 focus on	专注于
 be unsure about something	对某事不确定
 choose to do something	选择做某事
-instead of	而不是，代替
+instead of	而不是，代替;代替;相反
 find somebody in the same position as somebody	发现和某人处于同种境地
 end up	以...告终
 make progress	取得进步
@@ -51,3 +51,14 @@ take immediate action	立即行动
 clear about	清楚
 the rest of something	剩余某物
 either...or...	也
+have an affect on	对……有影响
+play a role in	在...起作用
+pack on the pounds	增重
+keep the pounds off	减肥
+turn up	调亮
+flood... with...	使……充满/淹没……
+tend to do	倾向于做
+at least	至少
+sit down	坐下
+slow down	放慢
+turn on	打开
