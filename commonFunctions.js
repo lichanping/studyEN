@@ -48,8 +48,8 @@ export function handleGroupGreetingClick() {
 export function handleAntiForgettingFeedbackClick() {
     // Get values from input boxes
     const antiForgettingReviewWord = document.getElementById('antiForgettingReviewWord').value;
-    let forgetWords = document.getElementById('forgetWords').value;
-    let pronounceWords = document.getElementById('pronounceWords').value;
+    let forgetWords = document.getElementById('forgetWords').value.trim();
+    let pronounceWords = document.getElementById('pronounceWords').value.trim();
 
     const userName = document.getElementById("userName").value;
     const randomFeedback = getRandomFeedback();
