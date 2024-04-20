@@ -175,3 +175,6 @@ lit	点亮
 lamps	灯具
 repaint	重画
 skinny	极瘦的
+separate	分开
+impression	印象
+attitude	态度
