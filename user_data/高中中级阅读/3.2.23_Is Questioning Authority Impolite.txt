@@ -16,3 +16,50 @@ This interest in questioning and searching may be considered by some people as b
 As was mentioned earlier, you may notice the same questioning in social conversations. Although some individuals may think that Americans are rude because of the direct manner with people, they are merely trying to learn more about your ideas. 
 
 正如前面提到的，你可能会在社交对话中注意到同样的问题。虽然有些人可能会认为美国人粗鲁，因为他们对人的态度直接，但他们只是想更多地了解你的想法。
+
+主旨大意：一些国家质疑权威是不礼貌的，而在美国等其他国家这是可以接受的。
+
+长难句：
+1. It may be considered improper for young businessmen to suggest ideas that differ from those of older, more experienced members of the business.
+主句为it may be considered improper...其中it为形式主语，improper为主语补足语。真正的主语为to suggest ideas...，关系代词that引导的定语从句修饰先行词ideas。
+
+2. To encourage such creativity, there are many national prizes offered to students every year for their scientific discoveries and artistic accomplishments
+
+主句为there be句型：there are many national prizes...句首的to encourage such creativity是动词不定式结构作目的状语。过去分词offered作后置定语，修饰prizes。因为prize和offer是动宾关系，所以offer因用其过去分词形式表示被动关系，to后面的students为间接宾语。
+
+3. This interest in questioning and searching may be considered by some people as bad for young people’s manners that young people lack respect for authority.
+
+主句为this interest may be considered as bad...其中in questioning and searching为介词短语作定语修饰interest。主句为被动语态，by引出施动者some people。后半句是连词that引导的同位语从句进一步解释前面的people’s manners
+4. However, this is because many Americans have a different attitude toward authority than may exist in other areas of the world.
+主句为this is because...其中because many Americans have a different attitude toward authority than may exist in other areas of the world为表语从句，作is的表语。表语从句中a different attitude为宾语，than引导的限制性定语从句，后面省略了主语what，便可以理解成than what may exist in other areas of the world, what相当于先行词，即是attitude。
+5. It is important to remember that it is the person’s ideas that are being questioned, not the individual himself.
+主句为it is important...，其中that引导的主语从句为真正的主语。主语从句中it is the person’s ideas为主句部分，第二个关系代词that引导的限制性定语从句，修饰ideas。限制性定语从句中为现在进行时的被动语态。
+
+6. Although some individual may think that Americans are rude because of the direct manner with people, they are merely trying to learn more about your ideas.
+
+主句为they are merely trying to learn more...，从句为although引导的让步状语从句。从句中think后有由that引导的宾语从句。
+
+语法点：
+1. 主语从句：形式主语it
+文中It may be considered improper for young businessmen to suggest ideas...为主语从句，为避免句子头重脚轻，将it作为形式主语放句首，真正的主语由动词不定式to suggest ideas...放在句末，使阅读更顺畅，for young businessmen表示“对于年轻的商人”。
+2. 限制性定语从句：
+文中 ideas that differ from those of older, more experienced members of the business.包含由关系代词that引导的限制性定语从句，修饰先行词ideas。因为that在定语从句中为主语，所以that不可以被省略。
+
+3. 非谓语动词：过去分词作后置定语
+
+文中offered为过去分词作后置定语，因为被修饰词和动词offer为被动关系，所以用过去分词。
+
+4. 非谓语动词：现在分词作宾语补足语
+
+文中visitors notice young Americans asking questions and arguing with older people.的asking和arguing为ask和argue的现在分词作宾语补足语，其中宾语是young Americans。现在分词作宾补，表示宾语发出的动作正在进行和发生。
+5. 主语从句
+文中It is important to remember that it is the person’s ideas为主语从句。It为形式主语。因为为避免句子头重脚轻，将it作为形式主语放句首，真正的主语由that引导的it is the person’s ideas...放在句末，使阅读更顺畅。
+6. 非谓语动词：动名词
+文中The purpose of the searching, questioning, and arguing中的searching和questioning以及arguing分别为search,question和argue的动名词形式。动名词是名词化的动词，可以充当主语、表语、动词宾语、介词宾语和定语。
+
+7. 形容词作名词
+
+文中the same questioning in social conversations.中the same为形容词作名词使用，表示这一类事物。
+8. 宾语从句：
+文中think that Americans are rude because of the direct manner with people
+为that引导的宾语从句，宾语从句可以充当句子中的宾语成分。
