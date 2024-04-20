@@ -38,6 +38,10 @@ const userData = {
         schedule: "每周1 18:45、周5 19:45 悠然 (高二)",
         course: "牛津上海版英语高中",
         hours: [19, 45]
+    }, "杨南剑": {
+        schedule: "每天晚上 杨南剑 (高三)",
+        course: "牛津上海版英语高中",
+        hours: [20, 0]
     }
 };
 
