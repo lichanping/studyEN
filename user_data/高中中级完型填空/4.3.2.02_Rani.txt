@@ -20,3 +20,23 @@ Rushing out gratefully, I called out over my shoulder, " By the way, what’s yo
 Sitting back in the car on the way to the airport, I figured it all out. Rani’s friendliness — her warm smile, her nods, her ‘I’m here for you’ attitude — were all silent signals that didn’t travel through wires. 
 
 在去机场的路上，我坐在车里，把一切都想明白了。拉尼的友好——她温暖的微笑，她的点头，她“我在这里为你”的态度——都是无声的信号，不会通过电线传播。
+
+主旨大意：“我”通过电话与“我”的代理商兰妮交流时发现，她比较“冷漠”，让我很生气，甚至有了换人的想法。后来实际生活中的一次接触让我发现原来“我”的看法完全是错误的。生活中的兰妮是一个很善良体贴的人。以此告诉我们不要随意下结论，要全面思考问题。
+
+长难句：
+1. Rani, my faceless agent whom I’d never met in person, got me rock-bottom prices on airfares, cars, and hotels
+在这句话，主干是Rani got me rock-bottom prices on airfares, cars, and hotels，其中, my faceless agent whom I’d never met in person, 是同位语补充说明Rani身份，whom引导定语从句。
+2. I turned around and saw a pleasant woman with a big smile on her face waving to wish me a safe trip.
+这句话中，主干是I turned around and saw a pleasant woman， with a big smile on her face是with引导伴随状语， waving是现在分词作伴随状语。
+3. Rani's friendliness — her warm smile, her nods, her ‘I’m here for you’ attitude — were all silent signals that didn't travel through wires.
+句中两个破折号之间的内容是对Rani's friendliness的补充解释说明，主句为Rani's friendliness were all silent signals that didn't travel through wires.
+
+语法点：
+1. 定语从句：省略that
+在句子Everything they know about you came through this device，有一个省略that的定语从句，修饰先行词everything。
+2. 非谓语动词：现在分词作伴随状语
+在这句子中The woman sitting at the desk, seeing my madness, sympathetically jumped up，seeing是现在分词作伴随状语，逻辑主要是the woman，与逻辑主语是主动关系，故用ing形式。
+3. With伴随状语
+在句子I turned around and saw a pleasant woman with a big smile on her face waving to wish me a safe trip，with是伴随状语结构，with+名词或名词短语+ to do/ doing/ done, 表示带有，带着。
+4. 非谓语结构：动名词作伴随状语
+在句子Sitting back in the car on the way to the airport, I figured it all out .sitting是动名词作伴随状语，逻辑主语是I，与I是主动关系，用ing形式。
