@@ -1,3 +1,37 @@
+weed	杂草
+starve	（使）挨饿，饿死
+feast	宴会
+properly	适当地
+hopeless	绝望的
+fact	事实
+worthy	有价值的
+example	例子
+lazy	懒惰的
+silver	银
+neck	脖子
+crop	庄稼
+creature	生物
+drive	驾驶
+relationship	关系
+event	事件
+disagreement	不同意
+crime	犯罪
+cafeteria	自助餐厅
+indeed	确实，的确
+lamb	羔羊
+temperature	温度
+print	印刷
+select	精选
+may	可以
+exhibition	展览
+failure	失败
+settler	移居者
+absent	缺席的
+natural	自然的
+pence	便士
+rooster	公鸡
+typhoon	台风
+accelerate	加速，促进
 decline	下降
 whip	鞭子;鞭子，抽打
 tamer	驯兽师
@@ -178,72 +212,3 @@ skinny	极瘦的
 separate	分开
 impression	印象
 attitude	态度
-weed	杂草
-starve	（使）挨饿，饿死
-feast	宴会
-properly	适当地
-hopeless	绝望的
-fact	事实
-worthy	有价值的
-example	例子
-lazy	懒惰的
-silver	银
-neck	脖子
-crop	庄稼
-creature	生物
-drive	驾驶
-relationship	关系
-event	事件
-disagreement	不同意
-crime	犯罪
-cafeteria	自助餐厅
-indeed	确实，的确
-lamb	羔羊
-temperature	温度
-print	印刷
-select	精选
-may	可以
-exhibition	展览
-failure	失败
-settler	移居者
-absent	缺席的
-natural	自然的
-pence	便士
-rooster	公鸡
-typhoon	台风
-accelerate	加速，促进
-weed杂草
-starve（使）挨饿，饿死
-feast宴会
-properly适当地
-hopeless绝望的
-fact事实
-worthy有价值的
-example例子
-lazy懒惰的
-silver银
-neck脖子
-crop庄稼
-handful一把；少数
-creature生物
-drive驾驶
-relationship关系
-event事件
-disagreement不同意
-crime犯罪
-cafeteria自助餐厅
-indeed确实，的确
-lamb羔羊
-temperature温度
-print印刷
-select精选
-may可以
-exhibition展览
-failure失败
-settler移居者
-absent缺席的
-natural自然的
-pence便士
-rooster公鸡
-typhoon台风
-accelerate加速，促进
