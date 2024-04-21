@@ -184,3 +184,4 @@ class GenerateTool:
         tool = TxtToXLSX()
         en_and_cn('敏珺.txt', max_items=None)
         en_and_cn('悠然.txt', max_items=None)
+        en_and_cn('杨南剑.txt', max_items=5)
