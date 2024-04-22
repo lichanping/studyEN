@@ -232,6 +232,8 @@ export function compareOptionIndex(event) {
         incorrectWordsSpan.innerText += `${english} ${correctOption}\n`;
         document.getElementById('errorCount').innerText = errorCount + 1;
         englishWordTextBox.style.backgroundColor = 'red';
+        // Mark incorrect option with red background color
+        event.target.style.backgroundColor = 'red';
     }
 
     // Automatically perform action of renderQuestion after 3 seconds
