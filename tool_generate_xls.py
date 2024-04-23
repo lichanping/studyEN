@@ -125,18 +125,27 @@ class TextToSpeechConverter:
         output_file = os.path.join(self.txt_to_xlsx.data_folder, file_name.split('.')[0] + ".mp3")
 
         voices = await VoicesManager.create()
-        english_voice = voices.find(Gender="Female", Language="en")
-        chinese_voice = voices.find(Language='zh'
-                                    , Gender="Female"
-                                    , Locale="zh-CN"
-                                    )
+        voice_names = [
+            "Microsoft Server Speech Text to Speech Voice (en-US, AvaMultilingualNeural)",
+            "Microsoft Server Speech Text to Speech Voice (en-US, EmmaMultilingualNeural)",
+            "Microsoft Server Speech Text to Speech Voice (en-US, EmmaNeural)",
+            "Microsoft Server Speech Text to Speech Voice (en-US, MichelleNeural)"
+        ]
+        english_voice = voice_names[-1]
+        # english_voice = voices.find(Gender="Female", Language="en")
+        # english_voice = random.choice(english_voice)["Name"]
+        chinese_voice = voices.find(
+            Language='zh'
+            , Gender="Male"
+            , Locale="zh-CN"
+        )
 
         with open(output_file, "wb") as file:
             for item in extracted_data:
                 english_word = item['单词']
                 chinese_meaning = item['释意']
                 print(f"English: {english_word}, Translation: {chinese_meaning}")
-                english_voice_name = random.choice(english_voice)["Name"]
+                english_voice_name = english_voice
                 chinese_voice_name = random.choice(chinese_voice)["Name"]
 
                 # Repeat English audio twice
@@ -182,6 +191,6 @@ class GenerateTool:
             print(f"Time taken: {elapsed_time} seconds")
 
         tool = TxtToXLSX()
-        en_and_cn('敏珺.txt', max_items=None)
-        en_and_cn('悠然.txt', max_items=None)
-        en_and_cn('杨南剑.txt', max_items=5)
+        # en_and_cn('敏珺.txt', max_items=None)
+        # en_and_cn('悠然.txt', max_items=None)
+        en_and_cn('杨南剑.txt', max_items=None)
