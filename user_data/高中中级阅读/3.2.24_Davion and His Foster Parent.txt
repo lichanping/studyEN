@@ -20,3 +20,45 @@ So Going, 52, invited Only to start spending time with the rest of her family-he
 Today, I feel blessed and honored to have been chosen to be the parent of all my children, Going said. 
 
 “今天，我感到很幸运，也很荣幸被选为我所有孩子的父母。”
+
+主旨大意：达维恩在经历的几次失败的尝试后，最终找到了愿意收养他的家庭。
+
+
+
+长难句：
+1. He had learned that his biological mother had died not long before.
+主句为he had learned that...其中that引导了宾语从句，作谓语动词learned的宾语。宾语从句的句子结构是主谓宾结构，时态为过去完成时。
+
+2. But after Only got into a physical fight with one of his elder would-be brothers, the family changed their minds.
+
+主句为the family changed their minds其中after后引导了时间状语从句，描述了发生在主句这件事情之前的事情。
+
+3. Back in Florida, Only passed through four different temporary homes over the following year, until he called Connie Going, his adoption case worker, to make a special request.
+
+主句为Only passed through four different temporary homes...其中back in Florida为地点状语从句。over the following year为介词短语作状语，表示“在接下来的一年”。Until引导了时间状语从句，表示”直到......”。时间状语从句中，句子结构为主谓宾结构，his adoption case worker为宾语Connie Going的同位语，解释说明她的身份。to make a special request为目的状语。
+4. But last July, when Only called and asked again if she might adopt him, Going said something different.
+主句为Going said something different,从句为when引导的时间状语从句。But last July是时间状语。从句中有两个由连接词and连接的谓语动词called和asked，if引导了宾语从句，在文中表示“是否”。
+
+5. So Going, 52, invited Only to start spending time with the rest of her family-her two daughters, Sydney, 21, and Carly, 17, and a son Taylor, 14, who she also adopted out of foster care.
+
+主句为Going invited Only...其中so为连接词，表示“因此，所以”。不定式短语to start...是宾语补足语，其中with引导了介词短语，表示“与...(谁)”。人名加年龄Sydney, 21；Carly, 17和Taylor, 14分别为two daughters和a son的同位语。关系代词who引导的限制性定语从句，修饰two daughters and a son。
+
+
+
+语法点：
+1. 过去完成时：had + done
+文中He had learned that his biological mother had died not long before.有两个动词是过去完成时时态，第一个是had learned，第二个是had died。过去完成时的结构是had加动词的过去分词，表示对过去已经发生的事情对过去的某时刻的影响，是“过去的过去”。
+
+2. 同位语从句
+
+文中Connie Going, his adoption case worker中的 his adoption case worker是同位语从句，解释说明了Connie Going的身份。同位语从句一般用逗号隔开(也有不隔开的，如：the fact that…等），在句中放在名词后面，用于解释说明名词。同位语从句删除后，句子结构仍然完整。
+3. everything, anything, something, nothing等的定语需要后置
+文中 something different的形容词different本来应该放在名词前面，但是当形容词修饰复合不定代词这一类代词时，必须放在复合不定代词后面。
+4. if引导的宾语从句
+文中had asked every year if she would adopt him以及 asked again if she might adopt him都为if引导的宾语从句。这里的if不能翻译成“如果”，而应翻译成“是否”，转换成直接引语就是一般疑问句。
+5. 宾语从句
+文中I always believed there was a better family有省略了that的宾语从句，这里的宾语从句作believed的宾语。宾语从句在句子中作宾语成分，通常情况下，从句前的关系代词that可以省略。
+
+6. 限制性定语从句
+
+文中who she also adopted out of foster care是限制性定语从句，修饰先行词two daughters and a son，关系代词who可用于指代人物。该句中who在从句中作adopted的宾语。
