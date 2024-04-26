@@ -37,7 +37,7 @@ body {
 }
 
 #teacherName {
-    width: 80px; /* Adjust the width as needed */
+    width: 120px; /* Adjust the width as needed */
 }
 
 #vocabularyCount, #studyTime {
@@ -75,7 +75,7 @@ button, input, select {
 }
 
 #userName {
-    width: 100px; /* Adjust the width as needed */
+    width: 150px; /* Adjust the width as needed */
 }
 
 #forgetWords, #pronounceWords {

@@ -26,7 +26,7 @@ export function handleScheduleNotificationClick() {
     const classDateTime = document.getElementById("classDateTime").value;
 
     // Create the notification message with the dynamic date and time
-    const notificationMessage = `亲爱的 ${userName} 用户您好! 语言体验服务课程时间安排在(${formatDateTime(classDateTime)}) 请提前安排好时间，以下是会议室链接。注意! 请提前下载好【腾讯会议】，我们一起开启语言学习体验之旅! 电脑🖥️、笔记本💻、平板📱都可使用。<br><br>(请提前检查好摄像头，检测好音频。笔记本电脑和平板无需佩戴耳机，台式电脑须佩戴耳机和音响)`;
+    const notificationMessage = `【体验课-${formatDateTime(classDateTime)}】<br><br>亲爱的 ${userName} 用户您好! 语言体验服务课程时间安排在(${formatDateTime(classDateTime)}) <br><br>请提前安排好时间，以下是会议室链接。<br><br>注意! 请提前下载好【腾讯会议】，我们一起开启语言学习体验之旅! 电脑🖥️、笔记本💻、平板📱都可使用。<br><br>(请提前检查好摄像头，检测好音频。台式电脑必须佩戴耳机和音响)<br><br>#腾讯会议：573-215-9639`;
 
     copyToClipboard(notificationMessage);
     showLongText(`${notificationMessage}`);
@@ -113,7 +113,7 @@ export function handleUnderstandSituationClick() {
     let message = "";
     if (studentLevel === "middleHigh") {
         // If student is in 初高中
-        message = `${userName}，我想了解一下，你现在几年级了呢?你现在的语言成绩在哪一个阶段呢?那我说三个段,如果对了你只用点头就行，好吗?<br>150 总分:90分以下，90-120，120以上<br>[问]:XX(和XX妈妈)你错的阅读、完型等等这些题目，你觉得错的原因是什么?<br>
+        message = `${userName}，我想了解一下，你现在几年级了呢?你现在的语言成绩在哪一个阶段呢?那我说三个段,如果对了你只用点头就行，好吗?<br>150 总分:90分以下，90-120，120以上<br>[问]:XX(和XX妈妈)丢分最主要是在哪些题型：阅读，基础句子填空<br>[问]:你错的阅读、完型等等这些题目，你觉得错的原因是什么?<br>
 [总结]:嗯，好的。其实归根结底是我们单词量不够的原因。如果有这样的一种方法，它能让你一分钟记住一个单词，全程有教练来陪伴学习和陪伴复习，并且全部记住消化不遗忘。你愿不愿意尝试一下?<br>
 那我们体验课正式开始吧！`;
     } else if (studentLevel === "primary") {
