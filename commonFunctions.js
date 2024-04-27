@@ -90,7 +90,7 @@ export function handleAntiForgettingFeedbackClick() {
         message += `<br><br>${userName}课下继续加强发音哦!`
     }
     // Append random motto
-    message += `<br><br>"${getRandomMotto()}" 💖✨`;
+    message += `<br><br><br><br>💟今日寄语💟<br><br>${getRandomMotto()}`;
     // Copy the message to clipboard
     copyToClipboard(message);
     // Show alert with the generated message
@@ -155,6 +155,8 @@ export function getRandomMotto() {
     const mottos = [
         "Children are able to learn more quickly and retain more knowledge than adults. 加油！",
         "Such a nice kid!",
+        "Good luck, good health, good cheer. l wish you a happy every Year.",
+        "祝好运、健康、欢乐伴你度过一个快乐每一年。",
         "知识改变命运",
         "坚持就是胜利",
         "学无止境",
