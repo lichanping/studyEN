@@ -12,3 +12,38 @@ Maurice Ashley was kind and smart, a former graduate returning to teach, and thi
 Ten years after my chess class with Ashley, I’m still putting to use what he taught me: “The absolute most important skill that you learn when you play chess is how to make good decisions.  On every single move, you have to analyze a situation, process what your opponent (对手) is doing and evaluate the best move from among all your options. ”These words still ring true today in my role as a journalist. 
 
 在和阿什利一起上国际象棋课十年后，我仍然在用他教给我的东西:“下棋时你学到的最重要的技能是如何做出正确的决定。在每一步棋中，你都必须分析形势，处理对手的动作，并从所有选择中评估出最好的一步棋。”这句话至今在我作为一名记者的生活中仍然历历在目。
+
+主旨大意：文章讲述了我在大二学的免费课程——下棋及它对我生活的指导意义。
+
+
+
+长难句：
+1. I was told that the education department was offering a “free” course, called Thinking Chess, for three credits.
+主句是I was told，从句是由that引导的完整的宾语从句that the education department was offering a “free” course, called Thinking Chess, for three credits。
+2. I jumped at the idea of taking the class because, after all, who doesn’t want to save a few dollars?
+主句是 I jumped at the idea of taking the class，从句是由because引导的原因状语从句because, after all, who doesn’t want to save a few dollars?。
+3. And，even if I weren’t excited enough about free credits, news about our instructor was appealing enough to me.
+主句是news about our instructor was appealing enough to me,从句是由even if 引导的让步状语从句even if I weren’t excited enough about free credits。
+4. He was an international grandmaster, which meant I would be learning from one of the game’s best.
+主句是He was an international grandmaster，从句是由which引导的非限制性定语从句which meant I would be learning from one of the game’s best。
+5. In his introduction, he made it clear that our credits would be hard-earned.
+主句是In his introduction, he made it clear，从句是由that引导的宾语从句 that our credits would be hard-earned。
+6. In order to pass the class, among other criteria, we had to write a paper on how we plan to apply what we would learn in class to our future professions and, eventually, to our lives.
+主句是we had to write a paper on…，in order to pass the class 做目的状语，放在句首，从句是由特殊疑问词how 引导的宾语从句how we plan to apply what we would learn in class to our future professions and, eventually, to our lives，其中包含由what引导的宾语从句 what we would learn in class to our future professions and, eventually, to our lives。
+7. Maurice Ashley was kind and smart, a former graduate returning to teach, and this job was no game for him; he meant business.
+主句是Maurice Ashley was kind and smart…and this job was no game for him，后接同位语a former graduate returning to teach进一步补充说明Maurice Ashley；分号表示转折强调，与 this job was no game for him形成对比，表示：教师这份工作对他而言不是一个游戏，而是一项事业。
+8. Ten years after my chess class with Ashley, I’m still putting to use what he taught me: “The absolute most important skill that you learn when you play chess is how to make good decisions.
+主句是I’m still putting to use，从句是由what引导的宾语从句 what he taught me，而Ten years after my chess class with Ashley作为时间状语，位于句首。
+引号内句子的主句是The absolute most important skill ，从句是由that引导的定语从句that you learn when you play chess，修饰限定前文的The absolute most important skill ，定语从句中包含由when引导的时间状语从句when you play chess。
+9. On every single move you have to analyze a situation, process what your opponent (对手) is doing and evaluate the best move from among all your options.”
+主句是On every single move you have to analyze a situation, process…and evaluate the best move from among all your options.，从句是由what引导的宾语从句what your opponent (对手) is doing 。
+
+
+
+语法点：
+1. 非谓语动词：过去分词作定语：
+I was told that …, called Thinking Chess, for three credits.中called 使用过去分词形式，表示：被叫做。
+2. 让步状语从句：由even if 引导
+And，even if I weren’t excited enough about free credits, news about our instructor was appealing enough to me.中even if 引导的从句是假设性的，又因为与现在事实相反，用weren’t excited。
+3. It作形式宾语
+In his introduction, he made it clear that our credits would be hard-earned.中it为形式宾语，真正的宾语是后面的that从句，这使得句子结构更加平衡。
