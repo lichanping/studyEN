@@ -105,7 +105,7 @@ export function handleScheduleNotificationClick() {
     const classDateTime = document.getElementById("classDateTime").value;
     const formattedDateTime = formatDateTimeWeekly(classDateTime);
     const thisDateTime = formatDateTime(classDateTime);
-    const notificationMessage = `【词汇课-${thisDateTime}】<br><br>亲爱的 ✨ ${userName} 用户您好! 我们的语言陪练服务时间安排在${formattedDateTime}。<br><br>#腾讯会议：573-215-9639<br><br>请学员及家长准时进入会议室上课，并确保摄像头📷开启。感谢您的配合！`;
+    const notificationMessage = `【词汇课-${thisDateTime}】<br><br>亲爱的 ✨ ${userName} 用户您好! 我们的语言陪练服务时间安排在${formattedDateTime}。<br><br>请学员及家长准时进入会议室上课，并确保摄像头📷开启。感谢您的配合！`;
 
     copyToClipboard(notificationMessage);
     showLongText(`${notificationMessage}`);
@@ -127,7 +127,7 @@ export function handleClassFeedbackClick() {
     // Calculate correct rate
     const correctRate = ((newWord - forgetWord) / newWord * 100).toFixed(0);
     // Generate feedback message
-    const feedbackMessage = `【${userName}今日学习反馈】<br><br>1.今日复习单词 ${reviewWordCount}个，遗忘 0个；今日新学单词 ${newWord}个，遗忘${forgetWord}个, 正确率 ${correctRate}%。<br><br>2.陪伴 ✨ ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} "${getRandomMotto()}”，认真且努力的${userName}一定能抵达梦想的彼岸。<br><br>3.严格按照 21 天抗遗忘复习表来复习哟! 🚀🚀🚀`
+    const feedbackMessage = `【${userName}今日学习反馈】<br><br>1.今日复习单词 ${reviewWordCount}个，遗忘 0个；今日新学单词 ${newWord}个，遗忘${forgetWord}个, 正确率 ${correctRate}%。<br><br>2.陪伴 ✨ ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} 认真且努力的${userName}一定能抵达梦想的彼岸。🚀🚀🚀<br><br>3.严格按照 21 天抗遗忘复习表来复习哟!<br><br><br><br>💟今日寄语💟<br><br>${getRandomMotto()}`
     copyToClipboard(feedbackMessage);
     showLongText(`${feedbackMessage}`);
 }
