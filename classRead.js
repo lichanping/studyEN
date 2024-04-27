@@ -97,7 +97,7 @@ export function handleScheduleNotificationClick() {
     const classDateTime = document.getElementById("classDateTime").value;
     const formattedDateTime = formatDateTimeWeekly(classDateTime);
     const thisDateTime = formatDateTime(classDateTime);
-    const notificationMessage = `【新课提醒-${thisDateTime}】<br><br>亲爱的 ⭐ ${userName} 用户您好! 我们的英语学习时间安排在${formattedDateTime}。<br><br>#腾讯会议：573-215-9639<br><br>请学员及家长准时进入会议室上课，并确保摄像头🎥开启。感谢您的配合！`;
+    const notificationMessage = `【新课提醒-${thisDateTime}】<br><br>亲爱的 ⭐ ${userName} 用户您好! 我们的英语学习时间安排在${formattedDateTime}。<br><br>请学员及家长准时进入会议室上课，并确保摄像头🎥开启。感谢您的配合！`;
     copyToClipboard(notificationMessage);
     showLongText(`${notificationMessage}`);
 }
