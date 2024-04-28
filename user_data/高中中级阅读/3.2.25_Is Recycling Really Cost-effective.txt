@@ -24,3 +24,48 @@ Glass is another recyclable material. To reduce greenhouse gas emissions by 1 to
 If recycling were truly cost-effective, private companies would be lining up at your doorstep to buy your rubbish. Don't look now because they're not there.
 
 如果回收真的具有成本效益，私人公司就会在你家门口排队购买你的垃圾。现在不要看，因为他们不在那里。
+
+主旨大意：从经济学的角度分析回收三种主流废品，告诉我们回收利用其实是一个昂贵的事业。
+
+长难句：
+1. If you are worried about the planet, please make sure your rubbish is buried under the ground.
+主句为祈使句please make sure... 其中your rubbish is buried under the ground为make sure的宾语从句，作make sure的宾语。从句为条件状语从句If you are worried about the planet。
+
+2. Even the U.S. Environmental Protection Agency (EPA) says it only makes sense economically and environmentally to recycle about 35 percent of disabled (废弃的) materials.
+
+主句为Even the U.S. Environmental Protection Agency (EPA) says...其中says后面有省略了that的宾语从句。宾语从句中的主句为it only makes sense economically and environmentally，其中it为形式主语，to recycle about 35 percent of disabled materials为动词不定式作真正的主语。
+
+3. Given the recent drop in crude oil prices, it is now cheaper to make a new plastic container than to recycle an old one.
+
+主句为it is now cheaper to make a new plastic container than to recycle an old one.其中 to make a new plastic container than to recycle an old one为真正的主语，由形式主语it指代。前半句为过去分词引导的时间状语从句Given the recent drop in crude oil prices。
+4. However, it doesn’t take into account the water most consumers use to wash their plastic containers before having them recycled.
+主句为 it doesn’t take into account the water其中however为状语，表示”尽管如此“，water后面为省略了关系代词that的从句most consumers use to wash their plastic containers before having them recycled。
+
+5. If one includes the cost of collecting glass waste from neighborhoods, and the pollution produced by the collection trucks and the recycling process itself, glass recycling creates more greenhouse gas emissions and is more expensive than making new glass, which comes primarily from sand that exists everywhere.
+
+从句为if引导的条件状语从句If one includes the cost of collecting glass waste from neighborhoods, and the pollution produced by the collection trucks and the recycling process itself其中第一个连接词and连接了两个宾语the pollution和the cost，第二个and连接了by后面引出的施动者the collection truck和the recycling process。而主句为glass recycling creates more greenhouse gas emissions and is more expensive than making new glass，主句的谓语动词is和creates由and连接。而which引导了非限制性定语从句which comes primarily from sand that exists everywhere，修饰先行词new glass。
+
+
+语法点：
+1. 宾语从句
+文中please make sure your rubbish is buried under the ground.有省略了that的宾语从句，这里的宾语从句是your rubbish is buried under the ground,宾语从句作make sure的宾语。宾语从句在句子中作宾语成分，通常情况下，从句前的关系代词that可以省略。
+
+2. 非谓语动词：动名词
+
+文中Recycling是recycle的动名词形式。动名词是名词化的动词，可以充当名词使用，在句中作主语或宾语成分。
+
+3. 主语从句：it作形式主语
+
+文中it only makes sense economically and environmentally to recycle about 35 percent of disabled materials.中为避免句子头重脚轻，将it作为形式主语放句首，真正的主语由不定式 to recycle about 35 percent of disabled materials放在句末，阅读更顺畅。
+
+4. 过去分词作状语
+
+文中Given the recent drop in crude oil prices为give的过去分词given作条件状语从句。因为逻辑主语是人，人和give是动宾关系，所以用give的过去分词而不是现在分词作状语。
+5. 限制性定语从句
+文中the water most consumers use to wash their plastic containers before having them recycled. 是限制性定语从句，the water为先行词。因为关系代词that在从句中作宾语语，所以可以省略。定语从句用于修饰先行词the water。
+
+6. 过去分词作后置定语
+
+文中the pollution produced by the collection trucks and the recycling process itself为produce的过去分词produced作the pollution的后置定语，修饰the pollution。因为pollution和produce是被动关系，所以使用过去分词，而不是现在分词作后置定语。produced后面的by引出动作的施动者the collection trucks和the recycling process。
+7. 非限制性定语从句
+文中making new glass, which comes primarily from sand that exists everywhere.有由which引导的非限制性定语从句。其中修饰先行词为new glass，关系代词为which。非限制性定语从句的先行词和关系代词一般用逗号隔开，非限制性定语从句删除后，句子的结构不变。
