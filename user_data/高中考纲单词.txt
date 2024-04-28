@@ -1,3 +1,7 @@
+planet	行星
+agency	专门机构
+producers	生产者
+trucks	卡车
 hear	听见
 misunderstand	误解
 digital	数字的
