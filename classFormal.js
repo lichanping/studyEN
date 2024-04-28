@@ -42,6 +42,10 @@ const userData = {
         schedule: "每天晚上 杨南剑 (高三)",
         course: "牛津上海版英语高中",
         hours: [20, 0]
+    }, "泽成": {
+        schedule: "每天晚上 泽成 (初三)",
+        course: "牛津上海版英语高中",
+        hours: [20, 0]
     }
 };
 
