@@ -1,3 +1,18 @@
+steady	平稳的
+lounge	休息厅
+ample	充足的
+statistics	统计
+tone	语气，音调
+electron	电子
+favorable	称赞的，有利的
+voluntary	自愿的
+clash	冲突，不协调
+decay	腐烂，衰败
+recreation	娱乐，消遣
+starve	饿死;（使）挨饿，饿死
+splendid	灿烂的
+source	来源，水源
+laser	激光
 planet	行星
 agency	专门机构
 producers	生产者
@@ -161,7 +176,6 @@ speechless	说不出话的
 airport	机场
 wires	金属丝
 weed	杂草
-starve	（使）挨饿，饿死
 feast	宴会
 properly	适当地
 hopeless	绝望的
