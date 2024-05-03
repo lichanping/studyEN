@@ -1,4 +1,4 @@
-move to	 搬到某地(+地点)
+move to	搬到某地(+地点)
 do the same	照做、效仿
 be considered as	被认为是...
 struggle with	和...作斗争、难以...
@@ -10,7 +10,7 @@ be used to	习惯
 go out	外出
 many other people	其他大部分人
 It is better to do something	做某事很好
-blend in with 与...融合
+blend in with	与...融合
 would rather do something than do something	宁愿做某事，也不愿...
 look like	看起来好像
 struggle over something	围绕...斗争
