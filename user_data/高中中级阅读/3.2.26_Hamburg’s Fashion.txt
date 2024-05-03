@@ -20,3 +20,33 @@ In general, however, I think it has also got cold here very quickly and it alrea
 What do you think?Clearly, I am missing something here as I seem to be the only one struggling over these fashion decisions. 
 
 你觉得呢?显然，我遗漏了一些东西，因为我似乎是唯一一个在这些时尚决定上挣扎的人。
+
+主旨大意：主人公初到德国汉堡，围绕衣物而展开了描述，最后表达自己的感受：与汉堡格格不入。
+
+长难句：
+1. Since I have moved here though, I have found this to actually be completely false and I think I would prefer it if they did just wear jeans, so I could do the same!
+主句是I have found this to actually be completely false and I think I would prefer it if they did just wear jeans, so I could do the same，从句是由时间词since引导的时间状语从句Since I have moved here though，以及由if引导的条件状语从句 if they did just wear jeans。
+
+2. I think it has also got cold here very quickly and it already feels like the winter that I am used to.
+
+主句是I think...，从句是省略了that的2个并列的宾语从句 it has also got cold here very quickly and it already feels like the winter that I am used to，第二个宾语从句内嵌套了由that引导的定语从句that I am used to。
+
+3. Clearly I am missing something here as I seem to be the only one struggling over these fashion decisions.
+
+主句是Clearly I am missing something here，从句是由as 引导的原因状语从句as I seem to be the only one struggling over these fashion decisions。
+
+语法点：
+1. 时间状语从句：由since引导
+Since I have moved here though, I have found this...中since表示“自从……”，后面接已经完成的事实，所以使用现在完成时。
+2. 条件状语从句：由if引导
+...prefer it if they did just wear jeans...中if引导条件状语从句，修饰限定it的内容。
+
+3. 宾语从句：由that引导，有时that可省略
+
+I think it has also got cold ...中省略了关联词that，句子意思不发生改变。
+4. 定语从句：由that引导
+...feels like the winter that I am used to中that引导限制性定语从句，修饰限定前文的the winter 。
+
+5. 原因状语从句：由as 引导
+
+...as I seem to be the only one struggling over these fashion decisions中as 相当于because，表示：因为...。
