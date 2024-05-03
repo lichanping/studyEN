@@ -1,3 +1,5 @@
+Germany	德国
+Germans	德国人
 headmistress	女校长
 ballet	芭蕾舞
 lamp	灯
