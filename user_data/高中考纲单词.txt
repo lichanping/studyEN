@@ -1,3 +1,10 @@
+grocery	食品杂货店
+spotted	有污迹的，有斑点的
+risky	有风险的
+crisis	危机
+possession	财产
+nursery	托儿所
+exchanged	交换的
 sand	沙子
 explain	解释
 random	随机的
@@ -256,7 +263,6 @@ east	东方
 enthusiastic	热情的
 nod	点头
 emotional	情绪的
-grocery	食品杂货店
 sum	总和，金额
 cupboard	碗柜
 theirs	他们的
