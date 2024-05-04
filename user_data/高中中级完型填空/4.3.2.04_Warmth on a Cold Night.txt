@@ -24,3 +24,47 @@ This one stranger responded beautifully to my small crisis, but she actually was
 Looking back, I feel blessed someone had wanted to help a stranger. Erin had gone beyond what almost anyone would have done, finding my house on a bitterly cold night, and for that I was extremely grateful. 
 
 回想起来，有人愿意帮助一个陌生人，我感到很幸运。艾琳做了几乎任何人都不会做的事，在一个寒冷的夜晚找到了我的家，为此我非常感激。
+
+主旨大意：作者遗失钱包后，本以为再也找不回来，但是一位热心的女士发现了钱包并还给了作者。通过这件事，作者感受到人间还有真情存在。
+
+长难句
+1. I could only have left it on the G9 bus, which was now speeding in the dark to some unknown station.
+主句为I could only have left it on the G9 bus，其中情态动词could+have done表推测，从句是which引导的非限制性定语从句which was now speeding in the dark to some unknown station。
+2. How much time and money would it cost to replace the contents of that little wallet？
+该句疑问句，所以句子部分倒装。陈述句语序为it would cost how much time and money to replace the contents of that little wallet其中it为形式主语，真正的主语为不定式to replace the contents of that little wallet。
+3. My husband answered it while I was on the phone in the dining room.
+主句为My husband answered it其中while引导了时间状语从句while I was on the phone in the dining room，表示“当......的时候”。
+4.In my husband's hand was my wallet, with not a penny missing.
+主句为倒装句In my husband's hand was my wallet其中with引导的介词短语作伴随状语。伴随状语中missing
+为现在分词作伴随状语，修饰a penny。
+5. After sharing the story online, I heard from someone, who identified the lady as Erin Smith.
+主句为I heard from someone其中who引导了非限制性定语从句who identified the lady as Erin Smith，修饰someone。After sharing the story online为时间状语从句。share的逻辑主语为主句中的I。
+6.She calculated that going to a stranger's house was a risky move, but she decided to take the chance.
+主句为She calculated that...but she decided to take the chance.其中that引导了宾语从句that going to a stranger's house was a risky move。连接词but表达转折，but she decided to take the chance中的不定式to take the chance作decided的宾语。
+7.Right after Erin took possession of my wallet on the bus, she posted a picture of my driver's license to an online forum, trying to see if anyone knew me.
+主句为she posted a picture of my driver's license to an online forum其中Right after Erin took possession of my wallet on the bus为after引导的时间状语从句；而trying to see if anyone knew me为try的现在分词trying引导的目的状语从句。目的状语从句中if引导了宾语从句，作see的宾语。
+8. I read that people are more divided than ever, but that's not how the people I encounter tend to act.
+该句为but连接的两个复合句，主句为I read that...but that's not how...其中第一个that引导了宾语从句that people are more divided than ever而how引导了表语从句how the people I encounter tend to act，作第二个复合句的表语。表语从句中I encounter为省略了that 的定语从句，修饰the people。
+9.No sooner did she leave my doorstep than I had emails from two women whose kids go to my son's nursery and who recognized my face.
+该句为no sooner... than...固定结构。该结构中，主句No sooner...使用一般过去时，并且是否定词置于句首主句倒装，而从句than...使用过去完成时。译为“一......就......”
+10. Erin had gone beyond what almost anyone would have done, finding my house on a bitterly cold night, and for that I was extremely grateful.
+主句为Erin had gone beyond...and for that I was extremely grateful.其中what引导了宾语从句，作介词beyond的宾语。finding my house on a bitterly cold night为现在分词finding引导的状语从句。
+
+语法点：
+1. 倒装句
+文中In my husband's hand was my wallet为倒装句，当介词短语移到句首时，必须倒装句子，倒装句将强调的部分移至句首。
+
+2. 非谓语动词：动名词
+文中After sharing the story online有动名词sharing。动名词为名词化的动词。可以充当主语、表语、动词宾语、介词宾语和定语。该句中充当的是表语。同理，going to a stranger's house was a risky move中的going to...也是动名词短语。
+3. 虚拟语气
+文中If I were in that situation I would want someone to try to find me应用了虚拟语气。对现在情况的虚拟语气的结构为：从句为if+过去时；主句为should / would /could / might+do。如果从句是主系表结构而且主语为第一人称，be动词用were。虚拟语气是指说话人表示一种假设的情况，一种愿望，怀疑，推测，请求等，即认为动词所表示的动作或状态并非事实。虚拟语气可用于状语从句，名词性从句，定语从句及其他结构中。
+4.非限制性定语从句：who引导
+文中who identified the lady as Erin Smith为关系代词who引导的非限制性定语从句。它修饰前面主句中的someone，也叫先行词。非限制性定语从句的先行词和关系代词一般用逗号隔开，非限制性定语从句删除后，句子的结构不变。
+5. 非谓语动词：现在分词作目的状语
+文中trying to see if anyone knew me为try的现在分词作目的状语，表示“为了”。
+6. 宾语从句：if引导
+文中if anyone knew me为if引导的宾语从句。If表示“是否”。宾语从句在句中作宾语，也可以由that引导。如果是关系代词that引导的宾语从句，that可以省略。
+7. 表语从句
+文中that's not how the people I encounter tend to act.有关系副词how引导的表语从句，作is的表语。关系副词译为“如何”。
+8. 限制性定语从句
+文中...two women whose kids go to my son's nursery and who recognized my face.有由whose和who分别引导的定语从句，其中关系代词whose相当于形容词性物主代词。两个定语从句的先行词都为women。定语从句中如果先行词为人，关系代词只能用who或whose不能用that。
