@@ -205,7 +205,7 @@ export function getRandomMotto() {
 }
 
 
-function countEnglishWords(text) {
+export function countEnglishWords(text) {
     const wordsArray = extractEnglishWords(text)
     const len = wordsArray.length;
     return len;
