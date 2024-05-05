@@ -1,3 +1,16 @@
+passively	被动地
+wondered	想知道
+definitely	肯定地
+Brazilian	巴西的；adj.巴西人的；巴西人n.
+fellow	同伴，伙伴;伙伴
+microscopic	微观的；极微的
+cancerous	癌的
+pollutant	污染物
+inhale	吸入
+Mexico	墨西哥
+accessible	可访问的
+consequences	后果
+enriching	丰富
 material	材料
 maple	枫树
 wise	明智的
@@ -193,7 +206,6 @@ guidance	引导
 Oceania	大洋洲
 defeat	击败
 spoon	汤匙
-fellow	伙伴
 danger	危险
 vacation	假期
 belong	属于

@@ -1,3 +1,24 @@
+walk through	穿梭、行走
+answer the question	回答问题
+equivalent to	与...等值
+mathematical model	数学模型
+compare to	与...作比较
+microscopic particle	微粒
+per day	每天
+up to	高达
+be surprised to do something	对做...感到惊讶
+heavily populated	人口稠密的
+both A and B	两者都
+not only...also ...	不但，而且
+air quality	空气质量
+air-quality monitoring stations	空气质量监测站
+be specific to somebody	特定、针对于某人而言
+environmental issues	环境问题
+deal with	处理、解决;处理
+in the daily life	日常生活中
+keep doing something	继续做某事
+work on	从事
+enable somebody to do something	使某人能够做某事
 be ready to do	准备做
 pay for	支付
 credit cards	信用卡
@@ -44,7 +65,6 @@ manage to do something.	设法做某事
 make good decisions	做出正确决定
 hundreds of	成百的人
 come through	经历
-deal with	处理
 by phone	通过手机
 in person	亲自
 for the first time	第一次
