@@ -1,4 +1,4 @@
-import {copyToClipboard, getRandomMotto, showAlert, getRandomFeedback, showLongText} from './commonFunctions.js'
+import {copyToClipboard, getRandomMotto, showAlert, getRandomFeedback, showLongText, countEnglishWords} from './commonFunctions.js'
 
 const setInitialDateTime = () => {
     const currentDate = new Date();
@@ -130,8 +130,26 @@ export function handleClassFeedbackClick() {
     const forgetWord = parseInt(document.getElementById("forgetWord").value) || 0; // Default to 0 if no value entered or invalid
     // Calculate correct rate
     const correctRate = ((newWord - forgetWord) / newWord * 100).toFixed(0);
+
+    // Get values from input boxes
+    const antiForgettingReviewWord = document.getElementById('antiForgettingReviewWord').value;
+    let forgetWords = document.getElementById('forgetWords').value.trim();
+    let pronounceWords = document.getElementById('pronounceWords').value.trim();
+
+    // Count the number of English words
+    const numberOfEnglishWords = countEnglishWords(forgetWords);
+    const numberOfWrongWords = countEnglishWords(pronounceWords);
+    const correctWordsCount = parseInt(antiForgettingReviewWord) - numberOfEnglishWords - numberOfWrongWords
+    const correctRateAnti = (correctWordsCount / antiForgettingReviewWord * 100).toFixed(0);
+    // Get the input element to display the result
+    const inputAntiForgettingForgetWord = document.getElementById("antiForgettingForgetWord");
+
+    // Set the calculated value to the input box
+    inputAntiForgettingForgetWord.value = numberOfEnglishWords;
+    const antiForgettingForgetWord = document.getElementById('antiForgettingForgetWord').value;
+
     // Generate feedback message
-    const feedbackMessage = `【${userName}今日学习反馈】<br><br>1.今日新学单词 ${newWord}个，遗忘${forgetWord}个, 正确率 ${correctRate}% ；今日复习单词 ${reviewWordCount}个，遗忘 0个。<br><br>2.陪伴 ✨ ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} 认真且努力的${userName}一定能抵达梦想的彼岸。🚀🚀🚀<br><br>3.严格按照 21 天抗遗忘复习表来复习哟!<br><br><br><br>💟今日寄语💟<br><br>${getRandomMotto()}`
+    const feedbackMessage = `【${userName}今日学习反馈】<br><br>1.今日新学单词 ${newWord}个，遗忘${forgetWord}个, 正确率 ${correctRate}% ；今日复习单词 ${reviewWordCount}个，遗忘 0个。<br><br>2.今日抗遗忘复习 ${antiForgettingReviewWord} 词，遗忘 ${antiForgettingForgetWord} 词，发音不标准 ${numberOfWrongWords} 词, 正确率 ${correctRateAnti}%。<br><br>3.陪伴 ✨ ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} 认真且努力的${userName}一定能抵达梦想的彼岸。🚀🚀🚀<br><br>4.严格按照 21 天抗遗忘复习表来复习哟!<br><br><br><br>💟今日寄语💟<br><br>${getRandomMotto()}`
     copyToClipboard(feedbackMessage);
     showLongText(`${feedbackMessage}`);
 }
