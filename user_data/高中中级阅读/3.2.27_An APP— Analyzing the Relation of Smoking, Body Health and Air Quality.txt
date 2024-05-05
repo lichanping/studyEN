@@ -24,3 +24,30 @@ For both Coelho and Martiny, the app isn't only a useful tool to inform users ab
 The developers' plan now is to keep working on and enriching the app's features. This will most likely include monthly average cigarette rates, and enabling users to get data from cities other than the one they're in. 
 
 开发人员现在的计划是继续开发和丰富应用程序的功能。这很可能包括每月平均香烟价格，并使用户能够获得他们所在城市以外的城市的数据。
+
+主旨大意：新研发出的一款应用程序能够研究烟雾、身体健康以及空气质量，开发人员将继续开发和增加其程序。
+
+
+长难句：
+1. Have you ever wondered how many cigarettes you're passively smoking while walking through the streets of a polluted, smog-infused city?
+主句是Have you ever wondered，从句是由特殊疑问短语how many 引导的宾语从句how many cigarettes you're passively smoking ……，其中嵌套了省略that的定语从句you're passively smoking，以及由while 引导的时间状语从句while walking through the streets of a polluted, smog-infused city。
+
+2. ...explains a mathematical model that compares smoking and tobacco-related deaths to levels of PM2.5, a microscopic particle that is a dangerous, cancerous pollutant after burning.
+
+主句是...explains a mathematical model，从句是由that引导的定语从句that compares smoking and tobacco-related deaths to levels of PM2.5, a microscopic particle …… 从句中嵌套了由that引导的定语从句that is a dangerous, cancerous pollutant after burning。
+
+3. So when you make this conversion to cigarettes, it makes it easier to understand what people are dealing with and the consequences air quality has in the daily lives.
+
+主句是 it makes it easier to understand what people are dealing with and the consequences air quality has in the daily lives，其中嵌套了由what引导的两个并列的宾语从句what people are dealing with and the consequences air quality has in the daily lives，和主句并列的从句是由when引导的时间状语从句when you make this conversion to cigarettes。
+
+语法点：
+1. 宾语从句：由特殊疑问短语引导
+Have you ever wondered how many cigarettes you're passively smoking ……其中how many充当宾语从句的先行词。
+2. 定语从句：由that引导，that有时可省略
+...how many cigarettes you're passively smoking...中省略了关系词that。
+3. 状语从句：由while引导的时间状语从句
+...while walking through the streets of a polluted, smog-infused city？此句中while 表示：当...时。
+
+4. 定语从句
+
+...explains a mathematical model that compares smoking and tobacco-related deaths to levels of PM2.5……中that修饰限定前文的a mathematical model ；a microscopic particle that is a dangerous, cancerous pollutant after burning中that修饰限定a microscopic particle。
