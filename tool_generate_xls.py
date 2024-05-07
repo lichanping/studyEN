@@ -141,10 +141,11 @@ class TextToSpeechConverter:
         )
 
         with open(output_file, "wb") as file:
-            for item in extracted_data:
+            for index, item in enumerate(extracted_data):
                 english_word = item['单词']
                 chinese_meaning = item['释意']
-                print(f"English: {english_word}, Translation: {chinese_meaning}")
+                # print(f"English: {english_word}, Translation: {chinese_meaning}")
+                print(f"{index + 1}: {english_word}, 翻译为_______")
                 english_voice_name = english_voice
                 chinese_voice_name = random.choice(chinese_voice)["Name"]
 
@@ -193,4 +194,4 @@ class GenerateTool:
         tool = TxtToXLSX()
         # en_and_cn('敏珺.txt', max_items=None)
         # en_and_cn('悠然.txt', max_items=None)
-        en_and_cn('杨南剑.txt', max_items=None)
+        en_and_cn('高中考纲词组.txt', max_items=10)
