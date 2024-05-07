@@ -141,6 +141,8 @@ class TextToSpeechConverter:
         )
 
         with open(output_file, "wb") as file:
+            current_date = datetime.now().strftime('%Y-%m-%d')
+            print(f"测验时间: ___{current_date}___, 考核项：___重点语言点___")
             for index, item in enumerate(extracted_data):
                 english_word = item['单词']
                 chinese_meaning = item['释意']
