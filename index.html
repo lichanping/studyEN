@@ -84,7 +84,10 @@
 <textarea id="forgetWords"></textarea>
 <label for="pronounceWords">发音不标准的词:</label>
 <textarea id="pronounceWords"></textarea>
+<div>
 <button id="antiForgettingFeedbackButton">抗遗忘课堂反馈</button>
+<button id="bye">体验课结束语</button>
+</div>
 
 <script type="module">
     import * as script from './classFormal.js';
@@ -103,6 +106,8 @@
     document.getElementById("understandSituationButton").addEventListener("click", script.handleUnderstandSituationClick);
     document.getElementById("managementGroupTemplateButton").addEventListener("click", script.handleManagementGroupTemplateClick);
     document.getElementById("antiForgettingFeedbackButton").addEventListener("click", commonFunctions.handleAntiForgettingFeedbackClick);
+    document.getElementById("bye").addEventListener("click", commonFunctions.byeClick);
+
 </script>
 </body>
 </html>

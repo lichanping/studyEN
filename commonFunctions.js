@@ -45,6 +45,20 @@ export function handleGroupGreetingClick() {
     showLongText(`${greetingMessage}`);
 }
 
+export function byeClick(){
+    const userName = document.getElementById("userName").value;
+    const newWord = parseInt(document.getElementById("newWord").value);
+    let message = `${userName}和${userName}妈妈你们好，自体验课之日起，加上连续3天的复习，这边${userName}的英语快速提升的体验课之旅已经到这里结束了，很开心能陪伴${userName}走过这一段学习时光。<br>
+${userName}现在已经很棒了，已经完全把上课所学习的${newWord}个单词完全吸收了。
+十分感谢家长和${userName}的高度配合，我们正式课见哦！`;
+    // Add line breaks
+    message = message.replace(/\n/g, '<br>');
+    // Copy the message to clipboard
+    copyToClipboard(message);
+    // Show alert with the generated message
+    showLongText(`${message}`);
+}
+
 export function handleAntiForgettingFeedbackClick() {
     // Get values from input boxes
     const antiForgettingReviewWord = document.getElementById('antiForgettingReviewWord').value;
