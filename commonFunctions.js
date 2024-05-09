@@ -45,12 +45,36 @@ export function handleGroupGreetingClick() {
     showLongText(`${greetingMessage}`);
 }
 
-export function byeClick(){
+// Define an array of 10 sentences
+const sentences = [
+    "亲爱的${userName}和${userName}妈妈，自体验课开始至今，${userName}的英语快速提升之旅已画下完美句号。感谢你们的陪伴和支持，让这段学习时光充满了温暖和意义。",
+    "${userName}和${userName}妈妈你们好，自体验课之日起，加上连续3天的复习，这边${userName}的英语快速提升的体验课之旅已经到这里结束了，很开心能陪伴${userName}走过这一段学习时光。",
+    "亲爱的${userName}和家长，感谢你们选择了我们的体验课。在这短短的时间里，${userName}展现出了惊人的学习潜力和积极态度，我们的学习旅程已经圆满结束。",
+    "${userName}和${userName}妈妈，感谢你们选择了我们的英语快速提升课程。在这短暂的时间里，${userName}展现了出色的学习能力和积极的学习态度，我们为她的成长感到骄傲。",
+    "亲爱的${userName}和家长，自从体验课开始以来，我们一直见证着${userName}的成长和进步。感谢你们的信任和支持，让我们一起度过了这段难忘的学习时光。",
+    "${userName}和${userName}妈妈，感谢你们选择了我们的英语快速提升课程。在这段时间里，${userName}展现了出色的学习能力和优秀的学习态度，我们期待在正式课上再次见到你们！",
+    "亲爱的${userName}和家长，感谢你们的支持和信任，让我们共同度过了这段美好的学习时光。${userName}已经做得非常棒了，我们期待在正式课上继续与她共同进步。",
+    "${userName}和${userName}妈妈，感谢你们选择了我们的英语快速提升课程。${userName}在这段时间里展现了出色的学习能力和积极的学习态度，我们的学习之旅已圆满结束。",
+    "亲爱的${userName}和家长，感谢你们的支持和信任，让我们共同度过了这段美好的学习时光。${userName}已经做得非常出色了，我们期待在正式课上继续与她共同进步。",
+    "${userName}和${userName}妈妈你们好，自体验课之日起，加上连续3天的复习，这边${userName}的英语快速提升的体验课之旅已经到这里结束了，很开心能陪伴${userName}走过这一段学习时光。期待与你踏上英语学习之旅。"
+];
+
+// Function to randomly select one sentence from the array
+function getRandomSentence() {
     const userName = document.getElementById("userName").value;
     const newWord = parseInt(document.getElementById("newWord").value);
-    let message = `${userName}和${userName}妈妈你们好，自体验课之日起，加上连续3天的复习，这边${userName}的英语快速提升的体验课之旅已经到这里结束了，很开心能陪伴${userName}走过这一段学习时光。<br>
-${userName}现在已经很棒了，已经完全把上课所学习的${newWord}个单词完全吸收了。
-十分感谢家长和${userName}的高度配合，我们正式课见哦！`;
+    var opt = sentences[Math.floor(Math.random() * sentences.length)];
+    opt = opt + `<br>${userName}现在已经很棒了，已经完全把上课所学习的${newWord}个单词完全吸收了。十分感谢家长和${userName}的高度配合，我们正式课见哦！`
+    return opt;
+}
+
+export function byeClick() {
+    const userName = document.getElementById("userName").value;
+    const newWord = parseInt(document.getElementById("newWord").value);
+    // Get a random sentence
+    const randomSentence = getRandomSentence();
+    // Replace placeholders with actual values
+    let message = randomSentence.replace(/\${userName}/g, userName).replace(/\${newWord}/g, newWord);
     // Add line breaks
     message = message.replace(/\n/g, '<br>');
     // Copy the message to clipboard
