@@ -1,3 +1,16 @@
+nook	角落；隐匿处
+knit	编织
+patterns	有规律的模式
+independent	独立的
+experts	专家
+settling	安置
+trade	贸易
+industrialization	工业化
+compulsory	必须做的;强制的
+dominant	统治的
+distribution	分布
+uneven	不均匀的
+mild	轻微的
 gerund	动名词n.(Gerund)是非谓语动词的另一种形式，在句子中起名词作用，又有动词的特征，可以带自己的宾语或状语，构成动名词短语。
 enthusiastic	热情的
 conventional	惯例的
@@ -23,7 +36,6 @@ privilege	特权
 encouragement	鼓励
 expensive	昂贵的
 borrow	借
-compulsory	强制的
 mercy	怜悯
 direct	直接的
 receive	收到
@@ -514,7 +526,6 @@ tale	故事
 undertake	承担
 content	满足的，内容
 urgent	紧要的
-nook	角落；隐匿处
 sincere	真诚的
 liars	撒谎者
 frowning	皱眉头
