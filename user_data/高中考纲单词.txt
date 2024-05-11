@@ -1,3 +1,34 @@
+camp	度假营
+price	价格
+general	普遍的
+public	公共的
+memberships	会员
+adventures	奇遇
+chemistry	化学
+biology	生物学
+engineering	工程学
+appear	出现
+experiments	实验
+discover	发现
+snowflake	雪花
+igloo	冰屋
+materials	材料
+chill	寒冷
+surviving生存(survive的现在分词)
+snowball	雪球
+launcher	发射者
+environments	环境
+optional	可选择的
+purchase	购买
+preferred更喜欢(prefer的过去式)
+communication	交流
+staff	职员
+monitor	班长
+respond	回答
+voicemails	电子语音邮件
+dependent	依赖的
+volume	量；额
+contact	联络
 unattended	无人看管的
 praise	表扬
 campaign	竞选活动
