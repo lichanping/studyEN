@@ -36,3 +36,47 @@ Now Mr. Anderson has set up an online campaign to raise money for Mr. Smith and 
 For Mr.Smith, this is a possible life-changing chance.   The story once again tells us that one good turn deserves another.
 
 对史密斯来说，这可能是一个改变他一生的机会。这个故事再一次告诉我们，善有善报。
+
+主旨大意：无家可归的汤姆·史密斯发现在一辆开着窗的车里有一个无人看管的钱包，里面有450英镑，在雨中站着等了车主大约两个小时后车主还没回来，也联系不上车主，于是史密斯先生留下便条说明钱包很安全并将钱包交到附近的警察局。车主拿到钱包后很感动，在网络上发布了史密斯先生的善行，这引起了社会的关注。车主还发起为史密斯先生和当地无家可归的人的捐款活动，有些人还为史密斯先生提供工作等其他帮助。这个故事印证了“善人有善报”这句话。
+
+长难句：
+1. For many, finding an unattended wallet filled with £400 in cash would be a source（来源）of temptation（诱惑）.
+这句话动名词短语finding an unattended wallet filled with £400 in cash作主语，谓语是would be，宾语是a source（来源）of temptation（诱惑）。
+2. But the urge would no doubt be greater if you were living on the streets with little food and money.
+这句话是虚拟语气，主句是the urge would no doubt be greater，从句是if引导的非真实条件句if you were living on the streets with little food and money。
+3. After hours in the cold and wet, he reached inside and pulled the wallet out hoping to find some ID so he could contact（联系）the driver, only to discover it contained £400 in notes, with another £50 in spare change beside it.
+这句话中，so 连接两个句子he reached inside and pulled the wallet out hoping to find some ID和he could contact（联系）the driver，现在分词短语hoping to find some ID作状语表目的，with短语with another £50 in spare change beside it表伴随。
+4. He then took the wallet to a nearby police station after leaving a note behind to let the owner know it was safe.
+在这句话中，主句是He then took the wallet to a nearby police station，动词不定式to let the owner know it was safe表目的，动词know的宾语是句子it was safe，省略了that。
+5. When the car's owner John Anderson and his colleague Carol Lawrence returned to the car—which was itself worth £35, 000—in Glasgow city centre, they were shocked to find two policemen standing next to it.
+这句话中，主句是they were shocked to find two policemen standing next to it，从句是when引导的时间状语从句When the car's owner John Anderson and his colleague Carol Lawrence returned to the car，which引导的非限制性从句which was itself worth £35, 000作car的定语。
+6. To think he is sleeping on the streets tonight when he could have stolen the money and paid for a place to stay in.
+这句话中，主句是To think he is sleeping on the streets tonight，think的宾语是宾语从句he is sleeping on the streets tonight，省略了that。When引导的从句when he could have stolen the money and paid for a place to stay in作时间状语，从句中could have done表示曾经有机会做某事但没做。
+
+语法点：
+1. 非谓语动词：过去分词作后置定语
+在这句For many, finding an unattended wallet filled with £400 in cash would be a source（来源）of temptation（诱惑），过去分词短语filled with £400 in cash作后置定语。
+2. 非谓语动词：to do特殊用法
+在这句话After hours in the cold and wet, he reached inside and pulled the wallet out hoping to find some ID so he could contact（联系）the driver, only to discover it contained £400 in notes, with another £50 in spare change beside it，only to discover it contained £400 in notes作结果状语表意外，谓语discover后面的宾语是句子it contained £400 in notes，省略了that。
+3. 时间状语从句
+在这句话He …… after Mr. Anderson posted about the act of kindness on Facebook.中，从句是after引导的时间状语从句，表示在“……之后”。
+4. 非限制性定语从句：which引导
+在这句话Now Mr. Anderson …… in the area, which by yesterday had received ￡8,000，which引导了非限制性定语从句。非限制性定语从句是先行词的附加说明，去掉了也不会影响主句的意思，它与主句之间通常用逗号分开。
+
+重点语言点：
+be filled with 充满
+a source of 来源
+more remarkable 更不同寻常
+wait for等待
+after doing 做…之后
+hope to do 希望做某事
+leave … behind 留下
+return to 返回
+be shocked to do 惊讶地做某事
+pay for 支付
+stay in 停留
+win praise 赢得赞美
+set up 发起
+raise money 攒钱
+show faith in … 信任…
+one good turn deserves another 善有善报
