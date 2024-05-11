@@ -1,0 +1,9 @@
+Mary is going to visit Aunt Judy with her parents and grandma
+
+提示词：brought passports, got boarding cards, brought a camera, got some US dollars, written down Aunt Judy's address, called Aunt Judy, put a name tag on the suitcase
+
+答案1：Mary is going to visit Aunt Judy with her parents and grandma. They have already done a lot of things. They have already brought their passports and a camera. They have got some US dollars. Besides, they have also put a name tag on the suitcase. However, they haven't got their boarding cards yet. They haven't written down Aunt Judy's address or called her. They must hurry up.
+
+答案2：Mary is going to visit Aunt Judy with her parents and grandma. They have made some preparations. They've brought their passports and a camera. And they've got some US dollars. They have put a name tag on the suitcase. But they have not got their boarding cards yet. Besides, they haven't written down Aunt Judy's address or called her. So they must hurry up.
+
+答案3：Mary is going to visit Aunt Judy with her parents and grandma. They are checking the preparations at the airport. They have brought their passports and a camera. They've got some US dollars. In addition, they have put a name tag on the suitcase. Oh, no! They haven't written down Aunt Judy's address or called her. And they haven't got their boarding cards yet. They have to hurry up!
