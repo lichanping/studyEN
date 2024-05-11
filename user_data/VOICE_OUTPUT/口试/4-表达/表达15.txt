@@ -1,0 +1,8 @@
+提示词：The lis' new flat, bathroom, Ben's bedroom, Mr and Mrs Li's bedroom, Kitty's bedroom, kitchen, living room, balcony,
+Lis' old flat
+
+答案1：The Lis' new flat has one living room, three bedrooms, one kitchen, two bathrooms and one balcony. The old fat has one living room, three bedrooms, one kitchen and one bathroom. The new flat has one more room than the old one. The living room in the old flat is much smaller than the one in the new flat. The bedrooms in the new flat are a lot bigger than the ones in the old flat. The Lis love the new flat so much!
+
+答案2：The Lis move into a new flat now. The Lis' new flat has two bathrooms, Kitty's bedroom, Ben's bedroom, Mr and Mrs Li's bedroom, a kitchen, a balcony and a living room. The old flat has Kitty's bedroom, Ben's bedroom, Mr and Mrs Li's bedroom, a kitchen, a bathroom and a living room. The new flat is much bigger than the old flat. The Lis love the new flat so much!
+
+答案3：The Lis' old flat is very small. There are three bedrooms, one kitchen, one bathroom and one living room. And now they move into a new flat. The new flat is much bigger than the old flat. There are two bathrooms, three bedrooms, a kitchen and a living room. The new flat also has a balcony! The Lis are so happy to live in the new flat.
