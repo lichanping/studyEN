@@ -16,3 +16,38 @@ At present, the world has about 6,800 languages. The distribution of these langu
 Already well over 400 of the total 6,800 languages are close to extinction（消亡）, with only a few elderly speakers left. Pick, at random, Busuu in Cameroon （eight remaining speakers）, and Chiapaneco in Mexico（150）. Lipan Apache in the United States（two or three） or Wadjigu in Australia （one, with a question mark）: none of these seems to have much chance of survival. 
 
 在总共6800种语言中，已经有超过400种濒临灭绝，只剩下少数上了年纪的语言使用者。随机选择喀麦隆的布苏语(仅剩8人)和墨西哥的恰帕内奇语(150人)。美国的利潘阿帕奇(两三个)或澳大利亚的瓦迪古(一个，带问号):这些似乎都没有多大的生存机会。
+
+主旨大意:文章讲述了随着社会的发展人类语言越来越少及其原因。
+
+长难句:
+1. When the world was still populated by hunter-gatherers, small, tightly knit groups developed their own patterns of
+speech independent of each other.
+
+主句是small, tightly knit groups developed their own patterns of speech independent of each other, 从句是出when 引导的时间状语从旬When the world was still populated by hunter gatherers.
+
+2. Some language experts believe that 10,000 years ago, when the world had just five to ten million people, they spoke perhaps 12,000 languages between them.
+
+主句是Some language experts believe……,从句是由that引导的宾语从句 that 10,000 years ago, when the world had just five to ten million people, they spoke perhaps 12000 languages between them,其中嵌套了由when 引导的时间状语从句when the world had
+just five to ten million people.
+
+3. The general rule is that mild zones have relatively few languages, often spoken by many people while hot, wet zones have lots, often spoken by small numbers
+
+主句是The general rule is…,从句是由that引导的两个表语从句，且两个表语从句由while连接，that mild zones have relatively few languages, often spoken by many people while hot, wet zones have lots, often spoken by small numbers.
+
+4. The median number of speakers is a mere 6, 000, which means that half the worlds languages are spoken by fewer people than that.
+
+主旬是The median number of speakers is a mere 6.000,从句是由which引导的非限制性定语从句which means that half the worlds languages are spoken by fewer people than that,其中嵌套了由that 引导的宾语从句that half the worlds languages are spoken by fewer people than that.
+
+语法点:
+1.状语从句:由when 引导的时间状语从句
+When the world was still populated by hunter-gatherer's....; when the world had just five to ten million people…中when 表示
+当…时、在。
+
+2.宾语从句:由that 引导
+Some language experts believe that 10,000 years ago…中that引导完整的宾语从句。
+
+3.定语从句:由which 引导非限制性定语从句
+The median number of speakers is a mere 6, 000, which means that half the worlds languages are spoken by fewer people than that.中which 充当非限制性定语从句的主语。
+
+4.宾语从句:由that 引导
+…means that half the worlds languages ….中that引导完整的宾语从句。
