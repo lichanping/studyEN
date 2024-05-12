@@ -1,3 +1,12 @@
+wanders	漫游
+stimuli	刺激（stimulus 的复数）;刺激（物），促进因素；（使生物产生反应的）刺激，刺激物；刺激性，趣味性（stimulus 的复数）
+threatened	受到威胁的
+experiment	实验
+positive	积极的
+energetically	精力充沛地
+enthusiasm	热情
+intensity	强度
+shepherd	牧羊人
 camp	度假营
 price	价格
 general	普遍的
@@ -14,13 +23,13 @@ snowflake	雪花
 igloo	冰屋
 materials	材料
 chill	寒冷
-surviving生存(survive的现在分词)
+surviving	生存(survive的现在分词)
 snowball	雪球
 launcher	发射者
 environments	环境
 optional	可选择的
 purchase	购买
-preferred更喜欢(prefer的过去式)
+preferred	更喜欢(prefer的过去式)
 communication	交流
 staff	职员
 monitor	班长
@@ -34,7 +43,6 @@ praise	表扬
 campaign	竞选活动
 faith	信任
 approaching	接近的
-stimuli	刺激（物），促进因素；（使生物产生反应的）刺激，刺激物；刺激性，趣味性（stimulus 的复数）
 nook	角落；隐匿处
 knit	编织
 patterns	有规律的模式
@@ -590,7 +598,6 @@ engrossed	全神贯注
 page-turner	引人入胜的书
 perception	看法
 pros	赞成者
-wanders	漫游
 audiobook	有声读物
 intonation	语调
 headphones	（头戴式）耳机
