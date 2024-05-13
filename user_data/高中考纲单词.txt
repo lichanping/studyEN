@@ -1,3 +1,19 @@
+premier	首相
+protest	抗议，反对
+woollen	羊毛的
+regard	视为
+somehow	以某种方式
+overcome	克服
+limb	肢，树枝
+oppose	反对
+speculate	推测，投机
+cocoa	可可粉
+initiative	主动，起始的
+moisture	潮湿
+virus	病毒
+turbine	汽轮机
+furnish	布置，装备
+pea	豌豆
 wanders	漫游
 stimuli	刺激（stimulus 的复数）;刺激（物），促进因素；（使生物产生反应的）刺激，刺激物；刺激性，趣味性（stimulus 的复数）
 threatened	受到威胁的
@@ -264,7 +280,6 @@ stamp	邮票
 since	自从
 rural	农村的
 quarrel	争吵
-woollen	羊毛的
 movie	电影
 glue	胶水
 self	自己
@@ -497,7 +512,6 @@ panic	惊慌
 burden	负担
 rectangle	长方形
 slender	苗条的，微薄的
-premier	首相
 procedure	程序
 hostile	敌对的，敌方的
 chorus	合唱，合唱队
