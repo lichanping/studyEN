@@ -1,3 +1,4 @@
+gerund	动名词n.(Gerund)是非谓语动词的另一种形式，在句子中起名词作用，又有动词的特征，可以带自己的宾语或状语，构成动名词短语。
 wanders	漫游
 stimuli	刺激（stimulus 的复数）;刺激（物），促进因素；（使生物产生反应的）刺激，刺激物；刺激性，趣味性（stimulus 的复数）
 threatened	受到威胁的
@@ -56,7 +57,6 @@ dominant	统治的
 distribution	分布
 uneven	不均匀的
 mild	轻微的
-gerund	动名词n.(Gerund)是非谓语动词的另一种形式，在句子中起名词作用，又有动词的特征，可以带自己的宾语或状语，构成动名词短语。
 enthusiastic	热情的
 conventional	惯例的
 wish	愿望
