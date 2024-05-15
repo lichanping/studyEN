@@ -29,7 +29,7 @@ const userData = {
     "夏启程": {
         schedule: "每周五、日 19:35 夏启程 (5年级)",
         course: "小学考纲词汇",
-        hours: [19, 35]
+        hours: [19, 25]
     }, "陈敏珺": {
         schedule: "每周日 19:40 陈敏珺 (初一)",
         course: "初中中级完型填空",
@@ -37,19 +37,15 @@ const userData = {
     }, "悠然": {
         schedule: "每周1 18:45、周5 19:45 悠然 (高二)",
         course: "牛津上海版英语高中",
-        hours: [19, 45]
+        hours: [19, 20]
     }, "杨南剑": {
         schedule: "每天晚上 杨南剑 (高三)",
         course: "牛津上海版英语高中",
-        hours: [20, 0]
+        hours: [19, 35]
     }, "泽成": {
         schedule: "每天晚上 泽成 (初三)",
         course: "牛津上海版英语初中",
-        hours: [20, 0]
-    }, "芷淇": {
-        schedule: "试听 芷淇 (初二)",
-        course: "牛津上海版英语初中",
-        hours: [19, 25]
+        hours: [19, 45]
     }
 };
 
