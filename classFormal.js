@@ -128,6 +128,7 @@ export function handleLateMeetingReminderClick() {
 }
 
 export function handleClassFeedbackClick() {
+    const course = document.getElementById('courseLabel').textContent;
     const userName = document.getElementById("userName").value;
     const newWord = parseInt(document.getElementById("newWord").value);
     const reviewWordCount = document.getElementById("reviewWord").value;
@@ -153,7 +154,7 @@ export function handleClassFeedbackClick() {
     const antiForgettingForgetWord = document.getElementById('antiForgettingForgetWord').value;
 
     // Generate feedback message
-    const feedbackMessage = `【${userName}今日学习反馈】<br><br>1.今日新学单词 ${newWord}个，遗忘${forgetWord}个, 正确率 ${correctRate}% ；今日复习单词 ${reviewWordCount}个，遗忘 0个。<br><br>2.今日抗遗忘复习 ${antiForgettingReviewWord} 词，遗忘 ${antiForgettingForgetWord} 词，发音不标准 ${numberOfWrongWords} 词, 正确率 ${correctRateAnti}%。<br><br>3.陪伴 ✨ ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} 认真且努力的${userName}一定能抵达梦想的彼岸。🚀🚀🚀<br><br>4.严格按照 21 天抗遗忘复习表来复习哟!<br><br><br><br>💟今日寄语💟<br><br>${getRandomMotto()}`
+    const feedbackMessage = `【${userName}今日学习-《${course}》的反馈】<br><br>1.今日新学单词 ${newWord}个，遗忘${forgetWord}个, 正确率 ${correctRate}% ；今日复习单词 ${reviewWordCount}个，遗忘 0个。<br><br>2.今日抗遗忘复习 ${antiForgettingReviewWord} 词，遗忘 ${antiForgettingForgetWord} 词，发音不标准 ${numberOfWrongWords} 词, 正确率 ${correctRateAnti}%。<br><br>3.陪伴 ✨ ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} 认真且努力的${userName}一定能抵达梦想的彼岸。🚀🚀🚀<br><br>4.严格按照 21 天抗遗忘复习表来复习哟!<br><br><br><br>💟今日寄语💟<br><br>${getRandomMotto()}`
     copyToClipboard(feedbackMessage);
     showLongText(`${feedbackMessage}`);
 }
