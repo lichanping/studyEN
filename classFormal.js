@@ -23,32 +23,32 @@ window.addEventListener("load", updateLabel);
 const userData = {
     "青青": {
         schedule: "每周一 19:30 青青 (6年级)",
-        course: "牛津上海版英语七年级下册",
+        course: "牛津上海版英语八年级上册",
         hours: [19, 30]
     },
     "启程": {
         schedule: "每周五、日 19:35 启程 (5年级)",
-        course: "小学考纲词汇",
+        course: "牛津上海版小学英语六年级（下册）",
         hours: [19, 25]
     }, "敏珺": {
         schedule: "每周日 19:40 敏珺 (初一)",
-        course: "初中中级完型填空",
+        course: "初中高级完型填空",
         hours: [19, 40]
     }, "悠然": {
         schedule: "每周1 18:45、周5 19:45 悠然 (高二)",
-        course: "牛津上海版英语高中",
+        course: "高中超前单词",
         hours: [19, 20]
     }, "南剑": {
         schedule: "每天晚上 南剑 (高三)",
-        course: "牛津上海版英语高中",
+        course: "高中考纲单词",
         hours: [19, 35]
     }, "泽成": {
         schedule: "每天晚上 泽成 (初三)",
-        course: "牛津上海版英语初中",
+        course: "上海市初中英语考纲词汇",
         hours: [19, 45]
     }, "芷淇": {
         schedule: "每天晚上 芷淇 (初二)",
-        course: "牛津上海版英语初中",
+        course: "上海市初中英语考纲词汇",
         hours: [20, 30]
     }
 };
