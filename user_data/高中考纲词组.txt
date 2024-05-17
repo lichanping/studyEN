@@ -1,3 +1,26 @@
+go down slides	滑滑梯
+infants and toddlers	蹒跚学步的小孩
+increases the risk of injury	增加受伤的风险
+under the age of	在…年龄下
+from	…to 从…到
+lower leg fractures	小腿骨折
+fall off	摔下
+get hurt	受伤
+at play	在游戏中，在玩耍
+fast enough	足够快
+for sure	确实，毫无疑问地
+depend on	依赖
+think of	考虑;考虑到
+move back	后退
+move forward	前进
+allow somebody to do	允许某人做某事
+take part in	参加
+a range of	一系列
+place in	安排，放置
+at the front	在前面
+at a time	一次;一次性
+tend to	倾向
+similar to	与…相似
 come and go	来来往往
 thousands of years	数千年
 soon afterwards	不久之后
@@ -126,7 +149,6 @@ speak to somebody	与…说话
 decide to do something	决定做某事
 lead to	导致
 convince somebody to do something	说服某人做某事
-allow somebody to do	允许某人做某事
 a couple of	一些
 go up	上升
 catch on	流行起来
@@ -148,7 +170,6 @@ open up	打开心扉
 over the years	多年以来
 fall victim	成为受害者
 ever-lasting	永远
-at a time	一次性
 attract somebody. to do something.	吸引某人做某事
 get all of the attention	吸引所有目光
 in reality	事实上
