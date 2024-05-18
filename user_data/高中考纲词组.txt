@@ -1,3 +1,22 @@
+for breakfast	吃早餐
+plan for	对于…的计划
+at a loss	不知所措
+try to do something	尽力做某事
+tell somebody about something	告诉某人某事
+for ten minutes	十分钟
+on purpose	故意地
+at that moment	在那一刻
+make the decision	作出决定
+talk to somebody about something	与某人谈论某事
+show somebody something	向某人展示某物
+make a sale	成交；达成交易
+offer a way for somebody to do something	给某人提供做某事的方法
+change one's lives	改变某人的生活
+achieve one's dream	实现某人的梦想
+decide to do something	决定做某事
+more importantly	更重要的是
+make a commitment to do something	承诺做某事
+from that day on	从那天起
 go down slides	滑滑梯
 infants and toddlers	蹒跚学步的小孩
 increases the risk of injury	增加受伤的风险
@@ -146,7 +165,6 @@ social problem	社会问题
 contribute to	导致
 talk with somebody	与…交流
 speak to somebody	与…说话
-decide to do something	决定做某事
 lead to	导致
 convince somebody to do something	说服某人做某事
 a couple of	一些
