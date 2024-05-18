@@ -52,6 +52,7 @@
     <label for="forgetWord">遗忘单词:</label>
     <input type="text" id="forgetWord" value="0">
     <button id="classFeedbackButton">课堂反馈</button>
+    <button id="selfReview">课后复习方式</button>
 </div>
 <div>
     <label for="reviewTime">复习时间:</label>
@@ -102,6 +103,7 @@
     document.getElementById("scheduleNotificationButton").addEventListener("click", script.handleScheduleNotificationClick);
     document.getElementById("lateMeetingReminderButton").addEventListener("click", script.handleLateMeetingReminderClick);
     document.getElementById("classFeedbackButton").addEventListener("click", script.handleClassFeedbackClick);
+    document.getElementById("selfReview").addEventListener("click", script.selfReviewClick);
     document.getElementById("openingSpeechButton").addEventListener("click", script.handleOpeningSpeechClick);
     document.getElementById("understandSituationButton").addEventListener("click", script.handleUnderstandSituationClick);
     document.getElementById("managementGroupTemplateButton").addEventListener("click", script.handleManagementGroupTemplateClick);
