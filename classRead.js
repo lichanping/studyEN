@@ -37,6 +37,11 @@ const userData2 = {
         course: "初中高级完型填空",
         hours: [16, 0]
     },
+     "敏珺同学": {
+        schedule: "每周日 16:10 敏珺同学 (初一)",
+        course: "初中高级阅读理解",
+        hours: [16, 10]
+    },
     "南剑": {
         schedule: "每周日 20:00 南剑 (高三)",
         course: "高中初级阅读",
