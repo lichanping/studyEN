@@ -22,3 +22,57 @@ Of course, industrial accidents and drunk drivers existed well before AI. Tools 
 But the nature of robots coming into our daily life lives will make it harder to recognize—or object to—the bigger changes they bring later. Walmart insists that the robot cleaners give employees more time for customer service and other tasks. Critics point out that they could just as easily become an excuse to reduce staff and wages. 
 
 但是，机器人进入我们日常生活的本质将使我们更难识别或反对它们以后带来的更大的变化。沃尔玛坚持认为，机器人清洁工给了员工更多的时间来做客户服务和其他任务。批评人士指出，这很容易成为削减员工和工资的借口。
+
+主旨大意：AI成为我们生活中的一部分，虽然能够帮助人类，但是也会引发事故，并且给资本家一个去裁员和降低工资的理由。
+
+
+
+长难句：
+1. Using maps input by human employees, the AI-powered cleaners will travel in the store with no difficulty, sweeping the floor--just as human employees used to do.
+在这句话，主句是 the AI-powered cleaners will travel in the store with no difficulty，sweeping是非谓语作目的状语，using非谓语作方式状语，逻辑主语是cleaner，as引导了一个非限制性定语从句。
+
+2. an auto-piloted Tesla drove a drunk, sleeping driver down a highway, which no doubt did some potential risk to the other drivers on the road.
+
+在这句话中，主干是an auto-piloted Tesla drove a drunk, sleeping driver down a highway，其中which引导了一个非限制性定语从句。
+3. In New Jersey this week, dozens of workers were hospitalized after a robot at an Amazon fulfillment centre accidentally broke a can and enveloped workers in eye-and-lung-damaging gas.
+这句话的主干是dozens of workers were hospitalized，after连接了一个时间状语从句， In New Jersey this week作地点状语。
+
+4. But the nature of robots’ coming into our daily life lives will make it harder to recognize—or object to—the bigger changes they bring later.
+
+这句话的主语是the nature of robots’ coming into our daily life lives，谓语动词 will make，而it作为形式宾语，真正的宾语为后面的to do不定式to recognize—or object to—the bigger changes they bring later，harder作宾补成分。
+
+
+
+语法点：
+1. 非限制性定语从句：as
+在句子 the AI-powered cleaners will travel in the store with no difficulty, sweeping the floor--just as human employees used to do中，有一个as引导了非限制性定语从句，as作为关系代词，指代sweeping the floor.
+
+2. 限制性定语从句
+
+在句中Sci-fi movies suggest a future full of human-like robots who appear with their horrible qualities中，有一个who引导的限制性定语从句，先行词是robots，在定语从句智能鼓做主语。
+
+3. 非限制性定语从句
+
+在句子an auto-piloted Tesla drove a drunk, sleeping driver down a highway, which no doubt did some potential risk to the other drivers on the road，出现了which引导的非限制性定语从句，which修饰前面的句子。
+
+4. 虚拟语气
+
+在句子Walmart insists that the robot cleaners give employees more time for customer service and other tasks，句中insist后的宾语从句中用（should）+动词原形的虚拟语气结构。本句是省略了should的虚拟语气形式（should）give。
+
+
+
+重点语言点：
+come into view 成为现实
+full of 充满
+dozens of 十几个
+figure out 指出
+on the spot当场，立即
+of course 当然
+self- driving 无人驾驶
+physical labor 体力劳动
+industrial accidents 工业事故
+the presence of …的存在
+step away from离开，逃避
+object to 反对
+come into 进入
+point out that 指出
