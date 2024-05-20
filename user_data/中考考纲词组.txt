@@ -1,3 +1,4 @@
+can't help doing something.	忍不住
 remember doing	记得曾做过
 remember to do	记得要去做
 forget doing	忘记曾做过
@@ -12,7 +13,6 @@ feel like doing something.	想要
 finish doing something.	结束
 mind doing something.	介意
 deny doing something.	否认
-can	’t help doing sth.忍不住
 admit doing something.	承认
 suggest doing something.	建议
 consider doing something.	考虑
