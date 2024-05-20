@@ -1,3 +1,18 @@
+forge	熔炉，伪造
+symbol	符号，象征
+cord	绳，带
+aware	意识到
+marvelous	惊人的
+alter	改变
+general	总体的;普遍的
+gross	总的，显著的
+dispose	排列，处理
+liable	有责任的
+vitamin	维生素
+locality	地区，位置
+inflation	（通货）膨胀
+famine	饥荒
+impress	使铭记
 enjoyable	愉快的
 acquisition	获得（物）
 weigh	称重
@@ -57,7 +72,6 @@ intensity	强度
 shepherd	牧羊人
 camp	度假营
 price	价格
-general	普遍的
 public	公共的
 memberships	会员
 adventures	奇遇
