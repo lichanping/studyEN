@@ -1,9 +1,0 @@
-millimetre毫米
-string线
-instrument器具
-storm暴风
-branch树枝
-awake醒着
-rug小地毯
-durian榴莲果
-Score得分
