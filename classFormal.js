@@ -179,7 +179,7 @@ export function handleManagementGroupTemplateClick() {
     var selectedDateTime = new Date(reviewTime);
     var hour = selectedDateTime.getHours();
     var minute = selectedDateTime.getMinutes().toString().padStart(2, '0');
-    const outputMessage = `【抗遗忘提醒-${hour}:${minute}】<br><br>${userName}同学的复习时间定为 ${hour}:${minute}；<br><br>21天抗遗忘复习已安排，请准时参加会议，确保打开摄像头。谢谢配合！📷<br><br>#腾讯会议：689-688-4088<br><br>仅需在当天收到提醒通知时入会。未收到通知也可复习纸质内容。如有疑问，请联系我们。😊`;
+    const outputMessage = `【${userName}的抗遗忘提醒-${hour}:${minute}】<br><br>• #腾讯会议：689-688-4088<br><br>温馨提示：<br><br>• 请准时参加会议并打开摄像头📷<br><br>• 临时无法参加尽量提前告知📢<br><br>• 仅在当天有收到提醒通知才需入会😊`;
     copyToClipboard(outputMessage);
     // Display the output message
     showLongText(outputMessage);
