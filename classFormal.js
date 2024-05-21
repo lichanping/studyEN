@@ -119,6 +119,13 @@ export function handleScheduleNotificationClick() {
     showLongText(`${notificationMessage}`);
 }
 
+export function handleStopNotificationClick() {
+    const userName = document.getElementById("userName").value;
+    const notificationMessage = `${userName}和${userName}妈妈，我遇到了一些突发状况，导致接下来的 n 天无法正常进行正课教学，需要暂停课程。对于给你们造成的不便，我由衷地表示歉意，带来不便，还望理解！`;
+    copyToClipboard(notificationMessage);
+    showLongText(`${notificationMessage}`);
+}
+
 export function handleLateMeetingReminderClick() {
     const userName = document.getElementById("userName").value;
     // Create the reminder message
