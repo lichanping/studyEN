@@ -75,9 +75,11 @@ ask for	请求；寻求
 at breakfast	早餐时
 at lunch	午餐时
 at supper	晚餐时
-at first at last	起先；开始的时候/最后；终于
+at first 起先；开始的时候
+at last	最后；终于
 at home	在家(里)
-at least at most	至少/至多
+at least 至少
+at most	至多
 at once	立刻；马上
 at present	现在，目前
 at the end of	在……结束的时候
