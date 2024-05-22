@@ -75,10 +75,10 @@ ask for	请求；寻求
 at breakfast	早餐时
 at lunch	午餐时
 at supper	晚餐时
-at first 起先；开始的时候
+at first	起先；开始的时候
 at last	最后；终于
 at home	在家(里)
-at least 至少
+at least	至少
 at most	至多
 at once	立刻；马上
 at present	现在，目前
@@ -87,7 +87,8 @@ at the same time	同时
 at weekends or on weekends	在周末
 at work	在 工 作
 based on	以……为依据；以……为基础
-be able to	能够(有能力) be afraid of 害怕
+be able to	能够(有能力)
+be afraid of	害怕
 be angry with somebody	生某人的气
 be bad for	有害于
 be born	出生
@@ -154,9 +155,12 @@ each other	互相
 encourage somebody to do something	鼓励某人做某事
 enjoy oneself	过得愉快
 fall asleep	入睡
-far away from	(离)遥远fill in 填充；填写
+far away from	(离)遥远
+fill in	填充；填写
 find out	找出；查明；了解
-focus on	聚焦于for example 例如for free 免费
+focus on	聚焦于
+for example	例如
+for free	免费
 for the first time	第一次
 for the time being	暂时；眼下
 from time to time	不时；有时
@@ -203,7 +207,8 @@ have breakfast	吃早餐
 have no idea	不清楚
 have pity on somebody	怜悯某人
 have sports	进行体育活动
-hear from	收到……来信hear of 听 说
+hear from	收到……来信
+hear of	听 说
 help somebody with something	帮助某人做某事
 here and there	到处
 hold a meeting	举行会议
