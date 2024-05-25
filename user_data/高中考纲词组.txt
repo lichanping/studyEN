@@ -45,7 +45,7 @@ go down slides	滑滑梯
 infants and toddlers	蹒跚学步的小孩
 increases the risk of injury	增加受伤的风险
 under the age of	在…年龄下
-from	…to 从…到
+from…to 从…到
 lower leg fractures	小腿骨折
 fall off	摔下
 get hurt	受伤
@@ -86,7 +86,7 @@ seem to do something	好像做某事
 have chance of survival	生存的机会
 try out something	尝试...
 result in	导致
-respond to	回应，回复;回应
+respond to	回复;回应
 be dependent on	取决于
 contact somebody at	＋号码 打电话给某人
 be filled with	充满
