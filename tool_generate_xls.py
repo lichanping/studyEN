@@ -147,7 +147,9 @@ class TextToSpeechConverter:
                 english_word = item['单词']
                 chinese_meaning = item['释意']
                 # print(f"English: {english_word}, Translation: {chinese_meaning}")
-                print(f"{index + 1}: {english_word}, 翻译为_______")
+                # print(f"{index + 1}: {english_word}, 翻译为_______")
+                print(f"{index + 1}: _______, 翻译为 {chinese_meaning}")
+
                 english_voice_name = english_voice
                 chinese_voice_name = random.choice(chinese_voice)["Name"]
 
@@ -196,5 +198,5 @@ class GenerateTool:
             print(f"Time taken: {elapsed_time} seconds")
 
         tool = TxtToXLSX()
-        en_and_cn('敏珺语言点.txt', max_items=10)
-        # en_and_cn('高中考纲词组.txt', max_items=10)
+        # en_and_cn('敏珺语言点.txt', max_items=10)
+        en_and_cn('高中考纲词组.txt', max_items=10)
