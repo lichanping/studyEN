@@ -52,6 +52,7 @@ class TxtToXLSX:
                     english_word = english_word.strip()
                     # Replace "sb" with "somebody" and "sth" with "something" only in the English words part
                     english_word = english_word.replace("sb", "somebody").replace("sth", "something")
+                    english_word = re.sub(r'sw(?!\w)', 'somewhere', english_word)
                     translation = translation.strip()
                     if english_word not in english_words:
                         # If the English word is encountered for the first time, initialize its translations as a list
