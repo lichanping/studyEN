@@ -1,3 +1,23 @@
+most of	大多数
+text message	短信
+get from	从......得到
+move on	离开，继续前行
+be intended for	旨在
+a group text	一条群发的短信
+wait for	等待
+the arrival of ...	的到来
+be born	出生
+in somebody's excitement	在某人的兴奋之中
+seem to do something	似乎做某事;好像做某事
+share with	和...分享
+take picture with somebody	和...合影
+much to the somebody's surprise	令...非常吃惊的是
+stick to	坚持
+turn up	出现;调亮
+be astonished by	对...感到惊讶
+post on	张贴到...上
+gain the attention of	得到...的关注
+be kind to	对...友善的
 drive from somewhere into somewhere	从某一个地点驾车前往另一个地点
 a great amount of	（后接不可数名词） 大量的
 the highest point	最高点
@@ -82,7 +102,6 @@ well over	超过
 be close to extinction	濒临灭绝
 at random	随机地
 none of	没有一个
-seem to do something	好像做某事
 have chance of survival	生存的机会
 try out something	尝试...
 result in	导致
@@ -92,7 +111,6 @@ contact somebody at	＋号码 打电话给某人
 be filled with	充满
 a source of	来源
 more remarkable	更不同寻常
-wait for	等待
 after doing	做…之后
 hope to do	希望做某事
 leave ... behind	留下
@@ -233,7 +251,6 @@ have an affect on	对……有影响
 play a role in	在...起作用
 pack on the pounds	增重
 keep the pounds off	减肥
-turn up	调亮
 flood... with...	使……充满/淹没……
 at least	至少
 sit down	坐下
