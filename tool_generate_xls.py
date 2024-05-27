@@ -123,7 +123,8 @@ class TextToSpeechConverter:
         if max_items is not None and 0 < max_items < len(extracted_data):
             extracted_data = random.sample(extracted_data, max_items)
 
-        output_file = os.path.join(self.txt_to_xlsx.data_folder, file_name.split('.')[0] + ".mp3")
+        current_date = datetime.now().strftime('%Y-%m-%d')
+        output_file = os.path.join(self.txt_to_xlsx.data_folder, file_name.split('.')[0] + f"-{current_date}.mp3")
 
         voices = await VoicesManager.create()
         voice_names = [
@@ -199,5 +200,5 @@ class GenerateTool:
             print(f"Time taken: {elapsed_time} seconds")
 
         tool = TxtToXLSX()
-        # en_and_cn('敏珺语言点.txt', max_items=10)
-        en_and_cn('高中考纲词组.txt', max_items=10)
+        en_and_cn('泽成.txt', max_items=10)
+        # en_and_cn('高中考纲词组.txt', max_items=10)
