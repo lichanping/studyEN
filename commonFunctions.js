@@ -64,7 +64,7 @@ function getRandomSentence() {
     const userName = document.getElementById("userName").value;
     const newWord = parseInt(document.getElementById("newWord").value);
     var opt = sentences[Math.floor(Math.random() * sentences.length)];
-    opt = opt + `<br>${userName}现在已经很棒了，已经完全把上课所学习的${newWord}个单词完全吸收了。十分感谢家长和${userName}的高度配合，我们正式课见哦！`
+    opt = opt + `<br>👍${userName}现在已经很棒了，已经完全把上课所学习的${newWord}个单词给吸收了。<br><br>👍十分感谢家长和${userName}的高度配合，我们正式课见哦！`
     return opt;
 }
 
@@ -117,10 +117,10 @@ export function handleAntiForgettingFeedbackClick() {
 
     // Generate the message
     let message = `【${userName} 今日抗遗忘复习反馈】<br>
-1. 今日复习 ${antiForgettingReviewWord} 词，遗忘 ${antiForgettingForgetWord} 词， 发音不标准 ${numberOfWrongWords} 词, 正确率 ${correctRate}%。<br>
-2. 遗忘词:${forgetWords}<br>
-3. 发音不标准的词:${pronounceWords}<br>
-4. ${userName} ${randomFeedback}`;
+1️⃣.今日复习 ${antiForgettingReviewWord} 词，遗忘 ${antiForgettingForgetWord} 词， 发音不标准 ${numberOfWrongWords} 词, 正确率 ${correctRate}%。<br>
+2️⃣.遗忘词:${forgetWords}<br>
+3️⃣.发音不标准的词:${pronounceWords}<br>
+4️⃣.${userName} ${randomFeedback}`;
 
     // Add line breaks
     message = message.replace(/\n/g, '<br>');

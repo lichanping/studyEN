@@ -135,7 +135,7 @@ export function handleLateMeetingReminderClick() {
 }
 
 export function selfReviewClick(){
-    const feedbackMessage = `*课后复习方式：<br><br>1.教练带动进行标准21天抗遗忘复习。<br><br>2.家长和学生需将【每日单词表】打印出来，家长打印中文版，让学生书写英文；打印英文版，学生填写中文，然后对应中英文版进行批改，并以拍照的方式发送到群里进行打卡，建议每天写30个左右。<br><br>3.学员端APP，学生可自主进行21天抗遗忘的复习，将不熟悉的单词收藏“生词本”进行重点复习。`
+    const feedbackMessage = `*课后复习方式：<br><br>1️⃣.教练带动进行标准21天抗遗忘复习。<br><br>2️⃣.家长和学生需将【每日单词表】打印出来，家长打印中文版，让学生书写英文；打印英文版，学生填写中文，然后对应中英文版进行批改，并以拍照的方式发送到群里进行打卡，建议每天写30个左右。<br><br>3️⃣.学员端APP，学生可自主进行21天抗遗忘的复习，将不熟悉的单词收藏“生词本”进行重点复习。`
     copyToClipboard(feedbackMessage);
     showLongText(`${feedbackMessage}`);
 }
@@ -167,7 +167,7 @@ export function handleClassFeedbackClick() {
     const antiForgettingForgetWord = document.getElementById('antiForgettingForgetWord').value;
 
     // Generate feedback message
-    const feedbackMessage = `【${userName}今日学习-《${course}》的反馈】<br><br>1.今日新学单词 ${newWord}个，遗忘${forgetWord}个, 正确率 ${correctRate}% ；今日复习单词 ${reviewWordCount}个，遗忘 0个。<br><br>2.今日抗遗忘复习 ${antiForgettingReviewWord} 词，遗忘 ${antiForgettingForgetWord} 词，发音不标准 ${numberOfWrongWords} 词, 正确率 ${correctRateAnti}%。<br><br>3.陪伴 ✨ ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} 认真且努力的${userName}一定能抵达梦想的彼岸。🚀🚀🚀<br><br>4.严格按照 21 天抗遗忘复习表来复习哟!<br><br><br><br>💟今日寄语💟<br><br>${getRandomMotto()}`
+    const feedbackMessage = `【${userName}今日学习-《${course}》的反馈】<br><br>1️⃣.今日新学单词 ${newWord}个，遗忘${forgetWord}个, 正确率 ${correctRate}% ；今日复习单词 ${reviewWordCount}个，遗忘 0个。<br><br>2️⃣.今日抗遗忘复习 ${antiForgettingReviewWord} 词，遗忘 ${antiForgettingForgetWord} 词，发音不标准 ${numberOfWrongWords} 词, 正确率 ${correctRateAnti}%。<br><br>3️⃣.陪伴 ✨ ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} 认真且努力的${userName}一定能抵达梦想的彼岸。🚀🚀🚀<br><br>4️⃣.严格按照 21 天抗遗忘复习表来复习哟!<br><br><br><br>💟今日寄语💟<br><br>${getRandomMotto()}`
     copyToClipboard(feedbackMessage);
     showLongText(`${feedbackMessage}`);
 }
@@ -179,7 +179,7 @@ export function handleManagementGroupTemplateClick() {
     var selectedDateTime = new Date(reviewTime);
     var hour = selectedDateTime.getHours();
     var minute = selectedDateTime.getMinutes().toString().padStart(2, '0');
-    const outputMessage = `【${userName}的抗遗忘提醒-${hour}:${minute}】<br><br>• #腾讯会议：689-688-4088<br><br>温馨提示：<br><br>• 请准时参加会议并打开摄像头📷<br><br>• 临时无法参加尽量提前告知📢<br><br>• 仅在当天有收到提醒通知才需入会😊`;
+    const outputMessage = `【${userName}的抗遗忘提醒-${hour}:${minute}】<br><br>👍#腾讯会议：689-688-4088<br><br>温馨提示：<br><br>👍请准时参加会议并打开摄像头📷<br><br>👍临时无法参加尽量提前告知📢<br><br>👍仅在当天有收到提醒通知才需入会😊`;
     copyToClipboard(outputMessage);
     // Display the output message
     showLongText(outputMessage);
