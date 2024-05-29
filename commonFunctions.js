@@ -117,10 +117,10 @@ export function handleAntiForgettingFeedbackClick() {
 
     // Generate the message
     let message = `【${userName} 今日抗遗忘复习反馈】<br>
-1️⃣.今日复习 ${antiForgettingReviewWord} 词，遗忘 ${antiForgettingForgetWord} 词， 发音不标准 ${numberOfWrongWords} 词, 正确率 ${correctRate}%。<br>
-2️⃣.遗忘词:${forgetWords}<br>
-3️⃣.发音不标准的词:${pronounceWords}<br>
-4️⃣.${userName} ${randomFeedback}`;
+1️⃣今日复习 ${antiForgettingReviewWord} 词，遗忘 ${antiForgettingForgetWord} 词， 发音不标准 ${numberOfWrongWords} 词, 正确率 ${correctRate}%。<br>
+2️⃣遗忘词:${forgetWords}<br>
+3️⃣发音不标准的词:${pronounceWords}<br>
+4️⃣${userName} ${randomFeedback}`;
 
     // Add line breaks
     message = message.replace(/\n/g, '<br>');

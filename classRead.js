@@ -143,7 +143,7 @@ export function handleReadClassFeedbackClick() {
     ];
     let feedback = feedbacks[Math.floor(Math.random() * feedbacks.length)]
     // Generate feedback message
-    const feedbackMessage = `【${userName}今日阅读课学习反馈】<br><br>1.今日学习《${courseLabel}》1篇<br><br>2.生词 ${newWord}个，错误词数：${mistakeWords}个，习题 ${test}个，错误习题数 ${mistake}个<br><br>3.⭐ ${userName} ${feedback} <br><br><br><br>💟今日寄语💟<br><br>${getRandomMotto()}`
+    const feedbackMessage = `【${userName}今日阅读课学习反馈】<br><br>①今日学习《${courseLabel}》1篇<br><br>②生词 ${newWord}个，错误词数：${mistakeWords}个，习题 ${test}个，错误习题数 ${mistake}个<br><br>③${userName}⭐${feedback} <br><br><br><br>💟今日寄语💟<br><br>${getRandomMotto()}`
     copyToClipboard(feedbackMessage);
     showLongText(`${feedbackMessage}`);
 }
