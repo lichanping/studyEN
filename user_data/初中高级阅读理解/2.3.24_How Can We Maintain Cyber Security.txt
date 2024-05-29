@@ -1,0 +1,22 @@
+How Can We Maintain Cyber Security?
+如何维护网络安全？
+
+Since May 12, a computer virus named Wanna Cry has infected（感染）more than 300,000 computers in over 150 countries, according to Reuters. 
+
+据路透社报道，自5月12日以来，一种名为“想哭”的电脑病毒已经感染了150多个国家的30多万台电脑。
+
+Wanna Cry is spread by using a weakness in Microsoft's Windows operating system. Once the virus gets into the computer, it locks all the papers and asks the user for money to unlock them. At first, it asks for $300, but if the user doesn't send the money in 72 hours, the price doubles, Papers are locked forever if the user doesn't pay in seven days. 
+
+《Wanna Cry》利用了微软Windows操作系统的一个漏洞进行传播。一旦病毒进入电脑，它就会锁定所有文件，并要求用户付钱解锁。一开始，它要价300美元，但如果用户在72小时内不付款，价格就会翻倍。如果用户在7天内不付款，文件将永远被锁定。
+
+The virus has brought bad results. For example, in the UK, the virus left the country's National Health Service in a mess. Some hospitals had to cancel patient appointments（预约）, reported The Telegraph. In China, the virus has hit thousands of computers, according to Qihoo 360. One of the most hard-hit groups in Qiu was university users. Many students' graduation papers were locked. They felt nervous and frightened. Also, many gas stations were seriously hit, and the payment system didn't work. 
+
+这种病毒带来了不好的结果。例如，在英国，该病毒使该国的国民医疗服务体系陷入混乱。据《每日电讯报》报道，一些医院不得不取消病人预约。据奇虎360称，在中国，该病毒已经感染了数千台电脑。在邱，受影响最严重的群体之一是大学用户。许多学生的毕业论文被锁住了。他们感到紧张和害怕。此外，许多加油站受到严重打击，支付系统无法正常工作。
+
+Wanna Cry is the latest example of the cyber security（网络安全）problem. Matthew Hickey(who set up the security company Hacker House) said, "The attack is not surprising.  It shows that many organizations do not use updates（更新）fast enough. "According to a survey, nearly half of the people said, " We are not satisfied with the way software updates work. "
+
+WanaCry是网络安全问题的最新例子。安全公司Hacker House的创始人马修·希基(Matthew Hickey)表示:“这次攻击并不令人意外。这表明许多组织使用更新不够快。”根据一项调查，近一半的人说，“我们对软件更新的工作方式不满意。”
+
+As China Daily wrote, "We can't completely protect our computers against these kinds of viruses, as this cat and mouse game will continue forever.  The best choice for most users is to take care online and always install（安装）software updates. "
+
+正如《中国日报》所写，“我们无法完全保护我们的电脑免受这类病毒的侵害，因为这种猫捉老鼠的游戏将永远持续下去。”对大多数用户来说，最好的选择是小心上网，经常安装软件更新。”
