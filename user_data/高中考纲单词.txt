@@ -1,3 +1,9 @@
+retrogression	退化；后退
+contracts	合同
+streaming	流媒体
+zero-tolerance	零容忍
+diagnosis	诊断
+closet	小房间
 impressive	印象深刻的
 vehicles	车辆
 occasionally	偶然
@@ -566,7 +572,6 @@ chorus	合唱，合唱队
 aerobic	有氧的
 cognition	认知
 stretches	延伸
-retrogression	退化；后退
 orphans	孤儿（orphan 的复数）
 bellies	腹部（belly 的复数）
 portion	一部分
