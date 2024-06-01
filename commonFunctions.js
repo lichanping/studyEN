@@ -95,7 +95,7 @@ export function handleAntiForgettingFeedbackClick() {
     // Count the number of English words
     const numberOfEnglishWords = countEnglishWords(forgetWords);
     const numberOfWrongWords = countEnglishWords(pronounceWords);
-    const correctWordsCount = parseInt(antiForgettingReviewWord) - numberOfEnglishWords - numberOfWrongWords
+    const correctWordsCount = parseInt(antiForgettingReviewWord) - numberOfEnglishWords
     const correctRate = (correctWordsCount / antiForgettingReviewWord * 100).toFixed(0);
     // Get the input element to display the result
     const inputAntiForgettingForgetWord = document.getElementById("antiForgettingForgetWord");
@@ -117,7 +117,7 @@ export function handleAntiForgettingFeedbackClick() {
 
     // Generate the message
     let message = `【${userName} 今日抗遗忘复习反馈】<br>
-1️⃣今日复习 ${antiForgettingReviewWord} 词，遗忘 ${antiForgettingForgetWord} 词， 发音不标准 ${numberOfWrongWords} 词, 正确率 ${correctRate}%。<br>
+1️⃣今天复习了${antiForgettingReviewWord}个单词，遗忘了${antiForgettingForgetWord}个，${numberOfWrongWords}个单词发音不标准, 正确率为 ${correctRate}% 💯<br>
 2️⃣遗忘词:${forgetWords}<br>
 3️⃣发音不标准的词:${pronounceWords}<br>
 4️⃣${userName} ${randomFeedback}`;
