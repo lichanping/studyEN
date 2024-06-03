@@ -135,7 +135,7 @@ export function handleLateMeetingReminderClick() {
 }
 
 export function selfReviewClick(){
-    const feedbackMessage = `*课后复习方式：<br><br>1️⃣.教练带动进行标准21天抗遗忘复习。<br><br>2️⃣.家长和学生需将【每日单词表】打印出来，家长打印中文版，让学生书写英文；打印英文版，学生填写中文，然后对应中英文版进行批改，并以拍照的方式发送到群里进行打卡，建议每天写30个左右。<br><br>3️⃣.学员端APP，学生可自主进行21天抗遗忘的复习，将不熟悉的单词收藏“生词本”进行重点复习。`
+    const feedbackMessage = `*课后复习方式：<br><br>1️⃣.教练带动进行标准21天抗遗忘复习。<br><br>2️⃣.家长和学生需将【每日单词表】打印出来，家长打印中文版，让学生书写英文；打印英文版，学生填写中文，然后对应中英文版进行批改，并以拍照的方式发送到群里进行打卡，建议每天写30个左右。<br><br>3️⃣.学员端APP，学生可自主进行21天抗遗忘的复习，将不熟悉的单词收藏“生词本”进行重点复习。<br><br>4️⃣.对于当日抗遗忘复习单词中遗忘的部分，也要进行默写哦。`
     copyToClipboard(feedbackMessage);
     showLongText(`${feedbackMessage}`);
 }
