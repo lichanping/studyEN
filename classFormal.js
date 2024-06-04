@@ -1,4 +1,11 @@
-import {copyToClipboard, getRandomMotto, showAlert, getRandomFeedback, showLongText, countEnglishWords} from './commonFunctions.js'
+import {
+    copyToClipboard,
+    getRandomMotto,
+    showAlert,
+    getRandomFeedback,
+    showLongText,
+    countEnglishWords
+} from './commonFunctions.js'
 
 const setInitialDateTime = () => {
     const currentDate = new Date();
@@ -134,7 +141,7 @@ export function handleLateMeetingReminderClick() {
     showLongText(`${reminderMessage}`);
 }
 
-export function selfReviewClick(){
+export function selfReviewClick() {
     const feedbackMessage = `*课后复习方式：<br><br>1️⃣.教练带动进行标准21天抗遗忘复习。<br><br>2️⃣.家长和学生需将【每日单词表】打印出来，家长打印中文版，让学生书写英文；打印英文版，学生填写中文，然后对应中英文版进行批改，并以拍照的方式发送到群里进行打卡，建议每天写30个左右。<br><br>3️⃣.学员端APP，学生可自主进行21天抗遗忘的复习，将不熟悉的单词收藏“生词本”进行重点复习。<br><br>4️⃣.对于当日抗遗忘复习单词中遗忘的部分，也要进行默写哦。`
     copyToClipboard(feedbackMessage);
     showLongText(`${feedbackMessage}`);
@@ -145,6 +152,9 @@ export function handleClassFeedbackClick() {
     const userName = document.getElementById("userName").value;
     const newWord = parseInt(document.getElementById("newWord").value);
     const reviewWordCount = document.getElementById("reviewWord").value;
+    const reviewforgetWord = document.getElementById("reviewforgetWord").value;
+    const reviewCorrectRate = ((reviewWordCount - reviewforgetWord) / reviewWordCount * 100).toFixed(0);
+
     const forgetWord = parseInt(document.getElementById("forgetWord").value) || 0; // Default to 0 if no value entered or invalid
     // Calculate correct rate
     const correctRate = ((newWord - forgetWord) / newWord * 100).toFixed(0);
@@ -157,7 +167,7 @@ export function handleClassFeedbackClick() {
     // Count the number of English words
     const numberOfEnglishWords = countEnglishWords(forgetWords);
     const numberOfWrongWords = countEnglishWords(pronounceWords);
-    const correctWordsCount = parseInt(antiForgettingReviewWord) - numberOfEnglishWords - numberOfWrongWords
+    const correctWordsCount = parseInt(antiForgettingReviewWord) - numberOfEnglishWords
     const correctRateAnti = (correctWordsCount / antiForgettingReviewWord * 100).toFixed(0);
     // Get the input element to display the result
     const inputAntiForgettingForgetWord = document.getElementById("antiForgettingForgetWord");
@@ -167,7 +177,7 @@ export function handleClassFeedbackClick() {
     const antiForgettingForgetWord = document.getElementById('antiForgettingForgetWord').value;
 
     // Generate feedback message
-    const feedbackMessage = `【${userName}今日学习-《${course}》的反馈】<br><br>1️⃣.今日新学单词 ${newWord}个，遗忘${forgetWord}个, 正确率 ${correctRate}% ；今日复习单词 ${reviewWordCount}个，遗忘 0个。<br><br>2️⃣.今日抗遗忘复习 ${antiForgettingReviewWord} 词，遗忘 ${antiForgettingForgetWord} 词，发音不标准 ${numberOfWrongWords} 词, 正确率 ${correctRateAnti}%。<br><br>3️⃣.陪伴 ✨ ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} 认真且努力的${userName}一定能抵达梦想的彼岸。🚀🚀🚀<br><br>4️⃣.严格按照 21 天抗遗忘复习表来复习哟!<br><br><br><br>💟今日寄语💟<br><br>${getRandomMotto()}`
+    const feedbackMessage = `【${userName}今日学习-《${course}》的反馈】<br><br>1️⃣.今日新学单词 ${newWord}个，遗忘${forgetWord}个, 正确率 ${correctRate}% ；<br><br>2️⃣.今日复习单词 ${reviewWordCount}个，遗忘 ${reviewforgetWord}个, 正确率 ${reviewCorrectRate}% ；<br><br>3️⃣.今日抗遗忘复习 ${antiForgettingReviewWord} 词，遗忘 ${antiForgettingForgetWord} 词，发音不标准 ${numberOfWrongWords} 词, 正确率 ${correctRateAnti}%。<br><br>4️⃣.陪伴 ✨ ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} 认真且努力的${userName}一定能抵达梦想的彼岸。🚀🚀🚀<br><br>5️⃣.严格按照 21 天抗遗忘复习表来复习哟!<br><br><br><br>💟今日寄语💟<br><br>${getRandomMotto()}`
     copyToClipboard(feedbackMessage);
     showLongText(`${feedbackMessage}`);
 }
