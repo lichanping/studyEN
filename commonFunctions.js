@@ -128,7 +128,7 @@ export function handleAntiForgettingFeedbackClick() {
         message += `<br><br>${userName}课下继续加强发音哦!`
     }
     // Append random motto
-    message += `<br><br><br><br>💟今日寄语💟<br><br>${getRandomMotto()}`;
+    message += `<br><br><br><br>📚知识小船📚<br><br>${getRandomMotto()}`;
     // Copy the message to clipboard
     copyToClipboard(message);
     // Show alert with the generated message
