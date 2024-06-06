@@ -22,6 +22,11 @@ window.addEventListener("load", updateLabel2);
 
 // Define user data
 const userData2 = {
+    "芷淇": {
+        schedule: "每周4、7 21:00 芷淇 (初二)",
+        course: "初中初级阅读理解",
+        hours: [20, 50]
+    },
     "悠然": {
         schedule: "每周6、7 11:00 悠然 (高二)",
         course: "高中中级阅读理解",
