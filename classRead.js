@@ -42,7 +42,7 @@ const userData2 = {
         course: "初中高级完型填空",
         hours: [16, 0]
     },
-     "敏珺同学": {
+    "敏珺同学": {
         schedule: "每周日 16:10 敏珺同学 (初一)",
         course: "初中高级阅读理解",
         hours: [16, 10]
@@ -108,12 +108,13 @@ export function updateLabel2() {
 
 export function handleScheduleNotificationClick() {
     const userName = document.getElementById("userName").value;
+    const courseLabel = document.getElementById("courseLabel").textContent.trim();
 
     // Get the date and time from the input field
     const classDateTime = document.getElementById("classDateTime").value;
     const formattedDateTime = formatDateTimeWeekly(classDateTime);
     const thisDateTime = formatDateTime(classDateTime);
-    const notificationMessage = `【新课提醒-${thisDateTime}】<br><br>亲爱的 ⭐ ${userName} 用户您好! 我们的英语学习时间安排在${formattedDateTime}。<br><br>请学员及家长准时进入会议室上课，并确保摄像头🎥开启。感谢您的配合！`;
+    const notificationMessage = `【新课提醒-${thisDateTime}】<br><br>亲爱的 ⭐ ${userName} 用户您好! 我们的英语《${courseLabel}》学习时间安排在${formattedDateTime}。<br><br>请学员及家长准时进入会议室上课，并确保摄像头🎥开启。感谢您的配合！`;
     copyToClipboard(notificationMessage);
     showLongText(`${notificationMessage}`);
 }
@@ -148,7 +149,7 @@ export function handleReadClassFeedbackClick() {
     ];
     let feedback = feedbacks[Math.floor(Math.random() * feedbacks.length)]
     // Generate feedback message
-    const feedbackMessage = `【${userName}今日阅读课学习反馈】<br><br>①今日学习《${courseLabel}》1篇<br><br>②生词 ${newWord}个，错误词数：${mistakeWords}个，习题 ${test}个，错误习题数 ${mistake}个<br><br>③${userName}⭐${feedback} <br><br><br><br>💟今日寄语💟<br><br>${getRandomMotto()}`
+    const feedbackMessage = `【${userName}今日学习反馈】<br><br>①今日学习《${courseLabel}》1篇<br><br>②生词 ${newWord}个，错误词数：${mistakeWords}个，习题 ${test}个，错误习题数 ${mistake}个<br><br>③${userName}⭐${feedback} <br><br><br><br>💟今日寄语💟<br><br>${getRandomMotto()}`
     copyToClipboard(feedbackMessage);
     showLongText(`${feedbackMessage}`);
 }
