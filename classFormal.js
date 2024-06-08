@@ -128,7 +128,7 @@ export function handleScheduleNotificationClick() {
     let notificationMessage;
     if (timeDifference > 0 && timeDifference <= 30) {
         // Calculate the countdown time
-        notificationMessage = `【词汇课-${thisDateTime}】<br><br>⏰我们的陪练课还有【${timeDifference}】分钟开始了，请做好准备，及时进入会议室哦🔥`;
+        notificationMessage = `【词汇课-${thisDateTime}】<br><br>⏰我们的在线课程还有【${timeDifference}】分钟开始了，请做好准备，及时进入会议室哦🔥`;
     } else {
         notificationMessage = `【词汇课-${thisDateTime}】<br><br>亲爱的 ✨ ${userName} 用户您好! 我们的语言陪练服务时间安排在${formattedDateTime}。<br><br>📢请学员及家长准时进入会议室上课，并确保摄像头📷开启。感谢您的配合！`;
     }
@@ -199,7 +199,18 @@ export function handleManagementGroupTemplateClick() {
     var selectedDateTime = new Date(reviewTime);
     var hour = selectedDateTime.getHours();
     var minute = selectedDateTime.getMinutes().toString().padStart(2, '0');
-    const outputMessage = `【${userName}的抗遗忘提醒-${hour}:${minute}】<br><br>👍#腾讯会议：689-688-4088<br><br>温馨提示：<br><br>⏰请准时参加会议并打开摄像头📷<br><br>📢临时无法参加尽量提前告知<br><br>㊙️仅在当天有收到提醒通知才需入会`;
+
+    // Get the current time
+    const currentTime = new Date();
+    const timeDifference = Math.floor((selectedDateTime - currentTime) / 1000 / 60); // Difference in minutes, rounded down
+
+    let outputMessage;
+    if (timeDifference > 0 && timeDifference <= 30) {
+        outputMessage = `【${userName}的抗遗忘提醒-${hour}:${minute}】<br><br>⏰我们的抗遗忘复习课还有 **${timeDifference}** 分钟开始了，请做好准备，及时进入会议室哦🔥`;
+    } else {
+        outputMessage = `【${userName}的抗遗忘提醒-${hour}:${minute}】<br><br>👍#腾讯会议：689-688-4088<br><br>温馨提示：<br><br>⏰请准时参加会议并打开摄像头📷<br><br>📢临时无法参加尽量提前告知<br><br>㊙️仅在当天有收到提醒通知才需入会`;
+    }
+
     copyToClipboard(outputMessage);
     // Display the output message
     showLongText(outputMessage);
