@@ -201,8 +201,6 @@ export function getRandomMotto() {
         "Challenges are opportunities in disguise. Keep a positive attitude and tackle them head-on!<br><br>挑战是伪装的机遇。保持积极态度，直面挑战！",
         "May your day be filled with moments that make your heart smile and your soul sing.<br><br>愿你的一天充满让心灵微笑、灵魂欢歌的时刻。",
         "Remember to take care of yourself today. Your well-being is important, too!<br><br>记得今天要好好照顾自己。你的健康也很重要！",
-        "Children are able to learn more quickly and retain more knowledge than adults. 加油！",
-        "Such a nice kid!",
         "祝好运、健康、欢乐伴你度过一个快乐每一年。<br><br>Good luck, good health, good cheer. l wish you a happy every Year.",
         "知识改变命运<br><br>Knowledge changes destiny",
         "坚持就是胜利<br><br>Persistence is victory",
@@ -235,7 +233,22 @@ export function getRandomMotto() {
         "自律之路，一步一个脚印<br><br>The road of self-discipline, one step at a time",
         "岁月静好，唯有努力不懈<br><br>The years are peaceful, only with unremitting efforts",
         "阳光总在风雨后<br><br>The sun always shines after the storm",
-        "前路漫漫，勿忘初心<br><br>The road ahead is long and winding; never forget your original intention"
+        "前路漫漫，勿忘初心<br><br>The road ahead is long and winding; never forget your original intention",
+        "在人生的旅程中，勇敢前行，迎接挑战，创造奇迹。<br><br>Embrace the journey of life, move forward bravely, face challenges, and create miracles.",
+        "相信自己的内在力量，你拥有无限的潜能。<br><br>Believe in your inner strength, you have unlimited potential.",
+        "勇敢地追求你的梦想，即使道路曲折，也要坚持不懈。<br><br>Pursue your dreams bravely, even if the road is winding, persevere.",
+        "在困难面前不退缩，因为你的坚韧会迎接挑战。<br><br>Do not shrink back in the face of difficulties, because your resilience will meet the challenge.",
+        "学会欣赏生活中的美好，感恩每一个来之不易的时刻。<br><br>Learn to appreciate the beauty in life, be grateful for every precious moment.",
+        "用爱心和善意装饰你的日常生活，创造美好的回忆。<br><br>Adorn your daily life with love and kindness, create beautiful memories.",
+        "坚持不懈，直至成功。在每一步都迈得更近。<br><br>Persist until success. Take one step closer with each step.",
+        "勇敢地跨出舒适区，探索未知的领域，拥抱成长的机会。<br><br>Bravely step out of your comfort zone, explore the unknown, embrace growth opportunities.",
+        "用心灵的眼睛看世界，你会发现无限的可能性。<br><br>See the world with the eyes of your heart, you will discover infinite possibilities.",
+        "每一次失败都是一次学习的机会，让它们成为你成功的台阶。<br><br>Every failure is an opportunity to learn, let them become the steps to your success.",
+        "热情与决心将引领你走向成功的道路，不断前行，永不放弃。<br><br>Passion and determination will lead you to the path of success, keep moving forward, never give up.",
+        "用积极的态度面对生活中的挑战，你会发现自己拥有无限的力量。<br><br>Face the challenges in life with a positive attitude, you will find yourself with infinite strength.",
+        "每一次努力都是一次成长，每一次挑战都是一次进步。<br><br>Every effort is a growth, every challenge is a progress.",
+        "勇敢地迎接未来的挑战，因为你拥有充足的能力去应对一切。<br><br>Bravely embrace the challenges of the future, because you have the ability to deal with everything.",
+        "坚持追求自己的梦想，即使前方是未知的道路，也要勇敢前行。<br><br>Persist in pursuing your dreams, even if the road ahead is unknown, keep moving forward bravely."
     ];
 
     const randomIndex = Math.floor(Math.random() * mottos.length);
