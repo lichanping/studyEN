@@ -120,8 +120,18 @@ export function handleScheduleNotificationClick() {
     const classDateTime = document.getElementById("classDateTime").value;
     const formattedDateTime = formatDateTimeWeekly(classDateTime);
     const thisDateTime = formatDateTime(classDateTime);
-    const notificationMessage = `【词汇课-${thisDateTime}】<br><br>亲爱的 ✨ ${userName} 用户您好! 我们的语言陪练服务时间安排在${formattedDateTime}。<br><br>请学员及家长准时进入会议室上课，并确保摄像头📷开启。感谢您的配合！`;
 
+    // Compare classDateTime with current time
+    const classTime = new Date(classDateTime);
+    const currentTime = new Date();
+    const timeDifference = Math.floor((classTime - currentTime) / 1000 / 60); // Difference in minutes, rounded down
+    let notificationMessage;
+    if (timeDifference > 0 && timeDifference <= 30) {
+        // Calculate the countdown time
+        notificationMessage = `【词汇课-${thisDateTime}】<br><br>⏰我们的陪练课还有【${timeDifference}】分钟开始了，请做好准备，及时进入会议室哦🔥`;
+    } else {
+        notificationMessage = `【词汇课-${thisDateTime}】<br><br>亲爱的 ✨ ${userName} 用户您好! 我们的语言陪练服务时间安排在${formattedDateTime}。<br><br>📢请学员及家长准时进入会议室上课，并确保摄像头📷开启。感谢您的配合！`;
+    }
     copyToClipboard(notificationMessage);
     showLongText(`${notificationMessage}`);
 }
