@@ -107,12 +107,12 @@ export function handleAntiForgettingFeedbackClick() {
     if (forgetWords.trim().length == 0) {
         forgetWords = " 无!";
     } else {
-        forgetWords = `<br>${forgetWords}`;
+        forgetWords = '<br>' + forgetWords.split('\n').map(word => `- ${word}`).join('<br>') + '<br>';
     }
     if (pronounceWords.trim().length == 0) {
         pronounceWords = " 无!";
     } else {
-        pronounceWords = `<br>${pronounceWords}`;
+        pronounceWords = '<br>' + pronounceWords.split('\n').map(word2 => `- ${word2}`).join('<br>') + '<br>';
     }
 
     // Generate the message
