@@ -3,7 +3,7 @@ Ugly Produce Counts in Decreasing Food Waste
 
 But ugly fruits should be loved, too. In recent years, a new crop of “ugly produce” companies have been around the U. S. . These start-ups sell those ugly fruits that supermarkets refuse. And they send them right to your door. 
 
-但是丑陋的水果也应该被爱。近年来，美国出现了一批新的“丑陋农产品”公司这些新兴企业出售的是超市拒绝出售的丑陋水果。他们会直接送到你家门口。
+但是丑陋的水果也应该被爱。近年来，美国出现了一批新的“丑陋农产品”公司。这些新兴企业出售的是超市拒绝出售的丑陋水果。他们会直接送到你家门口。
 
 The companies say they're on a mission（使命）. They want to stop billions of pounds of imperfect produce from going to waste. Think of it this way: Is a banged-up (be knocked and some places broken) banana any less tasty in a peanut butter sandwich?Why should it be thrown away?
 
@@ -56,3 +56,36 @@ But Imperfect Produce says both farmers and ugly produce companies can help redu
 No matter whose side you're on, remember this: It's what's on the inside that counts. 
 
 不管你站在哪一边，记住:内在才是最重要的。
+
+主旨大意：本文主要介绍卖丑陋农产品的公司及其使命。
+
+长难句：
+1. It gets resources from farms only after food banks take what they want，it said.
+主干It gets resources. 连词after连接两个句子，表示先后发生的事情，take后面有一个what连接的宾语从句，it said做整句话的插入语。
+2. No matter whose side you're on, remember this. no matter连接状语从句, 其中Whose 在从句中做定语，修饰side。
+
+语法点：
+1. It形式宾语: 不定式短语在某个句子中作宾语时,为保持句子结构平衡，常用 it作形式宾语,而将真正的宾语放在句尾。
+They make it harder for smaller farms to compete. 该句中不定式短语to compete为真正的宾语。
+2. the ＋形容词：表示一类人，为复数概念。The needy意为“穷人们”。
+3. 时间的书写方式：英语关于时间的表达一般是月日或者日月然后再写年。
+4. It做形式主语： 从句在某个句子中作主语时, 常用 it作形式主语, 而将真正的主语放在句尾。
+It is true that produce goes to waste in America. It为形式主语，真正的主语为that连接的主语从句。
+
+重点语言点：
+start-ups 新兴企业
+be on a mission 肩负使命
+stop...from doing sth 阻止……做……
+throw sth away 将……扔掉
+sound like... 听起来……
+think about... 考虑
+lose money 赔钱
+take sth for example 以……为例
+charge...with doing sth 指控……做某事
+take sth away 夺走……
+what’s more 更重要的是
+after all 毕竟
+in fact 事实上
+food waste 食品浪费
+both... and... 两者都
+It doesn’t have to be either-or 这并不一定非此即彼
