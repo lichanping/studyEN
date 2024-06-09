@@ -24,3 +24,44 @@ Just last year, I was conducting a workshop when someone knocked at the classroo
 I told the story to the class. As sad as it was, I couldn't help smiling. Although Freddy was taken from us, we all took something from Freddy. 
 
 我把这个故事讲给全班同学听。尽管很悲伤，我还是忍不住笑了。虽然弗雷迪从我们身边被夺走了，但我们都从弗雷迪身上得到了一些东西。
+
+主旨大意：我在小学教书时遇到了学生弗雷迪，他既有趣又有同情心。在学生毕业前，我送给每个学生一件上面写有“动词是你的朋友”的T恤，告诉孩子们动词在人生中的重要性。弗雷迪在毕业后继续保持着乐意助人的品质，40年后弗雷迪去世了。他妈妈把这件T恤送回到了我手中，我和学生们都从弗雷迪身上学到了一些宝贵的品质。
+
+
+
+长难句：
+1. That was the name students voted for after deciding that “Room 104” was too dull.
+在这句中，主句是That was the name，name 后有一个that引导的定语从句that students voted for，that代替先行词在从句中作宾语，故that可省略。after deciding做句子的状语，deciding后有一个that引导的宾语从句that “Room 104” was too dull。
+2. I had advised the kids that while verbs（动词）may seem dull, most of the fun things they do throughout their lives will be verbs.
+在这句中，主句是I had advised the kids, that引导宾语从句while verbs may seem dull, most of the fun things they do throughout their lives will be verbs。该宾语从句为一个复合句，主句为most of things they do throughout their lives will be verbs，while引导让步状语从句while verbs may seem dull。
+3. I learned that Freddy did several jobs after his graduation from high school and remained the same caring person I met forty years before.
+在这句中，主句是I learned，that引导宾语从句Freddy did several jobs after his graduation from high school and remained the same caring person I met forty years before。宾语从句为一个并列句，并列句的第二部分remained the same caring person I met forty years before中，有一个that引导的限制性定语从句 that I met forty years before，that代替先行词person在从句中作宾语，故that可以省略。
+4. Once, while working overnight at a store, he let a homeless man sleep in his truck.
+在这句中，主句是he let a homeless man sleep in his truck，while引导时间状语从句while working overnight at a store。
+5. As sad as it was, I couldn't help smiling.
+在这句中，主句是I couldn't help smiling, as sad as引导让步状语从句as sad as it was。
+
+语法点：
+1. 状语从句的省略
+在这句Once, while working overnight at a store, he let a homeless man sleep in his truck中，从句部分省略了Freddy was。因为从句的主语和主句的主语一致都是Freddy，且从句的谓语动词是系动词be，此时从句的主语Freddy和be动词可以一同省略，故为while working overnight at a store。
+2. 过去完成时
+在这句Through the years, I'd run into former students who would provide updates on old classmates中，有一个过去完成时，结构式had done，表示在过去某一时间或动作以前已经完成了的动作，即“过去的过去”。
+3. 全部倒装
+在这句Inside were the “Verbs” shirt and a note from Freddy's mother中，表语inside放在句首加强语气，主语the “Verbs” shirt and a note from Freddy's mother放在were之后形成完全倒装。将句子的整个谓语动词或整个谓语部分都放在主语前面时，称为完全倒装。
+4. 让步状语从句：as+形容词+as 引导让步状语从句
+在这句As sad as it was, I couldn't help smiling中，从句出现了as sad as it was，该句型结构为as+形容词+ as，是as的特殊用法，引导让步状语从句，理解为尽管它是悲伤的。
+
+重点语言点：
+vote for 投票赞成；投赞成票
+the balance of …的平衡
+laugh over sth. 笑着谈论某事
+run into 偶遇；遇到
+after graduation from 从…毕业后
+let sb. do 让某人做某事
+lend sb. money 借给某人钱
+conduct a workshop 开办讲习班
+knock at the door 敲门
+hand sb. sth. 将某物交给某人
+stop doing sth. 停止做某事
+pass away 去世
+can't help doing sth. 禁不住做某事
