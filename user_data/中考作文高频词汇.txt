@@ -1,53 +1,248 @@
-ceremony    仪式
-tradition   传统
-ancient   古代的
-custom   风俗
-imagination    想象力
-attractive  吸引人的
-symbol 象征
-believe    相信；认为
-familiar    熟悉的
-Spring Festival   春节
-Lantern Festival    元宵节
-Dragon Boat Festival     端午节
-Double Ninth Festival    重阳节
-Lunar New Year's Eve    除夕
-Tomb-Sweeping  Day   清明节
-Mid-Autumn Festival   中秋节
-New Year's Day    元旦
-couplet   对联
-Chinese knot   中国结
-red envelope   红包
-dragon dance    舞龙
-shadow play    皮影戏
-paper cutting   剪纸
-New Year painting    年画
-lucky money   压岁钱
-lion dance    舞狮
-Yangko dance    秧歌
-gunpowder   火药
-compass  指南针
-papermaking technique    造纸术
-printing technology    印刷术
-home     家
-relative   亲戚
-family tree     家谱
-family relationship     家庭关系
-a single-parent family     单亲家庭
-found or start a family     建立家庭
-household   家庭
-housework or house chores    家务事；家务活
-family responsibilities    家庭责任
-family education    家庭教育
-feed or raise or support a family   养家
-communication   交流，沟通
-understanding   理解
-care     关心
-support   支持
-companionship   陪伴
-argument    争吵
-trust   信任
-patience 耐心
-honesty   诚实
-togetherness    和睦相处
-bond     纽带；联系
+ceremony	仪式
+tradition	传统
+ancient	古代的
+custom	风俗
+imagination	想象力
+attractive	吸引人的
+symbol	象征
+believe	相信；认为
+familiar	熟悉的
+Spring Festival	春节
+Lantern Festival	元宵节
+Dragon Boat Festival	端午节
+Double Ninth Festival	重阳节
+Lunar New Year's Eve	除夕
+Tomb-Sweeping  Day	清明节
+Mid-Autumn Festival	中秋节
+New Year's Day	元旦
+couplet	对联
+Chinese knot	中国结
+red envelope	红包
+dragon dance	舞龙
+shadow play	皮影戏
+paper cutting	剪纸
+New Year painting	年画
+lucky money	压岁钱
+lion dance	舞狮
+Yangko dance	秧歌
+gunpowder	火药
+compass	指南针
+papermaking technique	造纸术
+printing technology	印刷术
+home	家
+relative	亲戚
+family tree	家谱
+family relationship	家庭关系
+a single-parent family	单亲家庭
+found or start a family	建立家庭
+household	家庭
+housework or house chores	家务事；家务活
+family responsibilities	家庭责任
+family education	家庭教育
+feed or raise or support a family	养家
+communication	交流，沟通
+understanding	理解;善解人意的
+care	关心
+support	支持
+companionship	陪伴
+argument	争吵
+trust	信任
+patience	耐心
+honesty	诚实
+togetherness	和睦相处
+bond	纽带；联系
+experience	经历；体验;经历
+go through	经历，经受
+grow up	成长
+overcome	克服
+enter school	入学
+witness	目击
+start working	开始工作
+practise hard	刻苦练习
+face challenges	面对挑战
+be nervous about or of something	对某事(物)感到紧张
+participate in	参加
+quit the competition	退出比赛
+feel embarrassed	感到尴尬
+comfort somebody	安慰某人
+keep smiling	保持微笑
+calm down	冷静下来
+perform well	表现良好
+manage to do something	设法做到某事
+achieve success	取得成功
+win awards	获奖
+kindness	善良
+self-dependence	自立
+team spirit	团队精神
+negative attitude	消极态度
+never give up	决不放弃
+progress	进步
+continuous learning	持续学习
+overcome  difficulties	克服困难
+self-confidence	自信
+teamwork	合作
+positive attitude	积极态度
+make constant or tireless or continued efforts	不断努力
+improvement	提升
+personal growth and development	个人成长与发展
+set and achieve goals	设定并实现目标
+meet or face challenges	迎接 or 面临挑战
+shape one's character	塑造某人的性格
+happiness	幸福
+build up one's confidence	建立自信
+tall	高的
+thin	瘦的
+well-dressed	衣着讲究的
+short	矮的
+slim	苗条的
+heavy	重 的
+be of medium build	中等身材
+humorous	幽默的
+smart	聪明的
+popular	受欢迎的
+active	活跃的
+fun	有趣的
+be kind or friendly to somebody	对某人友好
+be patient with somebody	对某人有耐心
+be grateful to somebody for something	因某事感激某人
+share happiness and sorrow	同甘共苦
+serious	严肃的
+hard-working	勤奋的
+outgoing	外向的
+warm-hearted	热心的
+be strict with somebody	对某人严格
+give a hand to somebody	帮助某人
+show respect or love for somebody	向某人表达尊敬 or 爱意
+hobby	业余爱好
+cartoon	卡通片
+tragedy	悲剧
+rock	摇滚乐
+jazz	爵士乐
+pop music	流行音乐
+attend a concert	去听音乐会
+enjoy art	欣赏艺术
+browse an art gallery	浏览画廊
+show	演 出
+comedy	喜剧
+go to the movies	去看电影
+band	乐 队
+country music	乡村音乐
+listen to music	听音乐
+read a book	读书
+visit a museum	参观博物馆
+player	运动员
+athlete	运动员
+captain	队长
+CoaCh	教练
+stadium	体育场
+swimming pool	游泳池
+game	比赛
+competition	竞赛
+exercise	运动；锻炼
+effort	努力
+courage	勇气；胆量
+energy	精力
+score	得分
+honour	荣誉；光荣
+prize	奖
+champion	冠军
+lose	输掉
+beat	打败；战胜
+break the record	破纪录
+go hiking	徒步旅行
+take a yoga class	上瑜伽课
+join a gym	加入健身房
+outdoor activities	户外活动
+participate in sports	参加体育运动
+be at work	在工作
+worker	工人
+Labour Day	劳动节
+physical labour	体力劳动
+work hard	努力工作
+workday	工作日
+labour force	劳动力
+mental labour	脑力劳动
+produce	生产
+labour	劳动
+voluntary labour	义务劳动
+heart and soul	全心全意
+do housework	做家务
+wash dishes	洗碗
+wash clothes	洗衣服
+mop the floor	拖地
+tidy up the room	整理房间
+make or cook dinner	做饭
+clean the table	收拾桌子
+sweep the floor	扫地
+water flowers	浇花
+clean windows	擦窗户
+take out rubbish	倒垃圾
+look after the pets	照顾宠物
+hang up the clothes	晾衣服
+lesson	教训
+opportunity	机会
+inspiration	灵感
+satisfying	令人满意的
+challenging	具有挑战性的
+tiring	累人的
+hard	艰苦的
+demanding	要求高的
+challenge	挑战
+journey	旅程
+wisdom	智慧
+enjoyable	令人愉快的
+rewarding	值得做的；有意义的
+fulfilling	令人满足的
+boring	无聊的
+stressful	压力重的；紧张的
+therapy	治疗
+fight	与……作斗争
+cope with	应付
+mental health	心理健康
+emotional well-being	情绪健康
+stress management	压力管理
+emotional support	情感支持
+have or eat a balanced diet	均衡饮食
+mental health awareness	心理健康意识
+develop a positive attitude	培养积极的态度
+do exercise every day	每天运动
+make more friends	广交朋友
+build good family relationships	建立良好的家庭关系
+primary school	小学
+junior or senior high school	初/高中
+the students' union	学生会
+fail an exam	考试不及格
+have difficulty	(in) doing sth 做某事有困难
+work hard at	在……方面努力
+be active in class	课堂上积极
+play an important role in	在……方面发挥重要作用
+middle school	中学
+lecture hall	报告厅
+the student activity centre	学生活动中心
+be weak in	不擅长 ……
+ask our teachers for help	向我们的老师求助
+learn from	向……学习
+do well in	擅长 ……
+put one's heart into	致力于……
+after-school activities	课外活动
+military training	军训
+look for new members	招收新成员
+join in the English speech contest	参加英语演讲比赛
+show somebody around	领某人参观
+attend the interview	参加面试
+put on or give performances	表演节目
+hold  a  New  Year  party	举办新年晚会
+school art festival	学校艺术节
+sign up for the basketball club	报名参加篮球俱乐部
+time	时间
+money	金 钱
+goal	目标
+activity planning	活动策划
+place	地点
+schedule	时间表
+people invited	受邀人
+suggestions for improvement	改进建议
+brainstorming	头脑风暴
+come up with a plan	提出计划
+make arrangements	做出安排
+organise an event	组织活动
