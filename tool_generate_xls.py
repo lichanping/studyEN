@@ -180,6 +180,7 @@ class GenerateTool:
         tool.remove_duplicates_or_merge_translations('高中考纲单词.txt')
         tool.remove_duplicates_or_merge_translations('高中考纲词组.txt')
         tool.remove_duplicates_or_merge_translations('敏珺语言点.txt')
+        tool.remove_duplicates_or_merge_translations('中考作文高频词汇.txt')
 
     @Test()
     def calculate_missing_words(self):
@@ -188,6 +189,7 @@ class GenerateTool:
         tool.convert('高中考纲单词.txt')  # commented the create_excel due to uselessness.
         tool.convert('高中考纲词组.txt')
         tool.convert('敏珺语言点.txt')
+        tool.convert('中考作文高频词汇.txt')
 
     @Test()
     def generate_media_word_list(self):
