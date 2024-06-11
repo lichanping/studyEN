@@ -1470,7 +1470,7 @@ rice	稻米；米饭【U】
 rid	使摆脱vt（rid，rid）
 ride	骑（马、自行车等）vt vi（rode，ridden）；骑车旅行【C】
 rode	骑【过去式】
-ridden	汽【过去分词】
+ridden	骑【过去分词】
 right	对；正确的；恰当的；右边的adj；正确地；恰恰；向右，在右边adv；右；权利【U，C】
 ring	打电话；铃声；环形物【U，C】；（钟、铃）响；摇铃；打电话【Vt vi】（rang，rung）
 rang	过去式ring
