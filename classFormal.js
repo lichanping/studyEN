@@ -57,6 +57,10 @@ const userData = {
         schedule: "每天晚上 芷淇 (初二)",
         course: "牛津上海版英语八年级下册",
         hours: [20, 30]
+    }, "辰辰": {
+        schedule: "每天晚上 辰辰 (初三)",
+        course: "中考词汇",
+        hours: [22, 30]
     }
 };
 
