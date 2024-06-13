@@ -73,7 +73,7 @@ mall	(n.) （封闭式）大型购物区；购物中心
 master	(n.) （男）主人；雇主；能手；擅长……者 vt. 精通；掌握；控制
 medal	(n.) 奖牌，奖章
 mess	(n.) 凌乱的状态；混乱的场面
-might modal	(v.) 可能；可以(may 的过去式)
+might 	(v.) modal 可能；可以(may 的过去式)
 Ms	(AmE Ms.)* n. 女士
 mutton	(n.) 羊肉
 negative	(adj.) 否定的，拒绝的；有害的，不良的；悲观的，消极的
