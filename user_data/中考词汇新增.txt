@@ -1,0 +1,146 @@
+admire	(vt.) 钦佩，赞赏，仰慕
+AI	(n.) 人工智能 (=artificial intelligence)
+aid	(n.) 援助；救援物资；帮助；辅助物 vi.&vt. 帮助；援助
+anyway	(adv.) 而且；加之；反正
+app	(n.) 应用程序；应用软件 (=application)
+athlete	(n.) 运动员
+awake	(adj.) 醒着的
+aware	(adj.) 知道；意识到；明白
+badminton	(n.) 羽毛球
+band	(n.) 乐队；条纹
+bat	(n.) 球拍，球棒；蝙蝠
+biology	(n.) 生物学
+birth	(n.) 出生
+bleed	(vi.) &vt. 流血（bled-bled）
+boss	(n.) 老板；首领
+budget	(n.) 预算 adj.价格低廉的；花钱少的
+bully	(n.) 仗势欺人者；横行霸道者 vt. 恐吓；伤害；胁迫
+cancer	(n.) 癌症
+candy	(n.) 糖果；巧克力
+cash	(n.) 现金
+central	(adj.) 主要的；最重要的；中央的，中心的
+chalk	(n.) 粉笔
+champion	(n.) 冠军
+characteristic	(n.) 特征，特色 adj. 典型的，独特的，独有的
+chore	(n.) 家务活；日常事务
+classic	(adj.) 经典的 n. 经典作品
+coach	(n.) 体育运动的教练
+countryside	(n.) 乡村；农村；乡村居民
+courage	(n.) 勇气；胆量
+cucumber	(n.) 黄瓜
+curious	(adj.) 好奇的；求知欲强的；不寻常的；稀奇的
+digital	(adj.) 数字的，数码的
+dining	(vi.) &n. 吃饭，进餐
+direct	(adj.) 直接的；笔直的 vt. 指示；引导；导演
+disappoint	(vt.) 使……失望
+disease	(n.) 疾病
+donate	(vt.) 捐赠
+doubt	(n.) &vt. 怀疑,不相信
+dragon	(n.) 龙
+drama	(n.) 戏剧
+eagle	(n.) 雕；鹰
+electronic	(adj.) 电子的；电子器件的
+emperor	(n.) 皇帝
+empress	(n.) 皇后；女皇
+energetic	(adj.) 精力充沛的；充满活力的；积极的
+era	(n.) 时代；年代；纪元
+eraser	(n.) 橡皮；黑板擦
+expert	(n.) 专家；行家；能手 adj. 熟练的；内行的；专家的；经验（或知识）丰富的
+false	(adj.) 错误的；不正确的；不真实的
+fantastic	(adj.) 极好的；了不起的
+feeling	(n.) 感觉；想法，信念；态度；意见
+folk	(n.) 人们；亲属 adj. 民间的
+force	(n.) 武力，暴力；力量 vt. 强迫，迫使
+found	(vt.) 创办，成立；建造，兴建
+giraffe	(n.) 长颈鹿
+grammar	(n.) 语法
+gym	(=gymnasium) n. 健身房；体育馆
+hen	(n.) 母鸡
+hi	(int.) 嗨
+hike	(n.) 徒步旅行；远足 vt. &vi. 徒步旅行；去远足
+instruction	(n.) 用法说明；命令，指示；教导
+instrument	(n.) 乐器；器具；仪器
+jog	(vt.) &vi.&n. 慢跑
+kung fu	(n.) 功夫
+landscape	(n.) 风景；景色
+lay	(vt.) 放，搁；下（蛋）（laid-laid）
+less	(det.) &prep.&adv. 少的；不足；更少地；较少地
+lightning	(n.) 闪电 adj. 闪电般的
+literature	(n.) 文学，文学作品
+lively	(adj.) 充满活力的；活泼的
+loss	(n.) 遗失；亏损；失败；减少
+mall	(n.) （封闭式）大型购物区；购物中心
+master	(n.) （男）主人；雇主；能手；擅长……者 vt. 精通；掌握；控制
+medal	(n.) 奖牌，奖章
+mess	(n.) 凌乱的状态；混乱的场面
+might modal	(v.) 可能；可以(may 的过去式)
+Ms	(AmE Ms.)* n. 女士
+mutton	(n.) 羊肉
+negative	(adj.) 否定的，拒绝的；有害的，不良的；悲观的，消极的
+noon	(n.) 正午；中午
+normal	(adj.) 正常的；标准的 n. 正常人；常态
+notebook	(n.) 笔记本；笔记本电脑
+object	(n.) 物体；物品；宾语；目标
+OK	(int.) (表同意) 好，可以 adj. 安然无恙的；平安的；快活的 adv. 可以地，令人满意地
+opera	(n.) 歌剧
+pancake	(n.) 烙饼；薄饼
+pardon	(int.) 请再说一遍；抱歉；对不起 vt. 原谅（表示礼貌时常用的词语）
+penguin	(n.) 企鹅
+perform	(vt.) 演出；表演；履行；执行；工作，运转
+period	(n.) 一段时间；时期；阶段
+ping-pong	(n.) 乒乓球
+police	(n.) 警察
+porridge	(n.) 粥
+position	(n.) 位置；地方；姿势；处境；状况
+positive	(adj.) 积极的，乐观的
+pressure	(n.) 压力；挤压
+pride	(n.) 自豪；骄傲；尊严
+punish	(vt.) 惩罚；处罚
+rainbow	(n.) 彩虹
+rapid	(adj.) 迅速的；快速的
+recommend	(vt.) 推荐；举荐；介绍
+regret	(n.) 懊悔；后悔；遗憾 vt. 懊悔；后悔；遗憾
+remain	(vi.) 仍然是；保持不变；剩余；遗留
+risk	(n.) 危险；风险 vt. 使……冒风险；冒……的风险（或危险）
+satisfy	(vt.) 使满意；使满足；满足（要求、需要等）
+scare	(vt.) 吓走；使害怕；受惊吓
+schoolbag	(n.) 书包
+separate	(adj.) 单独的，分离的，不同的
+shoot	(vt.) 拍摄；开（枪或其他武器）；射击 (shot-shot) n. 嫩芽，新枝；拍摄，摄影
+socialism	(n.) 社会主义
+sofa	(n.) 沙发
+soil	(n.) 泥土；土地
+somewhere	(adv.) 在某处；到某处
+sore	(adj.) 疼痛的；酸痛的
+spirit	(n.) 精神；心灵
+standard	(n.) 标准，水平 adj. 标准的，普通的
+sudden	(adj.) 突然的，意外的 n. 意外发生的事
+suit	(n.) 套装，西装 vt. 与……相配
+sweater	(n.) 毛衣
+symbol	(n.) 符号；象征；标志
+teamwork	(n.) 协同工作；配合
+teenage	(adj.) 十几岁的（指 13 至 19 岁）；青少年的
+tent	(n.) 帐篷
+therefore	(adv.) 因此；所以；因而
+throat	(n.) 喉咙
+thunder	(n.) 雷，雷声
+tofu	(n.) 豆腐
+trade	(n.) 贸易，商业 vi. 交易
+training	(n.) 训练；培训
+treasure	(n.) 财宝；珍宝 vt. 珍视；珍爱
+treat	(vt.) 对待；治疗 n. 款待
+T-shirt	(n.) T恤；短袖汗衫
+upon	(prep.) 上，向上；在上方
+vacation	(n.) 假期
+value	(n.) 价值；价格；价值观 vt. 重视；珍视
+virus	(n.) 病毒；病毒疾病
+voluntary	(adj.) 自愿的，主动的；无偿的，义务的
+vote	(vi.) 投票；表决；选举
+watermelon	(n.) 西瓜
+whatever	(pron.) 无论什么 conj. 无论什么
+wheel	(n.) 轮子
+whenever	(conj.) 无论何时 adv. 无论何时
+worse	(adj.) 比较坏的 adv. 比较坏地 n. 更多的问题；更坏的消息
+worst	(adj.) 最坏的 adv. 最坏地 n. 最严重的事；最坏的部分
+X-ray	(n.) X射线；X 光；X 光照片
+yard	(n.) 院子
