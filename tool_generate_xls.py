@@ -52,7 +52,7 @@ class TxtToXLSX:
                     english_word = english_word.strip()
 
                     if english_word.endswith(('adj.', 'adv.', 'n.', 'v.', 'phr.', 'vt.', 'prep.', 'vi.', 'det.',
-                                              'pron.', 'conj.')):
+                                              'pron.', 'conj.', 'int.')):
                         # If it does, move the part of speech to the translation
                         pos = english_word.split()[-1]  # Get the last part of the word as part of speech
                         english_word = english_word[
@@ -190,6 +190,7 @@ class GenerateTool:
         tool.remove_duplicates_or_merge_translations('高中考纲词组.txt')
         tool.remove_duplicates_or_merge_translations('敏珺语言点.txt')
         tool.remove_duplicates_or_merge_translations('中考作文高频词汇.txt')
+        tool.remove_duplicates_or_merge_translations('中考词汇新增.txt')
 
     @Test()
     def calculate_missing_words(self):
@@ -199,6 +200,7 @@ class GenerateTool:
         tool.convert('高中考纲词组.txt')
         tool.convert('敏珺语言点.txt')
         tool.convert('中考作文高频词汇.txt')
+        tool.convert('中考词汇新增.txt')
 
     @Test()
     def generate_media_word_list(self):
