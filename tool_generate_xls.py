@@ -213,5 +213,5 @@ class GenerateTool:
             print(f"Time taken: {elapsed_time} seconds")
 
         tool = TxtToXLSX()
-        en_and_cn('泽成.txt', max_items=10)
+        en_and_cn('悠然.txt', max_items=None)
         # en_and_cn('高中考纲词组.txt', max_items=10)
