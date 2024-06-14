@@ -24,3 +24,45 @@ One afternoon, I was crossing the field to go home and saw Miller stuck going ov
 His words freed me from my bad dreams.  I thought to myself, how even without an arm he was more of a leader. Damaged but not defeated, he was still ahead of me. I was right to have admired him.  From that day on, I grew bigger and a little more real. 
 
 他的话把我从噩梦中解救了出来。我心想，即使没有胳膊，他也更像个领袖。受损但没有被打败，他仍然领先于我。我钦佩他是对的。从那天起，我长大了，也变得更加真实。
+
+主旨大意：作者想成为球队里最棒的球员，并向最优秀的球员米勒看齐。为了实现梦想，作者刻苦训练，在米勒受伤之后，作者脱颖而出，成为最有价值球员。作者的表现得到了米勒认可。
+
+
+
+长难句：
+1. We went 10-1 and I was named most valuable player, but I often had crazy dreams in which I was to blame for Miller's accident.
+在这句中，主干是I often had crazy dreams，in which引导限制性定语从句in which I was to blame for Miller's accident。
+2. One afternoon, I was crossing the field to go home and saw Miller stuck going over a fence—which wasn't hard to climb if you had both arms.
+在这句话中，主干是I was crossing the field to go home and saw Miller stuck going over a fence.其中，stuck going over a fence是saw的宾语补足语，同时stuck为过去分词作后置定语，形容米勒被困在围栏里的状态，which wasn't hard to climb if you had both arms是which引导的非限制性定语从句，进一步解释说明前面翻越栏杆的事情。
+3. I'm sure I was the last person in the world he wanted to accept assistance from.
+在这句中，主干是I was the last person in the world he wanted to accept assistance from.其中he wanted to accept assistance from是由who引导的定语从句，但who作为从句中from的宾语可以被省略。
+4. I thought to myself, how even without an arm he was more of a leader.
+在这句中，主句是I thought to myself，even without表示即使没有，引导让步状语从句how even without an arm he was more of a leader。
+
+语法点：
+1. 非谓语动词：不定式作表语
+不定式作表语用于说明主语“是什么”，和主语之间是可以划等号的。在my only purpose was to become这个短语里，to become运用了不定式，在系动词was后面作表语，表示我唯一的目标是…。
+2. 非限制性定语从句
+非限制性定语从句在句中主要起补充说明作用，缺少也不会影响全句的理解。在非限定性定语从句的前面往往有逗号隔开，和先行词有一定距离。此外，在此类句子中，不能用that，而用who，whom代表人，用which代表事物。在句子That meant…, who was the best player….中，who引导的非限制性定语从句who was the best player at our school则是用来形容米勒。
+3. 限制性定语从句：in which引导
+限制性定语从句是紧跟在修饰对象（即先行词）之后的定语从句，对先行词进行限定修饰。在句子We went 10-1 …, but I often had crazy dreams in which I was to blame for Miller's accident.中，dream作为抽象地点名词，其后加in which或是where引导的限制性定语从句进行限定。
+4. much of + a +单数名词
+much of a表示在很大程度上，它有more/less/nothing/kind/somewhat of a +名词这几个变式。在how even without an arm he was more of a leader这句中，more of a leader是much of a的比较级，表示更是…。
+
+重点语言点：
+beat out 击败(竞争对手)
+all summer long 整个夏天
+work out 锻炼
+be struck by a car 出车祸
+come back from hospital 出院
+look pale 看起来脸色苍白
+break the record 破纪录
+home game 主场比赛
+be to blame for 对…负有责任
+the last person 最后一个人，引申为最不可能的人
+go/move over the fence 翻越围栏
+fill in for sb. 代替某人
+free sb. from 使某人摆脱
+think to oneself 自言自语，盘算
+be ahead of 领先
+from that day on 从那天起
