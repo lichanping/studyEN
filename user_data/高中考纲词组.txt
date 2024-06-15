@@ -1,3 +1,9 @@
+set off for	动身前往
+travel around	周游
+under the control of	在…的控制下
+cold shoulder	冷漠对待
+get into	进入
+let alone	更不必说
 beat out	击败(竞争对手)
 all summer long	整个夏天
 work out	锻炼
