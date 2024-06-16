@@ -191,6 +191,11 @@ export function showLongText(longText) {
 export function getRandomMotto() {
     // Replace the following array with your own collection of mottos
     const mottos = [
+    "Life is a journey, and if you fall in love with the journey, you will be in love forever.<br><br>生活是一场旅程，如果你爱上了这场旅程，你将永远热爱。",
+"Uncertainty is the only certainty there is, and knowing how to live with insecurity is the only security.<br><br>不确定性是唯一确定的，知道如何与不安全感共处是唯一的安全感。",
+"In a time of drastic change it is the learners who inherit the future. The learned usually find themselves equipped to live in a world that no longer exists.<br><br>在剧烈变化的时代，是学习者继承未来。有学识的人通常发现自己准备好生活在一个不再存在的世界里。",
+"Change is the law of life. And those who look only to the past or present are certain to miss the future.<br><br>变化是生活的法则。那些只看过去或现在的人肯定会错过未来。",
+"The future belongs to those who believe in the beauty of their dreams.<br><br>未来属于那些相信他们梦想之美的人。",
       "No pains,no gains.<br><br>不劳则无获。",
       "Rome was not built in a day.<br><br>罗马不是一天建成的。/伟业非一日之功。",
       "Practice makes perfect.<br><br>熟能生巧。",
