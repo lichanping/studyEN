@@ -9,11 +9,12 @@ However, the only problem wasn't that he Suddenly couldn't walk, but that he was
 
 然而，唯一的问题不是他突然不能走路，而是他使用的助行器对他来说太小了。他需要一个更宽松的框架来为他提供更多的稳定性，但助行器并不便宜，而且医疗设备也不是很保险。
 
+
 Thanks to Catherine's efforts, Lawrence is in possession of a new walker, completely free of charge!
 
 多亏了凯瑟琳的努力，劳伦斯免费拥有一个新的助行器！
 
-How did she make it?She took it upon herself to use the power of social media. Now she is changing more senior citizens who need medical equipment like walkers, and wheelchairs. These days, I've seen many problems in our neighborhood, such as patients having broken brakes on their wheelchairss," she wrote on a social website and posted some pictures to show the seriousness. 
+How did she make it?She took it upon herself to use the power of social media. Now she is changing more senior citizens who need medical equipment like walkers, and wheelchairs. These days, I've seen many problems in our neighborhood, such as patients having broken brakes on their wheelchairs," she wrote on a social website and posted some pictures to show the seriousness.
 
 她是怎么做到的呢？她主动利用社交媒体的力量。孔奶奶的故事触动了许多人的心灵。这些天，我在我们的社区看到了很多问题，比如病人的轮椅刹车出现故障，”她在社交网站上写道，并发布了一些照片来显示其严重性。
 
@@ -28,3 +29,48 @@ Since her initial request, she has already received positive responses and colle
 Catherine has done such deeds even before completing her program. With her commitment to her work, there's no telling how much more motivation she will put into the world!
 
 凯瑟琳甚至在完成她的项目之前就做过这样的事。由于她对工作的投入，不知道她能够给这个世界带来多大的动力！
+
+主旨大意：文章主要讲述了凯瑟琳现在处于其物理治疗博士项目的最后一年。她在给病人劳伦斯治疗的过程中，看到社区一些老年人使用的助行器、轮椅等代步工具不安全，于是她通过网络发出倡导，为老年人募集没有用过的代步工具或募集购买代步工具的资金，她的热心赢得了大家的积极响应。
+
+
+
+长难句：
+1. She's known he's had the will to get well again, so when he fell down while using his walker, she was sure he would be anxious to get right back up again.
+前半句主句是She's known...,从句是省略了that的宾语从句he's had the will to get well again； so表示原因，后接由when引导的时间状语从句when he fell down while using his walker，其中包含了由while引导的省略了主语的时间状语从句，因为从句的主语与主句的主语一样，通常可以省略从句的主语或助词。后半句主句是 she was sure，其中包含了省略了that的宾语从句he would be anxious to get right back up again。
+2. However, the only problem wasn't that he Suddenly couldn't walk, but that he was using a walker that was too small for him.
+主句是the only problem wasn't，从句是由not...but... 并列连接的两个由that引导的宾语从句：that he Suddenly couldn't walk和 that he was using a walker that was too small for him，第二个宾语从句中由that引导定语从句 that was too small for him修饰限定前面的walker。
+3. Now she is changing more senior citizens who need medical equipment like walkers, and wheelchairs.
+主句是Now she is changing more senior citizens，从句是由特殊疑问词who引导的定语从句 who need medical equipment like walkers, and wheelchairs，修饰限定前文的more senior citizens。
+4. Since her initial request, she has already received positive responses and collected more than 50 pieces of medical tools for the patients.
+主句是she has already received positive responses and collected more than 50 pieces of medical tools for the patients，由since引导的时间状语Since her initial
+request位于句首。
+5. With her commitment to her work, there's no telling how much more motivation she will put into the world!
+句首介词短语作状语With her commitment to her work，主句是there's no telling，从句是由特殊疑问短语how much引导的宾语从句how much more motivation she will put into the world，宾语从句多采用陈述句语序，故部分成分倒装。
+
+语法点：
+1. 非谓语动词：过去分词作定语
+Catherine is ..., and determined Lawrence McNutt, aged 73, is one of her patients. 中determined表示：意志坚定的，位于Lawrence McNutt前作定语，aged过去分词做定语，表示：多大年龄，修饰限定前文的Lawrence McNutt。
+2. 现在完成时：一般形式为：have/has +p.p
+These days, I've seen many problems in our neighborhood, such as patients having broken brakes on their wheelchairs,中出现了’ve seen=have seen ，表示：已经看到...。
+3. 非谓语动词：现在分词作定语
+People living in low-income areas like ours can't afford the necessary equipment. 中living使用现在分词形式，在文中作定语，修饰限定people。
+
+重点语言点：
+physical therapy 物理治疗
+fall down 摔倒
+be anxious to do sth. 渴望做某事
+not...but... 不是...而是...
+too+ adj. +for sb 表示对某人而言太...
+provide sth. for sb. 给某人提供某物
+thanks to 幸亏、由于
+in possession of sth. 拥有
+free of charge 免费
+make it 取得成功、做成某事
+take it upon oneself 揽责任
+social media 社交媒体
+such as 例如
+risk of sth. ...的风险
+appeal to sb 呼吁某人
+more than 超过
+with one's commitment to sth 某人对某事的承诺
+there's no telling 没人知道...
