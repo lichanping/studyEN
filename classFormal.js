@@ -55,7 +55,7 @@ const userData = {
         hours: [19, 45]
     }, "芷淇": {
         schedule: "每天晚上 芷淇 (初二)",
-        course: "牛津上海版英语八年级下册",
+        course: "牛津上海版英语九年级上册",
         hours: [20, 30]
     }, "辰辰": {
         schedule: "每天晚上 辰辰 (初三)",
