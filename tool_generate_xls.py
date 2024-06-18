@@ -91,7 +91,7 @@ class TxtToXLSX:
         file_path = os.path.join(self.data_folder, file_name)
         data = []
         missing_words = []  # List to store missing sound words
-        pattern = re.compile(r'([a-zA-Z\'\s\-\.\/]+)\s*(.*)')
+        pattern = re.compile(r'([a-zA-Z\'\’\s\-\.\/]+)\s*(.*)')
         with open(file_path, 'r', encoding='utf-8') as file:
             for line in file:
                 match = pattern.match(line.strip())
@@ -199,8 +199,6 @@ class GenerateTool:
         tool.convert('高中考纲单词.txt')  # commented the create_excel due to uselessness.
         tool.convert('高中考纲词组.txt')
         tool.convert('敏珺语言点.txt')
-        tool.convert('中考作文高频词汇.txt')
-        tool.convert('中考词汇新增.txt')
 
     @Test()
     def generate_media_word_list(self):
