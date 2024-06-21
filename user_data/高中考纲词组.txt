@@ -1,3 +1,13 @@
+grow up	长大
+because of	因为
+instead of	而不是，代替; 相反
+serve as	充当
+check out	检查
+be proud of	为…感到骄傲
+a part of	一部分
+look down at	俯视
+next to	紧挨着
+take pride in	以…为骄傲
 physical therapy	物理治疗
 fall down	摔倒
 be anxious to do something.	渴望做某事
@@ -321,7 +331,6 @@ in reality	事实上
 focus on	专注于
 be unsure about something	对某事不确定
 choose to do something	选择做某事
-instead of	而不是，代替; 相反
 find somebody in the same position as somebody	发现和某人处于同种境地
 end up	以...告终
 make progress	取得进步
@@ -346,6 +355,5 @@ differ from...	与......不同
 search for	搜寻
 offer something. to somebody.	提供某物给某人
 by the time	到…时候
-because of	因为
 try to do something.	努力作某事
 as mentioned earlier	如前所述
