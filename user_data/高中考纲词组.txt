@@ -1,12 +1,12 @@
-career expectation 职业期望
-concentrate in 集中于
-as a result of 由于，因为
-be more likely to do sth. 更有可能做某事
-rather than 而不是
-a broad range of 大范围的，广泛的
-more than 多于，超出，比…多
-a lack of 缺少
-over time 随着时间的推移
+career expectation	职业期望
+concentrate in	集中于
+as a result of	由于，因为
+be more likely to do something.	更有可能做某事
+rather than	而不是
+a broad range of	大范围的，广泛的
+more than	多于，超出，比…多;超过
+a lack of	缺少
+over time	随着时间的推移
 grow up	长大
 because of	因为
 instead of	而不是，代替; 相反
@@ -32,7 +32,6 @@ social media	社交媒体
 such as	例如
 risk of something. ...	的风险
 appeal to somebody	呼吁某人
-more than	超过
 with one's commitment to something	某人对某事的承诺
 there's no telling	没人知道...
 set off for	动身前往
@@ -133,8 +132,8 @@ amazing view	迷人的景色
 in rags	衣衫褴褛
 hand back	退还，归还
 ride off	离去
-express one's gratitude表示感谢
-never judge by one's appearance 不要以貌取人
+express one's gratitude	表示感谢
+never judge by one's appearance	不要以貌取人
 would like to do something.	想要做某事
 come into view	成为现实
 full of	充满
