@@ -1,3 +1,15 @@
+get on	上车
+get off	下车
+have to do something	不得不做某事
+drag out	拖走
+help somebody out	帮助某人脱离困境
+watch somebody do something	看某人做某事
+take public transport	乘坐公共交通工具
+continue to do something	继续做某事
+order something	点菜
+pay for something	付钱
+be thankful for doing something	对做某事很感激
+feel delighted to do something	做某事感到很开心
 career expectation	职业期望
 concentrate in	集中于
 as a result of	由于，因为
