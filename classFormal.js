@@ -31,7 +31,7 @@ const userData = {
     "阮王睿": {
         schedule: "每周一三六 19:30 阮王睿 (准高一)",
         course: "雅思",
-        hours: [19, 30]
+        hours: [19, 45]
     },
     "青青": {
         schedule: "每周一 19:30 青青 (6年级)",
