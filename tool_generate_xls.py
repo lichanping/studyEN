@@ -52,7 +52,8 @@ class TxtToXLSX:
                     english_word = english_word.strip()
 
                     if english_word.endswith(('adj.', 'adv.', 'n.', 'v.', 'phr.', 'vt.', 'prep.', 'vi.', 'det.',
-                                              'pron.', 'conj.', 'int.', 'aux.')):
+                                              'pron.', 'conj.', 'int.', 'aux.', 'a.', 'ad.', 'n./ad.', 'num.',
+                                              'a./ pron.', 'adv', 'n．')):
                         # If it does, move the part of speech to the translation
                         pos = english_word.split()[-1]  # Get the last part of the word as part of speech
                         english_word = english_word[
@@ -186,6 +187,7 @@ class GenerateTool:
     def simplify_words(self):
         # remove duplicate words
         tool = TxtToXLSX()
+        tool.remove_duplicates_or_merge_translations('雅思全部.txt')
         tool.remove_duplicates_or_merge_translations('高中考纲单词.txt')
         tool.remove_duplicates_or_merge_translations('高中考纲词组.txt')
         tool.remove_duplicates_or_merge_translations('敏珺语言点.txt')
@@ -196,6 +198,7 @@ class GenerateTool:
     def calculate_missing_words(self):
         tool = TxtToXLSX()
         # generate missing sounds
+        tool.convert('雅思全部.txt')
         tool.convert('高中考纲单词.txt')  # commented the create_excel due to uselessness.
         tool.convert('高中考纲词组.txt')
         tool.convert('敏珺语言点.txt')
