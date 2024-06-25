@@ -5364,7 +5364,7 @@ life	(n.) 生命，生存；一生，寿命；生活；生物
 migrate	(vi.) 迁移;移居
 fat	(a.) 多脂肪的，肥胖的；丰厚的n. 脂肪，肥肉
 intrude	(vi.) 闯入，侵入vt. 把(思想等)强加于人；强挤入
-flyover	n	(阅兵时)飞机编队低空飞行,<英>[交]跨线桥。
+flyover	(n.)(阅兵时)飞机编队低空飞行,<英>[交]跨线桥。
 rebuke	(vt.) 指责，非难，斥责
 wavelength	(n.) 波长
 bone	(n.) 骨(骼)
@@ -6126,7 +6126,7 @@ shallow	(a.) 浅的,肤浅的
 speculate	(v.) 推测,推断;投机,做投机买卖
 hypocrisy	(n.) 伪善，虚伪
 September	(n.) 九月
-female	(n./a.) 女性(的),[语
+female	(n./a.) 女性(的)
 Danish	(adj.) &n.丹麦人(的)
 assure	(vt.) 断言;使确信;保(人寿)险
 doze	(v./n.) 瞌睡；假寐
