@@ -8590,7 +8590,7 @@ fauna	(n.) 动物群, 动物区系, 动物志。
 association	(n.) 联盟，协会，社团；交往，联合；联想
 awe	(n.) 敬畏，惊惧vt. 使敬畏，使惊惧
 news	(n.) 新闻，消息；新闻报道，新闻广播
-awesome	(adj.) 可怕的
+awesome	(adj.) 令人惊叹的；可怕的
 chore	(n.) 家务杂事。
 survival	(n.) 幸存者,残存,幸存
 dysentery	(n.) [医] 痢疾。
