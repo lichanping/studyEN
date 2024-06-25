@@ -2846,7 +2846,6 @@ swirl	(n.) 漩涡, 涡状形。vt.使成漩涡。vi.打漩, 盘绕, 头晕。vi.
 eyebrow	(n.) 眉毛
 disapproval	(n.) 不批准
 repetition	(n.) 重复
-c/o	(v.) (缩)请转交
 employer	(n.) 雇主
 semester	(n.) 学期。
 fission	(n.) 裂开；分裂生殖
@@ -2977,7 +2976,7 @@ doubtful	(a.) 怀疑的,有疑问的
 debit	(n.) 借方
 stimulation	(n.) 刺激
 expenditure	(n.) 花费；(时间，金钱等的)支出，消耗
-terrestrial	(adj.) 陆地。
+terrestrial	(adj.) 陆地的；地球的；陆生的；陆栖的
 sewer	(n.) 下水道, 缝具, 缝纫者。
 inexorable	(adj.) 无情的
 sluggish	(adj.) 行动迟缓的。
