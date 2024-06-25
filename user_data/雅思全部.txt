@@ -4198,7 +4198,6 @@ hasten	(vt.) 催促 vi.赶紧
 find	(v.) (found，found)找到；发现；发觉；感到
 catholic	(n.) 天主教教徒
 welfare	(n.) 幸福,福利,社会保障
-b/l	(n.) (缩)提单
 inhibit	抑制, 约束, [化][医]抑制。
 mistress	(n.) 女主人；主妇；情妇，情人
 showroom	(n.) 展室，陈列室
