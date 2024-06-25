@@ -7472,7 +7472,7 @@ artillery	(n.) 炮的总称, 炮兵的总称。
 continuity	(n.) 连续性, 连贯性。
 syllable	(n.) 音节
 existence	(n.) 存在，实在；生存，生活(方式)
-aesomethingetic	(adj.) 美学的, 审美的, 有审美感的。
+aesthetic	(adj.) 美学的, 审美的, 有审美感的。
 moth	(n.) 蛾
 smash	(vt./vi.) 打碎,打破;击溃
 seldom	(ad.) 很少，不常
