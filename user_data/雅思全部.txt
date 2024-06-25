@@ -2708,7 +2708,7 @@ tale	(n.) 故事，传说
 ammonia	(n.) [化]氨, 氨水。
 summon	(vt.) 召唤,传唤;鼓起,聚集
 grain	(n.) 谷物，谷类；颗粒，细粒
-owe	vt./vi	欠债,感激,由于
+owe	(vt./vi)	欠债,感激,由于
 awkward	(a.) 难使用的;笨拙的;尴尬的
 reverence	(n.) 尊敬，崇敬
 forerunner	(n.) 先驱(者), 传令官, 预兆。
