@@ -2464,7 +2464,7 @@ Russian	(a.) 俄罗斯的 n.俄国人
 breakthrough	(n.) 军事突破;重大发明(发现)
 meanwhile	(n.) 其时，其间ad. 当时，与此同时
 disgustful	(adj.) 令人生厌的
-bud	n./vi	芽,萌芽
+bud	(n./vi)	芽,萌芽
 opportunity	(n.) 机会
 artificial	(a.) 人工的;矫揉造作的
 clam	(n.) 蛤。
