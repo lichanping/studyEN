@@ -2261,7 +2261,7 @@ itch	(v.) &n.痒，热望
 countermand	(v.) 撤回，取消
 dormant	(adj.) 睡眠状态的, 静止的, 隐匿的。
 remember	(v.) 记住；(to)转达问候，代…致意，代…问好
-odyssey	n. -seys	长期的冒险旅行。
+odyssey	(n.) 长期的冒险旅行。
 morning	(n.) 早晨，上午
 laborious	(adj.) (指工作)艰苦的, 费力的, (指人)勤劳的。
 assess	(vt.) 评价;估值
