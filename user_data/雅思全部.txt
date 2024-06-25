@@ -3375,7 +3375,7 @@ illiterate	(n./a.) 文盲(的)
 transship	(v.) 转运，转船
 nourish	(vt.) 养育;怀有(希望)
 voice	(n.) 声音；嗓音；发音能力；意见，发言权；语态
-the	art.	这(那)个；这(那)些(指特定的人或物)
+the	(art.) 这(那)个；这(那)些(指特定的人或物)
 underwear	(n.) 衫衣，内衣，贴身衣
 confront	(vt.) 使面对,面临
 pine	(vi.) 消瘦,衰弱;n. 松树
