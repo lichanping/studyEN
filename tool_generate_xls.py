@@ -61,7 +61,8 @@ class TxtToXLSX:
                         translation = f"({pos}) {translation.strip()}"
 
                     # Replace "sb" with "somebody" and "sth" with "something" only in the English words part
-                    english_word = english_word.replace("sb", "somebody").replace("sth", "something")
+                    if english_word not in ['posthumous']:
+                        english_word = english_word.replace("sb", "somebody").replace("sth", "something")
                     english_word = re.sub(r'sw(?!\w)', 'somewhere', english_word)
                     translation = translation.strip()
                     if english_word not in english_words:

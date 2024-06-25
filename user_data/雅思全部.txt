@@ -4866,7 +4866,7 @@ bold	(a.) 大胆的,无耻的,醒目的
 partisan	(n.) 游击队。
 symmetry	(n.) 对称(性)；匀称，整齐
 pitch	(n.) 球场;声音的高低度;程度;沥青 vt./vi. 投掷;搭帐,扎营;坠落
-city	n	．城市；都市；市
+city	(n．)城市；都市；市
 sustenance	(n.) 食物, 生计, (受)支持。
 nourishment	(n.) 食物
 pendulum	(n.) 钟摆, 摇锤。
@@ -5644,7 +5644,7 @@ capitalism	(n.) 资本主义
 liberation	(n.) 解放
 grope	(v.) 暗中摸索
 tape	(n.) 带(子)；录音带，磁带v. 录音；系，捆
-posomethingumous	(adj.) 死后的, 身后的, 作者死后出版的, 遗腹的。
+posthumous	(adj.) 死后的, 身后的, 作者死后出版的, 遗腹的。
 symmetric	(adj.) 对称的，匀称的
 creek	(n.) 小川，小湾
 suit	(v.) 合适，适合；相配，适应n. 一套西服；诉讼
