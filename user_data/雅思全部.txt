@@ -7291,7 +7291,6 @@ tug	(vt./vi.) 用力拉,猛拉,拖拉
 motel	(n.) 汽车旅馆
 knife	(n.) 刀，餐刀v. 用刀切，用匕首刺
 courier	(n.) 送快信的人, 旅行从仆。
-we	pron	．我们<主格>
 silly	(a.) 傻的，糊涂的，愚蠢的
 pose	(vt.) 造成,引起(困难等);提出(问题等),陈述(论点等) ;vi. 摆姿势;假装,冒充,装腔作势;n. 样子,姿势
 stronghold	(n.) 堡垒，要塞
@@ -7322,7 +7321,7 @@ microeconomics	(n.) 微观经济学
 sleepy	(a.) 想睡的；寂静的
 thirst	(vi./n.) 渴;渴望
 beset	(v.) 困扰。
-hysterical	a	歇斯底里的, 异常兴奋的。
+hysterical	(a)歇斯底里的, 异常兴奋的。
 bookstore	(n.) 书店
 himself	(pron.) 他自己；他本人
 likely	(a.) 很可能的，有希望的ad. 大概，多半
@@ -7722,7 +7721,7 @@ liner	(n.) 大客轮;衬里
 modulate	(vt.) 调整，调节(声音)
 undercharge	(vt.) 索价低于常价, 未给...装足够的火药, 充电不足。n.低的索价, 填不够量的火药, 充电不足。
 unravel	(v.) 拆开
-wrought	vbl.work	的过去式和过去分词。adj.做成的, 形成的, 精炼的, [冶](金属)锻造的。
+wrought	(vbl.)work	的过去式和过去分词。adj.做成的, 形成的, 精炼的, [冶](金属)锻造的。
 mars	(n.) 火星；战争
 outcome	(n.) 结果,后果
 stewardship	(n.) 乘务员(服务员)的职位, 工作。
@@ -8261,7 +8260,7 @@ periodical	(a.) 周期的;定期的;n. 期刊;杂志
 senseless	(a.) 愚蠢的，无意义的
 conversely	(ad.) 相反地,逆地
 entrance	(n.) 入口，门口；进入；入学，入会vt. 使某人(着魔般)狂喜, 着迷
-tiger	n	．虎；老虎
+tiger(n)虎；老虎
 demography	(n.) 人口统计学。
 explorer	(n.) 勘探者，探险家
 ferrous	(a.) 铁的；亚铁的
@@ -8308,7 +8307,7 @@ sunny	(a.) 阳光充足的；快活的
 counterbalance	(vt.) 使平均, 使平衡, 弥补。n.平衡量, 平衡力, 势均力敌
 intermediate	(a./n.) 中间的,中间物
 accountant	(n.) 会计人员，会计师
-x-ray	n. X	射线，X光
+x-ray(n.) X射线，X光
 premise	(n.) [逻][法]前提, (企业, 机构等使用的)房屋连地基。vt.提论, 预述, 假定。vi.作出前提。
 disposal	(n.) 处理，处置；布置，安排
 brook	(n.) 小溪vt.容忍
@@ -8363,7 +8362,7 @@ viscous	(a.) 粘滞的，粘性的
 ascertain	(vt.) 查明,探查
 unfortunately	(ad.) 不幸地
 differentiate	(v.) 区别, 区分。
-crawl	vi	,爬行,缓慢地行进,爬满;起鸡皮疙瘩;n. 爬行;自由泳
+crawl	(vi.)爬行,缓慢地行进,爬满;起鸡皮疙瘩;n. 爬行;自由泳
 tutorial	(n.) 指南。
 soak	(v.) 浸泡;淋湿
 mould	(n.) 模子,模型;模制品
