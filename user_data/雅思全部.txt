@@ -7334,7 +7334,7 @@ regret	(v./n.) 遗憾，懊悔，抱歉
 savings	(n.) 存款，储蓄额
 machinery	(n.) (总称)机器，机械
 sketch	(n.) 草图,素描;短剧;简述;v. 草拟
-versus	(prep.) (诉讼或比赛中)对
+versus	(prep.) (诉讼或比赛中)对；与……相对，与……相比
 prior	(a.) 较早的;更重要的
 actively	(adv.) 积极地，活跃地
 transcend	(vt.) 超越, 胜过。
