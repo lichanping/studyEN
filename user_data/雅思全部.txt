@@ -6771,7 +6771,7 @@ indicator	(n.) 指示器, [化]指示剂。
 stigma	(n.) 污名, (植物)柱头, [动物] 气门, 耻辱。
 coast	(n.) 海岸，海滨
 muddy	(a.) 多泥的，泥泞的
-programer	(n.) 项目，程序制定者
+programmer	(n.) 项目，程序制定者
 patch	(n.) 补钉,眼罩;斑点;小块土地;vt. 补缀;修补,平息
 dissolve	(v.) 使液化,融化;使解散
 dim	(a.) 暗的,看不清楚的,迟钝的;v. 变模糊,变暗淡
