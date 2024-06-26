@@ -30,7 +30,7 @@ window.addEventListener("load", updateLabel);
 const userData = {
     "阮王睿": {
         schedule: "每周一三六 19:30 阮王睿 (准高一)",
-        course: "雅思",
+        course: "雅思初级单词词汇表",
         hours: [19, 45]
     },
     "青青": {
