@@ -6425,7 +6425,6 @@ weekly	(a.) 每星期的，一周的ad. 每周一次n. 周刊，周报
 oriental	(a./n.) 东方的,东方人
 assortment	(n.) 花色品种
 topic	(n.) 话题，主题，题目
-l/c	(n.) (缩)信用证
 porous	(adj.) 多孔渗水的。
 associated	(adj.) 联合的
 shady	(a.) 成荫的，多荫的；可疑的，靠不住的
