@@ -7369,7 +7369,7 @@ undersigned	(adj.) 在下面签名的
 diploma	(n.) 毕业证书,文凭
 dramatic	(a.) 引人注目的,突然的;戏剧性的,激动人心的;戏剧的,剧本的
 sales	(n.) 销售adj.出售的
-disomebodyursement	(n.) 支付
+disbursement	(n.) 支付
 remote	(a.) 远的，遥远的，疏远的，偏僻的，细微的
 intermittent	(adj.) 间歇的, 断断续续的。
 graveyard	(n.) 墓地。
@@ -8260,7 +8260,7 @@ periodical	(a.) 周期的;定期的;n. 期刊;杂志
 senseless	(a.) 愚蠢的，无意义的
 conversely	(ad.) 相反地,逆地
 entrance	(n.) 入口，门口；进入；入学，入会vt. 使某人(着魔般)狂喜, 着迷
-tiger(n)虎；老虎
+tiger	(n)虎；老虎
 demography	(n.) 人口统计学。
 explorer	(n.) 勘探者，探险家
 ferrous	(a.) 铁的；亚铁的
@@ -8307,7 +8307,7 @@ sunny	(a.) 阳光充足的；快活的
 counterbalance	(vt.) 使平均, 使平衡, 弥补。n.平衡量, 平衡力, 势均力敌
 intermediate	(a./n.) 中间的,中间物
 accountant	(n.) 会计人员，会计师
-x-ray(n.) X射线，X光
+x-ray	(n.) X射线，X光
 premise	(n.) [逻][法]前提, (企业, 机构等使用的)房屋连地基。vt.提论, 预述, 假定。vi.作出前提。
 disposal	(n.) 处理，处置；布置，安排
 brook	(n.) 小溪vt.容忍
