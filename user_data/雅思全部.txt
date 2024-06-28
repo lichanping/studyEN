@@ -7559,7 +7559,7 @@ cynic	(n.) 愤世嫉俗者。
 reliance	(n.) 信任，信心，依靠，依靠的人或物
 imposing	(adj.) 使人难忘的, 壮丽的。
 terrific	(a.) 可怕的;非常的
-manuscript	(n.)
+manuscript	(n.)手稿；底稿
 outermost	(a.) 最外面的，最远的
 winery	(n.) 酿酒厂
 socialist	(a.) 社会主义的
