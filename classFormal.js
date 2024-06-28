@@ -215,9 +215,9 @@ export function handleManagementGroupTemplateClick() {
 
     let outputMessage;
     if (timeDifference > 0 && timeDifference <= 30) {
-        outputMessage = `【${userName}的抗遗忘提醒-${hour}:${minute}】<br><br>⏰我们的抗遗忘复习课还有 **${timeDifference}** 分钟开始了，请做好准备，及时进入会议室哦🔥`;
+        outputMessage = `【抗遗忘提醒-${hour}:${minute}】<br><br>⏰我们的抗遗忘复习课还有 **${timeDifference}** 分钟开始了，请做好准备，及时进入会议室哦🔥`;
     } else {
-        outputMessage = `【抗遗忘温馨提醒-${hour}:${minute}】<br><br>👍#腾讯会议：689-688-4088<br><br>温馨提示：<br><br>⏰请准时参加会议并打开摄像头📷<br><br>📢临时无法参加尽量提前告知<br><br>㊙️仅在当天有收到提醒通知才需入会<br><br>💝${userName}同学，在求知的旅程中，你的每一分努力老师都铭记于心，老师为你骄傲！`;
+        outputMessage = `【抗遗忘温馨提醒-${hour}:${minute}】<br><br>👍#腾讯会议：689-688-4088<br><br>温馨提示：<br><br>⏰请准时参加会议并打开摄像头📷<br><br>📢临时无法参加尽量提前告知<br><br>㊙️仅在当天有收到提醒通知才需入会<br><br>💝在求知的旅程中，你的每一分努力老师都铭记于心，老师为你骄傲！`;
     }
 
     copyToClipboard(outputMessage);
