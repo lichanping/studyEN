@@ -28,3 +28,52 @@ Peter Coker是马丁飞机公司的首席执行官。他说，喷气背包“从
 The Jetpack uses a gasoline-powered engine that produces two powerful jet streams. Mr. Coker says it also has a parachute that would be used if there should be an emergency. It starts to work at very low altitude and actually saves both the aircraft and the pilot, he adds. Mr. Coker says the Jetpack will be ready for sale soon.
 
 喷气背包使用汽油动力发动机，产生两股强大的射流。科克先生说，它还有一个降落伞，可以在紧急情况下使用。他补充说，它在非常低的高度开始工作，实际上拯救了飞机和飞行员。科克先生表示，Jetpack很快就会上市销售。
+
+主旨大意：飞行自行车的原型在被研发后经过一些测试确保了安全性，加之喷气背包各方性能得到更进后这种自行车的发售指日可待。
+
+
+
+长难句：
+1. Grant Stapleton, marketing sales director of Malloy Aeronautics, says the
+Hoverbike is able to get in and out of small spaces very quickly.
+该句中marketing sales director of ...为插入语作补充说明，说明Stapleton的职位；句子主干是Grant Stapleton says the Hoverbike..., says 后为由被省略的that引导的宾语从句。
+
+2. Mr. Coker says it also has a parachute that would be used, if there should be an emergency. 主句Mr. Coker says（that）...... 是由that引导的宾语从句，其中还嵌套了一个定语从句 that would be used修饰parachute，分句则是由连接词if引导的非真实条件状语从句。
+
+
+
+语法点：
+1. 现在完成时：其构成为 have +过去分词
+在Many people have long dreamed of being able to fly around as simply as riding a bicycle. 中的 have dreamed of 表示持续到现在的动作，中间long 作副词修饰dream的程度; 下句 developments in technology have moved the dream of personal flying vehicles closer to reality. 同理。
+2. 同级比较：as + adj./adv.+as
+如Many people have long dreamed of being able to fly around as simply as riding a bicycle. 中的as simply as . 表示同级比较，骑飞行自行车同骑自行车一样。
+
+3. 原因状语从句： because 引导
+
+在" It can be moved across continents very quickly because it can be folded and packed," he adds.中，because引导原因状语从句，表人所不知的原因。
+
+4. 非限制性定语从句：which引导
+
+文中The company is testing a full-size prototype of the Hoverbike, which will most likely be used first by the police and emergency rescue teams.是由关系代词which引导的非限制性定语从句，the Hoverbike为先行词。下文同理。
+5. 过去分词作定语
+在 Martin Aircraft Company is also testing a full-size prototype of its personal
+flying device, called the Jetpack.中，called与其被修饰的词 its personal flying device是被动关系，应用过去分词做定语表被动，相当于定语从句，which is called...
+
+6. 名词性从句：that引导的宾语从句
+
+文中He said the Jetpack "is built around safety from the start". said后为由被省略的关系代词that引导的宾语从句，that充当said的宾语。
+
+
+
+重点语言点：
+be able to 能够
+dream of 梦想
+get in 进入
+get out of 出去
+move across 跨越
+more than 超过
+up to 达到
+in one’s words 就某人而言
+be similar to 与......相似
+be ready for 为......做好准备
+both ... and ... 两者...
