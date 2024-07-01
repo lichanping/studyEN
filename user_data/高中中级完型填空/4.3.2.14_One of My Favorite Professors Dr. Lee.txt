@@ -24,3 +24,49 @@ Tired from having our best theories shot down, we nodded.
 While my knowledge of the Capital Markets has faded over time, the lessons have stayed with me. “Experts” can be wrong and say things that sound right—so build a habit of evaluating new information and check it against things you already accept as fact. 
 
 虽然随着时间的推移，我对资本市场的了解逐渐淡去，但这些经验教训一直伴随着我。“专家”可能是错的，也可能说的听起来是对的，所以要养成评估新信息的习惯，并将其与你已经接受的事实进行核对。
+
+主旨大意：作者最喜欢的一位教授用巧妙的教学方法让学生们知道，要养成评估新信息的习惯，并将其与你已经接受的事实进行核对。
+
+
+
+长难句：
+1. He was memorable because of a trick he employed at the beginning of his first class.
+这句话的主干是He was memorable。because of a trick he employed at the beginning of his first class是介词短语，在句子中作原因状语；其中he employed 是省略关系代词的限制性定语从句，修饰a trick；at the beginning of his first class是介词短语作时间状语。
+2. Discuss among yourselves what it might be, and I will tell you next Monday.
+本句话中，and连接前后两个短句，分别为Discuss among yourselves what it might be和I will tell you next Monday。第一个句子Discuss among yourselves what it might be是一个祈使句；且含有一个what引导的宾语从句what it might be；what在从句中作表语。
+3. What made Dr. Lee's teaching technique smart was that there was no lie during the most technically difficult lecture.
+在这句话中 What made Dr. Lee's teaching technique smart是由What引导的主语从句，在从句中充当主语。 that there was no lie 是由that引导的表语从句， that在从句中不作任何成分，只起连接作用。
+长难句：
+4. But I am glad you reviewed your notes carefully this weekend.
+这句话的主干是But I am glad。you reviewed your notes carefully this weekend是省略关系代词that的宾语从句。在一般情况下，宾语从句中的that只起引导作用，在句中不做任何成分，没有实际意义，通常可以将其省略。
+5. “Experts” can be wrong and say things that sound right- so build a habit of evaluating new information and check it against things you already accept as fact.
+破折号前面这部分的主干是“Experts” can be wrong and say things；that sound right是由that引导的限制性定语从句，that在从句中作主语。破折号后面这部分，and连接两个祈使句build a habit of evaluating new information和 check it against things you already accept as fact；you already accept as fact是省略关系代词的限制性定语从句。
+
+语法点：
+1. 非谓语形式：动词不定式to do 作表语
+句子Your job is to try and catch me in the Lie of the Day中to try and catch me作表语，用来表示主语的具体内容或目的。
+2. 非谓语形式：动词不定式to do 作逻辑主语
+句子中That was a brilliant way to focus our attention at the dry and boring subject—Capital Markets，that是形式主语，to focus our attention at the dry and boring subject—Capital Markets是逻辑主语。当动词不定式做逻辑主语时，谓语动词要用第三人称单数。
+3. 复合宾语结构：“with + n. + 现在分词”
+句子Every once in a while, a lecture would end with nobody seeing through the lie中，with nobody seeing是复合宾语结构。
+4. 形容词作宾补：make+宾语+宾补
+句子What made Dr. Lee's teaching technique smart was that... 中， made Dr. Lee's teaching technique smart是make+宾语+宾补的形式。
+5. 非谓语动词： have + sth (宾语)+ 过去分词(宾补)
+句子Tired from having our best theories shot down中，having our best theories shot down是 have + sth (宾语)+ 过去分词(宾补)的形式，our best theories和shot down是被动关系。
+6. 现在完成时：have/has+过去分词
+随着时间的推移，我对资本市场的了解越来越少。意味着过去的动作或状态持续到现在，或对现在造成的影响，可能持续发生下去。句子While my knowledge of the Capital Markets has faded over time要用现在完成时。
+
+重点语言点：
+because of 由于
+at the beginning of 在...的开始
+put a lie into 编造谎言
+focus our attention at 把注意力集中在...
+on those days 在这些天
+every once in a while 每隔一段时间
+end with 以...结束
+on the following 在接下来的
+offer to 提出做某事
+shot down 击落
+stay with 和...在一起
+a habit of 一种习惯
+as fact 作为事实
