@@ -1,7 +1,7 @@
 The Fall of a Basketball Superstar - Kobe Bryant
 篮球巨星的陨落—科比·布莱恩特
 
-On Jan.  26, people around the world were shocked to hear of the sudden passing of Kobe Bryant, one of the NBA's most legendary players. The 41-year-old, his 13-year-old daughter Gianna Bryant and seven others died when their helicopter crashed in California, US. 
+On Jan.26, people around the world were shocked to hear of the sudden passing of Kobe Bryant, one of the NBA's most legendary players. The 41-year-old, his 13-year-old daughter Gianna Bryant and seven others died when their helicopter crashed in California, US.
 
 1月26日，NBA最具传奇色彩的球员之一科比·布莱恩特突然去世，世界各地的人们都感到震惊。41岁的科比和他13岁的女儿吉安娜布莱恩特以及其他7人在美国加州乘坐的直升机坠毁时遇难。
 
@@ -24,3 +24,36 @@ He was also known as a proud family man. His friend, baseball star Derek Jeter, 
 As the Los Angeles Times noted, Bryant became stronger because of his skill, hard work and tireless pursuit of victory. His legacy will live on long after his death. 
 
 正如《洛杉矶时报》所指出的那样，科比因为他的技术、勤奋和对胜利的不懈追求而变得更加强大。他的遗产将在他去世后长久流传。
+
+主旨大意：文章讲述了人们对篮球巨星科比·布莱恩特的突然离世感到震惊，以及对他的回忆。
+
+标签：名人故事
+
+
+
+长难句：
+
+1. People from all walks of life have respected the late basketball superstar — not just for his achievements on the court, but for his sincere personality and the inspiration he provided to so many people.
+找到主句People from all walks of life have respected the late basketball superstar ，破折号后面是解释尊敬他的原因，由not (only)... but also...连接两个部分，he provided to...为省略关系代词that的定语从句，修饰先行词inspiration。
+2. He started out as a basketball prodigy who skipped college and took his talents directly to the NBA: His deadly agility and aggressive tactics earned him the nickname Black Mamba
+找到主句He started out as a basketball prodigy who skipped college and took his talents directly to the NBA，who引导的是限制性定语从句，充当从句主语部分。冒号后面的句子起着解释说明的作用
+3. Fans remember him as the player who helped the Los Angeles Lakers win five NBA championships during his 20-year-long career.
+主句为Fans remember him as the player.后面接由who引导的限制性定语从句，修饰先行词player。
+
+4. Off the court, he was known as a successful businessman, buying stakes in several companies, including Alibaba and Dell.
+句子主干为he was known as a successful businessman，后面现在分词buying做伴随状语，逻辑主语为he。
+
+
+
+重点语言点：
+
+around the world 全世界
+on the court 在球场上
+all walks of life 各行各业
+focus on 关注
+trust in 相信
+hard work 努力工作
+be known as 被称为
+as such 像这样
+live on long after death 死后长存
+as... noted 正如……写的/指出的
