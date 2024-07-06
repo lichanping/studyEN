@@ -28,3 +28,44 @@ Hunt-Broersma said she hoped to inspire people everywhere to push themselves to 
 Guinness World Records said it knew about Hunt-Broersma's 104 marathons, and that it would take 12 to 15 weeks to look at the evidence before the record can be confirmed by it. 
 
 吉尼斯世界纪录表示，它知道亨特-布罗尔斯马的104场马拉松比赛，在记录得到证实之前，需要12到15周的时间来查看证据。
+
+主旨大意：亨特-布罗尔斯玛在26岁时因癌症失去了膝盖以下的腿。但她却使用假肢在104天内完成了104次马拉松比赛的壮举，并一举打破了由健康运动员所创造的世界吉尼斯纪录。随着她在社交媒体上的知名度越来越高，她筹集钱来帮助其他截肢的跑步者购买他们需要的假肢，她希望能激励世界各地的人去做有挑战性的事情。
+
+
+
+长难句：
+1. Hunt-Broersma, 46, finished her 104th marathon on April 30, near her home in Phoenix, Arizona, breaking an unofficial world record along the way.
+在这句中，主句是Hunt-Broersma finished her 104th marathon，46和near her home in Phoenix是两个插入语，Arizona是near her home in Phoenix的同位语。该句中finished是真正的谓语，breaking unofficial world record along the way是现在分词作结果状语，表达她完成她的104次马拉松后的结果。
+2. Brick Runners, an organization that supports athletes who raise money for charities, even designed one of her favorite T-shirts, which reads, "Strong Has Many Forms."
+在这句中，主句是Brick Runners even designed one of her favorite T-shirts, 其后有一个which引导的非限制性定语从句which reads ,“Strong Has Many Forms.”。an organization that supports athletes who raise money for charities是Brick Runners的同位语，该同位语中有一个that引导的限制性定语从句that supports athletes，that作从句的主语。athletes后有一个who引导的限制性定语从句who raise money for charities，who作从句的主语。
+3. Hunt-Broersma, who is from South Africa, lost her leg below the knee to cancer when she was 26 years old.
+在这句中，主句是Hunt-Broersma lost her leg below the knee to cancer。when引导时间状语从句when she was 26 years old，Hunt-Broersma后有一个who引导的非限制性定语从句who is from South Africa，who在从句中作主语。
+4. But in March, after non-disabled British runner Kate Jayden unofficially broke Clark's record with 101 marathons in 101 days, Hunt-Broersma knew she'd need to run at least 101.
+在这句中，主句是Hunt-Broersma knew, knew后有一个省略that的宾语从句she’d need to run at least 101, after后有一个时间状语从句after non-disabled British runner Kate Jayden unofficially broke Clark's record with 101 marathons in 101 days。
+5. As she did her daily 42.2-kilometer runs, Hunt-Brocrsma's social media popularity grew, and she raised over US $67, 000 to help other amputee runners buy the prosthetic arms and legs they need.
+在这句中，主句是Hunt-Brocrsma's social media popularity grew, and she raised over US $67, 000 to help other amputee runners buy the prosthetic arms and legs they need，主句中the prosthetic arms and legs后有一个that引导的限制性定语从句that they need，因that在从句中作宾语，故that可以省略。As引导方式状语从句as she did her daily 42.2-kilometer runs。
+6. Hunt-Broersma, who is from South Africa, lost her leg below the knee to cancer when she was 26 years old.
+在这句中，主句是Hunt-Broersma lost her leg below the knee to cancer。when引导时间状语从句when she was 26 years old，Hunt-Broersma后有一个who引导的非限制性定语从句who is from South Africa，who在从句中作主语。
+7. Hunt-Broersma said she hoped to inspire people everywhere to push themselves to do challenging things even if they have disabilities.
+在这句中，主句是Hunt-Broersm said，said后有一个省略that的宾语从句she hoped to inspire people everywhere to push themselves to do challenging things，even if 引导让步状语从句even if they have disabilities。
+8. Guinness World Records said it knew about Hunt-Broersma's 104 marathons, and that it would take 12 to 15 weeks to look at the evidence before the record can be confirmed by it.
+在这句中，主句是Guinness World Records said, said后有由and连接的两个宾语从句，一个是it knew about Hunt-Broersma's 104 marathons，另一个是that it would take 12 to 15 weeks to look at the evidence before the record can be confirmed by it，在该句中before后有一个时间状语从句before the record can be confirmed by it。
+
+语法点：
+1. 非谓语动词：现在分词作方式状语
+在这句She has completed 104 marathons in 104 days, using a prosthetic leg中，主句是she has completed 104 marathons in 104 days。using a prosthetic leg是现在分词作方式状语，using与句子的主语she构成逻辑上的主谓关系，理解为“用义肢完成了比赛。”
+2. 非谓语动词：现在分词作结果状语
+在这句Hunt-Broersma, 46, finished her 104th marathon on April 30, near her home in Phoenix, Arizona, breaking an unofficial world record along the way中，主句是Hunt-Broersma finished 104th marathon。breaking unofficial world record along the way是现在分词作结果状语，breaking与句子的主语Hunt-Broersma构成逻辑上的主谓关系，即“她的第104次马拉松比赛打破了非官方的世界纪录”。
+
+重点语言点：
+break a world record 打破世界纪录
+raise money 筹钱
+at least 至少
+help sb. do sth.帮助某人做某事
+pay for 支付
+hope to do sth. 希望做某事
+inspire sb. to do sth.
+push sb. to do sth. 敦促某人做某事
+know about 了解
+It takes+时间/金钱+to do sth. 花费时间/金钱做某事
+be confirmed by 被证实
