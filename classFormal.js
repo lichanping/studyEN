@@ -48,31 +48,27 @@ const userData = {
         course: "雅思初级单词词汇表",
         hours: [19, 35]
     },
+    "伟杰": {
+        schedule: "体验课 19:35 伟杰 (高三)",
+        course: "体验课",
+        hours: [19, 35]
+    },
     "青青": {
         schedule: "每周一 19:30 青青 (6年级)",
         course: "牛津上海版英语八年级上册",
         hours: [19, 30]
     }, "敏珺": {
         schedule: "每周日 19:40 敏珺 (初一)",
-        course: "初中高级完型填空",
+        course: "初中高级阅读理解",
         hours: [19, 40]
-    }, "南剑": {
-        schedule: "每天晚上 南剑 (高三)",
-        course: "高中考纲单词",
-        hours: [19, 35]
     }, "泽成": {
         schedule: "每天晚上 泽成 (初三)",
         course: "上海市初中英语考纲词汇",
         hours: [19, 45]
     }, "辰辰": {
-        schedule: "每天晚上 辰辰 (初三)",
-        course: "中考词汇",
+        schedule: "每天晚上 辰辰 (高一)",
+        course: "高考词汇",
         hours: [22, 30]
-    },
-    "启程": {
-        schedule: "每周五、日 19:35 启程 (5年级)",
-        course: "牛津上海版小学英语六年级（下册）",
-        hours: [19, 25]
     }
 };
 
@@ -139,9 +135,9 @@ export function handleScheduleNotificationClick() {
     let notificationMessage;
     if (timeDifference > 0 && timeDifference <= 30) {
         // Calculate the countdown time
-        notificationMessage = `【词汇课-${thisDateTime}】<br><br>⏰我们的在线课程还有【${timeDifference}】分钟开始了，请做好准备，及时进入会议室哦🔥`;
+        notificationMessage = `【${thisDateTime}】<br><br>⏰我们的在线课程还有【${timeDifference}】分钟开始了，请做好准备，及时进入会议室哦🔥`;
     } else {
-        notificationMessage = `【词汇课-${thisDateTime}】<br><br>亲爱的 ✨ ${userName} 用户您好! 我们的语言陪练服务时间安排在${formattedDateTime}。<br><br>📢请学员及家长准时进入会议室上课，并确保摄像头📷开启。感谢您的配合！`;
+        notificationMessage = `【${thisDateTime}】<br><br>亲爱的 ✨ ${userName} 用户您好! 我们的语言陪练服务时间安排在${formattedDateTime}。<br><br>📢请学员及家长准时进入会议室上课，并确保摄像头📷开启。感谢您的配合！`;
     }
     copyToClipboard(notificationMessage);
     showLongText(`${notificationMessage}`);
