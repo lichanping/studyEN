@@ -177,15 +177,10 @@ export function handleClassFeedbackClick() {
     const correctRate = ((newWord - forgetWord) / newWord * 100).toFixed(0);
 
     // Get values from input boxes
-    const antiForgettingReviewWord = document.getElementById('antiForgettingReviewWord').value;
     let forgetWords = document.getElementById('forgetWords').value.trim();
-    let pronounceWords = document.getElementById('pronounceWords').value.trim();
 
     // Count the number of English words
     const numberOfEnglishWords = countEnglishWords(forgetWords);
-    const numberOfWrongWords = countEnglishWords(pronounceWords);
-    const correctWordsCount = parseInt(antiForgettingReviewWord) - numberOfEnglishWords
-    const correctRateAnti = (correctWordsCount / antiForgettingReviewWord * 100).toFixed(0);
     // Get the input element to display the result
     const inputAntiForgettingForgetWord = document.getElementById("antiForgettingForgetWord");
 

@@ -85,7 +85,8 @@ export function byeClick() {
 
 export function handleAntiForgettingFeedbackClick() {
     // Get values from input boxes
-    const antiForgettingReviewWord = document.getElementById('antiForgettingReviewWord').value;
+    const antiForgettingReviewWord = Array.from(document.querySelectorAll('.antiForgettingReviewWord'))
+            .reduce((sum, input) => sum + (input.value ? parseInt(input.value, 10) : 0), 0);
     let forgetWords = document.getElementById('forgetWords').value.trim();
     let pronounceWords = document.getElementById('pronounceWords').value.trim();
 

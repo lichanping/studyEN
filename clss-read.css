@@ -28,11 +28,14 @@ body {
 #newWord,
 #mistakeWords,
 #test,
-#mistake, #antiForgettingReviewWord,
+#mistake,
 #antiForgettingForgetWord {
     width: 30px; /* Set the width in pixels */
 }
 
+.antiForgettingReviewWord {
+    width: 27px;
+}
 
 h1 {
     font-size: 32px; /* Increase font size */
