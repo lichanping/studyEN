@@ -26,9 +26,13 @@ body {
     z-index: 9999; /* Ensure it's on top */
 }
 
-#reviewWord,#reviewforgetWord,
-#newWord, #forgetWord, #antiForgettingReviewWord, #antiForgettingForgetWord {
+#reviewWord, #reviewforgetWord,
+#newWord, #forgetWord, #antiForgettingForgetWord {
     width: 40px; /* Specify the width in pixels */
+}
+
+.antiForgettingReviewWord {
+    width: 27px;
 }
 
 button {

@@ -45,8 +45,12 @@ body {
 }
 
 #reviewWord,
-#newWord, #forgetWord, #antiForgettingReviewWord, #antiForgettingForgetWord {
+#newWord, #forgetWord, #antiForgettingForgetWord {
     width: 40px; /* Specify the width in pixels */
+}
+
+.antiForgettingReviewWord {
+    width: 27px;
 }
 
 button {
