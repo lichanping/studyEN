@@ -20,3 +20,58 @@ The same goes for professional settings. If I am a medical salesman talking to a
 Of course, most constructivist educators will argue that on-the-job training and project-based learning are more effective at learning new concepts than rote memorization. The problem is that no single cost-effective constructivist activity will guarantee that you will be exposed to all the concepts you need, or that you will fully remember the facts that you are exposed to. If you actually want to gain a full range of knowledge about a given topic, the most guaranteed and efficient way is to study on purpose using the time-honored repeating practice －specifically confidence-based repetition. 
 
 当然，大多数建构主义教育家会认为在职培训和基于项目的学习比死记硬背更有效地学习新概念。问题在于，没有任何一种具有成本效益的建构主义活动能够保证你接触到所有你需要的概念，或者你会完全记住你接触到的事实。如果你真的想全面掌握某一主题的知识，最可靠、最有效的方法就是有目的地学习，使用历史悠久的重复练习——特别是基于自信的重复。
+
+主旨大意：这是一篇议论文。文中作者主要就如今流行的一种强烈的反对练习和实践，支持“建构主义活动”和“基于项目的学习”的教学方式提出了自己的看法。作者认为死记硬背的学习方式仍然重要，同时指出了上述这两种教学方法存在的一些问题。
+
+
+
+长难句：
+1. Memorizing facts, many people argue, is an outdated educational practice,
+since anyone could just Google a fact on demand or look it up on Wikipedia nowadays.
+主句正常语序为Memorizing facts is an outdated educational practice，中间many people argue作为插入语，分句为since引导的让步状语从句，since在此处意为既然。
+
+2. For example, last night at a networking event, when I casually asked a Nigerian
+
+businessman how much of his business was conducted in English compared with that in his native Yoruba, he immediately became more engaged in our conversation.
+该句通过关系副词when连接主句he immediately became ...与分句I casually asked ... 这样的主从复合句便构成了时间状语从句。从句 when I casually asked a Nigerian businessman how much of his business was conducted in English compared with that in his native Yoruba中通过that指代 how much of his business was conducted。
+3. It was as if the simple fact that I knew that Yoruba was spoken in Nigeria won
+his trust, and therefore built up our relationship.
+该句子通过and 连接，前一分句由一个定语从句嵌套另一个定语从句构成，可拆分为It was as if the simple fact ...... (that）won his trust同 the simple fact that （I knew that Yoruba was spoken in Nigeria）来理解。I knew 后接that引导宾语从句。
+
+4. If I am a medical salesman talking to a doctor about a specific digestion drug,
+
+and he asks if it has any effect on the process of peristalsis, it will look quite unprofessional if I have to pull out my medical dictionary to look up the word.
+该长句整体通过if 连接构成一个主从复合型的条件状语从句，主句为 it will look quite unprofessional ... , 从句为If I am a medical salesman ... on the process of peristalsis，其引导的条件句为真实条件句，该事件有可能发生。 主句中亦嵌套了一个真实条件句，从句为一个并列句，通过and连接构成。
+
+5. The problem is that no single cost-effective constructivist activity will
+
+guarantee that you will be exposed to all the concepts you need, or that you will fully remember the facts that you are exposed to.
+The problem is that ... you need 是由that 引导构成的宾语从句，其中gaurantee that ... are exposed to 嵌套了两个由 or连接 的、that引导的宾语从句。而you will fully remember the facts that you are exposed to.则是由 that引导的定语从句，用you are exposed to来修饰限定先行词 facts， 前一句all the concepts you need同理，引导词that被省略。
+
+
+
+语法点：
+1. 条件状语从句：if引导
+文中句If you have spent any time reading papers on teaching strategies in the past few years, you have probably noticed ...是由连接词if 引导
+
+2. 现在分词作定语：
+
+在Memorizing facts，many people argue, is an outdated educational practic中，memorizing作前置分词，修饰facts。
+3. 宾语从句：that引导
+在 They consider that we should focus all school activities on getting skills as opposed to knowledge.中，consider+that 引导完整的宾语从句，点出consider的内容。
+
+4. 限制性定语从句： 介词+which 引导
+
+在There are many cases in which having knowledge immediately on the tip of your tongue can have great social and professional value. 中，因关系副词的含义相当于”介词+which”，因此常交替使用。此处根据先行词 cases选用in which引导定语从句修饰cases。
+
+5. 目的状语从句：
+
+在 I need to memorize those facts so that I can access them immediately.中，通过so that 引导目的状语从句，表”以便”。
+
+6. 宾语从句：that 引导
+
+在Of course, most constructivist educators will argue that on-the-job training and project-based learning ...中，由关系代词that 引导完整的宾语从句，点出argue后面的内容。
+7. 条件状语从句：if 引导
+在If you actually want to gain a full range of knowledge about a given topic, the most guaranteed中，由连词if引导真实条件状语从句，表明该事件可能发生。
+
+
