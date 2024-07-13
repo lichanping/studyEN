@@ -1,0 +1,22 @@
+The Advantages of Drones and the Usage in Agriculture
+无人机的好处以及在农业中的应用
+
+It used to be mostly the military that used small, unpiloted aircraft, called "drones". The little planes were very costly. But as they have dropped in price more people have begun to use them. Rescue workers and farmers are among the new users. 
+
+过去主要是军方使用被称为“无人机”的小型无人驾驶飞机。这些小飞机非常昂贵。但随着它们价格的下降，越来越多的人开始使用它们。救援人员和农民是新用户。
+
+The fast rate of the development of computer technology, image-sensing devices, satellite navigation （卫星导航）, and smartphones has led to lower-priced drones. Researchers and developers have learned how to build smaller and less costly drones. Moviemakers are using drones to film from the sky. Historians use them when they explore ancient buildings. Rescue workers use them to look for people. And now farmers are using them to monitor their crops. 
+
+计算机技术、图像传感设备、卫星导航和智能手机的快速发展导致了价格更低的无人机。研究人员和开发人员已经学会了如何制造更小、更便宜的无人机。电影制作人正在使用无人机从空中拍摄。历史学家在探索古建筑时使用它们。救援人员用它们来寻找人员。现在农民们正在用它们来监测他们的庄稼。
+
+He helped create a company that developed a small drone that could be controlled by people on the ground. They called it "Agridrone". It uses a special "optical sensor （光学传感器）" to examine crops. The technology used is similar to that used by smartphones—except it has wings. A computer program directs the drone to fly over the crops. The sensor on the drone records four different-colored "bands" of sunlight that are reflected off the crops. Romain Faroux is a French businessman who starts companies. His father was a farmer. He believed drones could help farmers. 
+
+他帮助创建了一家公司，开发了一种可以由地面人员控制的小型无人机。他们称之为“农业无人机”。它使用一种特殊的“光学传感器”来检测作物。所使用的技术类似于智能手机所使用的技术，只不过它有翅膀。计算机程序引导无人机飞越农作物。无人机上的传感器记录了农作物反射的四种不同颜色的“波段”。罗曼·法鲁克是一名创办公司的法国商人。他的父亲是个农民。他认为无人机可以帮助农民。
+
+Jean-Baptiste Bruggeman is a farmer. He says the drone flies over his crops at different times of the season. This provides a lot of information about his crops. The drone pictures show him the exact amount of fertilizer the crops need. It also shows exactly where the fertilizer is needed. 
+
+让-巴蒂斯特·布鲁格曼是一名农民。他说，无人机在这个季节的不同时间飞过他的庄稼。这提供了很多关于他的庄稼的信息。无人机拍摄的照片向他展示了农作物所需化肥的确切数量。它还能准确显示需要施肥的地方。
+
+Romain Faroux says farmers use information collected by the Agridrone to place fertilizer only in areas where it is needed. This saves money and reduces pollution. Before they used the drones, farmers would put the same amount of fertilizer everywhere. Drones also save time because farmers can examine up to three hectares （公顷） in about a minute. 
+
+Romain Faroux说，农民们利用农业无人机收集的信息，只在需要肥料的地方施肥。这样既省钱又减少污染。在使用无人机之前，农民们会在每个地方撒上等量的肥料。无人机还节省了时间，因为农民可以在一分钟内检查多达三公顷的土地。

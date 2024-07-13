@@ -1,0 +1,18 @@
+New Findings in Monkey’s Brain
+猴子大脑新发现
+
+New research in monkeys may provide a clue about how the brain manages vast amounts of information and remembers what it needs. 
+
+在猴子身上进行的一项新研究可能会为大脑如何管理大量信息并记住它所需要的东西提供线索。
+
+The researchers found that when monkeys were taught to remember computer clip art pictures, their brains reduced the level of detail by sorting the pictures into categories for recall, such as images that contained people, buildings, flowers, and animals. The categorizing cells were found in the hippocampus, an area of the brain that processes sensory information into memory. In the experiment, each monkey was shown one clip art picture, and after a delay of one to 30 seconds, picked the original out of two to six different images to get a juice reward. 
+
+研究人员发现，当猴子被教导记住电脑剪贴画图片时，它们的大脑会通过将图片分类以供回忆，比如包含人物、建筑、花卉和动物的图像，来降低细节水平。在海马体中发现了分类细胞，海马体是大脑中负责将感觉信息转化为记忆的区域。在实验中，给每只猴子看一张剪贴画，在1到30秒的延迟后，从2到6张不同的图片中选出原始图片，以获得果汁奖励。
+
+They found that different cells coded images that fitted different categories. The category cells grouped images based on common features—a strategy to improve memory. For example, the same cell responded to both tulips and daisies because they are both flowers. By recording cell activity during hundreds of these trials in which the pictures were all different, the researchers noticed that certain cells were more active when the pictures contained similar features, such as images of people—but not other objects. 
+
+他们发现，不同的细胞编码的图像适合不同的类别。分类单元根据共同特征对图像进行分组，这是一种提高记忆力的策略。例如，同一个细胞对郁金香和雏菊都有反应，因为它们都是花。通过记录数百个不同图片的细胞活动，研究人员注意到，当图片包含相似特征时，某些细胞更活跃，比如人的图像，而不是其他物体的图像。
+
+"While such categorization is a highly efficient memory process, it may also have a downside," said Deadwyler Ph. D.  "When the trials included more than one picture with people in it, instead of different images, the monkeys often confused the image with a picture of other people. "So learning more about how the brain remembers could have far-reaching benefits. If we can understand in advance how the brain works when decisions are made, we can predict when the brain will make a mistake, and correct it, said Tim Pons, Ph. D.  "This finding about how large amounts of information are processed by the brain will help us to ultimately achieve that goal. "
+
+“虽然这种分类是一种高效的记忆过程，但它也可能有缺点，”德德维勒博士说。“当实验中包含不止一张有人物的照片，而不是不同的照片时，猴子往往会把这张照片和其他人的照片混淆起来。”因此，更多地了解大脑如何记忆可能会带来深远的好处。如果我们能提前了解大脑在做决定时是如何工作的，我们就能预测大脑什么时候会犯错误，并纠正它，蒂姆·庞斯博士说。“这个关于大脑如何处理大量信息的发现将帮助我们最终实现这一目标。”

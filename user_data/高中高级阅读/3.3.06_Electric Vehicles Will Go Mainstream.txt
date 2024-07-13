@@ -1,0 +1,26 @@
+Electric Vehicles Will Go Mainstream
+电动汽车将成为主流
+
+A breakthrough in electric vehicle(EV)battery design has enabled a 10-minute charge time for a typical EV battery. The record-breaking combination of a shorter charge time and more energy acquired for longer travel range was announced on Oct.  12 in the journal Nature. 
+
+电动汽车(EV)电池设计的突破使典型的电动汽车电池充电时间达到10分钟。10月12日，《自然》杂志公布了这一纪录，即更短的充电时间和更长的行驶里程所获得的更多能量。
+
+“The need for smaller, faster-charging batteries is greater than ever,” said Wang, the William E. Diefenderfer Professor of Mechanical Engineering at Penn State and lead author on the study. “Because the critical raw(未经加工的) materials are short,there are not enough batteries to meet expected demand. ”
+
+“对更小、充电更快的电池的需求比以往任何时候都要大，”William E.  Wang说。宾夕法尼亚州立大学机械工程Diefenderfer教授，该研究的主要作者。“由于关键原材料短缺，没有足够的电池来满足预期需求。”
+
+In August, California's Air Resources Board passed an extensive plan to restrict and ultimately ban the sale of gasoline-powered cars within the state. “If new car sales are going to shift to battery powered electric vehicles,” Wang explained, “they'll need to overcome two major drawbacks: They are too slow to recharge and too large to be efficient and affordable. Instead of taking a few minutes at the gas pump, depending on the battery, some EVs can take all day to recharge. ”
+
+今年8月，加州空气资源委员会通过了一项巨大的计划，限制并最终禁止在该州销售汽油动力汽车。“如果新车销售要转向电池驱动的电动汽车，”王解释说，“它们需要克服两个主要缺点:充电速度太慢，体积太大，效率不高，价格不低。根据电池的不同，有些电动汽车充电可能需要一整天，而不是在加油站停留几分钟。”
+
+“Our fast-charging technology works for most energy-dense batteries and will open a new possibility to downsize electric vehicle batteries from 150 to 50 kWh without causing drivers to feel range anxiety,” said Wang,whose lab partnered with a power company to develop the technology. “The smaller, faster-charging batteries will dramatically cut down battery cost and usage of critical raw materials, enabling mass adoption of affordable electric cars. ”
+
+“我们的快速充电技术适用于大多数能量密集的电池，将为电动汽车电池从150千瓦时缩小到50千瓦时开辟了新的可能性，而不会导致司机感到里程焦虑，”王说，他的实验室与一家电力公司合作开发了这项技术。“更小、充电更快的电池将大幅降低电池成本和关键原材料的使用，使廉价电动汽车得以大规模普及。”
+
+“True fast-charging batteries would have immediate impact,” the researchers wrote. “Since there are not enough raw minerals for every internal combustion engine car to be replaced by a 150 kWh-equipped EV, fast charging is necessary for EVs to go mainstream. ”
+
+研究人员写道:“真正的快速充电电池将产生立竿见影的影响。”“由于没有足够的原材料来替代每辆配备150千瓦时的内燃机汽车，快速充电是电动汽车成为主流的必要条件。”
+
+“The study's partner, the power company, is working to manufacture and commercialize the fast-charging battery for an affordable and sustainable future of vehicle electrification,” Wang said. 
+
+王说:“这项研究的合作伙伴电力公司正在努力制造和商业化快速充电电池，以实现负担得起汽车电动化和可持续的未来。”

@@ -1,0 +1,22 @@
+The AI Cane
+人工智能手杖
+
+Kursat Ceylan is blind. He once walked into a pole and cut open his forehead. This inspired him and his partner to come up with a cane that had AI built-in, named WeWalk. This would then detect any objects that might be above chest level. The AI is also able to pair up with various systems, including Google Maps, Amazon Alexa, and more. 
+
+考斯登·塞兰(Kursat Ceylan)是盲人。有一次他撞上了一根杆子，把额头划破了。这启发了他和他的搭档设计了一款内置人工智能的手杖，名为WeWalk。然后，这将检测到任何可能在胸部以上的物体。该人工智能还能够与各种系统配对，包括谷歌地图、亚马逊Alexa等。
+
+Of course, the smart cane itself can only integrate with AI functions on a basic level right now but the overall aim is to gather information from various sensors that WeWalk have been installed （安装）. It can then use data to find out how visually damaged people use the product and how they behave so that a far more complicated product can be created in the form of advanced AI. 
+
+当然，智能手杖本身目前只能在基本层面上与人工智能功能集成，但总体目标是从WeWalk已安装的各种传感器收集信息。然后，它可以使用数据来找出视觉受损的人是如何使用产品的，以及他们的行为方式，这样就可以以先进的人工智能的形式创造出更复杂的产品。
+
+It should be noted that this isn't meant to be a simple smart cane. It's supposed to be connected with transportation networks and even autonomous vehicles. The general idea is that WeWalk would eventually be able to interact with traffic lights so that people can then cross roads without having to push a button. They would also be able to alert （报警） buses so that they can then wait at a stop ahead of time. 
+
+值得注意的是，这并不是一个简单的智能手杖。它应该与交通网络甚至自动驾驶汽车相连。总的想法是，WeWalk最终将能够与交通灯互动，这样人们就可以不用按按钮就能过马路。他们还可以提醒公共汽车，这样他们就可以提前在一站等候。
+
+Innovations like this would be more than welcome but they would fall short of some of the dreams that were once inspired by AI. People once thought that AI would be able to form logical connections and even change the world. Right now it hasn't really done that, but scientists are working on it. 
+
+像这样的创新将非常受欢迎，但它们与曾经受到人工智能启发的一些梦想相差甚远。人们曾经认为人工智能能够形成逻辑联系，甚至改变世界。目前它还没有真正做到这一点，但科学家们正在努力。
+
+Only time will tell if this is ever going to be the case but right now it looks like there is a lot being done to try and make sure that the world of tech and healthcare are being benefited and for all of the right reasons. 
+
+只有时间才能证明这种情况是否会发生，但现在看来，为了确保科技和医疗保健世界受益，人们正在做很多工作，而且理由都是正确的。
