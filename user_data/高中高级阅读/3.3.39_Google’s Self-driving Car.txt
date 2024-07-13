@@ -1,0 +1,18 @@
+Google’s Self-driving Car
+谷歌自动驾驶汽车
+
+Google's self-driving car is designed to work without a gas pedal （踏板） or steering wheel （方向盘）. Now, the company has decided that the car doesn't have any windscreen wipers either, because there's no need for passengers to see where they are being driven. 
+
+谷歌的自动驾驶汽车被设计成不需要油门踏板或方向盘。现在，该公司决定，这款车也没有任何挡风玻璃刮水器，因为乘客不需要看到他们在哪里行驶。
+
+The car requires no input from a driver, except telling it the destination. There is no driving in the way we know it and all people inside the cars will be passengers who can spend their time paying no attention to the road. While the car may not need windscreen wipers, the absence of them may make passengers feel helpless if they are unable to see where they are going clearly. 
+
+除了告诉它目的地外，汽车不需要司机的输入。没有我们所知道的驾驶方式，所有在车里的人都是乘客，他们可以花时间不注意道路。虽然汽车可能不需要雨刷，但如果没有雨刷，乘客可能会感到无助，因为他们无法清楚地看到自己要去的地方。
+
+Google's two-seater "bubble" cars have buttons to begin and end the drive, but no other controls. An onboard computer uses data from sensors, including radar （雷达） and cameras, to make turns and keep away from people walking in the street and other vehicles. Under the vision made public by Google, passengers might set their destination by typing it into a map or using voice commands. The new car can't go faster than 25 miles per hour （40 km/h）. It is electric and has to be 【recharged】 after 80 miles （129 km）. They can only be used in areas that have been thoroughly mapped by Google. 
+
+谷歌的双座“泡泡”汽车有开始和结束驾驶的按钮，但没有其他控制装置。车载计算机利用雷达和摄像头等传感器的数据来转弯，避开街上的行人和其他车辆。根据谷歌公开的设想，乘客可以通过在地图上输入目的地或使用语音命令来设定目的地。这辆新车的速度不能超过每小时25英里(40公里)。它是电动的，行驶80英里(129公里)后必须充电。它们只能在谷歌已经全面测绘的地区使用。
+
+Google has been testing its self-driving cars since 2009 and its new model without a steering wheel since early this summer. It intends on making its driverless cars available to consumers in the next five years. The final goal of the project is computer-controlled cars that can get rid of human error, which results in about 90 percent of the 1. 2 million road deaths worldwide each year and it was also inspiring to start with a blank sheet of paper. 
+
+自2009年以来，谷歌一直在测试其自动驾驶汽车，并从今年夏初开始测试其无方向盘的新车型。该公司计划在未来五年内向消费者推出无人驾驶汽车。该项目的最终目标是计算机控制的汽车，可以消除人为错误，每年导致全球120万道路死亡中约90%，从一张白纸开始也很鼓舞人心。

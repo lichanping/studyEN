@@ -1,0 +1,22 @@
+Intelligent Prosthetic Arm
+智能仿生手臂
+
+When only about eight years old, Ben Choi became attracted by mind-controlled prostheses (假肢). He saw a documentary on these prostheses, which are controlled by devices planted in the brain. “I was really amazed,” recalls the now 17-year-old senior at the Potomac School in McLean, Va.  “But it was also pretty alarming. ”Planting the devices required risky brain operations, and those prostheses cost hundreds of thousands of dollars. That always kind of stuck with him. 
+
+在只有8岁的时候，Ben Choi被意念控制的假肢所吸引。他看过一部关于这些假肢的纪录片，这些假肢是由植入大脑的设备控制的。“我真的很惊讶，”这位现年17岁的弗吉尼亚州麦克莱恩波托马克中学高三学生回忆道，“但这也相当令人担忧。”植入这些装置需要冒险的脑部手术，而这些假体要花费数十万美元。这句话一直困扰着他。
+
+In 2020, Ben set out to create his own non-invasive, low-cost bionic(仿生学的) arm. He set up shop on a basement ping-pong table. His first arm was built with a small 3-D printer borrowed from his sister. After updating his design more than 75 times, Ben has now showed a developed version of the arm using industry-grade material. It still costs less than $300 to make. 
+
+2020年，本开始创造自己的非侵入性、低成本仿生手臂。他在地下室的一张乒乓球桌上开店。他的第一个手臂是用从姐姐那里借来的一个小型3d打印机制作的。在对他的设计进行了超过75次的更新后，Ben现在展示了一个使用工业级材料的开发版本的手臂。它的制作成本还不到300美元。
+
+The arm is controlled by a device worn on the forehead whose sensors pick up the brain's electrical activity, or brainwaves. Thinking about different arm motions, such as waving or making a fist, creates different brainwave patterns. An artificial intelligence, or AI, system translates those brainwave patterns to move the robotic arm. 
+
+手臂由戴在额头上的设备控制，该设备的传感器捕捉到大脑的脑电活动或脑电波。思考不同的手臂动作，比如挥手或握拳，会产生不同的脑电波模式。人工智能(AI)系统将这些脑电波模式进行翻译来移动机械臂。
+
+The AI system had to be trained to translate those brainwaves. Ben gathered brainwave data from volunteers at his school and in his family. “From those participants, I collected maybe an hour or two of brainwave activity,” he says.  “That's thousands of data points. ”Studying those data helped the AI system learn to read minds. 
+
+人工智能系统必须经过训练才能翻译这些脑电波。本从学校和家里的志愿者那里收集了脑电波数据。“从这些参与者身上，我收集了一两个小时的脑电波活动，”他说。“这是数千个数据点。”研究这些数据有助于人工智能系统学会读心术。
+
+In early tests, Ben said that his robotic arm has proved to be as smart as the world's best brain-controlled prostheses. What he said needs to be confirmed in a clinical trial. But if it holds up, this bionic arm could be a game-changer for prosthetic technology. 
+
+在早期的测试中，本说他的机械臂已经被证明和世界上最好的脑控制假肢一样智能。他说的话需要在临床试验中得到证实。但如果它能成功，这种仿生手臂可能会改变假肢技术的游戏规则。

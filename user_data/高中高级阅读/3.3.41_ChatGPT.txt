@@ -1,0 +1,18 @@
+ChatGPT
+GPT
+
+Like most nerds who read science fiction, I've kept wondering how society will greet true artificial intelligence, if and when it arrives. Will we panic? Ignore it and go about our daily lives?Hence, it's beer fascinating to watch the Twittersphere try to make sense of ChatGPT, a new cutting-edge AI chatbot opened for testing at the end of 2022ChatGPT--which stands for “generative pretrained transformer”—landed with a splash. In five days, more than a million people signed up to test it. 
+
+像大多数阅读科幻小说的书呆子一样，我一直在想，如果真正的人工智能到来，以及当它到来的时候，社会将如何迎接它。我们会恐慌吗?忽略它，继续我们的日常生活?因此，看到推特圈试图理解ChatGPT是一件很有趣的事情，一款新的尖端人工智能聊天机器人在2022年底开放测试，ChatGPT——代表“生成预训练变压器”——引起了轰动。五天之内，超过一百万人注册测试
+
+In recent years, though a few Al tools have gotten good at doing narrow and well-defined tasks,like writing marketing copy,they still tend to be weak when taken outside their comfort zones. But ChatGPT feels different. Smarter. More flexible. It can write jokes and college-level essays.  It can also guess at medical diagnoses, "and even seems good at answering the types of open-ended analytical questions which frequently appear on school assignments. 
+
+近年来，尽管一些人工智能工具在完成范围狭窄且定义明确的任务(如撰写营销文案)方面做得很好，但当它们被带出自己的舒适区时，它们仍然往往很弱。但是ChatGPT感觉不同。更聪明，更灵活。它可以写笑话和大学水平的论文，也可以猜测医学诊断，甚至似乎很擅长回答学校作业中经常出现的开放式分析问题。
+
+The technology that powers ChatGPT isn't,strictly speaking,new. It's based on what the company calls “GPT-3. 5”, an upgraded version of GPT-3 in 2020. While the existence of a highly capable linguistic superbrain might be old news to Al researchers , it's the first time such a powerful tool has been made available to the general public through a free easy-to-use web interface. 
+
+严格来说，支持ChatGPT的技术并不新鲜。它基于该公司所谓的“GPT-3. 5”，这是2020年gpt -3的升级版本。虽然对于人工智能研究人员来说，存在一个功能强大的语言超级大脑可能已经不是什么新闻了，但这是第一次通过一个免费易用的网络界面向公众提供如此强大的工具。
+
+Unlike Google, ChatGPT doesn't crawl the web for information on current events , and its knowledge is restricted to things it learned before 2021. Since ChatGPT training data includes billions of examples of human opinion , representing every reasonable view, it's also, in some sense, moderate by design. Without specific prompting,for example,it's hard to coax a strong opinion out of ChatGPT about political debates. Usually, you'll get a fair summary of what each side believes. 
+
+与谷歌不同的是，ChatGPT不会在网络上抓取当前事件的信息，它的知识仅限于2021年之前学到的东西。由于ChatGPT训练数据包含数十亿个人类观点的例子，代表了每一个合理的观点，因此在某种意义上，它也是设计得温和的。例如，如果没有特定的提示，很难从ChatGPT中引出关于政治辩论的强烈意见。通常，你会得到双方所相信的一个公平的总结。
