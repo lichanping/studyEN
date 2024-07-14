@@ -2,15 +2,16 @@ import asyncio
 import os
 import random
 import re
-import random
-import shutil
 import time
 from datetime import datetime
 from os.path import dirname, abspath
 
 import edge_tts
+import numpy as np
 import pandas as pd
 from edge_tts import VoicesManager
+from openpyxl import load_workbook
+from openpyxl.utils import get_column_letter
 from ptest.decorator import TestClass, Test
 
 
@@ -217,3 +218,111 @@ class GenerateTool:
         tool = TxtToXLSX()
         en_and_cn('敏珺语言点.txt', max_items=None)
         # en_and_cn('高中考纲词组.txt', max_items=10)
+
+    @Test()
+    def calculate_class_fee(self):
+        temp_folder = get_sub_folder_path('temp')
+        file_path = os.path.join(temp_folder, '6月练习记录.xlsx')
+        columns_to_remove = ['30分钟软件时长', '60分钟软件时长', '软件体验时长', '佣金总额', '身份证号码', '陪练手机号']
+        self.add_category_sheet_with_fee(file_path, columns_to_remove)
+        self.separate_classes_into_sheets(file_path)
+        self.create_and_save_pivot_table(file_path)
+
+    def create_and_save_pivot_table(self, input_file_path):
+        # 读取 Excel 文件中的数据
+        df = pd.read_excel(input_file_path, sheet_name='总表')
+
+        # 创建数据透视表
+        pivot_table = pd.pivot_table(
+            df,
+            values=['应发放佣金（不包括成交奖励等）', '课时'],
+            index=['陪练账号', '陪练姓名'],
+            columns=['陪练类型', '课程类别'],
+            aggfunc={'应发放佣金（不包括成交奖励等）': 'sum', '课时': 'sum'},
+            fill_value=0  # 可选：填充缺失值
+        )
+
+        # 加载现有的 Excel 工作簿
+        book = load_workbook(input_file_path)
+        sheet_name = '数据透视表'
+        if sheet_name in book.sheetnames:
+            book.remove(book[sheet_name])
+
+        # 使用 Pandas 的 ExcelWriter 并且加载现有工作簿
+        with pd.ExcelWriter(input_file_path, engine='openpyxl', mode='a') as writer:
+            writer.book = book
+            pivot_table.to_excel(writer, sheet_name=sheet_name)
+
+        print(f'数据透视表已添加到 {input_file_path}')
+
+    def add_category_sheet_with_fee(self, file_path, columns_to_remove):
+        # Load the workbook
+        book = load_workbook(file_path)
+
+        # Check if '类别' sheet exists, remove it if it does
+        category_sheet_name = '总表'
+        # Remove all sheets except 'sheet1'
+        for sheet_name in book.sheetnames:
+            if sheet_name != 'sheet1':
+                book.remove(book[sheet_name])
+
+        # Read the 'removed' sheet to calculate '课程类别' and 'fee'
+        df = pd.read_excel(file_path, sheet_name='sheet1')
+        # Remove specified columns from the dataframe
+        df_removed = df.drop(columns=columns_to_remove)
+
+        # Add a new column '课程类别' based on '资料名称'
+        df_removed['课程类别'] = df_removed['资料名称'].apply(
+            lambda x: '阅读完型语法课' if any(word in x for word in ['阅读理解', '文化阅读', '阅读真题', '语法', '完型填空']) else '词汇课')
+
+        # Add a new column '课时' based on '陪练类型'
+        df_removed['课时'] = df_removed['陪练类型'].apply(
+            lambda x: 0.5 if '30分钟课' in x else 1)
+
+        # Add a new column 'fee' based on '陪练类型' and '课程类别'
+        def calculate_fee(row):
+            if row['陪练类型'] == '体验课':
+                return 40
+            else:
+                duration = 60 if '60分钟课' in row['陪练类型'] else 30
+                if row['课程类别'] == '词汇课':
+                    return 50 if duration == 60 else 25
+                else:
+                    return 55 if duration == 60 else 27.5
+
+        df_removed['应发放佣金（不包括成交奖励等）'] = df_removed.apply(calculate_fee, axis=1)
+
+        # Save the modified dataframe to a new sheet named '类别'
+        with pd.ExcelWriter(file_path, engine='openpyxl', mode='a') as writer:
+            writer.book = book
+            df_removed.to_excel(writer, index=False, sheet_name=category_sheet_name)
+
+        print(f"New sheet '{category_sheet_name}' added after 'removed' sheet in the original file {file_path}")
+
+    def separate_classes_into_sheets(self, file_path):
+        # Load the workbook
+        book = load_workbook(file_path)
+
+        # Check if '体验课' and '正课' sheets exist, remove them if they do
+        experience_sheet_name = '体验课'
+        regular_class_sheet_name = '正课'
+        if experience_sheet_name in book.sheetnames:
+            book.remove(book[experience_sheet_name])
+        if regular_class_sheet_name in book.sheetnames:
+            book.remove(book[regular_class_sheet_name])
+
+        # Read the '总表' sheet to filter records
+        df_category = pd.read_excel(file_path, sheet_name='总表')
+
+        # Filter the records
+        df_experience = df_category[df_category['陪练类型'] == '体验课']
+        df_regular = df_category[df_category['陪练类型'] != '体验课']
+
+        # Save the filtered dataframes to new sheets named '体验课' and '正课'
+        with pd.ExcelWriter(file_path, engine='openpyxl', mode='a') as writer:
+            writer.book = book
+            df_experience.to_excel(writer, index=False, sheet_name=experience_sheet_name)
+            df_regular.to_excel(writer, index=False, sheet_name=regular_class_sheet_name)
+
+        print(
+            f"Filtered data saved as new sheets '{experience_sheet_name}' and '{regular_class_sheet_name}' in the original file {file_path}")
