@@ -101,14 +101,6 @@ hate讨厌</textarea>
     import * as scriptR from './classRead.js';
     import * as commonFunctions from './commonFunctions.js';
 
-    document.addEventListener("keydown", function (event) {
-        if (event.key === "Enter" || event.keyCode === 13) {
-            if (!Swal.isVisible()) {
-                event.preventDefault(); // Prevent default Enter key behavior (e.g., form submission)
-                document.getElementById("openingSpeechButton").click();
-            }
-        }
-    });
     document.getElementById("navigateToFormalClass").addEventListener("click", commonFunctions.navigateToFormalClass);
     document.getElementById("navigateToTiyanClass").addEventListener("click", commonFunctions.navigateToTiyanClass);
     document.getElementById("wordSelfCheckButton").addEventListener('click', commonFunctions.navigateToLearnWords);
