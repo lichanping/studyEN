@@ -16,3 +16,47 @@ All the while, the dispatcher was listening and seeking clues as to where the tw
 The mystery was solved when the police pulled them over. Playing it straight, a police officer asked one of the suspects if he had anything in the vehicle that "shouldn't be in the vehicle. "The man said he didn't, but a quick search of the car led to the stolen property. The men were confused. They didn't know why the police came to them so quickly. When they were told the reason, one of the suspects asked, "We really called 911? Damn. "
 
 警察把他们拦在路边，谜底就解开了。一名警官直截了当地问其中一名嫌疑人，他的车里是否有什么“不应该在车里”的东西。该男子说他没有，但经过对汽车的快速搜查，找到了被盗物品。男人们很困惑。他们不知道警察为什么这么快就来找他们。当他们被告知原因时，其中一名嫌疑人问道:“我们真的打了911吗?该死的。”
+
+主旨大意：本文主要讲述了两名20岁男子Nathan Teklemariam和Carson Rinehart闯入一辆汽车时，不小心拨打了911，在不知情的情况下把警察引向了他们的位置。当警察找到他们，并在车里搜到了赃物时，他们还特别困惑，不知道自己已经拨打了911。
+
+
+
+长难句：
+1. Police say a man dialed 911 accidentally while he and another man were
+breaking into a car, unknowingly leading policemen right to their location.
+该句由while引导时间状语从句，后接现在分词leading作非谓语表示伴随，表示拨打911的同时也导致着警察的到来。
+
+2. Later, the sounds of a window being broken can be heard followed by a
+
+suspects excited declaration that he found something valuable in the car.
+现在分词being broken作window的宾语补足语，过去分词followed by作状语，
+the sounds 与follow 之间有被动的含义，用过去分词。 declaration that he found ...，that连接同位语从句，不充当任何成分。
+
+3. Playing it straight, a police officer asked one of the suspects if he had anything
+
+in the vehicle that “shouldn’t be in the vehicle.”
+分句由非谓语动词playing 构成伴随状语，因police officer与 play是主动关系故采用现在分词作非谓语。主句 a police officer asked ... anything in the vehicle that
+“shouldn’t be in the vehicle.”由that引导定语从句，“shouldn’t be in the vehicle.”修饰限定先行词vehicle。
+
+
+
+语法点：
+1. 过去分词作后置定语
+在From the tape provided by Fox News ,中provide 与 tape是被动关系，故用过去分词provided作后置定语，修饰tape。
+2. 宾语从句：that 引导
+在Fox News explains that the 911 dispatcher could hear people speaking in the background , so he listened to see if anyone was in need of help.中that引导出完整的宾语从句，点出explain后面的内容。
+
+3. 时间状语从句：when 引导
+
+在The mystery was solved when the police pulled them over.中，when
+引导时间状语从句。
+
+
+
+重点语言点：
+break into 闯入
+according to ... 根据 ...
+in need of ... 需要......
+take long for sb to do sth 花某人很长时间做某事
+pull over 拦下
+lead to 通向；把......带到
