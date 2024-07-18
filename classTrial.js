@@ -86,8 +86,8 @@ export function handleClassFeedbackClick() {
     // Generate feedback message
     const feedbackMessage = `【${userName} 体验课总结】<br>
 1. 首测词汇量 ${vocabularyCount}。
-2. 今日新学单词 ${newWord} 词，${forgetWord} 遗忘，正确率 ${correctRate}%，${studyTime} 分钟记住了 ${newWord - forgetWord} 词。
-3. ${userName}同学上课很积极，状态非常好，配合度很高，注意力集中，做到了 ${correctRate}% 正确，总体来说效果非常好！<br><br><br><br>💟今日寄语💟<br><br>
+2. 今日新学单词 ${newWord} 词，${forgetWord} 遗忘，正确率 ${correctRate}%，${studyTime} 分钟记住了 ${newWord - forgetWord} 词 (从开始识记到学后检测)。
+3. ${userName}同学上课很积极，状态非常好，配合度很高，注意力集中，做到了 ${correctRate}% 正确，总体来说效果非常好！<br><br><br><br>📚知识小船📚
 ${getRandomMotto()}`;
 
 
