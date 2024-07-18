@@ -117,10 +117,11 @@ export function handleAntiForgettingFeedbackClick() {
     }
 
     // Handle key language points
-    if (keyLanguagePoints.trim().length == 0) {
+    if (keyLanguagePoints.trim().length === 0) {
         keyLanguagePoints = "";
     } else {
-        keyLanguagePoints = '<br><br>5️⃣重点语言点：<br>' + keyLanguagePoints.split('\n').map(point => `- ${point}`).join('<br>') + '<br>';
+        keyLanguagePoints = '<br><br>5️⃣重点语言点：<br>' + keyLanguagePoints.split('\n').filter(point => point.trim() !== '').map((point, index) => (index + 1) + '. ' + point).join('<br>') + '<br>';
+        // keyLanguagePoints = '<br><br>5️⃣重点语言点：<br>' + keyLanguagePoints.split('\n').filter(point => point.trim() !== '').map(point => '- ' + point).join('<br>') + '<br>';
     }
 
     // Generate the message
@@ -135,11 +136,8 @@ export function handleAntiForgettingFeedbackClick() {
     }
     // Add line breaks
     message = message.replace(/\n/g, '<br>');
-    if (numberOfWrongWords > 0) {
-        message += `<br><br>${userName}课下继续加强发音哦!`
-    }
     // Append random motto
-    message += `<br><br><br><br>📚知识小船📚<br><br>${getRandomMotto()}`;
+    message += `<br><br>📚知识小船📚<br><br>${getRandomMotto()}`;
     // Copy the message to clipboard
     copyToClipboard(message);
     // Show alert with the generated message
