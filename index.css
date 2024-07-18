@@ -63,7 +63,7 @@ h1 {
     line-height: 1; /* Adjust line height to reduce vertical spacing */
 }
 
-#forgetWords, #pronounceWords {
+#forgetWords, #pronounceWords, #keyLanguagePoints {
     width: 400px; /* Adjust the width as needed */
     height: 60px; /* Adjust the height as needed */
     font-size: 18px; /* Adjust the font size as needed */

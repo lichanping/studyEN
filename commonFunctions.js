@@ -86,10 +86,10 @@ export function byeClick() {
 export function handleAntiForgettingFeedbackClick() {
     // Get values from input boxes
     const antiForgettingReviewWord = Array.from(document.querySelectorAll('.antiForgettingReviewWord'))
-            .reduce((sum, input) => sum + (input.value ? parseInt(input.value, 10) : 0), 0);
+        .reduce((sum, input) => sum + (input.value ? parseInt(input.value, 10) : 0), 0);
     let forgetWords = document.getElementById('forgetWords').value.trim();
     let pronounceWords = document.getElementById('pronounceWords').value.trim();
-
+    let keyLanguagePoints = document.getElementById('keyLanguagePoints').value.trim();
     const userName = document.getElementById("userName").value;
     const randomFeedback = getRandomFeedback();
 
@@ -116,13 +116,23 @@ export function handleAntiForgettingFeedbackClick() {
         pronounceWords = '<br>' + pronounceWords.split('\n').map(word2 => `- ${word2}`).join('<br>') + '<br>';
     }
 
+    // Handle key language points
+    if (keyLanguagePoints.trim().length == 0) {
+        keyLanguagePoints = "";
+    } else {
+        keyLanguagePoints = '<br><br>5️⃣重点语言点：<br>' + keyLanguagePoints.split('\n').map(point => `- ${point}`).join('<br>') + '<br>';
+    }
+
     // Generate the message
     let message = `【${userName} 今日抗遗忘复习反馈】<br>
 1️⃣今天复习了${antiForgettingReviewWord}个单词，遗忘了${antiForgettingForgetWord}个，${numberOfWrongWords}个单词发音不标准, 正确率为 ${correctRate}% 💯<br>
 2️⃣遗忘词:${forgetWords}<br>
 3️⃣发音不标准的词:${pronounceWords}<br>
 4️⃣${userName} ${randomFeedback}`;
-
+    // Add key language points if not empty
+    if (keyLanguagePoints.length > 0) {
+        message += keyLanguagePoints;
+    }
     // Add line breaks
     message = message.replace(/\n/g, '<br>');
     if (numberOfWrongWords > 0) {
@@ -192,31 +202,31 @@ export function showLongText(longText) {
 export function getRandomMotto() {
     // Replace the following array with your own collection of mottos
     const mottos = [
-    "Life is a journey, and if you fall in love with the journey, you will be in love forever.<br><br>生活是一场旅程，如果你爱上了这场旅程，你将永远热爱。",
-"Uncertainty is the only certainty there is, and knowing how to live with insecurity is the only security.<br><br>不确定性是唯一确定的，知道如何与不安全感共处是唯一的安全感。",
-"In a time of drastic change it is the learners who inherit the future. The learned usually find themselves equipped to live in a world that no longer exists.<br><br>在剧烈变化的时代，是学习者继承未来。有学识的人通常发现自己准备好生活在一个不再存在的世界里。",
-"Change is the law of life. And those who look only to the past or present are certain to miss the future.<br><br>变化是生活的法则。那些只看过去或现在的人肯定会错过未来。",
-"The future belongs to those who believe in the beauty of their dreams.<br><br>未来属于那些相信他们梦想之美的人。",
-      "No pains,no gains.<br><br>不劳则无获。",
-      "Rome was not built in a day.<br><br>罗马不是一天建成的。/伟业非一日之功。",
-      "Practice makes perfect.<br><br>熟能生巧。",
-      "It's never too old to learn.<br><br>活到老，学到老。",
-      "A good beginning is half done.<br><br>好的开始是成功的一半。",
-      "Easier said than done.<br><br>说起来容易做起来难。",
-      "Actions speak louder than words.<br><br>行胜于言。",
-      "A journey of a thousand miles begins with a single step.<br><br>千里之行，始于足下。",
-      "All roads lead to Rome.<br><br>条条大路通罗马。",
-      "No man can do two things at once.<br><br>一心不可二用。",
-      "Where there is a will,there is a way.<br><br>有志者，事竟成。",
-      "God helps those who help themselves.<br><br>自助者天助之。",
-      "Time and tide wait for no man.<br><br>时不我待。",
-      "A friend in need is a friend indeed.<br><br>患难见真情。",
-      "An apple a day keeps the doctor away.<br><br>一天一苹果，医生远离我。",
-      "Laughter is the best medicine.<br><br>笑是最好的药。",
-      "An hour in the morning is worth two in the evening.<br><br>一日之计在于晨。",
-      "Every coin has two sides.<br><br>凡事皆有两面性。",
-      "When in Rome,do as the Romans do.<br><br>入乡随俗。",
-      "It's never too late to mend.<br><br>亡羊补牢，为时未晚。",
+        "Life is a journey, and if you fall in love with the journey, you will be in love forever.<br><br>生活是一场旅程，如果你爱上了这场旅程，你将永远热爱。",
+        "Uncertainty is the only certainty there is, and knowing how to live with insecurity is the only security.<br><br>不确定性是唯一确定的，知道如何与不安全感共处是唯一的安全感。",
+        "In a time of drastic change it is the learners who inherit the future. The learned usually find themselves equipped to live in a world that no longer exists.<br><br>在剧烈变化的时代，是学习者继承未来。有学识的人通常发现自己准备好生活在一个不再存在的世界里。",
+        "Change is the law of life. And those who look only to the past or present are certain to miss the future.<br><br>变化是生活的法则。那些只看过去或现在的人肯定会错过未来。",
+        "The future belongs to those who believe in the beauty of their dreams.<br><br>未来属于那些相信他们梦想之美的人。",
+        "No pains,no gains.<br><br>不劳则无获。",
+        "Rome was not built in a day.<br><br>罗马不是一天建成的。/伟业非一日之功。",
+        "Practice makes perfect.<br><br>熟能生巧。",
+        "It's never too old to learn.<br><br>活到老，学到老。",
+        "A good beginning is half done.<br><br>好的开始是成功的一半。",
+        "Easier said than done.<br><br>说起来容易做起来难。",
+        "Actions speak louder than words.<br><br>行胜于言。",
+        "A journey of a thousand miles begins with a single step.<br><br>千里之行，始于足下。",
+        "All roads lead to Rome.<br><br>条条大路通罗马。",
+        "No man can do two things at once.<br><br>一心不可二用。",
+        "Where there is a will,there is a way.<br><br>有志者，事竟成。",
+        "God helps those who help themselves.<br><br>自助者天助之。",
+        "Time and tide wait for no man.<br><br>时不我待。",
+        "A friend in need is a friend indeed.<br><br>患难见真情。",
+        "An apple a day keeps the doctor away.<br><br>一天一苹果，医生远离我。",
+        "Laughter is the best medicine.<br><br>笑是最好的药。",
+        "An hour in the morning is worth two in the evening.<br><br>一日之计在于晨。",
+        "Every coin has two sides.<br><br>凡事皆有两面性。",
+        "When in Rome,do as the Romans do.<br><br>入乡随俗。",
+        "It's never too late to mend.<br><br>亡羊补牢，为时未晚。",
         "Every day is a new opportunity to learn and grow. Keep pushing forward!<br><br>每一天都是学习和成长的新机会。继续前进！",
         "May your kindness and positivity shine bright today and always!<br><br>愿你的善良和积极态度今天和永远闪耀光芒！",
         "Wishing you the courage to pursue your dreams and the strength to overcome any obstacles in your path.<br><br>祝你勇气去追逐梦想，力量去克服路上的任何障碍。",
