@@ -44,3 +44,34 @@ Where Chefs Eat应用
 “Where Chefs Eat” is a 975-page book. Most people would not want to carry that around. But there is a much lighter app version of the same name for just $15. Six hundred chefs provide information on 3,000 restaurants around the world on the Where Chefs Eat app.
 
 《厨师吃饭的地方》是一本975页的书。大多数人都不想带着它。但有一个更轻松的同名应用程序版本，只需15美元。600名厨师在Where chefs Eat应用程序上提供全球3000家餐厅的信息。
+
+
+主旨：文章介绍了关于健康食品和外出就餐的应用程序。
+
+
+
+长难句：
+
+1.It gives users points when they make reservations, which can add up to discounts on restaurant visits.
+找到主句It gives users points，后面则是when引导的时间状语从句，which引导的是非限制性定语从句，修饰整个主句。
+
+
+
+语法点：
+
+1.非限制性定语从句：
+在which can add up to discounts on restaurant visits中，which引导了一个非限制性定语从句，一般会用逗号隔开，去掉不影响主句意思，表达补充解释说明的作用，关系代词which可指代一句话。
+
+
+
+重点语言点：
+
+learn about 了解
+dining out 外出就餐
+go out 外出
+based on 根据
+add up 加起来
+hundreds of 数以百计
+pair with 与……配对
+be made for 为...而做
+be designed for 为...而设计
