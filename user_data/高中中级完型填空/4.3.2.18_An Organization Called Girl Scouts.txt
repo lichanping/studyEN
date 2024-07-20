@@ -20,3 +20,42 @@ In addition to arranging group lessons for all of the seniors to review together
 The eighth graders earned their "Silver Award, for their job. After experiencing the success of their project, the girls hope to organize more clinics in the near future. "Those girls were just great," said Nancy, a grandmother who once visited the clinic.  "They were ready for us and had a very mature attitude about answering our questions, and they deserved the praise. "
 
 初二学生的工作获得了银奖。在经历了项目的成功之后，女孩们希望在不久的将来组织更多的诊所。"那些女孩太棒了"曾咨询过诊所的祖母南希说。 "他们为我们做好了准备，对回答我们的问题有着非常成熟的态度，她们值得表扬。"
+
+
+主旨大意：文章主要讲述了一个名为"女孩童子军"的组织为老年人设立了一家免预约诊所，解决老人在使用智能手机时遇到的问题，受到了公众的认可和表扬。
+
+
+
+长难句：
+1. However, a group called Girl Scouts are receiving praise for setting up their first walk-in clinic for elderly people, who have difficulty understanding how to unlock the secrets of their smart phones.
+主句是a group called Girl Scouts are receiving praise for setting up their first walk-in clinic for elderly people，其中第一个for引导原因状语for setting up their first walk-in clinic，第二个for表示：为了某人；从句是由特殊疑问词who引导的非限制性定语从句who have difficulty understanding how to unlock the secrets of their smart phones，修饰限定前文的elderly people，who充当从句主语，从句中包含了由特殊疑问词how引导的特殊宾语结构how to unlock the secrets of their smart phones。
+2. Some of the oldsters actually wanted to take part in e-commerce (电子商务), and needed help to set up a payment account on their smart phones while others simply had trouble when learning how to send messages to their family members.
+主句是Some of the oldsters actually wanted to take part in e-commerce (电子商务), and needed help to set up a payment account on their smart phones，由while连接两个并列的句子，表示“对比”关系；others simply had trouble when learning how to send messages to their family members，其中从句是由特殊疑问词when引导的时间状语从句when learning how to send messages to their family members，由于时间状语从句主语和该句主语一致，故可省略主语。
+3. I was teaching this older woman how to text, and the first thing she did was to send a message to her daughter," one of the Scouts said.
+主句是由and 并列连接的两个句子，第二个句子中出现了省略that的定语从句she did，修饰限定前文的the first thing；其后to send... 充当目的状语，表示：为了...。
+4. In addition to arranging group lessons for all of the seniors to review together at the end of the clinic, the youngsters even printed out brochures and guides for the seniors to take home in case confused seniors would encounter problems with their smart phones in the future.
+主句是the youngsters even printed out brochures and guides for the seniors to take home，从句是由in case介词短语引导的目的状语从句in case confused seniors would encounter problems with their smart phones in the future，表示：以防。主句前是由介词短语引导的状语In addition to arranging group lessons for all of the seniors to review together at the end of the clinic，表示：除了、另外。
+5. "Those girls were just great," said Nancy, a grandmother who once visited the clinic.
+主句是Those girls were just great," said Nancy，后接同位语a grandmother，再加上由特殊疑问词who引导的定语从句who once visited the clinic，who充当从句主语。
+
+语法点：
+1. 非谓语动词：过去分词作后置定语
+However, a group called Girl Scouts are ... smart phones. 中called使用过去分词形式，表示：被叫做，修饰限定前文的a group。
+2. 复合结构：疑问副词+动词不定式，
+此结构一般在句中可作主语，宾语，表语在句中However, a group ..., who have difficulty understanding how to unlock the secrets of their smart phones.中how to unlock the secrets of their smart phones就采用这种复合结构，how to do sth. 表示：做某事的方式。后文同理。
+3. 非谓语动词：动词过去分词作状语，位于句首
+Based on their technological knowledge, each Girl Scout was assigned to teach different aspects of Android and Apple phones. 中based 表示：基于，过去分词短语位于句首充当状语。
+
+重点语言点：
+spend a lot of time on sth. 在某物上花费大量时间
+set up 建立，设置
+have difficulty (in) doing sth. 做某事有困难
+based on 基于
+be assigned to 被分配给
+take part in 参加、加入
+payment account 支付账户
+in addition to 除了、另外
+at the end of 在最后
+print out 打印出来
+in case 以防
+encounter with 遇到
