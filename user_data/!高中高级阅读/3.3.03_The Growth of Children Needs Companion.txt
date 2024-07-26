@@ -24,3 +24,54 @@ What you did yesterday should not be taken as a representative of what you did l
 As an exhausted parent who doesn't get enough time to work out, and who hasn't seen a movie for months, I understand why so many of us might seize on studies suggesting that we should take more time for ourselves. Perhaps we should. But I agree with Ariel Kalil, a developmental psychologist, on the suggestion that "when parents spend high-quality time with their children, their children are more likely to succeed". 
 
 作为一个没有足够时间锻炼身体、几个月没看电影的疲惫不堪的父母，我理解为什么我们中的许多人会抓住研究的建议，认为我们应该花更多的时间给自己。也许我们应该这么做。但我同意发展心理学家阿里尔•卡利尔(Ariel Kalil)的观点，即“当父母花高质量的时间与孩子在一起时，他们的孩子更有可能成功”。
+
+主旨大意：一项研究表明，父母陪伴孩子的时间长短与孩子的成长关系不大。作者在本文中对这一研究结果提出了不同的意见。
+
+
+
+长难句：
+1. The research suggests that children's outcomes(including behavior problems,
+emotional problems, and academic performance)are barely connected with the time that parents spend with their children.
+The research suggests that...由that引导完整的宾语从句，点出suggest后面的内容，including为现在分词作后置定语， time后由that引导限制性定语从句，修饰先行词time。
+2. The researchers examined the time diaries of 1, 600 children, looking at
+parenting time and outcomes when the kids were aged 3 to 11 in 1997, and again in 2002, when they were between 8 and 16.
+主句为The researchers examined the time diaries of 1, 600 children，分句 looking at parenting time and outcomes when..., when they were between 8 and 16. 因逻辑主语researchers 与 look at 为主动关系，故以现在分词looking at ...作目的状语，其中嵌套了两个用and 连接的when引导的时间状语从句。
+
+3. As an exhausted parent who doesn't get enough time to work out, and who hasn't seen a movie for months, I understand why so many of us might seize on studies suggesting that we should take more time for ourselves.
+
+主句I understand why so many of us ... suggesting that we should take more time for ourselves. 是由why 引导的宾语从句，非谓语suggesting作studies的后置定语，that引导同位语从句对suggest的内容进行补充说明；分句As an exhausted parent who doesn't ... 为as 引导的方式状语从句，其中包含由and连接的、who引导的定语从句。
+4. But I agree with Ariel Kalil, a developmental psychologist, on the suggestion that "when parents spend high-quality time with their children, their children are more likely to succeed".
+该句中，a developmental psychologist做插入语修饰 Ariel Kalil，on the suggestion that ... 是由that引导的同位语从句，对suggestion进一步解释，同位语从句中还嵌套了一个由when引导的时间状语从句。
+
+
+
+语法点：
+1. 非谓语动词：过去分词作后置定语
+在A new study published in the Journal of Marriage and Family claims that all that time you spend parenting just doesn't matter. 中，publish与逻辑主语study构成被动关系，故采用过去分词published做后置定语修饰study。
+2. 同位语从句：
+在But it's a claim that, despite the enthusiastic and widespread coverage by the media, does not hold water.中，claim作为名字，后面的that从句中结构完整，主干为祈使句，根据句意，是对claim的补充说明和解读，因此为同位语从句。
+
+3. 非谓语动词：现在分词作后置定语
+
+在A time diary is a detailed report showing you where your time is spent each day.中，逻辑主语report与show为主动关系，故采用现在分词形式作后置定语。
+
+4. 虚拟语气：
+
+在If yesterday was payday, you would look rich, but if it's not, you would be reported as the poor. 中，采用虚拟语气，表示与现在事实相反，if引导的从句用动词过去式，如 if yesterday was payday，主句 ：would +动词原形，如文中would be。
+5. 非谓语动词：动名词
+在Trying to get a sense of the time you spend parenting from a single day's diary is a bit like trying to measure your income from a single day. 中，非谓语动词“trying +不定式“ 起名词作用，在句中做主语，后面的谓语形式根据动名词数量，本句中因为只有一个动名词，因此用is。
+
+6. 名词性从句：主语从句
+
+文中What you did yesterday should not be taken as a representative of what you did last year. 是由连接代词what引导的主语从句。
+7. 表语从句：
+文中This is why most high-quality studies of parenting time focus on how often ...是由系动词is连接的的表语从句，从句中结构完整，且表原因，因此用连接词why。
+
+
+
+重点语言点：
+hold water 站得住脚，符合逻辑
+look at 查看
+be connected with 与……相连
+be taken as 被视为
+help sb. with sth. 帮助某人某事
