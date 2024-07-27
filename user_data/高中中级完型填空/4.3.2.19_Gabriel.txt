@@ -12,3 +12,51 @@ However，one day，in the music class that was spirit of his school's standard 
 This meant, of course, that he arrived at school early in the morning, dragging his heavy instrument case across the campus to the pitying looks of the non-musicians he had left behind. 
 
 当然，这意味着他一大早就到学校，拖着沉重的乐器箱穿过校园，面对那些被他留在身后的非音乐家们可怜的表情。
+
+主旨大意：本文讲述加布里埃尔由一个不喜欢音乐的学生到一个音乐爱好者的转变过程。
+
+
+
+长难句：
+1. In his first years of high school, Gabriel would look pityingly at music students, struggling across the campus with their heavy instrument cases, turning up at school for practice hours before anyone else had to be there.
+在这句话中，In his first years of high school作时间状语，主干是 Gabriel would look pityingly at music students, 其中struggling和turning 作后置定语修饰music students， before 引导时间状语从句。
+2. He might not have done this particularly well, because the teacher told Gabriel that he had a good taste and suggested that Gabriel go into the music store-room to see if any of the instruments there appealed to him.
+在这句话主干是He might not have done this particularly well,，其中because引导原因状语从句，在原因状语从句中第2个that 都引导宾语从句，而 if 引导条件状语从句。
+3. But he quickly found that he loved playing this instrument, and was committed to practicing it so that within a couple of months he was playing reasonably well.
+这句话But引导两个并列句，主干是But he quickly found that, and was committed to practicing it，其中that引导宾语从句，so that 引导结果状语从句，within a couple of months是时间状语从句。
+4. This meant, of course, that he arrived at school early in the morning, dragging his heavy instrument case across the campus to the pitying looks of the non-musicians he had left behind.
+这句话主干是This meant that，其中of course是插入语，that引导宾语从句，宾语从句的主干是 he arrived at school early in the morning，而 dragging是现在分词作伴随状语， his heavy instrument case across the campus 作地点状语，里面还有一个省略that/which的定语从句，修饰先行词 the pitying looks of the non-musicians 。
+
+
+
+语法点：
+1. 非谓语动词：现在分词作后置定语
+在句子Gabriel would look pityingly at music students, struggling across the campus with their heavy instrument cases, turning up at school for practice hours before anyone else had to be there, turning和struggling是现在分词作后置定语，修饰先行词music students。
+2. 非限制性定语从句
+在句子He tried to hide his obvious pleasure from the music teacher, who had wandered over to listen，who引导非限制性定语从句，修饰先行词 music teacher，在从句中作主语。
+3. 虚拟语气：suggest
+在句子because the teacher told Gabriel that he had a good taste and suggested that Gabriel go into the music store-room to see if any of the instruments there appealed to him，suggest引导虚拟从句，表示建议，后接从句所表示的内容为建议要做的事情，也就是说从句所描述的内容尚未成为事实，此时从句谓语要用虚拟语气，即谓语采用“should+动词原形”。
+4. with 独立主格结构
+在句子With a sinking feeling, he realized that he actually enjoyed doing it.，出现了with的独立主格结构，结构式with + n + done/ doing/ to do.
+5. 限制性定语从句
+在句子he arrived at school early in the morning, dragging his heavy instrument case across the campus to the pitying looks of the non-musicians he had left behind，里面有里面还有一个省略that/which的限制性定语从句，修饰先行词 the pitying looks of the non-musicians，因为which/that在从句中作宾语，故可以省略。
+6. 非谓语结构：现在分词作伴随状语
+在句子he arrived at school early in the morning, dragging his heavy instrument case across the campus to the pitying looks of the non-musicians he had left behind, dragging是现在分词作伴随状语，其与逻辑主语he是主动关系，故用ing形式。
+
+
+
+重点语言点：
+for a long time 长时间
+be involved in 包含
+swear to 发誓
+turn up 出现
+standard curriculum 学校标准课程
+pick out tunes 找到乐调
+wander over 逛
+give sth a chance 试试某物
+a couple of 好几个
+appeal to 有吸引力，引起兴趣
+so that 如此以至于
+of course 当然
+arrive at sp 到达某地
+leave behind 把…留在身后
