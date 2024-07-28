@@ -16,3 +16,45 @@ Less than a week after its landing, Zhurong returned its first two pictures. One
 If things go as planned, Zhurong will spend about three months studying the local environment around it and looking for signs of water ice on the Martian surface. 
 
 如果一切按计划进行，“祝融”号将花费大约三个月的时间研究周围的环境，并在火星表面寻找水冰的迹象。
+
+主旨大意：主要报道了中国“祝融号”火星车登陆火星这一事件，不仅展现了中国目前的发展，而且会一直探索火星。
+
+
+
+长难句：
+
+1.The Zhurong rover was transported on a long journey to Mars by the Tianwen-1 spacecraft which began orbiting the red planet in February.
+The Zhurong rover was transported...，这句话中which在这里做关系代词，后面引导了一个限制性定语从句，用来修饰先行词spacecraft。
+
+2.It is an important event for China, as only the U.S.A. had ever managed to land something on our neighboring planet before Zhurong.
+整句的主句为前面的It is an important event for China，as在这里做连词，后面引导了一个原因状语从句，用来解释这个事件对中国重要的原因。
+
+3.One is a black-and-white photo taken through a fisheye lens showing a view of where it landed.
+整句的主句为one is a black-and-white photo, lens后面的take的过去分词taken做后置定语，修饰photo，现在分词showing的短语做状语，表伴随，逻辑主语为one。
+
+4.If things go as planned, Zhurong will spend about three months studying the local environment around it and looking for signs of water ice on the Martian surface.
+整句的主句为Zhurong will spend about three months studying......，而if为连词，引导了一个条件状语从句，表示如果....，将会.....。
+
+
+
+语法点：
+
+1.非谓语动词：现在分词做伴随状语
+段落中两个showing a view of均在句子里面做伴随状语，逻辑主语为主句的主语，由于主语和show之间为主动关系，因此用现在分词showing。
+
+
+
+重点语言点：
+
+touch down 降落、着陆
+
+manage to do 设法完成某事
+either sth. or sth. 不是......就是.......
+congratulate on 祝贺......
+
+less than...... 少于、不到
+one is......the other is...... 一个是......另一个是......
+
+go as planned 按计划进行
+spend time doing sth. 花时间做......
+look for sth. 寻找.....
