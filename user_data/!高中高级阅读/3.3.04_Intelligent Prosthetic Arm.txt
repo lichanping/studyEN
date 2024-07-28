@@ -20,3 +20,44 @@ The AI system had to be trained to translate those brainwaves. Ben gathered brai
 In early tests, Ben said that his robotic arm has proved to be as smart as the world's best brain-controlled prostheses. What he said needs to be confirmed in a clinical trial. But if it holds up, this bionic arm could be a game-changer for prosthetic technology. 
 
 在早期的测试中，本说他的机械臂已经被证明和世界上最好的脑控制假肢一样智能。他说的话需要在临床试验中得到证实。但如果它能成功，这种仿生手臂可能会改变假肢技术的游戏规则。
+
+主旨：当 Ben Choi 只有 8 岁的时候，他就被大脑控制的假肢所吸引。但是它们很昂贵并且移植装置入脑的手术有很大风险。2020 年，他开始创造他自己的无创、低成本仿生手臂。
+
+
+
+长难句：
+
+1. After updating his design more than 75 times, Ben has now showed a developed version of the arm using industry-grade material.
+
+找到主句Ben has showed a version of the arm，其中after updating....作为时间状语放在句子前，developed作为version 的定语，using industry-grade material作为arm的后置定语。
+
+2.The arm is controlled by a device worn on the forehead whose sensors pick up the brain's electrical activity, or brainwaves.
+
+找到主句The arm is controlled by a device. Worn on ...brainwaves. 作为device的定语 worn表示了device和wear的关系是被动关系。whose sensors...or brainwaves.作为device的定语从句后置。先行词在从句中作定语。
+
+3. In early tests, Ben said that his robotic arm has proved to be as smart as the world's best brain-controlled prostheses.
+
+找到主句Ben said ....，said后接that引导的宾语从句，从句中as smart as连接比较的两个对象，即robotic arm和best brain-controlled prostheses。
+
+
+
+语法点：
+1.被动语态：主语+be+动词过去分词表达谓语和主语的关系是被动关系
+Ben Choi was attracted by mind-controlled prostheses.attract和Ben Choi是被动关系。使用was+attracted表示被动
+2.非限制性定语从句：从句对先行词进行附加说明的定语从句，删掉不影响主句意思。
+He saw...on these prostheses, which .... 由which引导的非限定性定语从句修饰先行词prostheses，对它进行补充说明。
+
+
+
+重点语言点：
+mind-controlled 被意念控制的
+in the brain 在大脑中
+low-cost 低成本的
+ping-pong table 乒乓台
+3-D printer 3D打印机
+industry-grade 工业级
+AI=artificial intelligence 人工智能
+electrical activity 脑电活动
+make a fist 握拳
+brainwave patterns 脑电波模式
+robotic arm 机械臂
