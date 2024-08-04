@@ -24,3 +24,33 @@ In August, California's Air Resources Board passed an extensive plan to restrict
 “The study's partner, the power company, is working to manufacture and commercialize the fast-charging battery for an affordable and sustainable future of vehicle electrification,” Wang said. 
 
 王说:“这项研究的合作伙伴电力公司正在努力制造和商业化快速充电电池，以实现负担得起汽车电动化和可持续的未来。”
+
+主旨大意：本文是一篇说明文。电动汽车的电池设计有了重大进展。
+
+
+
+长难句：
+1. The record-breaking combination of a shorter charge time and more energy acquired for longer travel range was announced on Oct.12 in the journal Nature.
+本句的主干为The record-breaking combination of a shorter charge time and more energy was announced.主干里面的and连接of后的介词宾语，过去分词词组acquired for longer travel range做energy的后置定语。
+2. Instead of taking a few minutes at the gas pump, depending on the battery, some EVs can take all day to recharge.
+句中主干为Some EVs can take all day to recharge.前面的介词短语instead of短语做状语，现在分词短语depending on做状语，表方式。
+3. The smaller, faster-charging batteries will dramatically cut down battery cost and usage of critical raw materials, enabling mass adoption of affordable electric cars.
+句子主干为The smaller, faster-charging batteries will dramatically cut down battery cost and usage of critical raw materials，后面的现在分词短语做结果状语。
+
+
+
+语法点：
+
+1. 非限制性定语从句：whose
+文中whose lab partnered with a power company to develop the technology为非限制性定语从句，whose lab在从句中做主语，修饰先行词Wang，对主句进行补充说明。
+2. 非谓语动词：过去分词做后置定语
+文中acquired for longer travel range做energy的后置定语，动词acquire由于和被修饰词energy之间存在逻辑上的被动关系，因此用过去分词形式acquired。
+
+重点语言点：
+acquire for 获取
+meet the demand 满足需求
+too... to 太……以致于不
+overcome drawbacks 克服缺点
+depend on 根据
+partner with 与……合作
+go mainstream 成为主流
