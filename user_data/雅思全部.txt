@@ -487,7 +487,7 @@ grammatical	(a.) 语法上的
 afraid	(adj.) 害怕的，恐惧的；犯愁的，不乐意的
 fervent	(a.) 热情的,热烈的
 irritation	(n.) 刺激，恼怒
-clarity	(n.) 清楚, 透明。
+clarity	(n.) 清楚, 透明;明晰
 maniac	(adj.) 发狂的, 癫狂的, 疯狂的。n.[医]燥狂(症)者, 疯子, 一种高速电子数字计。
 ball-pointpen	(n.) 圆珠笔
 hose	(n.) 输水软管;长统袜;vt. 浇(园子),用水管冲洗(汽车等)
@@ -1078,7 +1078,7 @@ criminal	(a.) 犯罪的,刑事上的 n. 罪犯
 climax	(n.) 顶点,小说等的高潮 v. 达到高潮
 liberal	(a.) 慷慨的,大方的,胸怀宽大的;n. 自由主义者
 divine	(a.) 神的;极好的;v. 占卜
-spectrum	(n.) 光谱,系列
+spectrum	(n.) 光谱,系列;范围
 dart	(n.) 标,镖;vt. 投掷;vi. 急冲
 hi	(int.) 嗨！喂！
 realize	(v.) 认识到，体会到；实现
@@ -1955,7 +1955,7 @@ sister	(n.) 姐，妹；护士长；修女，女教士
 fine	(a.) 晴朗的，美好的，细致的v./n. 罚金，罚款
 physics	(n.) 物理(学)
 model	(n.) 样式，型；模范；模型，原型；模特v. 模仿
-imperative	(a.) 紧急的,必要的;强制的,[语
+imperative	(a.) 紧急的,必要的;强制的
 antiquated	(adj.) 陈旧的。
 Sunday	(n.) 星期日
 basket	(n.) 筐，篮，篓
@@ -2170,7 +2170,7 @@ excrement	(n.) 排泄物, 大便。
 walnut	(n.) 胡桃，核桃树
 generalization	(n.) 一般化；概括，综合
 miniature	(n.) 缩小的模型，缩图a. 微型的，缩小的
-permanent	(a.) 永久的,持久的
+permanent	(a.) 永久的,持久的;固定的
 middleman	(n.) 中人，中间人
 arouse	(vt.) 激发,引起;唤醒
 bookkeeper	(n.) 簿记员。
@@ -2748,7 +2748,7 @@ acceptance	(n.) 接受，接收，验收，接纳；承认，认可
 past	(a.) 过去的ad. 过n. 过去，昔日prep. (经)过
 observation	(n.) 观察，观测，监视；(pl.)观察资料；观察力
 exertion	(n.) 尽力，竭力
-rank	(n.) 军衔，社会阶层；排v. 分等级，把…分类
+rank	(n.) 等级，军衔，社会阶层；排v. 分等级，把…分类
 play	(v.) 玩，做游戏；参加比赛n. 游戏；玩耍；剧本
 analogue	(n.) 类似物；相似体；模拟
 fragment	(n.) 碎片,片断;vi. 裂成碎片
@@ -2932,7 +2932,7 @@ pound	(n.) 磅；英镑v. (连续)猛击，(猛烈)敲打，捣碎
 ordeal	(n.) 严酷的考验, 痛苦的经验, 折磨。
 moonlight	(n.) 月光
 stationary	(a.) 固定的,定置的;不变动的, 不移动的
-likelihood	(n.) 可能性
+likelihood	(n.) 可能,可能性
 conscientiously	(adv.) 认真地
 weekend	(n.) 周末
 frightening	(adj.) 令人害怕的
@@ -3000,7 +3000,7 @@ marshal	(n.) 元帅；陆军元帅
 bachelor	(n.) 单身汉, 学士
 elimination	(n.) 消灭，排除，消除
 enjoyable	(adj.) 愉快的
-wither	(vt./vi.) 使枯萎,使凋谢;使人感觉羞惭或迷惑
+wither	(vt./vi.) 使枯萎,使凋谢;使人感觉羞惭或迷惑;使干枯
 sometimes	(ad.) 不时，有时，间或
 downfall	(n.) 衰败, 垮台, 大雨, 落下。
 infest	(v.) 大批滋生。
@@ -3238,7 +3238,7 @@ uniform	(n.) 制服，军服a. 相同的，一律的
 formulation	(n.) 明确的表达
 plank	(n.) 厚木板, 支架, (政党的)政纲条款。vt.铺板, 立刻付款。vi.睡在板上
 join	(v.) 参加，加入；联合，连接；和…在一起
-prohibit	(vt.) 禁止
+prohibit	(vt.) 禁止,不准
 spacecraft	(n.) 宇宙飞船
 deceased	(adj.) 已死的
 ketchup	(n.) 调味蕃茄酱。
@@ -4210,7 +4210,7 @@ their	(pron.) 他(她、它)们的
 geometry	(n.) 几何学
 custodian	(n.) 管理人。
 fumble	(v.) 摸索
-guarantee	(n./vt.) 保证,担保,保证人,担保物
+guarantee	(n./vt.) 保证,担保,保证人,担保物;保证书
 imperfect	(adj.) 不完善的
 inspect	(vt.) 检查，调查，视察
 bravery	(n.) 勇敢
@@ -4340,7 +4340,7 @@ mile	(n.) 英里，哩，海里
 unexpected	(a.) 想不到的，意外的，未预料到
 hedgehog	(n.) 刺猬
 heed	(v.) &n.注意，留心
-acquire	(vt.) 获得,取得
+acquire	(vt.) 获得,取得;学到
 congress	(n.) 代表会议,(C-)(美国等)议会
 comedy	(n.) 喜剧；喜剧性事件
 upon	(prep.) 在…上；在…旁[=on
@@ -4969,7 +4969,7 @@ improvise	(v.) 临时准备。
 Britain	(n.) 不列颠，英国
 his	(pron.) 他的(所有物)
 obedient	(a.) 服从的,顺从的
-whereas	(conj.) 鉴于;反之
+whereas	(conj.) 鉴于;反之;然而,尽管
 visitor	(n.) 访问者，客人，来宾，参观者
 analytical	(adj.) 分析的，解析的
 capitalist	(adj.) 资本主义的
@@ -5396,7 +5396,7 @@ respiration	(n.) 呼吸, 呼吸作用。
 implant	(v.) 灌输。
 expand	(v.) (使)扩大,展开;膨胀
 canon	(n.) 规范，准则
-regiment	(n.) 团，军团；一大群
+regiment	(n.) 团，军团；一大群;命令,指挥
 calibrate	(v.) 校准。
 prudence	(n.) 谨慎
 competitor	(n.) 竞争者，敌手
@@ -6061,7 +6061,7 @@ rigid	(a.) 僵硬的,不易弯的;严格的
 kilogram	(n.) 千克
 discard	(vt.) 抛弃,遗弃
 nephew	(n.) 侄子，外甥
-cylinder	(n.) 圆筒, 圆柱体, 汽缸, 柱面。
+cylinder	(n.) 圆筒, 圆柱体, 汽缸, 柱面。;气缸
 refrigerator	(n.) 冰箱
 embody	(vt.) 体现,使具体化;包含,收录
 duke	(n.) 公爵，君主；手
@@ -6128,7 +6128,7 @@ hypocrisy	(n.) 伪善，虚伪
 September	(n.) 九月
 female	(n./a.) 女性(的)
 Danish	(adj.) &n.丹麦人(的)
-assure	(vt.) 断言;使确信;保(人寿)险
+assure	(vt.) 断言;使确信;保(人寿)险;确保
 doze	(v./n.) 瞌睡；假寐
 ms.	(n.) (缩)女士
 fictional	(adj.) 虚构的
@@ -6307,7 +6307,7 @@ excuse	(v.) 原谅，宽恕，免除n. 借口，辩解
 react	(v.) 反应，起作用；(against)反对，起反作用
 sun	(n.) 太阳；恒星
 courageous	(a.) 勇敢的，无畏的
-sovereign	(a.) 主权的;有最高统治权的
+sovereign	(a.) 主权的;有最高统治权的;君主,至高无上
 eccentricity	(n.) 怪僻
 family	(n.) 家，家庭成员；氏族，家庭；族，科
 endorse	(vt.) 背书,签署(姓名);赞同
@@ -6341,7 +6341,7 @@ terrorism	(n.) 恐怖主义
 galaxy	(n.) 星系, 银河, 一群显赫的人, 一系列光彩夺目的东西。
 hero	(n.) 英雄，勇士；男主角，男主人公
 potentiality	(n.) 潜在性
-multiply	(vt./vi.) [数
+multiply	(vt./vi.) [数;繁殖,增加
 expert	(n.) 专家，能手a. 熟练的，有经验的；专门的
 culminate	(v.) 达到顶点。
 word	(n.) 词，词语；言语，话；谈话；消息，信息
@@ -6741,7 +6741,7 @@ terse	(adj.) 简洁的, 扼要的。
 topple	(v.) 倾倒。
 revoke	(v.) 废除，取消，撤回
 statute	(n.) 法令,法规
-devise	(vt.) 设计,想出
+devise	(vt.) 设计,想出;发明,策划
 scroll	(n.) 卷轴, 卷形物, 名册。v.(使)成卷形。
 jot	(v.) 匆匆记下
 bald	(n.) 秃头的,单调的
@@ -7358,7 +7358,7 @@ uncomfortable	(a.) 不舒服的；不自在的
 mock	(vt.) 嘲笑;模仿;vi. 嘲笑,嘲弄; a. 仿制的,假装的;模拟的,演习的
 harbor	(n.) 海港；避难所v. 隐匿，窝藏
 employee	(n.) 雇工，雇员
-conclude	(v.) 结束，终止；断定，下结论；缔结，议定
+conclude	(v.) 结束，终止；断定，下结论；缔结，议定;推断出
 immune	(adj.) 免疫的。
 dirty	(a.) 弄脏的；下流的v. 弄脏，玷污
 excellent	(a.) 卓越的，极好的
@@ -7549,7 +7549,7 @@ impact	(n.) 影响;冲击,碰撞
 proceeds	(n.) 收益
 evidence	(n.) 明显；显著；根据；证据；迹象
 maternal	(adj.) 母亲的, 似母亲的, 母性的。
-incline	(n.) 斜坡,斜面 v. (使)倾斜;(使)倾向于,赞同
+incline	(n.) 斜坡,斜面 v. (使)倾斜;(使)倾向于,赞同;倾斜,倾向
 goodness	(n.) 善良，仁慈；(食物等)精华int. 天哪
 sunlight	(n.) 日光，阳光
 deviate	(vi.) 偏离,背离
@@ -7747,7 +7747,7 @@ activity	(n.) 活动；活力；能动性；
 scorn	(n.) 轻蔑,蔑视
 denial	(n.) 拒绝,否认;拒绝给予
 ponder	(vt./vi.) 深思,考虑
-bulletin	(n.) 公报
+bulletin	(n.) 公报;公告
 momentum	(n.) 动力, 要素。
 herbalist	(n.) 草药医生。5h。:bElIst;
 reel	(n.) 卷,轴;(胶片)一盘; vt. 卷; vi. 眩晕,摇晃
@@ -7937,7 +7937,7 @@ similar	(a.) 类似的
 appointment	(n.) 约会;职位
 voluntary	(a.) 自愿的,志愿的;有意的
 frown	(vi./n.) 皱眉,不赞成
-evacuate	(v.) 疏散, 撤出, 排泄。
+evacuate	(v.) 疏散, 撤出, 排泄。;转移,疏散
 benefit	(n.) 利益,恩惠,津贴
 bounty	(n.) 慷慨, 宽大, 施舍, 奖励金。
 fabulous	(adj.) 寓言中的, 寓言般的, 神话般的, 传统上的, 惊人的, 难以置信的。
@@ -8133,7 +8133,7 @@ frosty	(adj.) 霜的
 heated	(n.) 激烈的，热烈的
 rigidity	(adj.) 僵硬，严厉，死板
 vat	(n.) (装液体的)大桶, 大缸(尤指染缸)。vt.装入大桶, 在大桶里处理。
-flip	(vt.) 掷, 弹, 轻击, (用鞭等)抽打, 空翻。vi.用指轻弹, 抽打, 翻动书页(或纸张), 蹦跳。n.抛, 弹, 筋斗。adj.无礼的, 冒失的, 轻率的
+flip	(vt.) 掷, 弹, 轻击, (用鞭等)抽打, 空翻。vi.用指轻弹, 抽打, 翻动书页(或纸张), 蹦跳。n.抛, 弹, 筋斗。adj.无礼的, 冒失的, 轻率的;翻动,轻抛
 emotion	(n.) 激动,情绪,情感
 rebel	(v.) 反抗，反叛，起义n. 叛逆者，起义者
 humiliation	(n.) 羞辱，耻辱
@@ -8676,7 +8676,7 @@ vacant	(a.) 空的,未被占用的;空虚的,无表情的
 shirt	(n.) 衬衫
 hoarse	(a.) (声音)嘶哑的
 virtual	(a.) 实际上的，事实上的
-closet	(n.) 小储藏室
+closet	(n.) 小储藏室;壁橱,私下的
 expensive	(a.) 花费的，昂贵的
 brother	(n.) 兄弟；同胞；教友
 solicitor	(n.) 律师
@@ -9381,3 +9381,5 @@ only	(ad.) 仅仅，只不过a. 唯一的conj. 可是，不过
 teapot	(n.) 茶壶
 handicapped	(adj.) 有残疾的
 womb	(n.) 子宫, 发源地。vt.(如子宫般的)包含, 容纳。
+cholesterol	胆固醇
+zoom	急升,变焦
