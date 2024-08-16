@@ -28,3 +28,43 @@ I started lessons a couple of weeks later, and it turned out that I could handle
 Sometimes, I could handle 40 minutes. I found myself completely immersed in playing the piano. The repetition calmed me. Going over difficult parts in each piece I was learning was incredibly satisfying. To my great surprise, at age 44, I have an actual hobby now, and I really look forward to performing together with my son one day. 
 
 有时候，我能应付40分钟。我发现自己完全沉浸在弹钢琴中。重复的话使我平静下来。复习每一篇文章中困难的部分让我非常满意。让我非常惊讶的是，在我44岁的时候，我现在有了一个真正的爱好，我真的很期待有一天能和我儿子一起表演。
+
+主旨大意：作者收到41岁的生日礼物电子琴后，作者从抵触到重拾弹琴的爱好的过程。
+
+长难句：
+1. Matt knew that I had taken piano lessons as a kid, but stopped doing so in the seventh grade.
+句子主干为Matt knew...，连接词that后面为宾语从句，从句为并列复合句，but表示转折。
+2. He reminded me that I’d mentioned wanting to play the piano again
+句子主干为He reminded me，连接词that引导了后面的宾语从句。
+3. To be honest, I had only made half-hearted attempts over the years to take up various hobbies, mostly craft-related ones like knitting and cross-stitch, to relax.
+该句主干为I had only made half-hearted attempts over the years。其中to take up various hobbies和to relax为不定式作目的状语，而mostly craft-related ones like knitting and cross-stitch 为同位语，补充说明hobbies。
+4. There was no point in adding another thing that was probably just going to stress me out.
+该句主干为there be句型。There was no point in adding another thing。关系代词that引导定语从句，修饰先行词thing。
+5. But recently, my 2-year-old son had figured out how to turn on the digital piano and loved to bang on the keys.
+该句主干为由and连接两个陈述句，分别为my 2-year-old son had figured out how to turn on the digital piano和loved to bang on the keys.。figured out后面连接了带连接词的不定式how to turn on the digital piano作为宾语。
+6. Seeing him play so joyfully, I thought maybe I could take piano lessons and help him to prepare for the music world.
+该句主干为I thought maybe I could take piano lessons and help him to prepare for the music world.。thought后接省略that的宾语从句。Seeing him play so joyfully为现在分词短语作状语，表示原因。
+7. Going over difficult parts in each piece I was learning was incredibly satisfying.
+该句为主系表结构。句子主干为Going over difficult parts in each piece was incredibly satisfying，其中piece后接省略that的定语从句，修饰piece。
+
+
+语法点：
+1. 限制性定语从句：when
+句子I was at the age when I would rather go中有由关系副词when引导的定语从句，when在此相当于at which，在从句中作时间状语，并修饰先行词age。
+2. 非谓语动词：动词不定式做状语
+文中的to take up various hobbies为动词不定式做状语，表目的，表达未发生或者计划去做的事件，因动词take与逻辑主语I构成主动关系，因此用不定式to take up。
+语法点：
+3. 非谓语动词：现在分词做状语
+Seeing him play so joyfully, I thought maybe I could take piano lessons中开头使用现在分词seeing做状语，表示原因，句中的I是seeing的逻辑主语，因此用现在分词形式。
+
+重点语言点：
+would rather do... than do... 宁愿做...而不愿做...
+stop doing 停止做某事
+set sth. up 设置某物
+make attempts 尝试做
+stress sb. out 使某人压力过大
+there is no point in doing 做某事没有意义
+figure out 想到
+be immersed in doing 沉浸于做某事
+to one’s surprise 让某人感到惊讶
+look forward to doing 期待做某事
