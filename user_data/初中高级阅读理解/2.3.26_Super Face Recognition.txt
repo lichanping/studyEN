@@ -1,7 +1,7 @@
 Super Face Recognition
 超级人脸识别
 
-Can you remember a face quickly and never forget it?If so, then you could be a super recognizer. 
+Can you remember a face quickly and never forget it? If so, then you could be a super recognizer.
 
 你能很快记住一张脸并且永远不会忘记吗?如果是这样，那么你可能是一个超级识别器。
 
