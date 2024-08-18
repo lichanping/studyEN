@@ -28,3 +28,36 @@ There is also little interaction among students. It can be harder for students t
 Online classes also require either a computer or laptop and a reliable Internet connection. Not all students have access to these types of resources, whether it is for financial or other reasons, and some students can be put at a disadvantage. Offering online classes certainly helps students who would otherwise not be able to attend classroom sessions. However, they fail to provide a true education with an emphasis on convenience rather than critical thinking. We need restructure online classes in which students can have a learning experience that will actually provide quality education. 
 
 在线课程还需要一台电脑或笔记本电脑以及可靠的互联网连接。不是所有的学生都有机会获得这些类型的资源，无论是出于经济原因还是其他原因，一些学生可能会处于不利地位。提供在线课程当然可以帮助那些原本无法参加课堂教学的学生。然而，他们没有提供真正的教育，强调方便，而不是批判性思维。我们需要重组在线课程，让学生能够获得真正提供优质教育的学习体验。
+
+主旨大意：文章叙述了网络课程的缺点，网络课程不但没法激起学生学习的欲望，缺少师生互动，学生之间的联系，而且不是每个人都可以获得上网课的设备。
+
+长难句：
+1. They are advertised as a way for adults to finish their education and students to learn the material at their own pace—it is far more suitable for people with busy schedules.
+本句的主干是They are advertised as a way. 后面的两个不定式结构做方式状语，由and连接。
+2. Live sessions are infrequent and are often scheduled during the middle of the day when students have to attend other classes or work.
+这句话的主干是 Live sessions are infrequent and are often scheduled during the middle of the day。而when引导了一个限制性定语从句修饰 the middle of the day。
+3. We need restructure online classes in which students can have a learning experience that will actually provide quality education.
+这句话的主干是We need restructure online classes。这个复杂句中有两个定语从句，online class后接由in which引导的限制性定语从句，in which充当从句中的状语成分，从句中experience后也跟了一个由that引导的限制性定语从句，that充当从句中的主语。
+4. Not all students have access to these types of resources, whether it is for financial or other reasons, and some students can be put at a disadvantage.
+这句的主干是Not all students have access to these types of resources and some students can be put at a disadvantage. 其中and作为连接词，并列了两个句子，whether... or...引导了条件状语从句，表示条件选择。
+
+
+语法点：
+1. 限制性定语从句
+在Offering online classes certainly helps students who，先行词是students，在从句缺少主语，所以要用关系代词who。
+
+重点语言点：
+at one’s own pace 按自己的节奏
+came to realize 意识到
+fulfil course requirements 完成课程要求
+first of all 首先
+complete assignments完成作业
+received credit 获得学分
+in depth 深入地
+interact with 与….相互作用
+be designed to 为…而设计
+not…but 不是…而是
+face-to-face 面对面
+build a relationship with 与某人建立联系
+have access to 可以使用
+critical thinking 批判性思维
