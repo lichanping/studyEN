@@ -26,7 +26,7 @@ body {
     z-index: 9999; /* Ensure it's on top */
 }
 
-#reviewWord, #reviewforgetWord,
+#reviewWord, #reviewforgetWord, #learnedWord,
 #newWord, #forgetWord, #antiForgettingForgetWord {
     width: 40px; /* Specify the width in pixels */
 }

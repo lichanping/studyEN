@@ -31,44 +31,53 @@ const userData = {
     "悠然": {
         schedule: "每周一五六日 悠然 (高二)",
         course: "高中超前单词",
-        hours: [19, 20]
+        hours: [19, 20],
+        courseWordCount: 3500
     },
     "何子谦": {
         schedule: "每周二六日 何子谦 (高二)",
         course: "升序版-上海市高考英语考纲词汇(2024)",
-        hours: [11, 0]
+        hours: [11, 0],
+        courseWordCount: 2960
     },
     "芷淇": {
         schedule: "每周五日 芷淇 (初二)",
         course: "牛津上海版英语九年级下册",
-        hours: [19, 25]
+        hours: [19, 25],
+        courseWordCount: 3500
     },
     "阮王睿": {
         schedule: "每周一三六 19:35 阮王睿 (准高一)",
         course: "雅思初级单词词汇表",
-        hours: [19, 35]
+        hours: [19, 35],
+        courseWordCount: 3500
     },
     "伟杰": {
         schedule: "体验课 19:35 伟杰 (高三)",
         course: "体验课",
-        hours: [19, 35]
+        hours: [19, 35],
+        courseWordCount: 3500
     },
     "青青": {
         schedule: "每周一 19:30 青青 (6年级)",
         course: "牛津上海版英语八年级上册",
-        hours: [19, 30]
+        hours: [19, 30],
+        courseWordCount: 3500
     }, "敏珺": {
         schedule: "每周日 19:40 敏珺 (初一)",
         course: "初中高级阅读理解",
-        hours: [19, 40]
+        hours: [19, 40],
+        courseWordCount: 3500
     }, "泽成": {
         schedule: "每天晚上 泽成 (初三)",
         course: "上海市初中英语考纲词汇",
-        hours: [19, 45]
+        hours: [19, 45],
+        courseWordCount: 3500
     }, "辰辰": {
         schedule: "每天晚上 辰辰 (高一)",
         course: "高考词汇",
-        hours: [22, 30]
+        hours: [22, 30],
+        courseWordCount: 3500
     }
 };
 
@@ -86,6 +95,7 @@ export function updateLabel() {
     var userName = document.getElementById("userName").value;
     var labels = document.getElementsByClassName("scheduleLabel");
     var courseLabel = document.getElementById("courseLabel");
+    var courseWordCountLabel = document.getElementById('courseWordCountLabel');
 
     const scheduleLabels = document.getElementsByClassName("scheduleLabels")[0];
     // Clear existing labels
@@ -103,6 +113,7 @@ export function updateLabel() {
         scheduleLabels.appendChild(label);
         scheduleLabels.appendChild(document.createElement("br"));
         courseLabel.textContent = userDataForSelectedUser.course;
+        courseWordCountLabel.textContent = userDataForSelectedUser.courseWordCount;
         currentDate.setHours(...userDataForSelectedUser.hours, 0, 0);
     } else {
         courseLabel.textContent = '';
@@ -166,6 +177,7 @@ export function selfReviewClick() {
 
 export function handleClassFeedbackClick() {
     const course = document.getElementById('courseLabel').textContent;
+    const courseWordCountLabel = document.getElementById('courseWordCountLabel').textContent;
     const userName = document.getElementById("userName").value;
     const newWord = parseInt(document.getElementById("newWord").value);
     const reviewWordCount = document.getElementById("reviewWord").value;
@@ -188,8 +200,14 @@ export function handleClassFeedbackClick() {
     inputAntiForgettingForgetWord.value = numberOfEnglishWords;
     const antiForgettingForgetWord = document.getElementById('antiForgettingForgetWord').value;
 
-    // Generate feedback message
-    const feedbackMessage = `【${userName}今日学习-《${course}》的反馈】<br><br>1️⃣.今日新学单词 ${newWord}个，遗忘${forgetWord}个, 正确率 ${correctRate}% ；<br><br>2️⃣.今日复习单词 ${reviewWordCount}个，遗忘 ${reviewforgetWord}个, 正确率 ${reviewCorrectRate}%。<br><br>3️⃣.陪伴 ✨ ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} 认真且努力的${userName}一定能抵达梦想的彼岸。🚀🚀🚀<br><br>4️⃣.严格按照 21 天抗遗忘复习表来复习哟!<br><br><br><br>💟今日寄语💟<br><br>${getRandomMotto()}`
+    const learnedWord = parseInt(document.getElementById("learnedWord").value.trim()) || 0;
+    let feedbackMessage
+    if (learnedWord > 0) {
+        let remaining = courseWordCountLabel - learnedWord;
+        feedbackMessage = `【${userName}今日学习-《${course}》的反馈】<br><br>1️⃣.今日新学单词 ${newWord}个，遗忘${forgetWord}个, 正确率 ${correctRate}% ；<br><br>2️⃣.今日复习单词 ${reviewWordCount}个，遗忘 ${reviewforgetWord}个, 正确率 ${reviewCorrectRate}%。<br><br>3️⃣.今天学习的是《${course}》，共${courseWordCountLabel}词，已学习${learnedWord}词，剩余${remaining}词未学。<br><br>4️⃣.🎉陪伴 ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} 认真且努力的${userName}一定能抵达梦想的彼岸。🚀🚀🚀<br><br>5️⃣.严格按照 21 天抗遗忘复习表来复习哟!<br><br><br><br>💟今日寄语💟<br><br>${getRandomMotto()}`
+    } else {
+        feedbackMessage = `【${userName}今日学习-《${course}》的反馈】<br><br>1️⃣.今日新学单词 ${newWord}个，遗忘${forgetWord}个, 正确率 ${correctRate}% ；<br><br>2️⃣.今日复习单词 ${reviewWordCount}个，遗忘 ${reviewforgetWord}个, 正确率 ${reviewCorrectRate}%。<br><br>3️⃣.陪伴 ✨ ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} 认真且努力的${userName}一定能抵达梦想的彼岸。🚀🚀🚀<br><br>4️⃣.严格按照 21 天抗遗忘复习表来复习哟!<br><br><br><br>💟今日寄语💟<br><br>${getRandomMotto()}`
+    }
     copyToClipboard(feedbackMessage);
     showLongText(`${feedbackMessage}`);
 }
