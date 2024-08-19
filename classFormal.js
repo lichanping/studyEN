@@ -29,22 +29,27 @@ window.addEventListener("load", updateLabel);
 // Define user data
 const userData = {
     "悠然": {
-        schedule: "每周一五六日 悠然 (高二)",
+        schedule: "每周一五六日 悠然 (高三)",
         course: "高中超前单词",
         hours: [19, 20],
-        courseWordCount: 3500
+        courseWordCount: 4610
     },
     "何子谦": {
-        schedule: "每周二六日 何子谦 (高二)",
-        course: "升序版-上海市高考英语考纲词汇(2024)",
+        schedule: "每周二六日 何子谦 (高三)",
+        course: "升序版-上海市高考英语考纲词汇（2024）",
         hours: [11, 0],
         courseWordCount: 2960
     },
     "芷淇": {
-        schedule: "每周五日 芷淇 (初二)",
-        course: "牛津上海版英语九年级下册",
+        schedule: "每周五日 芷淇 (初三)",
+        course: "牛津上海版九年级下册",
         hours: [19, 25],
-        courseWordCount: 3500
+        courseWordCount: 164
+    }, "泽成": {
+        schedule: "每天晚上 泽成 (高一)",
+        course: "上海市高中考纲词汇",
+        hours: [19, 45],
+        courseWordCount: 1000
     },
     "阮王睿": {
         schedule: "每周一三六 19:35 阮王睿 (准高一)",
@@ -67,11 +72,6 @@ const userData = {
         schedule: "每周日 19:40 敏珺 (初一)",
         course: "初中高级阅读理解",
         hours: [19, 40],
-        courseWordCount: 3500
-    }, "泽成": {
-        schedule: "每天晚上 泽成 (初三)",
-        course: "上海市初中英语考纲词汇",
-        hours: [19, 45],
         courseWordCount: 3500
     }, "辰辰": {
         schedule: "每天晚上 辰辰 (高一)",
