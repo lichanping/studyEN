@@ -36,9 +36,9 @@ const userData = {
     },
     "何子谦": {
         schedule: "每周二六日 何子谦 (高三)",
-        course: "升序版-上海市高考英语考纲词汇（2024）",
+        course: "高考英语必背词组短语固定搭配",
         hours: [11, 0],
-        courseWordCount: 2960
+        courseWordCount: 534
     },
     "芷淇": {
         schedule: "每周五日 芷淇 (初三)",
