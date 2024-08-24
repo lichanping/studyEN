@@ -20,3 +20,38 @@ We brought young children aged 2-4 into our Minds in Development Lab at USC. Eac
 A number of experiments ruled out that the children misunderstood what they were being asked. The results were clear: Our young subjects comprehended the questions and knew exactly what was asked of them. Their responses to the questions reflected their true belief that "I can see you only if you can see me, too. "They simply insist on mutual(相互的)recognition and regard. Our findings suggest that when a child "hides" by putting a blanket over her head, it is not a result of egocentrism. In fact, children consider this method effective when others use it. 
 
 一些实验排除了孩子们误解他们被问到的问题的可能性。结果很明显:我们的年轻研究对象理解了问题，并且确切地知道他们被要求做什么。他们对问题的回答反映了他们的真实信念:“只有你也能看到我，我才能看到你。”他们只是坚持相互承认和尊重。我们的研究结果表明，当一个孩子把毯子盖在头上“藏起来”时，这并不是自我中心主义的结果。事实上，当别人使用这种方法时，孩子们认为这种方法是有效的。
+
+
+主旨大意：本文是一篇说明文，通过实验证明孩子们捉迷藏时，只遮住自己的眼睛并不是自我中心主义的结果，而是孩子们坚持相互承认和尊重。
+
+
+
+长难句：
+1. For a long time, this ineffective hiding method was interpreted as evidence that children are hopelessly "egocentric" creatures.
+在这句中，for a long time是时间状语，主干是this ineffective hiding method was interpreted as evidence that，其中that引导同位语从句，起补充说明evidence的作用。
+2. The results were clear: Our young subjects comprehended the questions and knew exactly what was asked of them.
+这句话的主干是The results were clear，其中冒号后面的是同位语，补充说明results，在同位语从句中what引导宾语从句。
+
+
+
+语法点：
+1.非谓语动词：现在分词作伴随状语
+在句子They often cover only their eyes with their hands, leaving the rest of their bodies untouched，leaving是现在分词作伴随状语，逻辑主语是they，和逻辑主语是主动关系，故用ing。
+2. 限制性定语从句：who引导
+在句子Each child sat down with an adult who covered her own eyes or ears中，who引导限制性定语从句，修饰先行词adult，在从句中做主语。
+3. 被动语态：was/ were being done
+在句子A number of experiments ruled out that the children misunderstood what they were being asked中，出现了过去进行时的被动语态were /was being done，表示某个时间正在进行的或正在发生的动作。
+
+
+
+重点语言点：
+hide and seek 捉迷藏
+across the globe 全世界
+be bad at 不擅长做某事
+for a long time 很长时间
+developmental psychology 发展心理学
+cover one's eyes 遮住某人的眼睛
+a number of 大量的
+rule out 排除
+insist on 坚持
+In fact 事实上
