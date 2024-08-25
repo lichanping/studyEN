@@ -30,4 +30,41 @@ My father's pre-Internet Brazilian mistake was forgiven because of context — h
 在互联网出现之前，我父亲犯的巴西错误被原谅了，因为当时他刚到巴西，不知道这个词在当地的意思。但当上下文缺失或理解不同时——尤其是在社交媒体上——也许我们在打字或说话前都应该三思，尤其是当后果可能比滥用微信贴纸更严重的时候。
 
 
-已学，忘记解锁
+主旨大意：全文主要讲述了由于文化差异而导致的误解和冲突，如何通过跨文化交流来避免这些问题。
+
+长难句：
+1. I still remember my father’s embarrassment the day when he was invited to have dinner at a colleague’s house.
+句子主干是I still remember my father’s embarrassment。The day后的when引导限制性定语从句，修饰先行词day。
+2. Freshly arriving in Brazil, and not being able to look up on the Internet, he offended his hosts by making a hand gesture — a circle with the thumb and index finger.
+句子主干是he offended his hosts。Freshly arriving in Brazil and not being able to look up on
+the Internet是两个并列的非谓语动词做伴随状语。By making a hand gesture是介词短语，做方式状语。A circle with the thumb and index finger是hand gesture的同位语。
+3. After I replied to a friend’s WeChat message with a Van Gogh sticker that I thought meant “keep fighting”, another friend told me I used it wrong.
+句子主干是another friend told me。I used it wrong是省略that的宾语从句，为told的间接宾语。After引导时间状语从句。that引导限制性定语从句修饰先行词sticker，I thought是插入语，表示我认为。
+4. “The Chinese version is a bit different,” she said, taking out her phone and showing to me.
+句子主干是she said。“The Chinese version is a bit different”是宾语从句。Taking out her phone and showing to me是两个并列的现在分词做伴随状语。
+5. As adults, we understand that even if it hurts, a mistake is only an insult (侮辱) when it is deliberate.
+句子主干是we understand。that引导宾语从句，as adults是介词短语做方式状语。从句中，句子主干是a mistake is only an insult。Even if 引导条件状语从句，when引导时间状语从句。
+6. My father’s pre-Internet Brazilian mistake was forgiven because of context — he had just arrived and he didn’t know its local meaning.
+句子主干是My father’s pre-Internet Brazilian mistake was forgiven。Because of context是介词短语表原因。He had just.... meaning是context的同位语从句，用来补充说明父亲当时的情境。
+7. But when context is absent or simply differently understood — especially in the social media — perhaps it is time we all think twice before typing or talking, especially when the consequences can be more severe than the misuse of a WeChat sticker.
+句子主干是it is time，time后接省略that的限制性定语从句。But表示转折，when引导时间状语从句, especially in the social media是插入语，用连字符隔开，强调尤其是社交媒体亲情境下。
+
+
+语法点：
+1. 非谓语动词的否定式：not+非谓语动词
+Not being able to look up on the Internet是非谓语动词的否定形式，所以not放在非谓语动词前面，由于这里的动词和主语是逻辑上的主动关系，所以用现在分词形式。
+2. 过去完成时：had done 表示过去的过去
+He had always understood it to mean “OK”...这句话中 “had done”是过去完成时，表示在来巴西之前，父亲一直以为这个手势表示OK，所以是过去的过去。
+
+重点语言点：
+arrive in 到达
+look up on 查找
+be aware of 意识到
+file sth. away 把（文件等）归档
+reply to 回复
+a bit 有点
+be full of 充满
+sign to sb. to do 示意某人做某事
+cross-cultural communication 跨文化交流
+social media 社交媒体
+think twice 再三考虑
