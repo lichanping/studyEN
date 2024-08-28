@@ -26,9 +26,9 @@ body {
     z-index: 9999; /* Ensure it's on top */
 }
 
-#reviewWord, #reviewforgetWord, #learnedWord,
+#reviewWord, #reviewforgetWord, #learnedWord,#preTestWord,
 #newWord, #forgetWord, #antiForgettingForgetWord {
-    width: 40px; /* Specify the width in pixels */
+    width: 35px; /* Specify the width in pixels */
 }
 
 .antiForgettingReviewWord {
