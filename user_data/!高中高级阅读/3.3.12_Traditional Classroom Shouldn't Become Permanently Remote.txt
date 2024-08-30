@@ -20,3 +20,53 @@ Those policy-makers are often fascinated by the latest technology in education a
 The power of the classroom is rooted in the qualities of the people gathered in the same place, at the same time, including their nature, empathy, devotion and so on. Technology, no matter how advanced, should simply be a tool of a good teacher. 
 
 课堂的力量根植于聚集在同一地点、同一时间的人们的品质，包括他们的天性、共情、奉献等等。技术，无论多么先进，应该只是一个好老师的工具。
+
+主旨大意：远程学习变得越来越普遍，但人们往往忽略了它的弊端。线下上学有很多潜在的好处，且永远比线上课堂更加有优势。所以技术无论多么先进，都只是好老师的工具，传统课堂学习无法被取代。
+
+
+
+长难句：
+1.The appeal to those in charge of education budgets to trade teachers for technology is so strong that they tend to ignore the disadvantages of distance learning.
+句子主干是The appeal to those to trade teachers for technology is so strong，in charge of education 是介词短语做those的后置定语。that引导了结果状语从句，与前面的so连用，构成so... that的结构，表示如此...以至于...。
+2.It's true that online classes do not require buildings and each class can host hundreds of people, which can result in greater savings, but moving away from a traditional classroom in which a living, breathing human being teaches and interacts with students daily would be a disaster.
+这句话是由but这个并列连词连接了两个主句。第一个句子It's true that..., which...中，句子主干是It's true，这里的it是形式主语，而真正的主语是that引导的名词性从句；which引导了非限制性定语从句。第二个句子moving away from a traditional classroom in which... would be a disaster中，句子主干是moving away from a traditional classroom would be a disaster，这里是非谓语动词的现在分词结构作主语，in which引导了定语从句，修饰前面的先行词classroom。
+
+3.They are also places that provide meals, places where students receive mental help and other support.
+句子主干是They are also places..., places...,逗号连接了两个并列的短语。第一个places后面的that引导了限制性定语从句;第二个places后面where引导了限制性定语从句。
+
+4.Given these expectations, schools should not become permanently “remote”.
+句子主干是schools should not become permanently "remote"。Given these expectations是介词短语做条件状语，表示考虑到这些期待。
+
+5.The power of the classroom is rooted in the qualities of the people gathered in the same place, at the same time, including their nature, empathy, devotion and so on.
+句子主干是The power of the classrooms is rooted in the qualities of the people. gathered in the same place, at the same time是非谓语动词的过去分词形式做后置定语，因为是gather the people，所以用过去分词表被动。including...是介词短语作状语。
+6. Technology, no matter how advanced, should simply be a tool of a good teacher.
+句子主干是Technology should simply be a tool of a good teacher. no matter how advanced是插入语，由两个逗号隔开。
+
+
+
+语法点：
+1. 动词不定式结构主动表被动的条件：不定式跟在形容词后面做状语；不定式的动词与主语构成动宾关系
+School facilities are expensive to build and maintain, and teachers are expensive to employ.这句话中有两个adj.+ to do主动表被动的结构。第一句话里to build and maintain跟在形容词expensive后面，且build and maintain school facilities构成动宾关系；第二句话中to employ跟在形容词expensive后面，且employ teachers构成动宾关系。
+
+
+
+重点语言点：
+distance learning 远程学习
+a common thing 一件普遍的事情
+
+appeal to sb. to do sth.呼吁某人做某事
+in charge of sth. 负责某事
+so adj./ adv. that... 如此。。。。。。以至于。。。。。。
+trade A for B 用A来替换B
+result in 导致
+interact with sb. 与某人互动
+
+build relationships with sb. 和某人建立联系
+more than 不只是
+
+the potential to do sth. 做某事的潜能
+allow sb. to do sth. 允许某人做某事
+prepare sb. to do sth.准备某人做某事
+given sth.考虑到某事
+
+be rooted in 根植于
