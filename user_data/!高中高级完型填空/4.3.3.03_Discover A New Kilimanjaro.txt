@@ -13,10 +13,57 @@ However, I soon discover that much has changed since the days of disturbing repo
 
 然而，我很快发现，自从那些令人不安的报道在成堆的垃圾中建立营地以来，情况已经发生了很大变化。我找到了一座干净的山，在营地和小路上都有厕所。环境挑战是重大的，但坦桑尼亚国家公园管理局的努力似乎正在取得成效。
 
-The best of a Kilimanjaro experience, in my opinion, isn’t reaching the top. Mountains are regarded as spiritual places by many cultures. This view is especially evident on Kilimanjaro as climbers go through five ecosystems(生态系统)in the space of a few kilometers. At the base is a rainforest. It ends abruptly at 3, 000 meters, giving way to lands of low growing plants. Further up, the weather changes — low clouds envelope the mountainsides, which are covered with thick grass. I count twelve shades of green from where I stand. Above 4, 000 meters is the highland desert: gravel(砾石), stones and rocks. Finally, you climb into an arctic-like zone with permanent snow and the glaciers that may soon disappear. 
+The best of a Kilimanjaro experience, in my opinion, isn’t reaching the top. Mountains are regarded as spiritual places by many cultures. This view is especially evident on Kilimanjaro as climbers go through five ecosystems(生态系统)in the space of a few kilometers. At the base is a rainforest. It ends abruptly at 3,000 meters, giving way to lands of low growing plants. Further up, the weather changes — low clouds envelope the mountainsides, which are covered with thick grass. I count twelve shades of green from where I stand. Above 4, 000 meters is the highland desert: gravel(砾石), stones and rocks. Finally, you climb into an arctic-like zone with permanent snow and the glaciers that may soon disappear.
 
 在我看来，乞力马扎罗山最好的体验并不是登顶。山脉被许多文化视为精神圣地。这种观点在乞力马扎罗山上尤为明显，因为登山者在几公里的空间里要经历五个生态系统。基地是一片热带雨林。它在3000米处突然结束，让位给低矮植物的土地。再往上走，天气就变了——低云笼罩着长满茂密草地的山坡。我数了数从我站的地方有十二种深浅不一的绿色。4000米以上是高原沙漠:砾石(砾)、石头和岩石。最后，你爬到一个类似北极的区域，那里有永久的积雪和冰川，可能很快就会消失。
 
 Does Kilimanjaro deserve its reputation as a crowded mountain with lines of tourists ruining the atmosphere of peace？I found the opposite to be true. 
 
 乞力马扎罗山是一座人山人海、游客络绎不绝、破坏和平气氛的山峰，它的名声真的值得吗?我发现事实正好相反。
+
+
+主旨大意：每年有4万登山者攀登非洲第一高峰乞力马扎罗山，他们带来了垃圾，破坏了这里的环境。再加上冰川的消失，改变着它的地貌。对此作者对这个地方很是怀疑，想一探究竟。当他来到这里，他发现当地环保措施很到位，同时作者发现乞力马扎罗山有多种生态系统。作者认为乞力马扎罗山不应该被誉为一座挤满了破坏宁静氛围的游客的拥挤的山峰。
+
+
+
+长难句：
+1. Hearing these stories, I’m skeptical about the place— other destinations are described as “purer” natural experiences.
+主句为I’m skeptical about the place其中Hearing these stories为现在分词引导的时间状语从句。因为其逻辑主语I和hear是主动关系，所以用hear的现在分词而不是过去分词。破折号后为一个完整的简单句，用于解释说明前面的句子。破折号后的句子为被动语态，短语原型为“describe sth. as sth.”。
+2. However, I soon discover that much has changed since the days of disturbing reports of camps among tons of rubbish.
+主句为I soon discover that其中that后为宾语从句。宾语从句中，much为不定代词，表示“很多事”。However作状语位于句首。本句时态为现在完成时，“has done + since +时间点”是现在完成时的基本结构。
+3. It ends abruptly at 3, 000 meters, giving way to lands of low growing plants.
+主句为It ends abruptly at 3, 000 meters，从句为现在分词短语giving way to引导的伴随状语。
+4. Further up, the weather changes — low clouds envelope the mountainsides, which are covered with thick grass.
+该句为两个完整的句子，由破折号隔开。破折号后的句子用于解释说明破折号前的句子。文中说“天气随着往上走而变化”，破折号后便是天气变化后的具体风景，其主句为low clouds envelope the mountainsides其中从句为which引导的非限制性定语从句。
+5. Finally you climb into an arctic-like zone with permanent snow and the glaciers that may soon disappear.
+主句为Finally you climb into an arctic-like zone其中with引导了介词短语作伴随状语。而that引导了限制性定语从句，修饰permanent snow and the glaciers。
+
+
+
+语法点：
+1. 同位语
+文中Kilimanjaro, the highest mountain in Africa.有同位语the highest mountain in Africa，是前面的专有名词Kilimanjaro的说明。同位语用于解释说明前面的名词。同位语从句删除后，句子结构完整。
+2. 现在分词引导结果状语从句
+文中The glaciers are disappearing, changing the face of Kilimanjaro.有change的现在分词引导的结果状语从句。表示前面的动作产生的结果。
+3. 插入语
+文中in my opinion为句子The best of a Kilimanjaro experience, in my opinion, isn’t reaching the top的插入语。插入语指的是插在句子中的一个词、短语或句子，其作用是用来补充含义，或解释说明。插入语独立性强，一般用标点符号将其与其他句子成分隔开。在句中与其他部分没有语法上的联系，将它删掉之后，句子结构仍然完整。
+4. 非限制性定语从句：which引导
+文中which are covered with thick grass.为关系代词which引导的非限制性定语从句。它修饰前面主句中的the mountainsides，也叫先行词。非限制性定语从句的先行词和关系代词一般用逗号隔开，非限制性定语从句删除后，句子的结构不变。
+5. 限制性定语从句：that引导
+文中that may soon disappear.为限制性定语从句，修饰先行词permanent snow and the glaciers。因为that在从句中作主语，所以that不能省略。如果关系代词that/which在从句中作宾语，则可以被省略。
+6. 非谓语动词：现在分词作后置定语
+文中ruining the atmosphere of peace为ruin的现在分词作后置定语，修饰tourists。因为tourists和ruin是逻辑上的主动关系，所以用现在分词作后置定语。
+
+
+
+重点语言点：
+attempt to do 尝试做某事
+lots of 大量的
+be skeptical about 对某事产生怀疑
+be described as 被称为
+seem to be 看起来是
+pay off 得到偿还
+be regarded as 被看作是
+go through 穿过
+at the base 在底部
+further up 再往上走
