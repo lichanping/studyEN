@@ -161,7 +161,7 @@ export function handleAntiForgettingFeedbackClick() {
     // Add line breaks
     message = message.replace(/\n/g, '<br>');
     // Append random motto
-    message += `<br><br>📚知识小船📚<br><br>${getRandomMotto()}`;
+    message += `<br><br>📚知识小船📚<br><br>${getRandomMotto()}<br><br><br><br>🎯语言点实战区🎯<br><br>`;
     // Copy the message to clipboard
     copyToClipboard(message);
     // Show alert with the generated message
