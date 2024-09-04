@@ -26,7 +26,7 @@ body {
     z-index: 9999; /* Ensure it's on top */
 }
 
-#reviewWord, #reviewforgetWord, #learnedWord,#preTestWord,
+#reviewWord, #reviewforgetWord, #learnedWord, #preTestWord,
 #newWord, #forgetWord, #antiForgettingForgetWord {
     width: 35px; /* Specify the width in pixels */
 }
@@ -63,7 +63,7 @@ h1 {
     line-height: 1; /* Adjust line height to reduce vertical spacing */
 }
 
-#forgetWords, #pronounceWords, #keyLanguagePoints {
+#forgetWords, #pronounceWords, #keyLanguagePoints, #practiceArea {
     width: 400px; /* Adjust the width as needed */
     height: 60px; /* Adjust the height as needed */
     font-size: 18px; /* Adjust the font size as needed */

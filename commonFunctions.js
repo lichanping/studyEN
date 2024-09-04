@@ -114,6 +114,7 @@ export function handleAntiForgettingFeedbackClick() {
     let forgetWords = document.getElementById('forgetWords').value.trim();
     let pronounceWords = document.getElementById('pronounceWords').value.trim();
     let keyLanguagePoints = document.getElementById('keyLanguagePoints').value.trim();
+    let practiceArea = document.getElementById('practiceArea').value.trim();
     const userName = document.getElementById("userName").value;
     const randomFeedback = getRandomFeedback();
 
@@ -140,14 +141,22 @@ export function handleAntiForgettingFeedbackClick() {
         pronounceWords = '<br>' + pronounceWords.split('\n').map(word2 => `- ${word2}`).join('<br>') + '<br>';
     }
 
-    // Handle key language points
-    if (keyLanguagePoints.trim().length === 0) {
-        keyLanguagePoints = "";
-    } else {
-        keyLanguagePoints = '<br><br>5️⃣重点语言点：<br>' + keyLanguagePoints.split('\n').filter(point => point.trim() !== '').map((point, index) => (index + 1) + '. ' + point).join('<br>') + '<br>';
-        // keyLanguagePoints = '<br><br>5️⃣重点语言点：<br>' + keyLanguagePoints.split('\n').filter(point => point.trim() !== '').map(point => '- ' + point).join('<br>') + '<br>';
+    let keyLanguagePointsSection = "";
+    let practiceSection = "";
+
+    // If key language points are not empty, assign sequence number 5
+    if (keyLanguagePoints.length !== 0) {
+        keyLanguagePointsSection = '<br><br>5️⃣重点语言点：<br>' + keyLanguagePoints.split('\n').filter(point => point.trim() !== '').map((point, index) => (index + 1) + '. ' + point).join('<br>') + '<br>';
     }
 
+    // If practice area is not empty, assign sequence number based on keyLanguagePoints
+    if (practiceArea.length !== 0) {
+        let practiceNumber = keyLanguagePoints.length !== 0 ? '6️⃣' : '5️⃣';
+        practiceSection = '<br><br>' + practiceNumber + '语言闯关：<br>' + practiceArea.split('\n').filter(point => point.trim() !== '').map((point, index) => (index + 1) + '. ' + point).join('<br>') + '<br>';
+    }
+
+    // Combine both sections
+    let combinedContent = keyLanguagePointsSection + practiceSection;
     // Generate the message
     let message = `【${userName} 今日抗遗忘复习反馈】<br>
 1️⃣今天复习了${antiForgettingReviewWord}个单词，遗忘了${antiForgettingForgetWord}个，${numberOfWrongWords}个单词发音不标准, 正确率为 ${correctRate}% 💯<br>
@@ -155,13 +164,13 @@ export function handleAntiForgettingFeedbackClick() {
 3️⃣发音不标准的词:${pronounceWords}<br>
 4️⃣${userName} ${randomFeedback}`;
     // Add key language points if not empty
-    if (keyLanguagePoints.length > 0) {
-        message += keyLanguagePoints;
+    if (combinedContent.length > 0) {
+        message += combinedContent;
     }
     // Add line breaks
     message = message.replace(/\n/g, '<br>');
     // Append random motto
-    message += `<br><br>📚知识小船📚<br><br>${getRandomMotto()}<br><br><br><br>🎯语言点实战区🎯<br><br>`;
+    message += `<br><br>📚知识小船📚<br><br>${getRandomMotto()}`;
     // Copy the message to clipboard
     copyToClipboard(message);
     // Show alert with the generated message
