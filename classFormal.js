@@ -216,7 +216,14 @@ export function handleClassFeedbackClick() {
     const antiForgettingForgetWord = document.getElementById('antiForgettingForgetWord').value;
 
     const learnedWord = parseInt(document.getElementById("learnedWord").value.trim()) || 0;
-    const preTestWord = parseInt(document.getElementById('preTestWord').value.trim()) || 0;
+    const inputText = document.getElementById('preTestWord').value.trim();
+
+    // Default value is 0 if input is empty
+    let preTestWord = inputText ? inputText.split('+').reduce((sum, num) => {
+        // Parse the integer and add to sum, default to 0 if NaN
+        const parsedNum = parseInt(num.trim(), 10);
+        return sum + (isNaN(parsedNum) ? 0 : parsedNum);
+    }, 0) : 0;
     let feedbackMessage
     if (learnedWord > 0) {
         let remaining = courseWordCountLabel - learnedWord;
