@@ -57,9 +57,14 @@ const userData = {
         courseWordCount: 888
     }, "征洋": {
         schedule: "每天晚上 征洋（初一65%）",
-        course: "上海市高中考纲词汇",
+        course: "上海市初中考纲词汇",
         hours: [19, 45],
         courseWordCount: 777
+    }, "礼豪": {
+        schedule: "每天晚上 礼豪（初二88%）",
+        course: "上海市初中考纲词汇",
+        hours: [19, 45],
+        courseWordCount: 666
     }, "泽成": {
         schedule: "每天晚上 泽成 (高一)",
         course: "上海市高中考纲词汇",
