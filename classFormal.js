@@ -65,6 +65,11 @@ const userData = {
         course: "上海市初中考纲词汇",
         hours: [19, 45],
         courseWordCount: 666
+    }, "晨冬": {
+        schedule: "每天晚上 晨冬（六年级80%）",
+        course: "上海市初中考纲词汇",
+        hours: [19, 45],
+        courseWordCount: 666
     }, "泽成": {
         schedule: "每天晚上 泽成 (高一)",
         course: "上海市高中考纲词汇",
