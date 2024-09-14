@@ -28,17 +28,17 @@ window.addEventListener('load', createUsers);
 window.addEventListener("load", updateLabel);
 // Define user data
 const userData = {
-    "悠然": {
-        schedule: "每周一五六日 悠然 (高三)",
-        course: "高中超前单词",
-        hours: [19, 20],
-        courseWordCount: 4610
-    },
     "何子谦": {
         schedule: "每周二六日 何子谦 (高三)",
         course: "高考英语必背词组短语固定搭配",
         hours: [11, 0],
         courseWordCount: 534
+    },
+    "悠然": {
+        schedule: "每周一五六日 悠然 (高三)",
+        course: "高中超前单词",
+        hours: [19, 20],
+        courseWordCount: 4610
     },
     "芷淇": {
         schedule: "每周五日 芷淇 (初三)",
