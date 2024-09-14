@@ -45,15 +45,15 @@ const userData = {
         course: "牛津上海版九年级下册",
         hours: [19, 25],
         courseWordCount: 164
-    }, "煜杰": {
-        schedule: "每天晚上 煜杰 (6年级)",
-        course: "上海市初中考纲词汇",
-        hours: [19, 45],
+    }, "婧轩": {
+        schedule: "代申教练 婧轩 (9年级)",
+        course: "新版初中考纲单词",
+        hours: [19, 0],
         courseWordCount: 999
-    }, "霈霖": {
-        schedule: "每天晚上 霈霖 (初三，初二考90)",
-        course: "上海市初中考纲词汇",
-        hours: [19, 45],
+    }, "乙默": {
+        schedule: "基础薄弱 乙默 (3年级)",
+        course: "小学中级词库",
+        hours: [20, 0],
         courseWordCount: 888
     }, "征洋": {
         schedule: "每天晚上 征洋（初一65%）",
