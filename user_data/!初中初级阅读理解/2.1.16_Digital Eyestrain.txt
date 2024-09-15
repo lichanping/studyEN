@@ -32,3 +32,45 @@ When you are using a mobile phone, keep it at least 30cm from your eyes and just
 Remember to take a 20-20-20 break: every 20 minutes, take a 20-second break and look at something 20 feet（about 6 meters）away. 
 
 记住要休息20-20-20:每隔20分钟，休息20秒，看看20英尺(约6米)外的东西。
+
+主旨大意：随着我们的生活变得越来越数字化，大部分人会患有眼部问题，而视疲劳是其中最为常见的问题。小孩也开始出现视疲劳的一些症状。好消息是我们可以通过做很多事情来缓解视疲劳问题
+
+语法点：
+1. 现在完成时：have/has done
+Our lives have become more digital in the modern world. ""have become"" 是现在完成时，become是非延续性动词，表示动作发生在过去，对现在的影响。
+2. 同位语：
+Sarah Hinkley, spokeswoman for the American Optometric Association 后面的名词短语是同位语，起到补充说明的作用，一般紧跟着被说明的词。
+3. 祈使句：
+文中sit in your chair, reach out your arm等都是祈使句，祈使句的标志是句子意思完整，并且省略了主语you，表示强烈语气、建议或者命令。后文部分句子同理。
+
+长难句:
+1. However, spending a lot of time working, reading, texting and gaming through digital devices is bad for our eyes.
+句子主干为spending a lot of time working,... is bad for our eyes.句中的and连接并列的spend time doing搭配的doing结构，后面的through结构为状语。
+2. According to the American Optometric Association, 70 to 75 percent of computer workers have eye problems.
+句子主干为70 to 75 percent of computer workers have eye problems，前面的介词词组according to引导原因状语，表示根据。
+3. People with digital eyestrain may get headaches, dry and red eyes, eye pain, watering and other problems.
+句子主干是 People may get headaches.... and other problems. 介词短语with digital eyestrain作为people的后置定语。
+4. Children get cellphones at younger ages and are using them very often during the day, Sarah Hinkley, spokeswoman for the American Optometric Association, told USA Today.
+句子主干是 Sarah Hinkley told USA Today，引号里面直接引用了Hikely说的话，and连接句子的两个谓语部分get和are using，后面的spokewoman for the American Optometric是Hinkley的同位语，用来说明她的身份。
+5. The good news is that there are many things you can do to reduce digital eyestrain. 句子主干是 The good news is ...；that引导了表语从句，从句中things后接省略关系代词的限制性定语从句you can do，不定式短语to reduce做目的状语。
+6. When using a computer, first sit in your chair and reach out your arm.
+句子主干是由and连接的两个祈使句first sit in your chair and reach out your arm；when 引导了时间状语从句，该从句省略了主语+be动词，即原句为when you are using a computer。
+7. Your hand should rest comfortably on the screen, as if you're high-fiving the screen.
+句子主干是Your hand should rest comfortably on the screen， as if 引导方式状语从句。
+8. Put some books under the computer until your eyes feel comfortable.
+句子主干是一个祈使句put some books under the computer , until 引导时间状语从句表示直到。
+9. When you are using a mobile phone, keep it at least 30cm from your eyes and just below eye level.
+句子主干是一个祈使句keep it at least 30cm from your eyes and just below eye level，when 引导了时间状语从句。
+
+重点语言点：
+communicate with sb. 与某人交流
+spend time doing sth. 花时间做某事
+be bad for 对……有害
+according to 根据
+start to do 开始做某事
+reach out 伸展
+at least 至少
+try not to do 尽量不要做某事
+under sunlight 在阳光下
+remember to do sth. 记得要做某事
+take a break 休息
