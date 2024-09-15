@@ -61,9 +61,9 @@ const userData = {
         hours: [10, 0],
         courseWordCount: 254
     }, "礼豪": {
-        schedule: "每天晚上 礼豪（初二88%）",
-        course: "上海市初中考纲词汇",
-        hours: [19, 45],
+        schedule: "每周日晚上19点 礼豪（初二88%）",
+        course: "上海市初中词汇",
+        hours: [19, 0],
         courseWordCount: 666
     }, "晨冬": {
         schedule: "每天晚上 晨冬（六年级80%）",
