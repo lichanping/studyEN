@@ -26,7 +26,7 @@ export function handleScheduleNotificationClick() {
     const classDateTime = document.getElementById("classDateTime").value;
 
     // Create the notification message with the dynamic date and time
-    const notificationMessage = `【体验课-${formatDateTime(classDateTime)}】<br><br>亲爱的 ${userName} 用户您好! 语言体验服务课程时间安排在(${formatDateTime(classDateTime)}) <br><br>请提前安排好时间，以下是会议室链接。<br><br>注意! 请提前下载好【腾讯会议】，我们一起开启语言学习体验之旅! 电脑🖥️、笔记本💻、平板📱都可使用。<br><br>(请提前检查好摄像头，检测好音频。台式电脑必须佩戴耳机和音响)<br><br>#腾讯会议：689-688-4088`;
+    const notificationMessage = `【体验课-${formatDateTime(classDateTime)}】<br><br>亲爱的 ${userName} 用户您好! 语言体验服务课程时间安排在(${formatDateTime(classDateTime)}) <br><br>请提前安排好时间，以下是会议室链接。<br><br>注意! 请提前下载好【腾讯会议】，我们一起开启语言学习体验之旅! 电脑🖥️、笔记本💻、平板📱都可使用。<br><br>(请提前检查好摄像头，检测好音频。台式电脑必须佩戴耳机和音响)<br><br>#腾讯会议：988-8340-0582`;
 
     copyToClipboard(notificationMessage);
     showLongText(`${notificationMessage}`);
@@ -47,7 +47,7 @@ export function handlePreMeetingReminderClick() {
 - 体验服务家长要全程陪伴，但切勿打扰孩子，保持环境安静；
 - 因为全程阅读单词，会口渴，给孩子准备一杯温水🚰🚰️哦~感谢配合~<br>
 上课地址如下：
-#腾讯会议：689-688-4088`;
+#腾讯会议：988-8340-0582`;
 
     copyToClipboard(reminderMessage);
     showLongText(`${reminderMessage}`);
