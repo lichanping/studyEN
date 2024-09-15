@@ -56,10 +56,10 @@ const userData = {
         hours: [20, 0],
         courseWordCount: 888
     }, "征洋": {
-        schedule: "每天晚上 征洋（初一65%）",
-        course: "上海市初中考纲词汇",
-        hours: [19, 45],
-        courseWordCount: 777
+        schedule: "每周日10点 征洋（初一65%）",
+        course: "2024秋沪教版（五•四学制）七年级上册",
+        hours: [10, 0],
+        courseWordCount: 254
     }, "礼豪": {
         schedule: "每天晚上 礼豪（初二88%）",
         course: "上海市初中考纲词汇",
@@ -237,7 +237,7 @@ export function handleClassFeedbackClick() {
     let feedbackMessage
     if (learnedWord > 0) {
         let remaining = courseWordCountLabel - learnedWord;
-        feedbackMessage = `【${userName}今日学习-《${course}》的反馈】<br><br>1️⃣.今日新学单词 ${newWord}个，遗忘${forgetWord}个, 正确率 ${correctRate}% ；学前检测 ${preTestWord} 个单词。<br><br>2️⃣.今日复习单词 ${reviewWordCount}个，遗忘 ${reviewforgetWord}个, 正确率 ${reviewCorrectRate}%。<br><br>3️⃣.今天学习的是《${course}》，共${courseWordCountLabel}词，已学习${learnedWord}词，剩余${remaining}词未学。<br><br>4️⃣.🎉陪伴 ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} 认真且努力的${userName}一定能抵达梦想的彼岸。🚀🚀🚀<br><br>5️⃣.严格按照 21 天抗遗忘复习表来复习哟!<br><br><br><br>💟今日寄语💟<br><br>${getRandomMotto()}`
+        feedbackMessage = `【${userName}今日学习-《${course}》的反馈】<br><br>1️⃣.今日新学单词 ${newWord}个，遗忘${forgetWord}个, 正确率 ${correctRate}% ；学前检测 ${preTestWord} 个单词。<br><br>2️⃣.今日复习单词 ${reviewWordCount}个，遗忘 ${reviewforgetWord}个, 正确率 ${reviewCorrectRate}%。<br><br>3️⃣.今天学习的是《${course}》，共${courseWordCountLabel}词，已学习${learnedWord}词，剩余${remaining}词未推送完九宫格。<br><br>4️⃣.🎉陪伴 ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} 认真且努力的${userName}一定能抵达梦想的彼岸。🚀🚀🚀<br><br>5️⃣.严格按照 21 天抗遗忘复习表来复习哟!<br><br><br><br>💟今日寄语💟<br><br>${getRandomMotto()}`
     } else {
         feedbackMessage = `【${userName}今日学习-《${course}》的反馈】<br><br>1️⃣.今日新学单词 ${newWord}个，遗忘${forgetWord}个, 正确率 ${correctRate}% ；学前检测 ${preTestWord} 个单词。<br><br>2️⃣.今日复习单词 ${reviewWordCount}个，遗忘 ${reviewforgetWord}个, 正确率 ${reviewCorrectRate}%。<br><br>3️⃣.陪伴 ✨ ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} 认真且努力的${userName}一定能抵达梦想的彼岸。🚀🚀🚀<br><br>4️⃣.严格按照 21 天抗遗忘复习表来复习哟!<br><br><br><br>💟今日寄语💟<br><br>${getRandomMotto()}`
     }
