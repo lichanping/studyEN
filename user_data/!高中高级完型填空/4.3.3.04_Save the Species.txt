@@ -24,3 +24,57 @@ The two keepers are proud of their productive work. But before they can be assur
 How can we bridge the ever-widening gap that separates us from other animals?Chris and Tim offered us the answer: human beings took it for granted that their brains held all the solutions, but maybe their hearts can be a better guide. 
 
 我们怎样才能弥合我们与其他动物之间日益扩大的鸿沟呢?克里斯和蒂姆为我们提供了答案:人类理所当然地认为他们的大脑掌握着所有的解决方案，但也许他们的心可以成为更好的向导。
+
+
+主旨大意： 文章叙述了科学家救助、帮助白鹤繁衍的具体事例，呼吁人类要保护野生动物，维护人与野生动物的关系。
+
+
+
+长难句：
+1. Chris and Tim work at a zoo, helping endangered cranes with their reproduction.
+主句为Chris and Tim work at a zoo其中helping引导了伴随状语从句helping endangered cranes with their reproduction。
+1.She refused to live with male cranes, and even had a reputation for killing some of them, which made it impossible for her to become a mother.
+主句为She refused to live with male cranes, and even had a reputation for killing some of them其中which引导了非限制性定语从句which made it impossible for her to become a mother.
+2. After all, not everyone has realized that wildlife has thoughts, feelings, and most importantly, equal rights to survive.
+主句为not everyone has realized that其中从句为that引导的宾语从句that wildlife has thoughts, feelings, and most importantly, equal rights to survive从句中的most importantly为插入语。
+3. How can we bridge the ever-widening gap that separates us from other animals?
+该句为一个疑问句。主句为How can we bridge the ever-widening gap，其中that引导了限制性定语从句that separates us from other animals。
+4. Chris and Tim offered us the answer: human beings took it for granted that their brains held all the solutions, but maybe their hearts can be a better guide.
+该句由冒号隔开的两个完整的句子组成，冒号前的句子为简单句，冒号后的句子用于解释说明前面的“answer”。第二句由连词but连接的两个句子组成，第一句主句为human beings took it for granted，其中that引导了宾语从句that their brains held all the solutions，it为形式宾语。
+
+
+
+语法点：
+1. 限制性定语从句
+文中that are disappearing为限制性定语从句，修饰先行词species。因为that在从句中作主语，所以that不能省略。如果关系代词that/which在从句中作宾语，则可以被省略。
+2 .现在分词作伴随状语
+文中helping endangered cranes with their reproduction为help的现在分词helping作伴随状语从句。其逻辑主语为Chris和Tim。
+3. 同位语
+文中a female crane是前面的名字Emma的同位语。同位语用于解释说明前面的名词。同位语从句删除后，句子结构完整。
+4. 非限制性定语从句
+文中which made it impossible for her to become a mother.为非限制性定语从句，它修饰的先行词前面的a reputation for killing some of them。非限制性定语从句的先行词和关系代词一般用逗号隔开，非限制性定语从句删除后，句子的结构不变。
+5. 过去分词作伴随状语
+文中的Born at an international crane foundation有过去分词born引导的伴随状语。其逻辑主语为主句中的Emma。因为born和Emma是逻辑上的被动关系，所以用过去分词born。
+6. 宾语从句
+文中After all, not everyone has realized that wildlife has thoughts, feelings, and most importantly, equal rights to survive.有连接代词that的宾语从句，宾语从句that wildlife has thoughts, feelings, and most importantly, equal rights to survive.作realized的宾语。宾语从句在句中充当宾语，其连接代词that一般可以省略。
+
+
+
+重点语言点：
+try one's best 努力，尽力
+save sb. from sth. 救助某人免于遭受某事
+in one's care 处于某人的照顾中
+lead to 导致
+take sb as 把某人看作
+a reputation for 有......的名声
+a combination of A and B A和B的结合
+enable sb. to do sth. 使某人能够做某事
+with one's patience and efforts 在某人的耐心和努力下
+be proud of 以......而骄傲
+make efforts 做出努力
+on the decline 正在减少
+after all 毕竟
+have rights to do sth. 有做某事的权利
+head towards 朝向......发展
+separate sb from sb 把某人和某人分开
+take sth. for granted 把某事视为理所应当
