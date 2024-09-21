@@ -30,9 +30,9 @@ window.addEventListener("load", updateLabel);
 const userData = {
     "何子谦": {
         schedule: "每周二六日 何子谦 (高三)",
-        course: "高考英语必背词组短语固定搭配",
+        course: "高中超前单词",
         hours: [11, 0],
-        courseWordCount: 534
+        courseWordCount: 4610
     },
     "悠然": {
         schedule: "每周一五六日 悠然 (高三)",
@@ -49,12 +49,12 @@ const userData = {
         schedule: "代申教练 婧轩 (9年级)",
         course: "新版初中考纲单词",
         hours: [19, 0],
-        courseWordCount: 999
+        courseWordCount: 1623
     }, "乙默": {
         schedule: "基础薄弱 乙默 (3年级)",
-        course: "小学中级词库",
+        course: "牛津版单词三年级下册",
         hours: [20, 0],
-        courseWordCount: 888
+        courseWordCount: 168
     }, "征洋": {
         schedule: "每周日10点 征洋（初一65%）",
         course: "2024秋沪教版（五•四学制）七年级上册",
@@ -62,14 +62,9 @@ const userData = {
         courseWordCount: 254
     }, "礼豪": {
         schedule: "每周日晚上19点 礼豪（初二88%）",
-        course: "上海市初中词汇",
+        course: "牛津上海版英语八年级上册",
         hours: [19, 0],
-        courseWordCount: 666
-    }, "晨冬": {
-        schedule: "每天晚上 晨冬（六年级80%）",
-        course: "上海市初中考纲词汇",
-        hours: [19, 45],
-        courseWordCount: 666
+        courseWordCount: 236
     }, "泽成": {
         schedule: "每天晚上 泽成 (高一)",
         course: "上海市高中考纲词汇",
