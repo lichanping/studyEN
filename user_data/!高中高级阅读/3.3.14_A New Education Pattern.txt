@@ -32,3 +32,46 @@ Some netizens, however, expressed their concern that as a non-core curriculum, t
 “Through the learning and experience, students will develop respect for labor, the ability to make innovations and apply knowledge and skills in real life, and a sense of social responsibilities.  Schools should take the lead in teaching life skills, while families should play a supporting role. ” said Gu Jianjun, a MOE official. 
 
 “通过学习和体验，培养学生尊重劳动、创新和应用知识技能的能力，以及社会责任感。学校应该带头教授生活技能，而家庭应该发挥辅助作用。”教育部官员顾建军说。
+
+主旨大意：本文围绕在互联网上走红的烹饪课程，展开阐述了对新的教育模式的政策各方的观点。
+
+
+
+长难句：
+1.Last week, social media posts about a cooking course for school kids, as part of a life skill program to be delivered nationwide this September, went viral on the Internet.
+主句为social media posts went viral...，而介词短语about a cooking course为posts的后置定语,as part of a life skill program to be delivered nationwide this September为方式状语。
+2.It quickly became the top trending topic on China's Twitter-like Weibo, sparking heated discussions among netizens.
+主句为It became the top trending topic，现在分词sparking引导了结果状语。
+
+3.It is recommended that first and second graders learn how to peel fruits and brew tea and acquire a basic knowledge of nutrition as well as the ability to take part in basic cooking at home.
+主句为It is recommended that ...,其中it为形式主语，真正的主语为that引导的主语从句。主语从句中第二个and连接了两个谓语动词learn和acquire，as well as连接了acquire的两个宾语a basic knowledge of...和the ability to...。
+
+4.Some netizens, however, expressed their concern that as a non-core curriculum, the program cannot be fully carried out in schools, while others are worried that the program will merely put an extra burden on parents.
+主句为Some netizens expressed their concern that...，concern后为that引导的同位语从句。该从句中主句为the program cannot be fully carried out in schools，从句为while引导的时间状语从句，其中从句中的that引导了宾语从句。
+
+
+
+语法点：
+1.非谓语动词：
+sparking heated discussions中为现在分词作结果状语，结果状语常常位于句尾，表示直接造成的结果。
+
+2.It作为形式主语：
+一般用形式主语it代替真正的主语，放在句首，避免句子显得头重脚轻，文中It is recommended that...中，it为形式主语，真正的主语由that引出，避免主语放在句首显得过长。
+
+3.虚拟语气：
+This should have been done earlier.本句是对过去的否定，结构为should+have done，表示“本应该做”（而没有做）。
+
+
+
+重点语言点：
+go viral 迅速传播
+
+take part in 参与
+
+apart from 除了
+
+distinguish A from B 区分A和B
+
+make innovations 做出创新
+take the lead 带领
+play a role 发挥作用
