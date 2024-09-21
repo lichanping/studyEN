@@ -58,7 +58,7 @@ const userData = {
     }, "征洋": {
         schedule: "每周日10点 征洋（初一65%）",
         course: "2024秋沪教版（五•四学制）七年级上册",
-        hours: [10, 0],
+        hours: [9, 0],
         courseWordCount: 254
     }, "礼豪": {
         schedule: "每周日晚上19点 礼豪（初二88%）",
