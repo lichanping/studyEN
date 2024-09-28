@@ -13,6 +13,7 @@ from edge_tts import VoicesManager
 from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
 from ptest.decorator import TestClass, Test
+from bs4 import BeautifulSoup
 
 
 def get_sub_folder_path(sub_dir_name='user_data'):
@@ -227,6 +228,102 @@ class GenerateTool:
         self.add_category_sheet_with_fee(file_path, columns_to_remove)
         self.separate_classes_into_sheets(file_path)
         self.create_and_save_pivot_table(file_path)
+
+    @Test()
+    def calc_personal_fee(self):
+        temp_folder = get_sub_folder_path('temp')
+        file_path = os.path.join(temp_folder, 'scratch.html')
+
+        self.calc_month_fee(file_path)
+
+    def calc_month_fee(self, file_path):
+        # Open the HTML file
+        with open(file_path, "r", encoding="utf-8") as file:
+            html_content = file.read()
+        # Parse the HTML content
+        soup = BeautifulSoup(html_content, 'html.parser')
+        # Find the root node <ion-list> with class containing 'md'
+        root_node = soup.find('ion-list', class_='md')
+        # Get all child nodes <ion-item-sliding> with class "md"
+        child_nodes = root_node.find_all('ion-item-sliding', class_='md')
+        data = []
+        reading_keywords = ['阅读理解', '文化阅读', '阅读真题', '语法', '完型填空']
+
+        # Function to determine the category
+        def get_category(course, class_time):
+            if class_time == '体验课':
+                return '体验课'
+            elif any(keyword in course for keyword in reading_keywords):
+                return '阅读完型语法课'
+            else:
+                return '词汇课'
+
+        # Simplified function to determine the actual price
+        def get_actual_price(class_time, category):
+            if class_time == '体验课':
+                return 40
+
+            # Check for 60 or 30 minute classes
+            duration = 60 if '60分钟' in class_time else 30 if '30分钟' in class_time else None
+            if duration:
+                base_price = 50 if category == '词汇课' else 55
+                return base_price if duration == 60 else base_price / 2
+
+            return 0  # Default if no condition is met
+
+        for child in child_nodes:
+            # Extract the <ion-item> node
+            ion_item = child.find('ion-item')
+
+            if ion_item:
+                # Extract the <ion-label> node
+                ion_label = ion_item.find('ion-label')
+
+                if ion_label:
+                    # Extract the student name (text in <h2>, excluding <span>)
+                    h2_tag = ion_label.find('h2')
+                    student = h2_tag.contents[0].strip()  # Get only the first part of the <h2> before any <span>
+
+                    # Extract the class time (text in the first <span> under <h2>)
+                    class_time = ion_label.find('h2').find('span').get_text(strip=True)
+
+                    # Extract the first <p> text (课程)
+                    first_p = ion_label.find('p')
+                    course = first_p.get_text(strip=True) if first_p else ""
+
+                    # Extract the last <p> text (价格)
+                    last_p = ion_label.find_all('p')[-1]
+                    price = last_p.get_text(strip=True) if last_p else ""
+
+                    # Determine category based on course name and class time
+                    category = get_category(course, class_time)
+
+                    # Determine actual price based on class time and category
+                    actual_price = get_actual_price(class_time, category)
+
+                    # Append the extracted data to the list
+                    data.append({
+                        '学生': student,
+                        '课时': class_time,
+                        '课程': course,
+                        '价格': price,
+                        '类别': category,
+                        '实际价格': actual_price
+                    })
+        # Create a DataFrame using the extracted data
+        df = pd.DataFrame(data)
+        # Create the pivot table
+        df['时长'] = df['课时'].apply(lambda x: 1 if '60分钟' in x else 0.5 if '30分钟' in x else 1)
+        pivot = pd.pivot_table(df, values='时长', index='类别', aggfunc='sum').reset_index()
+        # Define the Excel file path
+        temp_folder = get_sub_folder_path('temp')
+        output_file = os.path.join(temp_folder, 'output.xlsx')
+
+        # Write the data and pivot table to a new Excel file, overriding if it exists
+        with pd.ExcelWriter(output_file, engine='openpyxl', mode='w') as writer:
+            df.to_excel(writer, sheet_name='明细', index=False)
+            pivot.to_excel(writer, sheet_name='汇总', index=False)
+        print(f"Data and summary successfully written to {output_file}")
 
     def create_and_save_pivot_table(self, input_file_path):
         # 读取 Excel 文件中的数据
