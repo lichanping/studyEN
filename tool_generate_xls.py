@@ -232,8 +232,10 @@ class GenerateTool:
     @Test()
     def calc_personal_fee(self):
         temp_folder = get_sub_folder_path('temp')
-        file_path = os.path.join(temp_folder, 'scratch.html')
+        file_path = os.path.join(temp_folder, '悠然-历史.html')
+        self.calc_month_fee(file_path)
 
+        file_path = os.path.join(temp_folder, '悠然-最近.html')
         self.calc_month_fee(file_path)
 
     def calc_month_fee(self, file_path):
@@ -317,7 +319,8 @@ class GenerateTool:
         pivot = pd.pivot_table(df, values='时长', index='类别', aggfunc='sum').reset_index()
         # Define the Excel file path
         temp_folder = get_sub_folder_path('temp')
-        output_file = os.path.join(temp_folder, 'output.xlsx')
+        base_name = os.path.splitext(os.path.basename(file_path))[0]
+        output_file = os.path.join(temp_folder, f'{base_name}.xlsx')
 
         # Write the data and pivot table to a new Excel file, overriding if it exists
         with pd.ExcelWriter(output_file, engine='openpyxl', mode='w') as writer:
