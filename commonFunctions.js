@@ -159,7 +159,7 @@ export function handleAntiForgettingFeedbackClick() {
     let combinedContent = keyLanguagePointsSection + practiceSection;
     // Generate the message
     let message = `【${userName} 今日抗遗忘复习反馈】<br>
-1️⃣今天复习了${antiForgettingReviewWord}个单词，遗忘了${antiForgettingForgetWord}个，${numberOfWrongWords}个单词发音不标准, 正确率为 ${correctRate}% 💯<br>
+1️⃣复习${antiForgettingReviewWord} 词，遗忘${antiForgettingForgetWord} 词，发音不标准${numberOfWrongWords} 词，正确率${correctRate}% 💯<br>
 2️⃣遗忘词:${forgetWords}<br>
 3️⃣发音不标准的词:${pronounceWords}<br>
 4️⃣${userName} ${randomFeedback}`;
