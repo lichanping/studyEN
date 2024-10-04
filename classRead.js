@@ -141,26 +141,29 @@ export function handleLateMeetingReminderClick() {
 export function handleReadClassFeedbackClick() {
     const userName = document.getElementById("userName").value;
     const courseLabel = document.getElementById("courseLabel").textContent.trim();
+    const reviewWordCount = document.getElementById("reviewWord").value;
     const newWord = parseInt(document.getElementById("newWord").value);
     const mistakeWords = parseInt(document.getElementById("mistakeWords").value);
 
     const test = document.getElementById("test").value;
     const mistake = parseInt(document.getElementById("mistake").value)
+    const correctRate = ((test - mistake) / test * 100).toFixed(0);
+
     const feedbacks = [
-        "今天的表现相当不错！上课非常投入，对文章的理解也相当透彻，翻译也十分流畅。词汇和短语的积累有所提升，但还有改进的空间。发音方面要多加练习，多读文章，提高阅读的流畅度，继续努力哦！",
-        "你的表现今天相当出色！上课态度非常专注，对文章的理解很到位，翻译也相当自然。词汇和短语的积累有所提升，但还需更多练习。发音方面需要多加注意，多读文章，提高阅读的流畅度，继续加油！",
-        "今天的表现相当棒！上课非常认真，对文章的理解也十分透彻，翻译也很流畅。词汇和短语的积累有所提升，但还需努力。发音方面要多加练习，多读文章，提高阅读的流畅度，继续保持！",
-        "你今天的表现相当亮眼！上课态度非常积极，对文章的理解很透彻，翻译也相当自然。词汇和短语的积累有所提升，但还需更多练习。发音方面需要多加注意，多读文章，提高阅读的流畅度，继续加油哦！",
-        "今天你的表现相当出色！上课非常用心，对文章的理解也相当深入，翻译也很自然。词汇和短语的积累有所增加，但还需继续努力。发音方面要多加注意，多读文章，提高阅读的流畅度，继续保持下去！",
-        "你的表现今天相当不错！上课非常专注，对文章的理解也很透彻，翻译也十分流畅。词汇和短语的积累有所提升，但还有提升空间。发音方面要多加练习，多读文章，提高阅读的流畅度，继续努力！",
-        "今天你的表现相当优秀！上课态度非常认真，对文章的理解很到位，翻译也相当自然。词汇和短语的积累有所提升，但还需加强。发音方面需要更多练习，多读文章，提高阅读的流畅度，继续加油！",
-        "你的表现今天相当出色！上课非常投入，对文章的理解也很深入，翻译也很流畅。词汇和短语的积累有所提升，但仍需努力。发音方面需要多加练习，多读文章，提高阅读的流畅度，继续保持！",
-        "今天你的表现相当优秀！上课态度非常积极，对文章的理解很深入，翻译也十分自然。词汇和短语的积累有所增加，但还需更多努力。发音方面要多加注意，多读文章，提高阅读的流畅度，继续加油哦！",
-        "你今天的表现相当不错！上课态度十分认真，对文章的理解也相当到位，翻译也很自然。词汇和短语的积累有所提升，但仍需加强。发音方面需要多加练习，多读文章，提高阅读的流畅度，继续努力！"
+        "今天表现很棒！上课投入，文章理解透彻，翻译流畅。词汇短语积累有进步，但还可更好。发音要多练，多读提高流畅度，加油！",
+        "今天表现超棒！上课专注，理解文章到位，翻译自然。词汇积累有提升，还需多练。注意发音，多读文章，加油！",
+        "今天表现优秀！上课认真，文章理解深入，翻译流畅。词汇积累有进步，仍需努力。多练发音，提高流畅度，保持！",
+        "今天表现亮眼！上课积极，理解透彻，翻译自然。词汇积累有提升，还需练习。发音多注意，加油！",
+        "今天表现出色！上课用心，理解深入，翻译自然。词汇有增加，继续努力。发音多练习，保持下去！",
+        "今天表现不错！上课专注，理解透彻，翻译流畅。词汇积累有提升空间。多练发音，加油！",
+        "今天表现优秀！上课认真，理解到位，翻译自然。词汇积累有提升，还需加强。多练发音，加油！",
+        "今天表现出色！上课投入，理解深入，翻译流畅。词汇积累有提升，仍需努力。多练发音，保持！",
+        "今天表现优秀！上课积极，理解深入，翻译自然。词汇增加了，还需努力。注意发音，加油！",
+        "今天表现不错！上课认真，理解到位，翻译自然。词汇积累有提升，仍需加强。多练发音，努力！"
     ];
     let feedback = feedbacks[Math.floor(Math.random() * feedbacks.length)]
     // Generate feedback message
-    const feedbackMessage = `【${userName}今日学习反馈】<br><br>①今日学习《${courseLabel}》1篇<br><br>②生词 ${newWord}个，错误词数：${mistakeWords}个，习题 ${test}个，错误习题数 ${mistake}个<br><br>③${userName}⭐${feedback} <br><br><br><br>💟今日寄语💟<br><br>${getRandomMotto()}`
+    const feedbackMessage = `【${userName}学习反馈】<br><br>①《${courseLabel}》1篇<br><br>②复习${reviewWordCount} 词，新学${newWord} 词，遗忘${mistakeWords} 词，习题${test}个，错误习题${mistake}个，正确率${correctRate}%💯<br><br>③${userName}⭐${feedback} <br><br><br><br>💟今日寄语💟<br><br>${getRandomMotto()}`
     copyToClipboard(feedbackMessage);
     showLongText(`${feedbackMessage}`);
 }
