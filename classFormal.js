@@ -28,11 +28,11 @@ window.addEventListener('load', createUsers);
 window.addEventListener("load", updateLabel);
 // Define user data
 const userData = {
-    "何子谦": {
-        schedule: "每周二六日 何子谦 (高三)",
-        course: "高中超前单词",
-        hours: [11, 0],
-        courseWordCount: 4610
+    "征洋": {
+        schedule: "每周日9点 征洋（初一65%）",
+        course: "【新教材】2024秋沪教版",
+        hours: [20, 30],
+        courseWordCount: 254
     },
     "悠然": {
         schedule: "每周一五六日 悠然 (高三)",
@@ -55,11 +55,6 @@ const userData = {
         course: "牛津版单词三年级下册",
         hours: [20, 0],
         courseWordCount: 168
-    }, "征洋": {
-        schedule: "每周日10点 征洋（初一65%）",
-        course: "2024秋沪教版（五•四学制）七年级上册",
-        hours: [9, 0],
-        courseWordCount: 254
     }, "礼豪": {
         schedule: "每周日晚上19点 礼豪（初二88%）",
         course: "牛津上海版英语八年级上册",
@@ -98,6 +93,12 @@ const userData = {
         course: "高考词汇",
         hours: [22, 30],
         courseWordCount: 3500
+    },
+    "何子谦": {
+        schedule: "每周二六日 何子谦 (高三)",
+        course: "高中超前单词",
+        hours: [11, 0],
+        courseWordCount: 4610
     }
 };
 
@@ -153,6 +154,7 @@ export function updateLabel() {
 // JavaScript code for the button click functions
 export function handleScheduleNotificationClick() {
     const userName = document.getElementById("userName").value;
+    const course = document.getElementById('courseLabel').textContent;
 
     // Get the date and time from the input field
     const classDateTime = document.getElementById("classDateTime").value;
@@ -168,7 +170,7 @@ export function handleScheduleNotificationClick() {
         // Calculate the countdown time
         notificationMessage = `【${thisDateTime}】<br><br>⏰我们的在线课程还有【${timeDifference}】分钟开始了，请做好准备，及时进入会议室哦🔥`;
     } else {
-        notificationMessage = `【${thisDateTime}】<br><br>亲爱的 ✨ ${userName} 用户您好! 我们的语言陪练服务时间安排在${formattedDateTime}。<br><br>📢请学员及家长准时进入会议室上课，并确保摄像头开启。<br><br>👄为了更好地呵护您的嗓子，课前请精心准备一杯水放在身旁哟!<br><br>🔔如无法参加请务必提前通知我们。感谢您的配合！<br><br>👍#腾讯会议：988-8340-0582`;
+        notificationMessage = `【${thisDateTime}】<br><br>亲爱的 ✨ ${userName} 用户您好! 我们的语言陪练课程将于${formattedDateTime}开始，<br><br>课程名称为《${course}》。<br><br>📢请学员准时进入会议室，并确保摄像头开启。<br><br>👄为了呵护嗓子，建议课前准备一杯水放在身旁。<br><br>🔔若无法参加，请务必提前告知。感谢您的配合！<br><br>👍#腾讯会议：988-8340-0582`;
     }
     copyToClipboard(notificationMessage);
     showLongText(`${notificationMessage}`);
