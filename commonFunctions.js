@@ -171,6 +171,9 @@ export function handleAntiForgettingFeedbackClick() {
     message = message.replace(/\n/g, '<br>');
     // Append random motto
     message += `<br><br>📚知识小船📚<br><br>${getRandomMotto()}`;
+    if (forgetWords!== " 无!" || pronounceWords!== " 无!"){
+        message += `<br><br>🎯课后重要提醒🎯<br><br>${userName}🥰，课后一定要记得练习那些你遗忘或者发音不标准的单词哦💪`;
+    }
     // Copy the message to clipboard
     copyToClipboard(message);
     // Show alert with the generated message
