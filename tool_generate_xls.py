@@ -232,10 +232,7 @@ class GenerateTool:
     @Test()
     def calc_personal_fee(self):
         temp_folder = get_sub_folder_path('temp')
-        file_path = os.path.join(temp_folder, '悠然-历史.html')
-        self.calc_month_fee(file_path)
-
-        file_path = os.path.join(temp_folder, '悠然-最近.html')
+        file_path = os.path.join(temp_folder, '每月结算.html')
         self.calc_month_fee(file_path)
 
     def calc_month_fee(self, file_path):
