@@ -33,6 +33,11 @@ const userData = {
         course: "【新教材】2024秋沪教版",
         hours: [20, 30],
         courseWordCount: 254
+    }, "礼豪": {
+        schedule: "每周日晚上19点 礼豪（初二88%）",
+        course: "牛津上海版英语八年级上册",
+        hours: [19, 0],
+        courseWordCount: 236
     },
     "悠然": {
         schedule: "每周一五六日 悠然 (高三)",
@@ -55,11 +60,6 @@ const userData = {
         course: "牛津版单词三年级下册",
         hours: [20, 0],
         courseWordCount: 168
-    }, "礼豪": {
-        schedule: "每周日晚上19点 礼豪（初二88%）",
-        course: "牛津上海版英语八年级上册",
-        hours: [19, 0],
-        courseWordCount: 236
     }, "泽成": {
         schedule: "每天晚上 泽成 (高一)",
         course: "上海市高中考纲词汇",
