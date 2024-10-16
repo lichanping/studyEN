@@ -39,7 +39,7 @@ export function handleCameraWarningClick() {
 
 export function handleGroupGreetingClick() {
     const teacherName = document.getElementById("teacherName").value;
-    const greetingMessage = `您好！我是${teacherName}，很⾼兴你们加⼊语⾔集训营，接下来让我们⼀起开启快乐、⾼效的语⾔训练之旅! 在此过程中，我会全程陪伴孩⼦的学习和复习过程，从短暂记忆到永久记忆，从被动接收到主动参与，让我们⼀起⻅证孩⼦的蜕变吧!🌟🌟🌟`;
+    const greetingMessage = `        亲爱的家长朋友，您们好！我是${teacherName}，很⾼兴您们加⼊英语快速提升集训营🎉🎉🎉，开启一段快乐、高效的“英语提升之旅”！<br><br>        在此过程中，我会全程陪伴孩⼦进行学新和复习，也会根据学生状态调整上课节奏🐧🕙，从短暂记忆到永久记忆，从被动接收到主动参与，逐渐提高学生的英语能力。💪💪<br><br>        让我们一起努力，⻅证孩子的学习提升和蜕变吧！😉😉😉`;
 
     copyToClipboard(greetingMessage);
     showLongText(`${greetingMessage}`);
