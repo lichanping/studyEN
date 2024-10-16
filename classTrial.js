@@ -71,6 +71,12 @@ export function handleVocabularyResultClick() {
     showLongText(`${resultMessage}`);
 }
 
+export function selfReviewClick() {
+    const feedbackMessage = `*课后复习方式：<br><br>1️⃣.教练带动进行【体验课】3次抗遗忘复习（解决“两会” ：看到英文会读，看到英文知道中文意思）<br><br>2️⃣.家长和学生需将【每日单词表】打印出来，家长打印中文版，让学生书写英文；打印英文版，学生填写中文，家长及学员对应中英文版进行批改，并以拍照的方式发送到群里进行打卡（解决另外“两会” ：会拼会写），建议每天写一遍。<br><br>3️⃣.对于当日抗遗忘复习单词中遗忘的部分，也要加入“生词本”进行重点复习。`
+    copyToClipboard(feedbackMessage);
+    showLongText(`${feedbackMessage}`);
+}
+
 // JavaScript code for the button click functions
 export function handleClassFeedbackClick() {
     const userName = document.getElementById("userName").value;
@@ -129,7 +135,6 @@ export function handleUnderstandSituationClick() {
 export function startVocabularyTest() {
     showAlert("在开始体验之前，我们先做一个系统的词汇量检测吧!<br>这样我可以更好地了解你的真实情况，才能更好地帮助你。<br>点击【开始】后，每个单词有10秒的思考时间，系统说英文，你说英文+中文，你认识就直接告诉我它的意思，不知道就说不知道。<br>好，我们现在开始吧!<br>（系统声音不分享或太低，教练清晰代读）");
 }
-
 
 
 function formatDateTime(dateTimeString) {

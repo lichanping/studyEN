@@ -25,6 +25,7 @@
 <div>
     <label for="userName">User Name:</label>
     <select id="userName">
+        <option value="闵熙">闵熙(初二上海）</option>
         <option value="刘老师">刘老师(初中老师）</option>
         <option value="齐乙默">齐乙默(四年级0%）</option>
         <option value="晨冬">晨冬(六年级80%）</option>
@@ -81,6 +82,7 @@
 <div>
     <input type="text" id="studyTime" placeholder="Enter study time" value="40">
     <button id="classFeedbackButton">课堂反馈</button>
+    <button id="selfReview">课后复习方式</button>
 </div>
 <div>
     <label for="antiForgettingReviewWord">抗遗忘复习单词:</label>
@@ -131,6 +133,7 @@
     document.getElementById("onTimeReminderButton").addEventListener("click", script.handleOnTimeReminderClick);
     document.getElementById("vocabularyResultButton").addEventListener("click", script.handleVocabularyResultClick);
     document.getElementById("classFeedbackButton").addEventListener("click", script.handleClassFeedbackClick);
+    document.getElementById("selfReview").addEventListener("click", script.selfReviewClick);
     document.getElementById("openingSpeechButton").addEventListener("click", script.handleOpeningSpeechClick);
     document.getElementById("understandSituationButton").addEventListener("click", script.handleUnderstandSituationClick);
     document.getElementById("startVocabularyTestButton").addEventListener("click", script.startVocabularyTest);
