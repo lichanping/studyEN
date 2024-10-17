@@ -170,7 +170,7 @@ export function handleScheduleNotificationClick() {
         // Calculate the countdown time
         notificationMessage = `【${thisDateTime}】<br><br>⏰我们的在线课程还有【${timeDifference}】分钟开始了，请做好准备，及时进入会议室哦🔥`;
     } else {
-        notificationMessage = `【${thisDateTime}】<br><br>亲爱的 ✨ ${userName} 用户您好! 我们的语言陪练课程将于${formattedDateTime}开始，<br><br>课程名称为《${course}》。<br><br>📢请学员准时进入会议室，并确保摄像头开启。<br><br>👄为了呵护嗓子，建议课前准备一杯水放在身旁。<br><br>🔔若无法参加，请务必提前告知。感谢您的配合！<br><br>👍#腾讯会议：988-8340-0582`;
+        notificationMessage = `【${thisDateTime}】<br><br>亲爱的 ✨ ${userName} 用户您好! 我们的语言陪练课程将于${formattedDateTime}开始，<br><br>📖课程名称为《${course}》。<br><br>📢请学员准时进入会议室，并确保摄像头开启。<br><br>👄为了呵护嗓子，建议课前准备一杯水放在身旁。<br><br>🔔请您看到消息后抽空回复，让我们确认您已知课程安排😉。期待课堂相见🎈<br><br>👍#腾讯会议：988-8340-0582`;
     }
     copyToClipboard(notificationMessage);
     showLongText(`${notificationMessage}`);
