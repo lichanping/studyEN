@@ -28,38 +28,34 @@ window.addEventListener('load', createUsers);
 window.addEventListener("load", updateLabel);
 // Define user data
 const userData = {
-    "征洋": {
-        schedule: "每周日9点 征洋（初一65%）",
-        course: "【新教材】2024秋沪教版",
-        hours: [20, 30],
-        courseWordCount: 254
-    }, "礼豪": {
-        schedule: "每周日晚上19点 礼豪（初二88%）",
-        course: "牛津上海版英语八年级上册",
-        hours: [19, 0],
-        courseWordCount: 236
-    },
     "悠然": {
         schedule: "每周一五六日 悠然 (高三)",
         course: "高中超前单词",
         hours: [19, 20],
         courseWordCount: 4610
     },
+    "礼豪": {
+        schedule: "每周日晚上19点 礼豪（初二88%）",
+        course: "牛津上海版英语八年级上册",
+        hours: [19, 0],
+        courseWordCount: 236
+    },
     "芷淇": {
         schedule: "每周五日 芷淇 (初三)",
         course: "牛津上海版九年级下册",
         hours: [19, 25],
         courseWordCount: 164
+    },
+    "征洋": {
+        schedule: "每周日9点 征洋（初一65%）",
+        course: "【新教材】2024秋沪教版",
+        hours: [20, 30],
+        courseWordCount: 254
     }, "婧轩": {
         schedule: "代申教练 婧轩 (9年级)",
         course: "新版初中考纲单词",
         hours: [19, 0],
         courseWordCount: 1623
-    }, "乙默": {
-        schedule: "基础薄弱 乙默 (3年级)",
-        course: "牛津版单词三年级下册",
-        hours: [20, 0],
-        courseWordCount: 168
     }, "泽成": {
         schedule: "每天晚上 泽成 (高一)",
         course: "上海市高中考纲词汇",
@@ -69,12 +65,6 @@ const userData = {
     "阮王睿": {
         schedule: "每周一三六 19:35 阮王睿 (准高一)",
         course: "雅思初级单词词汇表",
-        hours: [19, 35],
-        courseWordCount: 3500
-    },
-    "伟杰": {
-        schedule: "体验课 19:35 伟杰 (高三)",
-        course: "体验课",
         hours: [19, 35],
         courseWordCount: 3500
     },
@@ -88,17 +78,6 @@ const userData = {
         course: "初中高级阅读理解",
         hours: [19, 40],
         courseWordCount: 3500
-    }, "辰辰": {
-        schedule: "每天晚上 辰辰 (高一)",
-        course: "高考词汇",
-        hours: [22, 30],
-        courseWordCount: 3500
-    },
-    "何子谦": {
-        schedule: "每周二六日 何子谦 (高三)",
-        course: "高中超前单词",
-        hours: [11, 0],
-        courseWordCount: 4610
     }
 };
 
