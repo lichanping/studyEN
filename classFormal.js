@@ -36,9 +36,9 @@ const userData = {
     },
     "礼豪": {
         schedule: "每周日晚上19点 礼豪（初二88%）",
-        course: "牛津上海版英语八年级上册",
-        hours: [19, 0],
-        courseWordCount: 236
+        course: "2023年上海市初中英语考纲词汇",
+        hours: [19, 30],
+        courseWordCount: 1768
     },
     "芷淇": {
         schedule: "每周五日 芷淇 (初三)",
@@ -48,8 +48,8 @@ const userData = {
     },
     "征洋": {
         schedule: "每周日9点 征洋（初一65%）",
-        course: "【新教材】2024秋沪教版",
-        hours: [20, 30],
+        course: "【新教材】2024秋沪教版（五•四学制）七年级上册",
+        hours: [9, 0],
         courseWordCount: 254
     }, "婧轩": {
         schedule: "代申教练 婧轩 (9年级)",
