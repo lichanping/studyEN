@@ -87,7 +87,9 @@ button, input, select {
     height: 60px; /* Adjust the height as needed */
     font-size: 18px; /* Adjust the font size as needed */
 }
-
+#preTestWord {
+    width: 100px;
+}
 /* Style for the button container */
 .button-container {
     display: flex;

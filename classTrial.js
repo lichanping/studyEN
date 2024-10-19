@@ -26,7 +26,7 @@ export function handleScheduleNotificationClick() {
     const classDateTime = document.getElementById("classDateTime").value;
 
     // Create the notification message with the dynamic date and time
-    const notificationMessage = `【体验课-${formatDateTime(classDateTime)}】<br><br>亲爱的 ${userName} 用户您好! 语言体验服务课程时间安排在(${formatDateTime(classDateTime)}) <br><br>请提前安排好时间，以下是会议室链接。<br><br>注意! 请提前下载好【腾讯会议】，我们一起开启语言学习体验之旅! 电脑🖥️、笔记本💻、平板📱都可使用。<br><br>(请提前检查好摄像头，检测好音频。台式电脑必须佩戴耳机和音响)<br><br>#腾讯会议：988-8340-0582`;
+    const notificationMessage = `【体验课-${formatDateTime(classDateTime)}】<br><br>亲爱的 ${userName} 用户您好!<br><br>我们为您安排的语言体验课程即将到来，请提前做好时间安排。以下是您的会议室链接：<br><br>#腾讯会议：988-8340-0582<br><br>🔔 温馨提醒：<br><br>- 请提前下载并安装【腾讯会议】应用，方便顺利进入课堂。 <br><br>- 电脑🖥️、笔记本💻、平板📱都可使用。<br><br>- 请提前检查 摄像头 和 音频设备，确保它们正常工作。台式电脑用户请务必佩戴耳机和音响。<br><br>我们期待与您一起开启这段精彩的语言学习体验之旅！`;
 
     copyToClipboard(notificationMessage);
     showLongText(`${notificationMessage}`);
@@ -84,18 +84,24 @@ export function handleClassFeedbackClick() {
     const newWord = parseInt(document.getElementById("newWord").value) || 30; // Default to 30 if no value entered or invalid
     const forgetWord = parseInt(document.getElementById("forgetWord").value) || 0; // Default to 0 if no value entered or invalid
     const studyTime = parseInt(document.getElementById("studyTime").value) || 30; // Default to 30 if no value entered or invalid
+    const inputText = document.getElementById('preTestWord').value.trim();
 
+    // Default value is 0 if input is empty
+    let preTestWord = inputText ? inputText.split('+').reduce((sum, num) => {
+        // Parse the integer and add to sum, default to 0 if NaN
+        const parsedNum = parseInt(num.trim(), 10);
+        return sum + (isNaN(parsedNum) ? 0 : parsedNum);
+    }, 0) : 0;
     // Calculate correct rate
     const correctRate = ((newWord - forgetWord) / newWord * 100).toFixed(0);
     const vocabularyCount = document.getElementById("vocabularyCount").value || "XXXX"; // Default to "XXXX" if no value entered
 
     // Generate feedback message
     const feedbackMessage = `【${userName} 体验课总结】<br>
-1. 首测词汇量 ${vocabularyCount}。
-2. 今日新学单词 ${newWord} 词，${forgetWord} 遗忘，正确率 ${correctRate}%，${studyTime} 分钟记住了 ${newWord - forgetWord} 词 (从开始识记到学后检测)。
-3. ${userName}同学上课很积极，状态非常好，配合度很高，注意力集中，做到了 ${correctRate}% 正确，总体来说效果非常好！<br><br><br><br>📚知识小船📚
+1. 首测词汇量${vocabularyCount}。
+2. 新学${newWord} 词，遗忘${forgetWord} 词，正确率 ${correctRate}%（学前检测${preTestWord} 词）。
+3. ${userName}在${studyTime} 分钟内记住了${newWord - forgetWord} 词 (从开始识记到学后检测)，上课很积极，状态非常好，配合度很高，注意力集中，做到了${correctRate}% 正确，总体来说效果非常好！<br><br><br><br>📚知识小船📚
 ${getRandomMotto()}`;
-
 
     copyToClipboard(feedbackMessage);
     showLongText(`${feedbackMessage}`);
