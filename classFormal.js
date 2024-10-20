@@ -34,6 +34,12 @@ const userData = {
         hours: [19, 20],
         courseWordCount: 4610
     },
+    "盛安逸": {
+        schedule: "每周 盛安逸 (四年级)",
+        course: "xxx",
+        hours: [20, 20],
+        courseWordCount: 4610
+    },
     "礼豪": {
         schedule: "每周日晚上19点 礼豪（初二88%）",
         course: "2023年上海市初中英语考纲词汇",
