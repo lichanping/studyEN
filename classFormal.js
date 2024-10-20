@@ -74,7 +74,7 @@ const userData = {
         hours: [19, 30],
         courseWordCount: 3500
     }, "敏珺": {
-        schedule: "每周日 19:40 敏珺 (初一)",
+        schedule: "每周日 19:40 敏珺 (初二)",
         course: "初中高级阅读理解",
         hours: [19, 40],
         courseWordCount: 3500

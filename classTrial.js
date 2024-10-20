@@ -3,7 +3,7 @@ import {copyToClipboard, getRandomMotto, showAlert, showLongText} from './common
 // window.addEventListener("load", copyToClipboard);
 const setInitialDateTime = () => {
     const currentDate = new Date();
-    currentDate.setHours(15, 0, 0, 0); // Set the time to 21:00 (9 PM)
+    currentDate.setHours(16, 0, 0, 0); // Set the time to 21:00 (9 PM)
 
     const year = currentDate.getFullYear();
     const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Months are zero-based
