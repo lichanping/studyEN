@@ -51,9 +51,9 @@ const userData = {
         course: "【新教材】2024秋沪教版（五•四学制）七年级上册",
         hours: [9, 0],
         courseWordCount: 254
-    }, "婧轩": {
-        schedule: "代申教练 婧轩 (9年级)",
-        course: "新版初中考纲单词",
+    }, "思瑶": {
+        schedule: "思瑶 (初二)",
+        course: "体验课",
         hours: [19, 0],
         courseWordCount: 1623
     }, "泽成": {
