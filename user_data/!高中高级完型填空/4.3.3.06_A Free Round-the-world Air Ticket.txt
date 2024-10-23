@@ -20,3 +20,63 @@ Axani wrote in his post that he is not looking for anything in return and that t
 The trip is scheduled to start on December 21 in New York City and continue on to Milan, Prague, Paris, Bangkok and New Delhi before ending in Toronto on January 8. He said the lucky woman will be announced on the website and the trip will be shared online. 
 
 这次旅行计划于12月21日从纽约开始，然后前往米兰、布拉格、巴黎、曼谷和新德里，最后于1月8日在多伦多结束。他说，这位幸运的女士将在网站上公布，这次旅行将在网上分享。
+
+主旨大意： 这是一篇新闻报道，讲述一个叫阿克萨尼的人因为与女朋友分手而且之前预定与女朋友一起环球旅行的机票又不能转让，在网上发帖称要把定给前女友的机票拿出来免费送给任何叫伊丽莎白·加拉赫，并且有加拿大的护照的女性。此贴一出立马引起了轰动，很快阿克萨尼收到了数千封邮件，当中有30个与他前女友同名同姓的加拿大人，甚至有人要为此而改成他前女友的名字。
+
+
+
+长难句：
+1. Jordan Axani, 28, said he and his then girlfriend, Elizabeth Gallagher, booked heavily discounted round-the-world air tickets in May, but their relationship ended and he did not want her ticket to go to waste.
+这句话先是一个由but连接的并列复合句，连接but前后两个句子，Jordan Axani, 28, said he and his then girlfriend, Elizabeth Gallagher, booked heavily discounted round-the-world air tickets in May和their relationship ended and he did not want her ticket to go to waste.在Jordan Axani, 28, said he and his then girlfriend, Elizabeth Gallagher, booked heavily discounted round-the-world air tickets in May中又包含一个said宾语从句，省略了引导词that。
+2. The ticket had a strict no-transfer（不可转让）policy , but since passport information was not required when booking , any Canadian Elizabeth Gallagher can use it.
+这句话是but连接的并列复合句，连接but前后两个句子，但是在but之后的句子里又包含一个since引导的原因状语从句，when booking是省略的时间状语从句，省略主语和谓语。
+3. He posted his offer on a social networking website, and received thousands of e-mails, including thirty from actual Elizabeth Gallagbers with the right passports.
+这个句子中，and连接两个谓语动词posted和received，其中including thirty from actual Elizabeth Gallagbers with the right passports是include的现在分词形式作伴随状语。
+4. More interesting , there are hundreds of Canadians who are interested in changing their name to Elizabeth Gallagher.
+这个句子是there be存在句型，同时又有一个限制性定语从句，who are interested in changing their name to Elizabeth Gallagher，先行词是Canadians关系代词是who，在从句中作主语。
+5. It was absolutely out of control , thousands of e-mails, people around the world sharing their stories of travel.
+这个句子中主句是It was absolutely out of control，还有两个附属成分，thousands of e-mails是名词短语作插入成分，people around the world sharing their stories of travel.是一个独立主格结构，在句子中作状语，表伴随。
+6. Axani wrote in his post that he is not looking for anything in return and that the woman who uses the extra ticket can choose to either travel with him or take the ticket and travel on her own.
+这句话包含了两个并列的同位语从句，由that引导，that he is not looking for anything in return 和 that the woman who uses the extra ticket can choose to either travel with him or take the ticket and travel on her own.对前面的名词post作进一步的解释。另外还有一个限制性定语从句，the woman who uses the extra ticket can choose to either travel with him or take the ticket and travel on her own.先行词是woman,关系代词是who，先行词在定语从句中作主语。
+7. The trip is scheduled to start on December 21 in New York City and continue on to Milan, Prague, Paris, Bangkok and New Delhi before ending in Toronto on January 8.
+这句话有一个before 引导的时间状语从句，before ending是时间状语从句的省略，前后主语一致，谓语动词为be动词，故可以省略。
+8. He said the lucky woman will be announced on the website and the trip will be shared online.
+这句话首先是said的一个宾语从句，省略了引导词that，在宾语从句中又是and连接两个并列的句子，the lucky woman will be announced on the website 和the trip will be shared online.
+
+
+
+语法点：
+1. 状语从句的省略
+since passport information was not required when booking. 这句话里的when looking省略了主语和谓语，在连词when, while, if, as though, although, until, whether等引导的状语从句中，当主句的主语和从句的主语一致时，省略跟主句相同的主语和be动词，只剩下主要的部分。
+2. 非谓语动词：doing作结果状语
+在这句He posted his offer on a social networking website, and received thousands of e-mails, including thirty from actual Elizabeth Gallagbers with the right passports. 是现在分词作伴随状语，与其逻辑主语是e-mails呈主动关系，故用ing形式。
+3. 限制性定语从句
+There are hundreds of Canadians who are interested in changing their name to Elizabeth Gallagher.这句话包含一个定语从句，先行词是Canadians指人，关系代词可用who或that，但是who更佳。
+4. 独立主格结构
+It was absolutely out of control , thousands of e-mails, people around the world sharing their stories of travel.
+这句话中的 people around the world sharing their stories of travel是一个独立主格结构，由于主语不一致，那么谓语动词就必须使用非谓语动词形式，由于people和share是主动关系，故采用现在分词形式，在句中做伴随状语。
+
+
+
+重点语言点：
+offer sth to sb 提供某物给某人
+round-the-world air 环球旅行机票
+go to waste浪费
+no-transfer policy 不可转让政策
+want to do sth 想要做某事
+see sb\sth do sth 看某人或某事做…
+go to good use 被好好利用
+post…on a social networking website 在社交网络上发布…
+more interesting 更有趣的是
+be interested in… 对…感兴趣
+change A to B 把A改成B
+be out of control 失控
+receive thousands of e-mails 收到成百上千的邮件
+look for 寻找
+in return 作为回报
+choose to do sth 选择做某事
+either …or…要么…要么…
+on one's own 靠某人自己
+be scheduled to do sth 预计会做某事
+continue on 继续
+on the website 在网络上
