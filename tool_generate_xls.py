@@ -314,6 +314,12 @@ class GenerateTool:
         # Create the pivot table
         df['时长'] = df['课时'].apply(lambda x: 1 if '60分钟' in x else 0.5 if '30分钟' in x else 1)
         pivot = pd.pivot_table(df, values='时长', index='类别', aggfunc='sum').reset_index()
+
+        # Create the pivot table based on student and actual price
+        pivot_by_student = pd.pivot_table(df, values='实际价格', index='学生', aggfunc='sum').reset_index()
+        # Sort the pivot table by actual price in descending order
+        pivot_by_student = pivot_by_student.sort_values(by='实际价格', ascending=False)
+
         # Define the Excel file path
         temp_folder = get_sub_folder_path('temp')
         base_name = os.path.splitext(os.path.basename(file_path))[0]
@@ -323,6 +329,7 @@ class GenerateTool:
         with pd.ExcelWriter(output_file, engine='openpyxl', mode='w') as writer:
             df.to_excel(writer, sheet_name='明细', index=False)
             pivot.to_excel(writer, sheet_name='汇总', index=False)
+            pivot_by_student.to_excel(writer, sheet_name='按学生汇总', index=False)
         print(f"Data and summary successfully written to {output_file}")
 
     def create_and_save_pivot_table(self, input_file_path):
