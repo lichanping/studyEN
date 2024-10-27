@@ -262,7 +262,6 @@ export function getRandomMotto() {
         "An hour in the morning is worth two in the evening.<br><br>一日之计在于晨。",
         "Every coin has two sides.<br><br>凡事皆有两面性。",
         "When in Rome,do as the Romans do.<br><br>入乡随俗。",
-        "It's never too late to mend.<br><br>亡羊补牢，为时未晚。",
         "Every day is a new opportunity to learn and grow. Keep pushing forward!<br><br>每一天都是学习和成长的新机会。继续前进！",
         "May your kindness and positivity shine bright today and always!<br><br>愿你的善良和积极态度今天和永远闪耀光芒！",
         "Wishing you the courage to pursue your dreams and the strength to overcome any obstacles in your path.<br><br>祝你勇气去追逐梦想，力量去克服路上的任何障碍。",
