@@ -19,4 +19,44 @@ Perhaps most of us aren't as extreme at fault-finding, but when we're honest, we
 
 Train yourself to "bite your tongue", and with a little practice, you'll get really good at letting things go. And when you do, you'll get back your enthusiasm and love for life. 
 
-训练自己“咬紧牙关”，稍加练习，你就会很擅长放手了。当你这样做的时候，你会重拾对生活的热情和热爱。
+训练自己“咬紧牙关”（‘忍住不说），稍加练习，你就会很擅长放手了。当你这样做的时候，你会重拾对生活的热情和热爱。
+
+
+主旨大意：本文通过毒舌的女孩克里的经历让我们意识到学着放手，才能让自己的世界变得美好。
+
+
+
+长难句：
+1. Several years ago I received a letter from seventeen-year-old Kerry, who described herself as a world-class fault-finder, almost always bothered by things.
+在这句中，主句是Several years ago I received a letter from seventeen-year-old Kerry，who引导非限制性定语从句who described herself as a world-class fault-finder，who在从句中作主语。后文People were always doing things that annoyed her是that引导的限制性定语从句。
+2. What made it almost impossible to deal with was that the day before the accident , Kerry had visited her friend and had spent the whole time criticizing her choice of boyfriends, the way she was living, the way she related to her mother, and various other things she felt she needed to express .
+这句话是一个主系表结构，主语和表语位置分别是两个从句。what引导的主语从句What made it almost impossible to deal with，what在从句中作主语，其中it作形式宾语，真正的宾语是to deal with；that引导表语从句that the day before the accident;其中the way she was living和the way she related to her mother是省略that的限制性定语从句，先行词为the way；various other things she felt she needed to express中she felt she needed to express是一个省略that的限制性定语从句，其中she needed to express是作felt的宾语，是一个省略that的宾语从句。
+3. I'm not suggesting you ignore problems, or that you pretend things are better than they are, but simply that you learn to allow things to be as they are— at least most of the time, and especially when it's not a really big deal.
+在这句中，主句是I'm not suggesting；you ignore problems是省略引导词that的宾语从句；than引导比较状语从句than they are；连词that引导宾语从句that you pretend things are better than they are，that无实义；连词that 引导宾语从句you learn to allow things to be as they are— at least most of the time, and especially when it's not a really big deal ；as引导表语从句as they are；when引导时间状语从句when it's not a really big deal，when为连词，起连接作用，表示当……的时候。
+
+语法点：
+1. 强调句：It is+until引导的状语从句+that+从句
+这句It wasn't until her friend was badly hurt that Kerry became aware of her habit of finding fault是强调句，其介词until引导状语从句until her friend was badly hurt。
+2. 省略that的宾语从句
+
+that引导宾语从句无意义,不充当句子成分时可省略
+在这句I'm not suggesting you ignore problem…a really big deal 中，是省略that宾语从句you ignore problems,that不充当句子成分。
+3. that引导的主语从句：主语从句位于句首，且that不作成分
+在这句I'm not suggesting you ignore problem…a really big deal 中，连词that引导主语从句that you pretend things are better than they are，that无实义。
+
+重点语言点：
+be busy doing sth 忙于做某事
+receive form 从…接收
+describe as 描述为
+deal with 处理
+spend time (in) doing sth 花费时间做某事
+be related to 与…有关
+become aware of 意识到
+rather than 而不是
+not…until 直到……才
+as well 也
+be critical of 对…持批评态度
+allow to do sth 允许做某事
+at least 至少
+get good at 擅长
+get back 返回
