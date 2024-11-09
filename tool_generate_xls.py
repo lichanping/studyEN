@@ -315,8 +315,8 @@ class GenerateTool:
         df['时长'] = df['课时'].apply(lambda x: 1 if '60分钟' in x else 0.5 if '30分钟' in x else 1)
         pivot = pd.pivot_table(df, values='时长', index='类别', aggfunc='sum').reset_index()
 
-        # Create the pivot table based on student and actual price
-        pivot_by_student = pd.pivot_table(df, values='实际价格', index='学生', aggfunc='sum').reset_index()
+        # Create the pivot table based on student with both actual price and total duration (时长)
+        pivot_by_student = pd.pivot_table(df, values=['实际价格', '时长'], index='学生', aggfunc='sum').reset_index()
         # Sort the pivot table by actual price in descending order
         pivot_by_student = pivot_by_student.sort_values(by='实际价格', ascending=False)
 
