@@ -250,7 +250,7 @@ class GenerateTool:
 
         # Function to determine the category
         def get_category(course, class_time):
-            if class_time == '体验课':
+            if class_time == '体验类型':
                 return '体验课'
             elif any(keyword in course for keyword in reading_keywords):
                 return '阅读完型语法课'
@@ -259,7 +259,7 @@ class GenerateTool:
 
         # Simplified function to determine the actual price
         def get_actual_price(class_time, category):
-            if class_time == '体验课':
+            if class_time == '体验类型':
                 return 40
 
             # Check for 60 or 30 minute classes
