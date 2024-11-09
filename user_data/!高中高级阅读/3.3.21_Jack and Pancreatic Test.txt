@@ -16,3 +16,42 @@ The next big reward for Andraka's perseverance was winning the grand prize at th
 Jack Andraka is not alone as a young innovator. After all, there were 1,499 other contestants for the Intel award, and all of them had ground-breaking ideas. For Andraka, having a family that loves science and encourages creative thinking gave him an advantage. But the key for Andraka is that reading, research, and discovery are just plain fun, and the chance to improve the world around him in the process makes it even better. 
 
 作为一名年轻的创新者，杰克·安德拉卡并不孤单。毕竟，有1499名其他竞争者角逐英特尔奖，他们都有突破性的想法。对于安德拉卡来说，拥有一个热爱科学并鼓励创造性思维的家庭给了他一个优势。但对安德拉卡来说，关键是阅读、研究和发现只是单纯的乐趣，在这个过程中有机会改善他周围的世界，让它变得更好。
+
+主旨大意：因为杰克的好朋友死于胰腺癌，杰克就努力寻找可以早期测试胰腺癌的测试，经给杰克的不懈努力，他终于找到测试的方法并获得了国际大奖。
+
+
+
+长难句：
+1. Realizing that this was the case, Andraka decided to try to develop a test that might catch problems at the earliest stages.
+在这句中，主句是Andraka decided to try to develop a test，其中 that引导定语从句，修饰test。Realizing that this was the case, realizing是非谓语成分，现在分词作伴随状语，与逻辑主语Andraka是主动关系，故用ing形式。
+2. This great award is given to young innovators who have developed a world-changing idea.
+在这句话中，主句是This great award is given to young innovators ，其中is given 是一般现在时的被动语态，who 引导一个定语从句，修饰先行词innovators 。
+3. For Andraka, having a family that loves science and encourages creative thinking gave him an advantage.
+这句话主句是having a family gave him an advantage，其中having是动名词作主语，而that引导定语从句修饰先行词family。
+
+
+
+语法点：
+1. 限制性定语从句：that引导
+在句子Realizing that this was the case, Andraka decided to try to develop a test that might catch problems at the earliest stages，that引导定语从句，修饰先行词test，在定语从句中作主语。
+2. by the time 引导时间状语
+在句子By the time standard tests determine you have the disease, it is often too late中，by the time引导时间状语，表示在……时候。
+3. 非谓语动词：现在分词作伴随状语
+在句子Dr.Maitra agreed to work with Andraka on his idea, giving him guidance and access to a laboratory，giving是现在分词作伴随状语，其逻辑主语是Dr.Maitra，因为与逻辑主语Dr.Maitra呈主动关系，故用ing形式。
+4. 限制性定语从句：who引导
+句子This great award is given to young innovators who have developed a world-changing idea，有一个who引导的定语从句，修饰先行词innovators，who在定语从句中作主语。
+
+
+
+重点语言点：
+come up with 想出
+die of 死于…
+decide to do 决定做某事
+pancreatic cancer 胰腺癌
+want to do 想要做某事
+agree to do 赞同做某事
+across to 通向
+the grand prize 大奖
+be likely to 有可能做某事
+ground-breaking 突破性
+improve the world 改变世界
