@@ -1,4 +1,5 @@
 import asyncio
+import json
 import os
 import random
 import re
@@ -234,6 +235,53 @@ class GenerateTool:
         temp_folder = get_sub_folder_path('temp')
         file_path = os.path.join(temp_folder, '每月结算.html')
         self.calc_month_fee(file_path)
+
+    @Test()
+    def export_hot_products_to_excel(self):
+        temp_folder = get_sub_folder_path('temp')
+        file_path = os.path.join(temp_folder, '人气爆款.json')
+        # Load JSON data
+        with open(file_path, "r", encoding="utf-8") as file:
+            data = json.load(file)
+
+        self.export_to_file(data, file_path)
+
+    def export_to_file(self, data, file_path):
+        # Extract the list of products
+        products = data.get("data", {}).get("productSearchV3", {}).get("products", [])
+        # Create a list to store processed product information
+        product_data = []
+        # Process each product and select only the required fields
+        for product in products:
+            name = product.get("name")
+            serial_no = product.get("serialNo")
+            bricks = product.get("bricks")
+            suitable_label = product.get("suitable", {}).get("label")
+            # Append the selected fields to the product_data list
+            product_data.append({
+                "name": name,
+                "serialNo": serial_no,
+                "bricks": bricks,
+                "label": suitable_label
+            })
+        # Convert the product data into a DataFrame
+        df = pd.DataFrame(product_data)
+        # Get the current date and format it as YYYYMMDD
+        date_str = datetime.now().strftime("%Y-%m-%d")
+        # Define the output Excel filename
+        base_name = os.path.splitext(file_path)[0]
+        output_filename = f"{base_name}_{date_str}.xlsx"
+        # Create a pivot table summarizing by 'label' and sort by 'count' in descending order
+        pivot_table = df.pivot_table(index='label', values='bricks', aggfunc='count').reset_index()
+        pivot_table.rename(columns={'bricks': 'count'}, inplace=True)
+        pivot_table.sort_values(by='count', ascending=False, inplace=True)  # Sort by count in descending order
+        # Export to Excel with multiple sheets
+        with pd.ExcelWriter(output_filename, engine='openpyxl') as writer:
+            # Save the raw product data to Sheet1
+            df.to_excel(writer, index=False, sheet_name='Sheet1')
+            # Save the sorted pivot table to Sheet2
+            pivot_table.to_excel(writer, index=False, sheet_name='Sheet2')
+        print(f"Data has been successfully exported to {output_filename}")
 
     def calc_month_fee(self, file_path):
         # Open the HTML file
