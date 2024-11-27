@@ -33,6 +33,27 @@ const userData = {
         course: "高中超前单词",
         hours: [19, 20],
         courseWordCount: 4610
+    }
+    ,
+    "吴一菲": {
+        schedule: "每周 吴一菲 (初一)",
+        course: "xxx",
+        hours: [20, 20],
+        courseWordCount: 4610
+    }
+    ,
+    "硕硕": {
+        schedule: "每周 硕硕 (四年级)",
+        course: "xxx",
+        hours: [20, 20],
+        courseWordCount: 4610
+    }
+    ,
+    "王泓俨": {
+        schedule: "每周 王泓俨 (高二)",
+        course: "xxx",
+        hours: [20, 20],
+        courseWordCount: 4610
     },
     "盛安逸": {
         schedule: "每周 盛安逸 (四年级)",
