@@ -48,9 +48,9 @@ const userData = {
     },
     "王泓俨": {
         schedule: "每周 王泓俨 (高二)",
-        course: "xxx",
+        course: "上海高考英语考纲词汇（乱序版）",
         hours: [20, 20],
-        courseWordCount: 4610
+        courseWordCount: 4955
     },
     "盛安逸": {
         schedule: "每周 盛安逸 (四年级)",
