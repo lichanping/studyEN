@@ -41,9 +41,9 @@ const userData = {
         courseWordCount: 4610
     },
     "硕硕": {
-        schedule: "每周 硕硕 (四年级)",
+        schedule: "每周周六下午3点+周日 10点 硕硕 (四年级)",
         course: "xxx",
-        hours: [20, 20],
+        hours: [10, 0],
         courseWordCount: 4610
     },
     "王泓俨": {
