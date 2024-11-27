@@ -66,15 +66,15 @@ const userData = {
     },
     "芷淇": {
         schedule: "每周五日 芷淇 (初三)",
-        course: "牛津上海版九年级下册",
+        course: "新东方中考英语必备词汇666个",
         hours: [19, 25],
-        courseWordCount: 164
+        courseWordCount: 643
     },
     "征洋": {
         schedule: "每周日9点 征洋（初一65%）",
-        course: "【新教材】2024秋沪教版（五•四学制）七年级上册",
+        course: "新版初中考纲单词",
         hours: [9, 0],
-        courseWordCount: 254
+        courseWordCount: 1623
     }, "思瑶": {
         schedule: "思瑶 (初二)",
         course: "体验课",
