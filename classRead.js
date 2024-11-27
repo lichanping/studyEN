@@ -28,7 +28,7 @@ const userData2 = {
         hours: [20, 50]
     },
     "悠然": {
-        schedule: "每周6、7 10:30 悠然 (高二)",
+        schedule: "每周6、7 悠然 (高二)",
         course: "高中高级阅读理解",
         hours: [11, 0]
     },
