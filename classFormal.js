@@ -30,9 +30,9 @@ window.addEventListener("load", updateLabel);
 const userData = {
     "悠然": {
         schedule: "每周一五六日 悠然 (高三)",
-        course: "高中超前单词",
-        hours: [19, 20],
-        courseWordCount: 4610
+        course: "乱序版-高中英语短语词组&固定搭配",
+        hours: [19, 30],
+        courseWordCount: 1092
     },
     "吴一菲": {
         schedule: "每周 吴一菲 (初一)",
