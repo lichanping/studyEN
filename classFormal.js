@@ -44,7 +44,7 @@ const userData = {
         schedule: "每周周六下午3点+周日 10点 硕硕 (四年级)",
         course: "全册-牛津上海版小学英语四年级（上册）",
         hours: [15, 0],
-        courseWordCount: 4610
+        courseWordCount: 260
     },
     "王泓俨": {
         schedule: "每周 王泓俨 (高二)",
