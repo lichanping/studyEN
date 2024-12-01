@@ -34,10 +34,10 @@ const userData = {
         hours: [19, 30],
         courseWordCount: 1092
     },
-    "吴一菲": {
-        schedule: "每周 吴一菲 (初一)",
+    "子琦": {
+        schedule: "每周 刘子琦 (初二)",
         course: "xxx",
-        hours: [20, 20],
+        hours: [21, 30],
         courseWordCount: 4610
     },
     "硕硕": {
