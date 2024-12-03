@@ -180,6 +180,62 @@ export function handleAntiForgettingFeedbackClick() {
     copyToClipboard(message);
     // Show alert with the generated message
     showLongText(`${message}`);
+
+    // Store current date and correct rate in a local file
+    storeFeedbackInFile(userName, correctRate);
+}
+
+// Function to store feedback data (current date and correct rate) in a file
+function storeFeedbackInFile(userName, correctRate) {
+    // Get the date and time from the reviewTime input field
+    const reviewTime = document.getElementById('reviewTime').value; // Retrieve the value (in format: 'YYYY-MM-DDTHH:mm')
+
+    // Check if reviewTime has a valid value (i.e., it is not empty)
+    if (!reviewTime) {
+        console.error('Review time not selected.');
+        return; // Exit the function if no review time is provided
+    }
+
+    // Format the date part (e.g., '2024-12-03') from the reviewTime value
+    const currentDate = reviewTime.split('T')[0];  // Get only the date part (YYYY-MM-DD)
+
+    // Get the day of the week (e.g., "星期一")
+    const dateObj = new Date(currentDate);
+    const daysOfWeek = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+    const weekDay = daysOfWeek[dateObj.getDay()];
+
+    // Format content with day of the week
+    const content = `${currentDate} (${weekDay}): ${correctRate}%\n`;
+
+    // Create or append to the file in localStorage
+    const existingContent = localStorage.getItem(userName) || ''; // Retrieve previous data from local storage
+    const updatedContent = existingContent + content;
+
+    // Store the updated content in localStorage (browser's local storage)
+    localStorage.setItem(userName, updatedContent);
+}
+
+export function downloadFeedbackFile() {
+    const userName = document.getElementById("userName").value;
+    // Retrieve the stored content from localStorage
+    const content = localStorage.getItem(userName);
+
+    // Check if there's any content to download
+    if (!content) {
+        alert("没有找到数据可供下载！");
+        return; // Exit if no content is found
+    }
+
+    // Create a Blob with the feedback data
+    const blob = new Blob([content], { type: 'text/plain' });
+
+    // Create an anchor element for downloading the file
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${userName}_背单词正确率统计.txt`; // Use the username as the filename
+
+    // Trigger a click event to download the file
+    link.click();
 }
 
 export function getRandomFeedback() {
