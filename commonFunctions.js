@@ -108,14 +108,18 @@ export function handleManagementGroupTemplateClick() {
 }
 
 export function handleAntiForgettingFeedbackClick() {
+    const userName = document.getElementById("userName").value;
     // Get values from input boxes
     const antiForgettingReviewWord = Array.from(document.querySelectorAll('.antiForgettingReviewWord'))
         .reduce((sum, input) => sum + (input.value ? parseInt(input.value, 10) : 0), 0);
     let forgetWords = document.getElementById('forgetWords').value.trim();
+
+    // Store forgetWords in localStorage with the key studentName_遗忘词
+    storeForgetWords(userName, forgetWords);
+
     let pronounceWords = document.getElementById('pronounceWords').value.trim();
     let keyLanguagePoints = document.getElementById('keyLanguagePoints').value.trim();
     let practiceArea = document.getElementById('practiceArea').value.trim();
-    const userName = document.getElementById("userName").value;
     const randomFeedback = getRandomFeedback();
 
     // Count the number of English words
@@ -182,6 +186,25 @@ export function handleAntiForgettingFeedbackClick() {
 
     // Store current date and correct rate in a local file
     storeFeedbackInFile(userName, correctRate);
+}
+
+// Function to store forgetWords in localStorage with the student's name as key
+function storeForgetWords(studentName, forgetWords) {
+    try {
+        // Retrieve the existing forgetWords list or initialize it as an empty string
+        let existingForgetWords = localStorage.getItem(`${studentName}_遗忘词`) || '';
+
+        // Append the new forgetWords to the existing list, if not already present
+        if (forgetWords.trim() && !existingForgetWords.includes(forgetWords)) {
+            existingForgetWords += `\n${forgetWords}`;
+        }
+
+        // Store the updated list back to localStorage
+        localStorage.setItem(`${studentName}_遗忘词`, existingForgetWords);
+        console.log('Forget words stored successfully.');
+    } catch (error) {
+        console.error('Error storing forget words:', error);
+    }
 }
 
 // Function to store feedback data (current date and correct rate) in a file
@@ -266,6 +289,22 @@ export function downloadFeedbackFile() {
 
 
 function formatFeedbackContent(rawContent) {
+    const userName = document.getElementById("userName").value;
+    const forgetWords = localStorage.getItem(`${userName}_遗忘词`) || '无数据';
+    // Add the forget words to the end of the formatted content
+    let forgetWordsContent = '';
+    if (forgetWords !== '无数据') {
+        // Filter out empty strings and create a numbered list
+        const forgetWordsArray = forgetWords.split('\n')
+            .map(word => word.trim()) // Trim each word
+            .filter(word => word.length > 0) // Filter out empty strings
+            .map((word, index) => `${index + 1}. ${word}`) // Create numbered list
+            .join('\n'); // Join into a string with line breaks
+
+        forgetWordsContent = `\n\n遗忘词\n---------------------\n${forgetWordsArray}`;
+    } else {
+        forgetWordsContent = `\n\n遗忘词\n---------------------\n无数据`;
+    }
     const feedbackEntries = rawContent.split('\n').filter(entry => entry.trim()); // Split by line and remove empty lines
     let totalCorrectRate = 0;
     let validEntries = 0; // Counter for valid entries
@@ -307,7 +346,7 @@ function formatFeedbackContent(rawContent) {
     const header = `日期                | 正确率\n---------------------`;
     const footer = validEntries > 0 ? `---------------------\n平均正确率: ${averageRate}%` : '';
 
-    return `${header}\n${formattedEntries.join('\n')}\n${footer}`;
+    return `${header}\n${formattedEntries.join('\n')}\n${footer}${forgetWordsContent}`;
 }
 
 
