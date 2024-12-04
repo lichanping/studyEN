@@ -258,7 +258,7 @@ export function downloadFeedbackFile() {
     // Create an anchor element for downloading the file
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `${userName}_背单词正确率统计.txt`; // Use the username as the filename
+    link.download = `${userName}_抗遗忘正确率统计.txt`; // Use the username as the filename
 
     // Trigger a click event to download the file
     link.click();
