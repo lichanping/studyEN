@@ -92,6 +92,8 @@
     <input type="text" id="studyTime" placeholder="Enter study time" value="40">
     <button id="classFeedbackButton">课堂反馈</button>
     <button id="selfReview">课后复习方式</button>
+    <label for="reviewTime">复习时间:</label>
+    <input type="datetime-local" id="reviewTime" value="2024-02-28T18:00">
 </div>
 <div>
     <label for="antiForgettingReviewWord">抗遗忘复习单词:</label>
@@ -115,6 +117,7 @@
 <div>
     <button id="antiForgettingFeedbackButton" style="font-weight: bold; color: red;">抗遗忘课堂反馈</button>
     <button id="bye">体验课结束语</button>
+    <button id="downloadFileButton">下载背单词正确率统计</button>
 </div>
 
 <script type="module">
@@ -150,6 +153,7 @@
     document.getElementById("understandSituationButton").addEventListener("click", script.handleUnderstandSituationClick);
     document.getElementById("startVocabularyTestButton").addEventListener("click", script.startVocabularyTest);
     document.getElementById("antiForgettingFeedbackButton").addEventListener("click", commonFunctions.handleAntiForgettingFeedbackClick);
+    document.getElementById("downloadFileButton").addEventListener("click", commonFunctions.downloadFeedbackFile);
     document.getElementById("bye").addEventListener("click", commonFunctions.byeClick);
 
 
