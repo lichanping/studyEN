@@ -126,7 +126,7 @@ export function handleAntiForgettingFeedbackClick() {
     const numberOfEnglishWords = countEnglishWords(forgetWords);
     const numberOfWrongWords = countEnglishWords(pronounceWords);
     const correctWordsCount = parseInt(antiForgettingReviewWord) - numberOfEnglishWords
-    const correctRate = (correctWordsCount / antiForgettingReviewWord * 100).toFixed(1);
+    const correctRate = (correctWordsCount / antiForgettingReviewWord * 100).toFixed(0);
     // Get the input element to display the result
     const inputAntiForgettingForgetWord = document.getElementById("antiForgettingForgetWord");
 
@@ -185,7 +185,7 @@ export function handleAntiForgettingFeedbackClick() {
     showLongText(`${message}`);
 
     // Store current date and correct rate in a local file
-    storeFeedbackInFile(userName, correctRate);
+    storeFeedbackInFile(userName, correctRate, antiForgettingReviewWord);
 }
 
 // Function to store forgetWords in localStorage with the student's name as key
@@ -194,8 +194,8 @@ function storeForgetWords(studentName, forgetWords) {
         // Retrieve the existing forgetWords list or initialize it as an empty string
         let existingForgetWords = localStorage.getItem(`${studentName}_遗忘词`) || '';
 
-        // Append the new forgetWords to the existing list, if not already present
-        if (forgetWords.trim() && !existingForgetWords.includes(forgetWords)) {
+        // Append the new forgetWords to the existing list
+        if (forgetWords.trim()) {
             existingForgetWords += `\n${forgetWords}`;
         }
 
@@ -208,7 +208,7 @@ function storeForgetWords(studentName, forgetWords) {
 }
 
 // Function to store feedback data (current date and correct rate) in a file
-function storeFeedbackInFile(userName, correctRate) {
+function storeFeedbackInFile(userName, correctRate, totalWordsReviewed) {
     const reviewTime = document.getElementById('reviewTime').value;
 
     if (!reviewTime) {
@@ -219,10 +219,10 @@ function storeFeedbackInFile(userName, correctRate) {
     try {
         // Extract the date part and day of the week
         const currentDate = reviewTime.split('T')[0];
-        const weekDay = getDayOfWeek(currentDate);
+        const weekDay = getDayOfWeek(currentDate); // Function to get the weekday
 
         // New entry for the feedback
-        const newContent = `${currentDate} (${weekDay}): ${correctRate}%`;
+        const newContent = `${currentDate} (${weekDay}): ${correctRate}% | ${totalWordsReviewed}`;
 
         // Retrieve and parse existing feedback
         const existingContent = localStorage.getItem(userName) || '';
@@ -291,60 +291,85 @@ export function downloadFeedbackFile() {
 function formatFeedbackContent(rawContent) {
     const userName = document.getElementById("userName").value;
     const forgetWords = localStorage.getItem(`${userName}_遗忘词`) || '无数据';
-    // Add the forget words to the end of the formatted content
+
+    // Initialize forget words content
     let forgetWordsContent = '';
     if (forgetWords !== '无数据') {
-        // Filter out empty strings and create a numbered list
+        // Count occurrences of each forget word
         const forgetWordsArray = forgetWords.split('\n')
-            .map(word => word.trim()) // Trim each word
-            .filter(word => word.length > 0) // Filter out empty strings
-            .map((word, index) => `${index + 1}. ${word}`) // Create numbered list
-            .join('\n'); // Join into a string with line breaks
+            .map(word => word.trim())
+            .filter(word => word.length > 0);
 
-        forgetWordsContent = `\n\n遗忘词\n---------------------\n${forgetWordsArray}`;
+        const wordCounts = forgetWordsArray.reduce((acc, word) => {
+            acc[word] = (acc[word] || 0) + 1;
+            return acc;
+        }, {});
+
+        // Sort by occurrence count (most frequent first)
+        const sortedWordCounts = Object.entries(wordCounts)
+            .sort(([, a], [, b]) => b - a)
+            .map(([word, count], index) => {
+                if (count === 1) {
+                    return `${index + 1}. ${word}`; // Only show the word without count if it is 1
+                } else {
+                    return `${index + 1}. ${word} (遗忘 ${count} 次)`; // Show count if more than 1
+                }
+            })
+            .join('\n');
+
+        forgetWordsContent = `\n\n遗忘词\n---------------------\n${sortedWordCounts}`;
     } else {
         forgetWordsContent = `\n\n遗忘词\n---------------------\n无数据`;
     }
-    const feedbackEntries = rawContent.split('\n').filter(entry => entry.trim()); // Split by line and remove empty lines
+
+    // Process the feedback entries (correct rate content)
+    const feedbackEntries = rawContent.split('\n').filter(entry => entry.trim());
     let totalCorrectRate = 0;
-    let validEntries = 0; // Counter for valid entries
+    let validEntries = 0;
+    let totalWordsReviewed = 0;
 
     const formattedEntries = feedbackEntries.map(entry => {
-        // Split the entry into date and rate parts
         let datePart = '未知日期';
         let ratePart = '无数据';
+        let wordsReviewed = 0; // New variable to track words reviewed
 
         if (entry.includes(':')) {
             const parts = entry.split(':').map(part => part.trim());
             datePart = parts[0] || '未知日期';
             ratePart = parts[1] || '无数据';
         } else {
-            // If no colon is found, just use the entry as the date part
             datePart = entry.trim();
         }
 
-        // Validate the correct rate and remove the percentage sign
         let correctRate = NaN;
         if (ratePart && ratePart.includes('%')) {
             correctRate = parseFloat(ratePart.replace('%', '')) || NaN;
+        }
+
+        // Extract words reviewed from the feedback content (3rd column)
+        const wordsPart = entry.split('|')[1]?.trim();
+        if (wordsPart) {
+            wordsReviewed = parseInt(wordsPart) || 0;
         }
 
         // Only include valid entries
         if (!isNaN(correctRate)) {
             totalCorrectRate += correctRate;
             validEntries++;
-            return `${datePart.padEnd(12)} | ${correctRate}%`; // Format with valid data
+            totalWordsReviewed += wordsReviewed;
+
+            return `${datePart.padEnd(12)} | ${String(correctRate).padEnd(4)}% | ${wordsReviewed}`; // Add words reviewed as 3rd column
         }
 
         return ''; // Return empty string for invalid entries
-    }).filter(entry => entry); // Filter out any empty entries
+    }).filter(entry => entry);
 
     // Calculate the average if there are valid entries
     const averageRate = validEntries > 0 ? (totalCorrectRate / validEntries).toFixed(2) : '无数据';
 
     // Header and footer for the formatted content
-    const header = `日期                | 正确率\n---------------------`;
-    const footer = validEntries > 0 ? `---------------------\n平均正确率: ${averageRate}%` : '';
+    const header = `日期               | 正确率 | 复习词汇数\n-------------------------------`;
+    const footer = validEntries > 0 ? `-------------------------------\n平均正确率: ${averageRate}%` : '';
 
     return `${header}\n${formattedEntries.join('\n')}\n${footer}${forgetWordsContent}`;
 }
