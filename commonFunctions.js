@@ -170,10 +170,9 @@ export function handleAntiForgettingFeedbackClick() {
     // Add line breaks
     message = message.replace(/\n/g, '<br>');
     // Append random motto
-    if (forgetWords!== " 无!" || pronounceWords!== " 无!"){
+    if (forgetWords !== " 无!" || pronounceWords !== " 无!") {
         message += `<br><br><br>🎯重要提醒🎯<br><br>${userName}🥰，课后一定要记得练习那些你遗忘或者发音不标准的单词哦💪`;
-    }
-    else{
+    } else {
         message += `<br><br><br>📚知识小船📚<br><br>${getRandomMotto()}`;
     }
     // Copy the message to clipboard
@@ -187,47 +186,74 @@ export function handleAntiForgettingFeedbackClick() {
 
 // Function to store feedback data (current date and correct rate) in a file
 function storeFeedbackInFile(userName, correctRate) {
-    // Get the date and time from the reviewTime input field
-    const reviewTime = document.getElementById('reviewTime').value; // Retrieve the value (in format: 'YYYY-MM-DDTHH:mm')
+    const reviewTime = document.getElementById('reviewTime').value;
 
-    // Check if reviewTime has a valid value (i.e., it is not empty)
     if (!reviewTime) {
         console.error('Review time not selected.');
-        return; // Exit the function if no review time is provided
+        return;
     }
 
-    // Format the date part (e.g., '2024-12-03') from the reviewTime value
-    const currentDate = reviewTime.split('T')[0];  // Get only the date part (YYYY-MM-DD)
+    try {
+        // Extract the date part and day of the week
+        const currentDate = reviewTime.split('T')[0];
+        const weekDay = getDayOfWeek(currentDate);
 
-    // Get the day of the week (e.g., "星期一")
-    const dateObj = new Date(currentDate);
-    const daysOfWeek = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
-    const weekDay = daysOfWeek[dateObj.getDay()];
+        // New entry for the feedback
+        const newContent = `${currentDate} (${weekDay}): ${correctRate}%`;
 
-    // Format content with day of the week
-    const content = `${currentDate} (${weekDay}): ${correctRate}%\n`;
+        // Retrieve and parse existing feedback
+        const existingContent = localStorage.getItem(userName) || '';
+        const feedbackEntries = existingContent
+            .split('\n')
+            .filter(entry => entry.trim()); // Remove empty lines
 
-    // Create or append to the file in localStorage
-    const existingContent = localStorage.getItem(userName) || ''; // Retrieve previous data from local storage
-    const updatedContent = existingContent + content;
+        // Update or append the current date's entry
+        let updated = false;
+        const updatedEntries = feedbackEntries.map(entry => {
+            if (entry.startsWith(currentDate)) {
+                updated = true; // Mark as updated
+                return newContent;
+            }
+            return entry;
+        });
 
-    // Store the updated content in localStorage (browser's local storage)
-    localStorage.setItem(userName, updatedContent);
+        // If the date does not exist, add the new entry
+        if (!updated) {
+            updatedEntries.push(newContent);
+        }
+
+        // Save back to localStorage
+        localStorage.setItem(userName, updatedEntries.join('\n') + '\n');
+        console.log('Feedback stored successfully.');
+    } catch (error) {
+        console.error('An error occurred while storing feedback:', error);
+    }
 }
+
+function getDayOfWeek(dateStr) {
+    const dateObj = new Date(dateStr);
+    const daysOfWeek = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+    return daysOfWeek[dateObj.getDay()];
+}
+
 
 export function downloadFeedbackFile() {
     const userName = document.getElementById("userName").value;
+
     // Retrieve the stored content from localStorage
-    const content = localStorage.getItem(userName);
+    const rawContent = localStorage.getItem(userName);
 
     // Check if there's any content to download
-    if (!content) {
+    if (!rawContent) {
         alert("没有找到数据可供下载！");
         return; // Exit if no content is found
     }
 
-    // Create a Blob with the feedback data
-    const blob = new Blob([content], { type: 'text/plain' });
+    // Generate the formatted content
+    const formattedContent = formatFeedbackContent(rawContent);
+
+    // Create a Blob with the formatted feedback data
+    const blob = new Blob([formattedContent], {type: 'text/plain'});
 
     // Create an anchor element for downloading the file
     const link = document.createElement('a');
@@ -237,6 +263,53 @@ export function downloadFeedbackFile() {
     // Trigger a click event to download the file
     link.click();
 }
+
+
+function formatFeedbackContent(rawContent) {
+    const feedbackEntries = rawContent.split('\n').filter(entry => entry.trim()); // Split by line and remove empty lines
+    let totalCorrectRate = 0;
+    let validEntries = 0; // Counter for valid entries
+
+    const formattedEntries = feedbackEntries.map(entry => {
+        // Split the entry into date and rate parts
+        let datePart = '未知日期';
+        let ratePart = '无数据';
+
+        if (entry.includes(':')) {
+            const parts = entry.split(':').map(part => part.trim());
+            datePart = parts[0] || '未知日期';
+            ratePart = parts[1] || '无数据';
+        } else {
+            // If no colon is found, just use the entry as the date part
+            datePart = entry.trim();
+        }
+
+        // Validate the correct rate and remove the percentage sign
+        let correctRate = NaN;
+        if (ratePart && ratePart.includes('%')) {
+            correctRate = parseFloat(ratePart.replace('%', '')) || NaN;
+        }
+
+        // Only include valid entries
+        if (!isNaN(correctRate)) {
+            totalCorrectRate += correctRate;
+            validEntries++;
+            return `${datePart.padEnd(12)} | ${correctRate}%`; // Format with valid data
+        }
+
+        return ''; // Return empty string for invalid entries
+    }).filter(entry => entry); // Filter out any empty entries
+
+    // Calculate the average if there are valid entries
+    const averageRate = validEntries > 0 ? (totalCorrectRate / validEntries).toFixed(2) : '无数据';
+
+    // Header and footer for the formatted content
+    const header = `日期          | 正确率\n---------------------`;
+    const footer = validEntries > 0 ? `---------------------\n平均正确率: ${averageRate}%` : '';
+
+    return `${header}\n${formattedEntries.join('\n')}\n${footer}`;
+}
+
 
 export function getRandomFeedback() {
     const attentionLevels = [
@@ -297,13 +370,13 @@ export function getRandomMotto() {
         "One clap: You’re great! Two claps: You’re awesome! Three claps: You’re the best!<br><br>一个赞：你很棒！两个赞：你真棒！三个赞：你最棒！",
         "Wonderful, keep it up! Every success is built upon a foundation of consistent effort!<br><br>很棒，坚持！每个成功后面都有着厚积薄发的过程！",
         "Received the record of your efforts! Applause to the best version of you, making progress bit by bit. Great job!<br><br>收到宝贝的打卡啦，掌声送给最棒的你，正在一点一点的进步，很棒哦！",
-		"Every effort and persistence from you will not be in vain!<br><br>宝贝的每一次努力和坚持都不会被辜负！",
-		"You’re amazing! Such effort and determination make me truly proud of you!<br><br>你真行！这么努力，这么执着，真为你感到骄傲！",
-		"Your performance is outstanding; you are the best!<br><br>你的表现很出色，你就是最棒的！",
-		"You’re progressing so fast, I’m genuinely happy for you!<br><br>你进步的真快，太为你感到开心啦！",
-		"I love seeing your hard-working spirit and look forward to seeing you take another step forward tomorrow!<br><br>我喜欢你努力的样子，期待明天的你更进一步！",
-		"Your recent training has been so dedicated, I’m cheering for you!<br><br>最近训练很认真，我疯狂为你点赞！",
-		"Here’s a little flower for you, as a reward for all your hard work!<br><br>送你一朵小花花，奖励努力的你！",
+        "Every effort and persistence from you will not be in vain!<br><br>宝贝的每一次努力和坚持都不会被辜负！",
+        "You’re amazing! Such effort and determination make me truly proud of you!<br><br>你真行！这么努力，这么执着，真为你感到骄傲！",
+        "Your performance is outstanding; you are the best!<br><br>你的表现很出色，你就是最棒的！",
+        "You’re progressing so fast, I’m genuinely happy for you!<br><br>你进步的真快，太为你感到开心啦！",
+        "I love seeing your hard-working spirit and look forward to seeing you take another step forward tomorrow!<br><br>我喜欢你努力的样子，期待明天的你更进一步！",
+        "Your recent training has been so dedicated, I’m cheering for you!<br><br>最近训练很认真，我疯狂为你点赞！",
+        "Here’s a little flower for you, as a reward for all your hard work!<br><br>送你一朵小花花，奖励努力的你！",
         "Through continuous efforts, I believe you will become more and more amazing!<br><br>通过一次次努力相信你一定会越来越棒的！",
         "I hope every effort you make becomes a stroke of luck. Keep it up!<br><br>希望你的每一次努力，都是幸运的伏笔，加油！",
         "With hard work, you've perfectly completed your training goal once again!<br><br>经过努力，你又一次完美地完成了训练目标！",

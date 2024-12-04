@@ -13,6 +13,7 @@ const setInitialDateTime = () => {
 
     const formattedCurrentDate = `${year}-${month}-${day}T${hours}:${minutes}`;
     document.getElementById("classDateTime").value = formattedCurrentDate;
+    document.getElementById("reviewTime").value = formattedCurrentDate;
 };
 
 // Attach the function to the "load" event of the window
