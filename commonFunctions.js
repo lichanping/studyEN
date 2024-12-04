@@ -304,7 +304,7 @@ function formatFeedbackContent(rawContent) {
     const averageRate = validEntries > 0 ? (totalCorrectRate / validEntries).toFixed(2) : '无数据';
 
     // Header and footer for the formatted content
-    const header = `日期          | 正确率\n---------------------`;
+    const header = `日期                | 正确率\n---------------------`;
     const footer = validEntries > 0 ? `---------------------\n平均正确率: ${averageRate}%` : '';
 
     return `${header}\n${formattedEntries.join('\n')}\n${footer}`;
