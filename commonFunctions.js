@@ -122,7 +122,7 @@ export function handleAntiForgettingFeedbackClick() {
     const numberOfEnglishWords = countEnglishWords(forgetWords);
     const numberOfWrongWords = countEnglishWords(pronounceWords);
     const correctWordsCount = parseInt(antiForgettingReviewWord) - numberOfEnglishWords
-    const correctRate = (correctWordsCount / antiForgettingReviewWord * 100).toFixed(0);
+    const correctRate = (correctWordsCount / antiForgettingReviewWord * 100).toFixed(1);
     // Get the input element to display the result
     const inputAntiForgettingForgetWord = document.getElementById("antiForgettingForgetWord");
 
