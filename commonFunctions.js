@@ -190,17 +190,17 @@ export function handleAntiForgettingFeedbackClick() {
 
 // Function to store forgetWords in localStorage with the student's name as key
 function storeForgetWords(studentName, forgetWords) {
+    const reviewTime = document.getElementById('reviewTime').value;
+
+    if (!reviewTime) {
+        console.error('Review time not selected.');
+        return;
+    }
+
     try {
-        // Retrieve the existing forgetWords list or initialize it as an empty string
-        let existingForgetWords = localStorage.getItem(`${studentName}_遗忘词`) || '';
-
-        // Append the new forgetWords to the existing list
-        if (forgetWords.trim()) {
-            existingForgetWords += `\n${forgetWords}`;
-        }
-
+        const currentDate = reviewTime.split('T')[0];
         // Store the updated list back to localStorage
-        localStorage.setItem(`${studentName}_遗忘词`, existingForgetWords);
+        localStorage.setItem(`${studentName}_遗忘词_${currentDate}`, forgetWords);
         console.log('Forget words stored successfully.');
     } catch (error) {
         console.error('Error storing forget words:', error);
@@ -298,7 +298,17 @@ function formatFeedbackContent(rawContent) {
         weekday: "long"
     });
 
-    const forgetWords = localStorage.getItem(`${userName}_遗忘词`) || '无数据';
+    let forgetWords = '';
+    // Loop through all keys in localStorage
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith(`${userName}_遗忘词_`)) {
+            const words = localStorage.getItem(key);
+            if (words) {
+                forgetWords += words + '\n'; // Append forget words for this key
+            }
+        }
+    }
 
     // Initialize forget words content
     let forgetWordsContent = '';
