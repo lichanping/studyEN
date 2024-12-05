@@ -289,7 +289,15 @@ export function downloadFeedbackFile() {
 
 
 function formatFeedbackContent(rawContent) {
-    const userName = document.getElementById("userName").value;
+    const userName = document.getElementById("userName").value || "未知用户";
+    const coachName = document.getElementById("teacherName").value;
+    const currentDate = new Date().toLocaleDateString("zh-CN", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        weekday: "long"
+    });
+
     const forgetWords = localStorage.getItem(`${userName}_遗忘词`) || '无数据';
 
     // Initialize forget words content
@@ -371,7 +379,10 @@ function formatFeedbackContent(rawContent) {
     const header = `日期               | 正确率 | 复习词汇数\n-------------------------------`;
     const footer = validEntries > 0 ? `-------------------------------\n平均正确率: ${averageRate}%` : '';
 
-    return `${header}\n${formattedEntries.join('\n')}\n${footer}${forgetWordsContent}`;
+    // Add user, coach, and print time info
+    const metaInfo = `用户: ${userName}\n教练: ${coachName}\n打印时间: ${currentDate}\n`;
+
+    return `${metaInfo}\n${header}\n${formattedEntries.join('\n')}\n${footer}${forgetWordsContent}`;
 }
 
 
