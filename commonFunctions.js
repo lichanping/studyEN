@@ -380,7 +380,7 @@ function formatFeedbackContent(rawContent) {
     const footer = validEntries > 0 ? `-------------------------------\n平均正确率: ${averageRate}%` : '';
 
     // Add user, coach, and print time info
-    const metaInfo = `用户: ${userName}\n教练: ${coachName}\n打印时间: ${currentDate}\n`;
+    const metaInfo = `学员: ${userName}\n教练: ${coachName}\n打印时间: ${currentDate}\n`;
 
     return `${metaInfo}\n${header}\n${formattedEntries.join('\n')}\n${footer}${forgetWordsContent}`;
 }
