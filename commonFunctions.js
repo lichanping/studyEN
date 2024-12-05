@@ -134,30 +134,41 @@ export function handleAntiForgettingFeedbackClick() {
     inputAntiForgettingForgetWord.value = numberOfEnglishWords;
     const antiForgettingForgetWord = document.getElementById('antiForgettingForgetWord').value;
 
+    // Remove empty lines from forgetWords and pronounceWords
     if (forgetWords.trim().length == 0) {
         forgetWords = " 无!";
     } else {
-        forgetWords = '<br>' + forgetWords.split('\n').map(word => `- ${word}`).join('<br>') + '<br>';
+        forgetWords = '<br>' + forgetWords.split('\n')
+            .filter(word => word.trim() !== '') // Remove empty lines
+            .map(word => `- ${word.trim()}`)
+            .join('<br>') + '<br>';
     }
+
     if (pronounceWords.trim().length == 0) {
         pronounceWords = " 无!";
     } else {
-        pronounceWords = '<br>' + pronounceWords.split('\n').map(word2 => `- ${word2}`).join('<br>') + '<br>';
+        pronounceWords = '<br>' + pronounceWords.split('\n')
+            .filter(word2 => word2.trim() !== '') // Remove empty lines
+            .map(word2 => `- ${word2.trim()}`)
+            .join('<br>') + '<br>';
     }
 
     let keyLanguagePointsSection = "";
     let practiceSection = "";
 
-    // If key language points are not empty, assign sequence number 5
     if (keyLanguagePoints.length !== 0) {
-        keyLanguagePointsSection = '<br><br>5️⃣重点语言点：<br>' + keyLanguagePoints.split('\n').filter(point => point.trim() !== '').map((point, index) => (index + 1) + '. ' + point).join('<br>') + '<br>';
+        keyLanguagePointsSection = '<br><br>5️⃣重点语言点：<br>' + keyLanguagePoints.split('\n').filter(point => point.trim() !== '').map((point, index) => {
+            return (index + 1) + '. ' + point.trim(); // Trim spaces within each item
+        }).join('<br>') + '<br>';
     }
 
-    // If practice area is not empty, assign sequence number based on keyLanguagePoints
     if (practiceArea.length !== 0) {
         let practiceNumber = keyLanguagePoints.length !== 0 ? '6️⃣' : '5️⃣';
-        practiceSection = '<br><br>' + practiceNumber + '语言闯关：<br>' + practiceArea.split('\n').filter(point => point.trim() !== '').map((point, index) => (index + 1) + '. ' + point).join('<br>') + '<br>';
+        practiceSection = '<br><br>' + practiceNumber + '语言闯关：<br>' + practiceArea.split('\n').filter(point => point.trim() !== '').map((point, index) => {
+            return (index + 1) + '. ' + point.trim(); // Trim spaces within each item
+        }).join('<br>') + '<br>';
     }
+
 
     // Combine both sections
     let combinedContent = keyLanguagePointsSection + practiceSection;
@@ -167,18 +178,22 @@ export function handleAntiForgettingFeedbackClick() {
 2️⃣遗忘词:${forgetWords}<br>
 3️⃣发音不标准的词:${pronounceWords}<br>
 4️⃣${userName} ${randomFeedback}`;
+
     // Add key language points if not empty
     if (combinedContent.length > 0) {
         message += combinedContent;
     }
+
     // Add line breaks
     message = message.replace(/\n/g, '<br>');
+
     // Append random motto
     if (forgetWords !== " 无!" || pronounceWords !== " 无!") {
         message += `<br><br><br>🎯重要提醒🎯<br><br>${userName}🥰，课后一定要记得练习那些你遗忘或者发音不标准的单词哦💪`;
     } else {
         message += `<br><br><br>📚知识小船📚<br><br>${getRandomMotto()}`;
     }
+
     // Copy the message to clipboard
     copyToClipboard(message);
     // Show alert with the generated message
