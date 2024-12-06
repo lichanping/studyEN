@@ -402,7 +402,9 @@ function formatFeedbackContent(rawContent) {
 
     // Header and footer for the formatted content
     const header = `日期               | 正确率 | 复习词汇数\n-------------------------------`;
-    const footer = validEntries > 0 ? `-------------------------------\n平均正确率: ${averageRate}%` : '';
+    const footer = validEntries > 0
+        ? `-------------------------------\n平均正确率: ${averageRate} %\n总复习词汇: ${totalWordsReviewed} 词`
+        : '';
 
     // Add user, coach, and print time info
     const metaInfo = `学员: ${userName}\n教练: ${coachName}\n打印时间: ${currentDate}\n`;
