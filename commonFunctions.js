@@ -270,7 +270,7 @@ function storeFeedbackInFile(userName, correctRate, totalWordsReviewed) {
 
 function getDayOfWeek(dateStr) {
     const dateObj = new Date(dateStr);
-    const daysOfWeek = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+    const daysOfWeek = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
     return daysOfWeek[dateObj.getDay()];
 }
 
@@ -401,7 +401,7 @@ function formatFeedbackContent(rawContent) {
     const averageRate = validEntries > 0 ? (totalCorrectRate / validEntries).toFixed(2) : '无数据';
 
     // Header and footer for the formatted content
-    const header = `日期               | 正确率 | 复习词汇数\n-------------------------------`;
+    const header = `日期              | 正确率 | 词汇量\n-------------------------------`;
     const footer = validEntries > 0
         ? `-------------------------------\n平均正确率: ${averageRate} %\n总复习词汇: ${totalWordsReviewed} 词`
         : '';
