@@ -24,99 +24,135 @@ const setInitialDateTime = () => {
 
 // Attach the function to the "load" event of the window
 window.addEventListener("load", setInitialDateTime);
-window.addEventListener('load', createUsers);
+window.addEventListener('load', updateUserNameOptions);
 window.addEventListener("load", updateLabel);
 // Define user data
-const userData = {
-    "悠然": {
-        schedule: "每周一五六日 悠然 (高三)",
-        course: "乱序版-高中英语短语词组&固定搭配",
-        hours: [19, 30],
-        courseWordCount: 1092
+const teacherData = {
+    "liTeacher": {
+        users: {
+            "悠然": {
+                schedule: "每周一五六日 悠然 (高三)",
+                course: "乱序版-高中英语短语词组&固定搭配",
+                hours: [19, 30],
+                courseWordCount: 1092
+            },
+            "子琦": {
+                schedule: "每周 刘子琦 (初二)",
+                course: "上海高考英语考纲词汇（乱序版）",
+                hours: [21, 30],
+                courseWordCount: 4955
+            },
+            "硕硕": {
+                schedule: "每周周六下午3点+周日 10点 硕硕 (四年级)",
+                course: "全册-牛津上海版小学英语四年级（上册）",
+                hours: [15, 0],
+                courseWordCount: 260
+            },
+            "王泓俨": {
+                schedule: "每周 王泓俨 (高二)",
+                course: "上海高考英语考纲词汇（乱序版）",
+                hours: [20, 20],
+                courseWordCount: 4955
+            },
+            "盛安逸": {
+                schedule: "每周 盛安逸 (四年级)",
+                course: "xxx",
+                hours: [20, 20],
+                courseWordCount: 4610
+            },
+            "礼豪": {
+                schedule: "每周日晚上19点 礼豪（初二88%）",
+                course: "2023年上海市初中英语考纲词汇",
+                hours: [19, 30],
+                courseWordCount: 1768
+            },
+            "芷淇": {
+                schedule: "每周五日 芷淇 (初三)",
+                course: "新东方中考英语必备词汇666个",
+                hours: [19, 25],
+                courseWordCount: 643
+            },
+            "征洋": {
+                schedule: "每周日9点 征洋（初一65%）",
+                course: "新版初中考纲单词",
+                hours: [9, 0],
+                courseWordCount: 1623
+            }, "思瑶": {
+                schedule: "思瑶 (初二)",
+                course: "体验课",
+                hours: [19, 0],
+                courseWordCount: 1623
+            }, "泽成": {
+                schedule: "每天晚上 泽成 (高一)",
+                course: "上海市高中考纲词汇",
+                hours: [19, 45],
+                courseWordCount: 1000
+            },
+            "阮王睿": {
+                schedule: "每周一三六 19:35 阮王睿 (准高一)",
+                course: "雅思初级单词词汇表",
+                hours: [19, 35],
+                courseWordCount: 3500
+            },
+            "青青": {
+                schedule: "每周一 19:30 青青 (6年级)",
+                course: "牛津上海版英语八年级上册",
+                hours: [19, 30],
+                courseWordCount: 3500
+            }, "敏珺": {
+                schedule: "每周日 19:40 敏珺 (初二)",
+                course: "初中高级阅读理解",
+                hours: [19, 40],
+                courseWordCount: 3500
+            }
+        }
     },
-    "子琦": {
-        schedule: "每周 刘子琦 (初二)",
-        course: "上海高考英语考纲词汇（乱序版）",
-        hours: [21, 30],
-        courseWordCount: 4955
+    "shiTeacher": {
+        users: {
+            "aaa": {
+                schedule: "每周周六下午3点+周日 10点 硕硕 (四年级)",
+                course: "aaa-全册",
+                hours: [15, 0],
+                courseWordCount: 260
+            },
+            "bbb": {
+                schedule: "每周 王泓俨 (高二)",
+                course: "bbb-考纲",
+                hours: [20, 50],
+                courseWordCount: 4955
+            },
+            // Add other users for 施教练 here...
+        }
     },
-    "硕硕": {
-        schedule: "每周周六下午3点+周日 10点 硕硕 (四年级)",
-        course: "全册-牛津上海版小学英语四年级（上册）",
-        hours: [15, 0],
-        courseWordCount: 260
-    },
-    "王泓俨": {
-        schedule: "每周 王泓俨 (高二)",
-        course: "上海高考英语考纲词汇（乱序版）",
-        hours: [20, 20],
-        courseWordCount: 4955
-    },
-    "盛安逸": {
-        schedule: "每周 盛安逸 (四年级)",
-        course: "xxx",
-        hours: [20, 20],
-        courseWordCount: 4610
-    },
-    "礼豪": {
-        schedule: "每周日晚上19点 礼豪（初二88%）",
-        course: "2023年上海市初中英语考纲词汇",
-        hours: [19, 30],
-        courseWordCount: 1768
-    },
-    "芷淇": {
-        schedule: "每周五日 芷淇 (初三)",
-        course: "新东方中考英语必备词汇666个",
-        hours: [19, 25],
-        courseWordCount: 643
-    },
-    "征洋": {
-        schedule: "每周日9点 征洋（初一65%）",
-        course: "新版初中考纲单词",
-        hours: [9, 0],
-        courseWordCount: 1623
-    }, "思瑶": {
-        schedule: "思瑶 (初二)",
-        course: "体验课",
-        hours: [19, 0],
-        courseWordCount: 1623
-    }, "泽成": {
-        schedule: "每天晚上 泽成 (高一)",
-        course: "上海市高中考纲词汇",
-        hours: [19, 45],
-        courseWordCount: 1000
-    },
-    "阮王睿": {
-        schedule: "每周一三六 19:35 阮王睿 (准高一)",
-        course: "雅思初级单词词汇表",
-        hours: [19, 35],
-        courseWordCount: 3500
-    },
-    "青青": {
-        schedule: "每周一 19:30 青青 (6年级)",
-        course: "牛津上海版英语八年级上册",
-        hours: [19, 30],
-        courseWordCount: 3500
-    }, "敏珺": {
-        schedule: "每周日 19:40 敏珺 (初二)",
-        course: "初中高级阅读理解",
-        hours: [19, 40],
-        courseWordCount: 3500
-    }
+    // Add more teachers as needed
 };
 
-export function createUsers() {
+
+export function updateUserNameOptions() {
     const userNameSelect = document.getElementById("userName");
-    Object.keys(userData).forEach(userName => {
+    const selectedTeacher = document.getElementById("teacherName").value;
+    userNameSelect.innerHTML = "";
+    const userNames = Object.keys(teacherData[selectedTeacher].users);
+
+    userNames.forEach(userName => {
         const option = document.createElement("option");
         option.value = userName;
         option.textContent = userName;
         userNameSelect.appendChild(option);
     });
+    // Update the label for the first user in the list (if any)
+    if (userNames.length > 0) {
+        document.getElementById("userName").value = userNames[0];
+        updateLabel();  // Update the label with the first user's details
+    } else {
+        updateLabel();  // No users, just update labels
+    }
 }
 
 export function updateLabel() {
     var userName = document.getElementById("userName").value;
+    const teacherName = document.getElementById("teacherName").value;
+
     var labels = document.getElementsByClassName("scheduleLabel");
     var courseLabel = document.getElementById("courseLabel");
     var courseWordCountLabel = document.getElementById('courseWordCountLabel');
@@ -125,11 +161,11 @@ export function updateLabel() {
     // Clear existing labels
     scheduleLabels.innerHTML = "";
 
-    const userDataForSelectedUser = userData[userName];
+    const userDataForSelectedUser = teacherData[teacherName].users[userName];
     const currentDate = new Date();
 
     if (userDataForSelectedUser) {
-        const userInfo = userData[userName];
+        const userInfo = userDataForSelectedUser;
         const label = document.createElement("label");
         label.textContent = userInfo.schedule;
         label.className = "scheduleLabel";
@@ -245,16 +281,6 @@ export function handleClassFeedbackClick() {
     showLongText(`${feedbackMessage}`);
 }
 
-export function handleOpeningSpeechClick() {
-    const userName = document.getElementById("userName").value;
-    const teacherName = document.getElementById("teacherName").value;
-
-    const openingSpeechMessage = `${userName}同学，你那边能听到我说话吗?从现在开始需要你保持摄像头的开启，这样能我更好地关注到你的状态，跟你多互动。(已经打开可以不说)<br><br>
-下面我来做一个自我介绍，我是【李校来啦】${teacherName}，以后我就是你的词汇/阅读完型/语法的专属陪练，我会陪着你一起训练和复习，那么接下来我们就开启英语学习之旅吧!`;
-
-    copyToClipboard(openingSpeechMessage);
-    showAlert(`${openingSpeechMessage}`);
-}
 
 export function handleUnderstandSituationClick() {
     const userName = document.getElementById("userName").value;

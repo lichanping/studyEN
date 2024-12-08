@@ -109,14 +109,6 @@ ${getRandomMotto()}`;
     // Add your function logic here
 }
 
-export function handleOpeningSpeechClick() {
-    const userName = document.getElementById("userName").value;
-    const openingSpeechMessage = `${userName}，${userName}妈妈你们好！<br>可以打开你们的视频吗？<br>同时我也打开我的视频，让我们互相都能看见彼此，这样会感觉更加真实和亲切。`;
-
-    copyToClipboard(openingSpeechMessage);
-    showAlert(`${openingSpeechMessage}`);
-    // Add your function logic here
-}
 
 export function handleUnderstandSituationClick() {
     const userName = document.getElementById("userName").value;
