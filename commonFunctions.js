@@ -407,7 +407,7 @@ function formatFeedbackContent(rawContent) {
         : '';
 
     // Add user, coach, and print time info
-    const metaInfo = `学员: ${userName}\n教练: ${coachName}\n打印时间: ${currentDate}\n`;
+    const metaInfo = `学员: ${userName}\n教练: ${coachName}\n统计时间: ${currentDate}\n`;
 
     return `${metaInfo}\n${header}\n${formattedEntries.join('\n')}\n${footer}${forgetWordsContent}`;
 }
