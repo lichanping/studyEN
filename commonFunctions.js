@@ -290,6 +290,10 @@ export function downloadFeedbackFile() {
     // Generate the formatted content
     const formattedContent = formatFeedbackContent(rawContent);
 
+    // Copy the formatted content to the clipboard
+    copyToClipboard(formattedContent);
+    console.log("内容已复制到剪贴板！");
+
     // Create a Blob with the formatted feedback data
     const blob = new Blob([formattedContent], {type: 'text/plain'});
 
@@ -310,7 +314,7 @@ function formatFeedbackContent(rawContent) {
         year: "numeric",
         month: "2-digit",
         day: "2-digit",
-        weekday: "long"
+        weekday: "short"
     });
 
     let forgetWords = '';
