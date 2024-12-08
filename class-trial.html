@@ -51,7 +51,10 @@
 </div>
 <div class="form-group">
     <label for="teacherName">教师名称:</label>
-    <input type="text" id="teacherName" value="英语提升李教练">
+    <select id="teacherName">
+        <option value="liTeacher">英语提升李教练</option>
+        <option value="shiTeacher">英语提升施教练</option>
+    </select>
     <button id="groupGreetingButton">入群招呼语</button>
 </div>
 <div>
@@ -149,7 +152,7 @@
     document.getElementById("vocabularyResultButton").addEventListener("click", script.handleVocabularyResultClick);
     document.getElementById("classFeedbackButton").addEventListener("click", script.handleClassFeedbackClick);
     document.getElementById("selfReview").addEventListener("click", script.selfReviewClick);
-    document.getElementById("openingSpeechButton").addEventListener("click", script.handleOpeningSpeechClick);
+    document.getElementById("openingSpeechButton").addEventListener("click", commonFunctions.handleOpeningSpeechClick);
     document.getElementById("understandSituationButton").addEventListener("click", script.handleUnderstandSituationClick);
     document.getElementById("startVocabularyTestButton").addEventListener("click", script.startVocabularyTest);
     document.getElementById("antiForgettingFeedbackButton").addEventListener("click", commonFunctions.handleAntiForgettingFeedbackClick);

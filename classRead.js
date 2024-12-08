@@ -17,94 +17,124 @@ const setInitialDateTime = () => {
 
 // Attach the function to the "load" event of the window
 window.addEventListener("load", setInitialDateTime);
-window.addEventListener('load', createUsers2);
+window.addEventListener('load', updateUserNameOptions2);
 window.addEventListener("load", updateLabel2);
 
-// Define user data
-const userData2 = {
-    "芷淇": {
-        schedule: "每周4、7 21:00 芷淇 (初二)",
-        course: "初中初级阅读理解",
-        hours: [20, 50]
+const teacherData = {
+    "liTeacher": {
+        users: {
+            "芷淇": {
+                schedule: "每周4、7 21:00 芷淇 (初二)",
+                course: "初中初级阅读理解",
+                hours: [20, 50]
+            },
+            "悠然": {
+                schedule: "每周6、7 悠然 (高二)",
+                course: "高中高级阅读理解",
+                hours: [11, 0]
+            },
+            "悠然同学": {
+                schedule: "每周6、7 10:30 悠然同学 (高二)",
+                course: "高中高级完型填空",
+                hours: [10, 30]
+            },
+            "盛安逸": {
+                schedule: "每周六 9:00 盛安逸 (五年级)",
+                course: "小学基础阅读理解",
+                hours: [9, 0]
+            },
+            "盛安逸同学": {
+                schedule: "每周六 9:00 盛安逸同学 (五年级)",
+                course: "英语基础语法",
+                hours: [9, 0]
+            },
+            "陈敏珺": {
+                schedule: "每周日 16:00 陈敏珺 (初一)",
+                course: "初中高级完型填空",
+                hours: [16, 0]
+            },
+            "敏珺同学": {
+                schedule: "每周日 16:10 敏珺同学 (初一)",
+                course: "初中高级阅读理解",
+                hours: [16, 10]
+            },
+            "南剑": {
+                schedule: "每周日 20:00 南剑 (高三)",
+                course: "高中初级阅读",
+                hours: [20, 0]
+            },
+        }
     },
-    "悠然": {
-        schedule: "每周6、7 悠然 (高二)",
-        course: "高中高级阅读理解",
-        hours: [11, 0]
+    "shiTeacher": {
+        users: {
+            "硕硕2": {
+                schedule: "每周周六下午3点+周日 10点 硕硕 (四年级)",
+                course: "全册",
+                hours: [15, 0],
+            },
+            "王泓俨2": {
+                schedule: "每周 王泓俨 (高二)",
+                course: "上海高考英语考纲词汇（乱序版）",
+                hours: [20, 50],
+            },
+            // Add other users for 施教练 here...
+        }
     },
-    "悠然同学": {
-        schedule: "每周6、7 10:30 悠然同学 (高二)",
-        course: "高中高级完型填空",
-        hours: [10, 30]
-    },
-    "盛安逸":{
-        schedule: "每周六 9:00 盛安逸 (五年级)",
-        course: "英语基础语法",
-        hours: [9, 0]
-    },
-    "盛安逸同学":{
-        schedule: "每周六 9:00 盛安逸同学 (五年级)",
-        course: "小学基础阅读理解",
-        hours: [9, 0]
-    },
-    "陈敏珺": {
-        schedule: "每周日 16:00 陈敏珺 (初一)",
-        course: "初中高级完型填空",
-        hours: [16, 0]
-    },
-    "敏珺同学": {
-        schedule: "每周日 16:10 敏珺同学 (初一)",
-        course: "初中高级阅读理解",
-        hours: [16, 10]
-    },
-    "南剑": {
-        schedule: "每周日 20:00 南剑 (高三)",
-        course: "高中初级阅读",
-        hours: [20, 0]
-    },
+    // Add more teachers as needed
 };
 
-export function createUsers2() {
+
+export function updateUserNameOptions2() {
     const userNameSelect = document.getElementById("userName");
-    Object.keys(userData2).forEach(userName => {
+    const selectedTeacher = document.getElementById("teacherName").value;
+    userNameSelect.innerHTML = "";
+    const userNames = Object.keys(teacherData[selectedTeacher].users);
+
+    userNames.forEach(userName => {
         const option = document.createElement("option");
         option.value = userName;
         option.textContent = userName;
         userNameSelect.appendChild(option);
     });
+    // Update the label for the first user in the list (if any)
+    if (userNames.length > 0) {
+        document.getElementById("userName").value = userNames[0];
+        updateLabel2();  // Update the label with the first user's details
+    } else {
+        updateLabel2();  // No users, just update labels
+    }
 }
 
 export function updateLabel2() {
     var userName = document.getElementById("userName").value;
+    const teacherName = document.getElementById("teacherName").value;
+
     var labels = document.getElementsByClassName("scheduleLabel");
     var courseLabel = document.getElementById("courseLabel");
+    var courseWordCountLabel = document.getElementById('courseWordCountLabel');
 
     const scheduleLabels = document.getElementsByClassName("scheduleLabels")[0];
     // Clear existing labels
     scheduleLabels.innerHTML = "";
-    // Create labels for each user
-    Object.keys(userData2).forEach(userName => {
-        const userInfo = userData2[userName];
+
+    const userDataForSelectedUser = teacherData[teacherName].users[userName];
+    const currentDate = new Date();
+
+    if (userDataForSelectedUser) {
+        const userInfo = userDataForSelectedUser;
         const label = document.createElement("label");
         label.textContent = userInfo.schedule;
         label.className = "scheduleLabel";
+        label.style.color = "red";
         scheduleLabels.appendChild(label);
         scheduleLabels.appendChild(document.createElement("br"));
-    });
-
-    const userDataForSelectedUser = userData2[userName];
-    const currentDate = new Date();
-    for (var i = 0; i < labels.length; i++) {
-        if (labels[i].textContent.includes(userName)) {
-            labels[i].style.fontWeight = "bold";
-            labels[i].style.color = "red";
-            courseLabel.textContent = userDataForSelectedUser.course;
-            currentDate.setHours(...userDataForSelectedUser.hours, 0, 0);
-        } else {
-            labels[i].style.fontWeight = "normal";
-            labels[i].style.color = "initial";
-        }
+        courseLabel.textContent = userDataForSelectedUser.course;
+        courseWordCountLabel.textContent = userDataForSelectedUser.courseWordCount;
+        currentDate.setHours(...userDataForSelectedUser.hours, 0, 0);
+    } else {
+        courseLabel.textContent = '';
     }
+
     const year = currentDate.getFullYear();
     const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Months are zero-based
     const day = String(currentDate.getDate()).padStart(2, '0');
@@ -115,6 +145,7 @@ export function updateLabel2() {
     document.getElementById("classDateTime").value = formattedCurrentDate;
     document.getElementById("reviewTime").value = formattedCurrentDate;
 }
+
 
 export function handleScheduleNotificationClick() {
     const userName = document.getElementById("userName").value;
@@ -178,17 +209,6 @@ export function handleReadClassFeedbackClick() {
     showLongText(`${feedbackMessage}`);
 }
 
-export function handleOpeningSpeechClick() {
-    const userName = document.getElementById("userName").value;
-    const teacherName = document.getElementById("teacherName").value;
-
-    const openingSpeechMessage = `${userName}同学，你那边能听到我说话吗?从现在开始需要你保持摄像头的开启，这样能我更好地关注到你的状态，跟你多互动。(已经打开可以不说)<br><br>
-下面我来做一个自我介绍，我是【李校来啦】${teacherName}，以后我就是你的词汇/阅读完型/语法的专属陪练，我会陪着你一起训练和复习，那么接下来我们就开启英语学习之旅吧!`;
-
-    copyToClipboard(openingSpeechMessage);
-    showAlert(`${openingSpeechMessage}`);
-    // Add your function logic here
-}
 
 export function handleUnderstandSituationClick() {
     const userName = document.getElementById("userName").value;

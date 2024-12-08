@@ -27,12 +27,16 @@
     <button id="cameraWarningButton">未开启摄像头</button>
 </div>
 
-<label id="courseLabel" style="font-weight: bold; color: red;"></label>
+<div><label id="courseLabel"></label>
+    <label id="courseWordCountLabel"></label></div>
 <div class="scheduleLabels"></div>
 
 <div class="form-group">
     <label for="teacherName">教师名称:</label>
-    <input type="text" id="teacherName" value="英语提升李教练">
+    <select id="teacherName">
+        <option value="liTeacher">英语提升李教练</option>
+        <option value="shiTeacher">英语提升施教练</option>
+    </select>
     <button id="groupGreetingButton">入群招呼语</button>
 </div>
 
@@ -109,10 +113,12 @@
     document.getElementById("scheduleNotificationButton").addEventListener("click", scriptR.handleScheduleNotificationClick);
     document.getElementById("lateMeetingReminderButton").addEventListener("click", scriptR.handleLateMeetingReminderClick);
     document.getElementById("classFeedbackButton").addEventListener("click", scriptR.handleReadClassFeedbackClick);
-    document.getElementById("openingSpeechButton").addEventListener("click", scriptR.handleOpeningSpeechClick);
+    document.getElementById("openingSpeechButton").addEventListener("click", commonFunctions.handleOpeningSpeechClick);
     document.getElementById("understandSituationButton").addEventListener("click", scriptR.handleUnderstandSituationClick);
     document.getElementById("managementGroupTemplateButton").addEventListener("click", commonFunctions.handleManagementGroupTemplateClick);
     document.getElementById("antiForgettingFeedbackButton").addEventListener("click", commonFunctions.handleAntiForgettingFeedbackClick);
+    document.getElementById("teacherName").addEventListener("change", scriptR.updateUserNameOptions2);
+
 </script>
 
 </body>

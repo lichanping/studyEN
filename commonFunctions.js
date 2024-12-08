@@ -38,12 +38,26 @@ export function handleCameraWarningClick() {
 }
 
 export function handleGroupGreetingClick() {
-    const teacherName = document.getElementById("teacherName").value;
+    const teacherNameElement = document.getElementById("teacherName");
+    const teacherName = teacherNameElement.options[teacherNameElement.selectedIndex].text;
     const greetingMessage = `亲爱的家长朋友，您们好！我是${teacherName}，很⾼兴您们加⼊英语快速提升集训营🎉🎉🎉，开启一段快乐、高效的“英语提升之旅”！<br><br>        在此过程中，我会全程陪伴孩⼦进行学新和复习，也会根据学生状态调整上课节奏🐧🕙，从短暂记忆到永久记忆，从被动接收到主动参与，逐渐提高学生的英语能力。💪💪<br><br>        让我们一起努力，⻅证孩子的学习提升和蜕变吧！😉😉😉`;
 
     copyToClipboard(greetingMessage);
     showLongText(`${greetingMessage}`);
 }
+
+export function handleOpeningSpeechClick() {
+    const userName = document.getElementById("userName").value;
+    const teacherNameElement = document.getElementById("teacherName");
+    const teacherName = teacherNameElement.options[teacherNameElement.selectedIndex].text;
+
+    const openingSpeechMessage = `${userName}同学，你那边能听到我说话吗?从现在开始需要你保持摄像头的开启，这样能我更好地关注到你的状态，跟你多互动。(已经打开可以不说)<br><br>
+下面我来做一个自我介绍，我是【李校来啦】${teacherName}，以后我就是你的词汇/阅读完型/语法的专属陪练，我会陪着你一起训练和复习，那么接下来我们就开启英语学习之旅吧!`;
+
+    copyToClipboard(openingSpeechMessage);
+    showAlert(`${openingSpeechMessage}`);
+}
+
 
 // Define an array of 10 sentences
 const sentences = [
@@ -309,7 +323,8 @@ export function downloadFeedbackFile() {
 
 function formatFeedbackContent(rawContent) {
     const userName = document.getElementById("userName").value || "未知用户";
-    const coachName = document.getElementById("teacherName").value;
+    const teacherNameElement = document.getElementById("teacherName");
+    const coachName = teacherNameElement.options[teacherNameElement.selectedIndex].text;
     const currentDate = new Date().toLocaleDateString("zh-CN", {
         year: "numeric",
         month: "2-digit",
