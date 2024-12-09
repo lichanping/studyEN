@@ -314,7 +314,7 @@ export function downloadFeedbackFile() {
     // Create an anchor element for downloading the file
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `${userName}_抗遗忘正确率统计.txt`; // Use the username as the filename
+    link.download = `${userName}_抗遗忘正确率统计详情.txt`; // Use the username as the filename
 
     // Trigger a click event to download the file
     link.click();
@@ -417,7 +417,7 @@ function formatFeedbackContent(rawContent) {
     }).filter(entry => entry);
 
     // Calculate the average if there are valid entries
-    const averageRate = validEntries > 0 ? (totalCorrectRate / validEntries).toFixed(2) : '无数据';
+    const averageRate = validEntries > 0 ? (totalCorrectRate / validEntries).toFixed(0) : '无数据';
 
     // Header and footer for the formatted content
     const header = `日期              | 正确率 | 词汇量\n-------------------------------`;
@@ -426,7 +426,14 @@ function formatFeedbackContent(rawContent) {
         : '';
 
     // Add user, coach, and print time info
-    const metaInfo = `学员: ${userName}\n教练: ${coachName}\n统计时间: ${currentDate}\n`;
+    // const metaInfo = `==========\n 本次总累计: ${totalWordsReviewed} 词 \n==========\n学员: ${userName}\n教练: ${coachName}\n统计时间: ${currentDate}\n`;
+    const metaInfo = `======================
+   本次总累计: ${totalWordsReviewed} 词   
+======================
+学员: ${userName}
+教练: ${coachName}
+统计时间: ${currentDate}
+`;
 
     return `${metaInfo}\n${header}\n${formattedEntries.join('\n')}\n${footer}${forgetWordsContent}`;
 }
