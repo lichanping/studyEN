@@ -42,23 +42,11 @@ const teacherData = {
                 hours: [21, 30],
                 courseWordCount: 4955
             },
-            "硕硕": {
-                schedule: "每周周六下午3点+周日 10点 硕硕 (四年级)",
-                course: "全册-牛津上海版小学英语四年级（上册）",
-                hours: [15, 0],
-                courseWordCount: 260
-            },
             "王泓俨": {
                 schedule: "每周 王泓俨 (高二)",
                 course: "上海高考英语考纲词汇（乱序版）",
                 hours: [20, 20],
                 courseWordCount: 4955
-            },
-            "盛安逸": {
-                schedule: "每周 盛安逸 (四年级)",
-                course: "xxx",
-                hours: [20, 20],
-                courseWordCount: 4610
             },
             "礼豪": {
                 schedule: "每周日晚上19点 礼豪（初二88%）",
@@ -77,6 +65,18 @@ const teacherData = {
                 course: "新版初中考纲单词",
                 hours: [9, 0],
                 courseWordCount: 1623
+            },
+            "硕硕": {
+                schedule: "每周周六下午3点+周日 10点 硕硕 (四年级)",
+                course: "全册-牛津上海版小学英语四年级（上册）",
+                hours: [15, 0],
+                courseWordCount: 260
+            },
+            "盛安逸": {
+                schedule: "每周 盛安逸 (四年级)",
+                course: "xxx",
+                hours: [20, 20],
+                courseWordCount: 4610
             }, "思瑶": {
                 schedule: "思瑶 (初二)",
                 course: "体验课",
