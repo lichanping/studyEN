@@ -77,27 +77,11 @@ const teacherData = {
                 course: "xxx",
                 hours: [20, 20],
                 courseWordCount: 4610
-            }, "思瑶": {
-                schedule: "思瑶 (初二)",
-                course: "体验课",
-                hours: [19, 0],
-                courseWordCount: 1623
-            }, "泽成": {
-                schedule: "每天晚上 泽成 (高一)",
-                course: "上海市高中考纲词汇",
-                hours: [19, 45],
-                courseWordCount: 1000
             },
             "阮王睿": {
                 schedule: "每周一三六 19:35 阮王睿 (准高一)",
                 course: "雅思初级单词词汇表",
                 hours: [19, 35],
-                courseWordCount: 3500
-            },
-            "青青": {
-                schedule: "每周一 19:30 青青 (6年级)",
-                course: "牛津上海版英语八年级上册",
-                hours: [19, 30],
                 courseWordCount: 3500
             }, "敏珺": {
                 schedule: "每周日 19:40 敏珺 (初二)",
