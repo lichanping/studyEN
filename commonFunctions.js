@@ -410,11 +410,20 @@ function formatFeedbackContent(rawContent) {
             validEntries++;
             totalWordsReviewed += wordsReviewed;
 
-            return `${datePart.padEnd(12)} | ${String(correctRate).padEnd(4)}% | ${wordsReviewed}`; // Add words reviewed as 3rd column
+            return {
+                date: datePart,
+                formatted: `${datePart.padEnd(12)} | ${String(correctRate).padEnd(4)}% | ${wordsReviewed}`
+            };
         }
 
-        return ''; // Return empty string for invalid entries
+        return null; // Return null for invalid entries
     }).filter(entry => entry);
+
+    // Sort entries by date in descending order
+    formattedEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    // Map sorted entries back to strings
+    const sortedFormattedEntries = formattedEntries.map(entry => entry.formatted);
 
     // Calculate the average if there are valid entries
     const averageRate = validEntries > 0 ? (totalCorrectRate / validEntries).toFixed(0) : '无数据';
@@ -426,7 +435,6 @@ function formatFeedbackContent(rawContent) {
         : '';
 
     // Add user, coach, and print time info
-    // const metaInfo = `==========\n 本次总累计: ${totalWordsReviewed} 词 \n==========\n学员: ${userName}\n教练: ${coachName}\n统计时间: ${currentDate}\n`;
     const metaInfo = `======================
    本次总累计: ${totalWordsReviewed} 词   
 ======================
@@ -435,7 +443,7 @@ function formatFeedbackContent(rawContent) {
 统计时间: ${currentDate}
 `;
 
-    return `${metaInfo}\n${header}\n${formattedEntries.join('\n')}\n${footer}${forgetWordsContent}`;
+    return `${metaInfo}\n${header}\n${sortedFormattedEntries.join('\n')}\n${footer}${forgetWordsContent}`;
 }
 
 

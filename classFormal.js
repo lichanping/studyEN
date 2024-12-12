@@ -50,9 +50,9 @@ const teacherData = {
             },
             "欣怡": {
                 schedule: "每周四 欣怡 (高一)",
-                course: "上海高考英语考纲词汇（乱序版）",
+                course: "乱序版-上海市高考英语考纲词汇（2024）",
                 hours: [19, 50],
-                courseWordCount: 4955
+                courseWordCount: 2960
             },
             "礼豪": {
                 schedule: "每周日晚上19点 礼豪（初二88%）",
