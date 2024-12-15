@@ -332,23 +332,34 @@ function formatFeedbackContent(rawContent) {
         weekday: "short"
     });
 
-    let forgetWords = '';
-    // Loop through all keys in localStorage
+    // Read day range from input
+    const dayRangeInput = document.getElementById("daysRangeInput");
+    const dayRange = parseInt(dayRangeInput.value) || 7; // Default to 7 days if input is invalid
+
+    const today = new Date();
+    const startDate = new Date();
+    startDate.setDate(today.getDate() - dayRange);
+
+    // Process forget words
+    let forgetWordsContent = '';
+    let forgetWordsData = '';
     for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
         if (key.startsWith(`${userName}_遗忘词_`)) {
-            const words = localStorage.getItem(key);
-            if (words) {
-                forgetWords += words + '\n'; // Append forget words for this key
+            const datePart = key.split('_').pop();
+            const wordDate = new Date(datePart.trim());
+
+            if (wordDate >= startDate && wordDate <= today) {
+                const words = localStorage.getItem(key);
+                if (words) {
+                    forgetWordsData += words + '\n';
+                }
             }
         }
     }
 
-    // Initialize forget words content
-    let forgetWordsContent = '';
-    if (forgetWords !== '无数据') {
-        // Count occurrences of each forget word
-        const forgetWordsArray = forgetWords.split('\n')
+    if (forgetWordsData) {
+        const forgetWordsArray = forgetWordsData.split('\n')
             .map(word => word.trim())
             .filter(word => word.length > 0);
 
@@ -357,15 +368,12 @@ function formatFeedbackContent(rawContent) {
             return acc;
         }, {});
 
-        // Sort by occurrence count (most frequent first)
         const sortedWordCounts = Object.entries(wordCounts)
             .sort(([, a], [, b]) => b - a)
             .map(([word, count], index) => {
-                if (count === 1) {
-                    return `${index + 1}. ${word}`; // Only show the word without count if it is 1
-                } else {
-                    return `${index + 1}. ${word} (遗忘 ${count} 次)`; // Show count if more than 1
-                }
+                return count === 1
+                    ? `${index + 1}. ${word}`
+                    : `${index + 1}. ${word} (遗忘 ${count} 次)`;
             })
             .join('\n');
 
@@ -374,7 +382,7 @@ function formatFeedbackContent(rawContent) {
         forgetWordsContent = `\n\n遗忘词\n---------------------\n无数据`;
     }
 
-    // Process the feedback entries (correct rate content)
+    // Process feedback entries (correct rate content)
     const feedbackEntries = rawContent.split('\n').filter(entry => entry.trim());
     let totalCorrectRate = 0;
     let validEntries = 0;
@@ -383,7 +391,7 @@ function formatFeedbackContent(rawContent) {
     const formattedEntries = feedbackEntries.map(entry => {
         let datePart = '未知日期';
         let ratePart = '无数据';
-        let wordsReviewed = 0; // New variable to track words reviewed
+        let wordsReviewed = 0;
 
         if (entry.includes(':')) {
             const parts = entry.split(':').map(part => part.trim());
@@ -398,45 +406,40 @@ function formatFeedbackContent(rawContent) {
             correctRate = parseFloat(ratePart.replace('%', '')) || NaN;
         }
 
-        // Extract words reviewed from the feedback content (3rd column)
         const wordsPart = entry.split('|')[1]?.trim();
         if (wordsPart) {
             wordsReviewed = parseInt(wordsPart) || 0;
         }
 
-        // Only include valid entries
         if (!isNaN(correctRate)) {
-            totalCorrectRate += correctRate;
-            validEntries++;
-            totalWordsReviewed += wordsReviewed;
+            const entryDate = new Date(datePart);
+            if (entryDate >= startDate && entryDate <= today) {
+                totalCorrectRate += correctRate;
+                validEntries++;
+                totalWordsReviewed += wordsReviewed;
 
-            return {
-                date: datePart,
-                formatted: `${datePart.padEnd(12)} | ${String(correctRate).padEnd(4)}% | ${wordsReviewed}`
-            };
+                return {
+                    date: datePart,
+                    formatted: `${datePart.padEnd(12)} | ${String(correctRate).padEnd(4)}% | ${wordsReviewed}`
+                };
+            }
         }
 
-        return null; // Return null for invalid entries
+        return null;
     }).filter(entry => entry);
 
-    // Sort entries by date in descending order
-    formattedEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
+    formattedEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-    // Map sorted entries back to strings
     const sortedFormattedEntries = formattedEntries.map(entry => entry.formatted);
-
-    // Calculate the average if there are valid entries
     const averageRate = validEntries > 0 ? (totalCorrectRate / validEntries).toFixed(0) : '无数据';
 
-    // Header and footer for the formatted content
     const header = `日期              | 正确率 | 词汇量\n-------------------------------`;
     const footer = validEntries > 0
         ? `-------------------------------\n平均正确率: ${averageRate} %\n总复习词汇: ${totalWordsReviewed} 词`
         : '';
 
-    // Add user, coach, and print time info
     const metaInfo = `======================
-   本次总累计: ${totalWordsReviewed} 词   
+   本次总累计: ${totalWordsReviewed} 词
 ======================
 学员: ${userName}
 教练: ${coachName}

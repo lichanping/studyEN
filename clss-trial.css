@@ -45,7 +45,7 @@ body {
 }
 
 #reviewWord,
-#newWord, #forgetWord, #antiForgettingForgetWord {
+#newWord, #forgetWord, #antiForgettingForgetWord, #daysRangeInput {
     width: 40px; /* Specify the width in pixels */
 }
 
