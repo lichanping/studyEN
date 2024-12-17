@@ -197,9 +197,18 @@ export function handleScheduleNotificationClick() {
     let notificationMessage;
     if (timeDifference > 0 && timeDifference <= 30) {
         // Calculate the countdown time
-        notificationMessage = `【${thisDateTime}】<br><br>⏰我们的在线课程还有【${timeDifference}】分钟开始了，请做好准备，及时进入会议室哦🔥`;
+        notificationMessage = `【${thisDateTime}】<br><br>⏳我们的在线课程还有【${timeDifference}】分钟开始了，请做好准备，及时进入会议室哦`;
     } else {
-        notificationMessage = `【${thisDateTime}】<br><br>亲爱的 ✨ ${userName} 用户您好! 我们的语言陪练课程将于${formattedDateTime}开始，<br><br>📖课程名称为《${course}》。<br><br>📢请学员准时进入会议室，并确保摄像头开启。<br><br>👄为了呵护嗓子，建议课前准备一杯水放在身旁。<br><br>🔔请您看到消息后抽空回复，让我们确认您已知课程安排😉。期待课堂相见🎈<br><br>👍#腾讯会议：988-8340-0582`;
+        notificationMessage =
+`【${thisDateTime}】
+亲爱的 ✨ ${userName} 用户您好！
+📖 课程名称：《${course}》
+🔔 重要提醒：
+如需调整时间，请务必提前4小时告知学员服务中心负责人，否则系统无法更改，仍会消耗课时。
+🗣️ 上课小贴士：
+请准时进入会议室，准备好摄像头和一杯水🥤，呵护嗓子。
+💬 请您看到消息后回复确认👌。
+📞 #腾讯会议：988-8340-0582`;
     }
     copyToClipboard(notificationMessage);
     showLongText(`${notificationMessage}`);
