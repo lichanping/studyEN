@@ -54,23 +54,11 @@ const teacherData = {
                 hours: [19, 50],
                 courseWordCount: 2960
             },
-            "礼豪": {
-                schedule: "每周日晚上19点 礼豪（初二88%）",
-                course: "2023年上海市初中英语考纲词汇",
-                hours: [19, 30],
-                courseWordCount: 1768
-            },
             "芷淇": {
                 schedule: "每周五日 芷淇 (初三)",
                 course: "新东方中考英语必备词汇666个",
                 hours: [19, 25],
                 courseWordCount: 643
-            },
-            "征洋": {
-                schedule: "每周日9点 征洋（初一65%）",
-                course: "新版初中考纲单词",
-                hours: [9, 0],
-                courseWordCount: 1623
             },
             "硕硕": {
                 schedule: "每周周六下午3点+周日 10点 硕硕 (四年级)",
@@ -80,7 +68,7 @@ const teacherData = {
             },
             "盛安逸": {
                 schedule: "每周 盛安逸 (四年级)",
-                course: "xxx",
+                course: "小学基础阅读理解",
                 hours: [20, 20],
                 courseWordCount: 4610
             },
@@ -94,6 +82,18 @@ const teacherData = {
                 course: "初中高级阅读理解",
                 hours: [19, 40],
                 courseWordCount: 3500
+            },
+            "礼豪": {
+                schedule: "每周日晚上19点 礼豪（初二88%）",
+                course: "2023年上海市初中英语考纲词汇",
+                hours: [19, 30],
+                courseWordCount: 1768
+            },
+            "征洋": {
+                schedule: "每周日9点 征洋（初一65%）",
+                course: "新版初中考纲单词",
+                hours: [9, 0],
+                courseWordCount: 1623
             }
         }
     },
@@ -200,14 +200,15 @@ export function handleScheduleNotificationClick() {
         notificationMessage = `【${thisDateTime}】<br><br>⏳我们的在线课程还有【${timeDifference}】分钟开始了，请做好准备，及时进入会议室哦`;
     } else {
         notificationMessage =
-`【${thisDateTime}】
+            `【${thisDateTime}】
 亲爱的 ✨ ${userName} 用户您好！
 📖 课程名称：《${course}》
 🔔 重要提醒：
-如需调整时间，请务必提前4小时告知学员服务中心负责人，否则系统无法更改，仍会消耗课时。
+如需取消或调整上课时间，请至少提前4小时告知学员服务中心负责人，否则系统将无法更改，仍会消耗课时。
 🗣️ 上课小贴士：
-请准时进入会议室，准备好摄像头和一杯水🥤，呵护嗓子。
+请准时进入会议室，准备好摄像头和一杯水🍵，呵护嗓子。
 💬 请您看到消息后回复确认👌。
+
 📞 #腾讯会议：988-8340-0582`;
     }
     copyToClipboard(notificationMessage);
