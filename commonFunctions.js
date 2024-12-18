@@ -29,6 +29,24 @@ export function navigateToReadClass() {
     window.location.href = "class-read.html";
 }
 
+
+export function checkLoginStatus() {
+    const currentDate = new Date().toDateString(); // Get today's date
+
+    // Check if the user is logged in and if the login date is today
+    const storedLoginDate = localStorage.getItem('loginDate');
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+
+    if (isLoggedIn && storedLoginDate === currentDate) {
+        // If logged in and the login date is today, allow the user to stay on the page
+        // No action needed, user is allowed to stay on the page
+    } else {
+        // If not logged in or the login date is not today, redirect to login.html
+        window.location.href = 'login.html';
+    }
+}
+
+
 export function validateLogin() {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
@@ -37,10 +55,23 @@ export function validateLogin() {
     const validUsername = "jx";
     const validPassword = "jx";
 
+    const currentDate = new Date().toDateString(); // Get today's date
+
+    // Check if user is already logged in and if login is valid for today
+    const storedLoginDate = localStorage.getItem('loginDate');
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+
+    if (isLoggedIn && storedLoginDate === currentDate) {
+        // If already logged in for today, skip login process
+        window.location.href = 'index.html';
+        return;
+    }
+
+    // Validate credentials
     if (username === validUsername && password === validPassword) {
-        // Store a flag in localStorage to remember login
+        // Store login state and date if credentials are correct
         localStorage.setItem('isLoggedIn', 'true');
-        // Redirect to index.html
+        localStorage.setItem('loginDate', currentDate);
         window.location.href = 'index.html';
     } else {
         document.getElementById('error-message').style.display = 'block';
