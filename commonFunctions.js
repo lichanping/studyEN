@@ -29,6 +29,25 @@ export function navigateToReadClass() {
     window.location.href = "class-read.html";
 }
 
+export function validateLogin() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    // Hardcoded credentials
+    const validUsername = "jx";
+    const validPassword = "jx";
+
+    if (username === validUsername && password === validPassword) {
+        // Store a flag in localStorage to remember login
+        localStorage.setItem('isLoggedIn', 'true');
+        // Redirect to index.html
+        window.location.href = 'index.html';
+    } else {
+        document.getElementById('error-message').style.display = 'block';
+    }
+}
+
+
 export function handleCameraWarningClick() {
     const userName = document.getElementById("userName").value;
     const warningMessage = `尊敬的家长，我们注意到 ${userName} 在课堂上未按要求开启摄像头。为了确保学习效果和教学质量，请您督促 ${userName} 在课堂期间按要求操作。感谢您的理解与配合！⚠`;
