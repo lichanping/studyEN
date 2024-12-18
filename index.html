@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>正式课（词汇）</title>
+    <title>正式课</title>
     <!-- Include SweetAlert2 CSS and JS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10">
     <link rel="stylesheet" href="index.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <link rel="icon" type="image/png" href="sounds/icon.jpg">
     <!-- Add script to check login status -->
-    <script>
-        // Check if the user is logged in
-        if (localStorage.getItem('isLoggedIn') !== 'true') {
-            // Redirect to login.html if not logged in
-            window.location.href = 'login.html';
-        }
+    <script type="module">
+        import * as commonFunctions from './commonFunctions.js';
+
+        commonFunctions.checkLoginStatus();
+
     </script>
+
 </head>
 <body>
 

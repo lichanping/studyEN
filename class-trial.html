@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple UI Page</title>
+    <title>体验课</title>
     <!-- Include SweetAlert2 CSS and JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script type="module" src="./commonFunctions.js"></script>
@@ -11,12 +11,16 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="clss-trial.css">
     <link rel="icon" type="image/png" href="sounds/tick.jpeg">
-    <style>
-    </style>
+    <script type="module">
+        import * as commonFunctions from './commonFunctions.js';
+
+        commonFunctions.checkLoginStatus();
+
+    </script>
 </head>
 <body>
 
-<h1 style="font-size: 24px;">Trial Class UI Page</h1>
+<h1 style="font-size: 24px;">体验课</h1>
 <div id="button-container">
     <button id="navigateToFormalClass">正式课</button>
     <button id="navigateToReadClass">阅读课</button>

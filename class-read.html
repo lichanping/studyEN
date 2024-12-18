@@ -3,14 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple UI Page</title>
+    <title>阅读</title>
     <!-- Include SweetAlert2 CSS and JS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10">
     <link rel="stylesheet" href="clss-read.css">
     <link rel="icon" type="image/png" href="sounds/tick.jpeg">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-    <style>
-    </style>
+    <script type="module">
+        import * as commonFunctions from './commonFunctions.js';
+
+        commonFunctions.checkLoginStatus();
+
+    </script>
 </head>
 <body>
 
