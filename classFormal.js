@@ -66,29 +66,6 @@ const teacherData = {
                 hours: [15, 0],
                 courseWordCount: 260
             },
-            "盛安逸": {
-                schedule: "每周 盛安逸 (四年级)",
-                course: "小学基础阅读理解",
-                hours: [20, 20],
-                courseWordCount: 4610
-            },
-            "阮王睿": {
-                schedule: "每周一三六 19:35 阮王睿 (准高一)",
-                course: "雅思初级单词词汇表",
-                hours: [19, 35],
-                courseWordCount: 3500
-            }, "敏珺": {
-                schedule: "每周日 19:40 敏珺 (初二)",
-                course: "初中高级阅读理解",
-                hours: [19, 40],
-                courseWordCount: 3500
-            },
-            "礼豪": {
-                schedule: "每周日晚上19点 礼豪（初二88%）",
-                course: "2023年上海市初中英语考纲词汇",
-                hours: [19, 30],
-                courseWordCount: 1768
-            },
             "征洋": {
                 schedule: "每周日9点 征洋（初一65%）",
                 course: "新版初中考纲单词",
