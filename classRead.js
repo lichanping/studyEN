@@ -38,31 +38,6 @@ const teacherData = {
                 course: "高中高级完型填空",
                 hours: [10, 30]
             },
-            "盛安逸": {
-                schedule: "每周六 9:00 盛安逸 (五年级)",
-                course: "小学基础阅读理解",
-                hours: [9, 0]
-            },
-            "盛安逸同学": {
-                schedule: "每周六 9:00 盛安逸同学 (五年级)",
-                course: "英语基础语法",
-                hours: [9, 0]
-            },
-            "陈敏珺": {
-                schedule: "每周日 16:00 陈敏珺 (初一)",
-                course: "初中高级完型填空",
-                hours: [16, 0]
-            },
-            "敏珺同学": {
-                schedule: "每周日 16:10 敏珺同学 (初一)",
-                course: "初中高级阅读理解",
-                hours: [16, 10]
-            },
-            "南剑": {
-                schedule: "每周日 20:00 南剑 (高三)",
-                course: "高中初级阅读",
-                hours: [20, 0]
-            },
         }
     },
     "shiTeacher": {
