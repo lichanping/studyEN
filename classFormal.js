@@ -48,29 +48,11 @@ const teacherData = {
                 hours: [20, 20],
                 courseWordCount: 4955
             },
-            "欣怡": {
-                schedule: "每周四 欣怡 (高一)",
-                course: "乱序版-上海市高考英语考纲词汇（2024）",
-                hours: [19, 50],
-                courseWordCount: 2960
-            },
-            "芷淇": {
-                schedule: "每周五日 芷淇 (初三)",
-                course: "新东方中考英语必备词汇666个",
-                hours: [19, 25],
-                courseWordCount: 643
-            },
             "硕硕": {
                 schedule: "每周周六下午3点+周日 10点 硕硕 (四年级)",
                 course: "全册-牛津上海版小学英语四年级（上册）",
                 hours: [15, 0],
                 courseWordCount: 260
-            },
-            "征洋": {
-                schedule: "每周日9点 征洋（初一65%）",
-                course: "新版初中考纲单词",
-                hours: [9, 0],
-                courseWordCount: 1623
             }
         }
     },

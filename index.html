@@ -29,7 +29,7 @@
 <div class="form-group">
     <label for="userName">User Name:</label>
     <select id="userName"></select>
-    <button id="cameraWarningButton">未开启摄像头</button>
+    <button id="reviewLateReminderButton">复习迟到提醒</button>
 </div>
 <div><label id="courseLabel"></label>
     <label id="courseWordCountLabel"></label></div>
@@ -126,7 +126,7 @@
     document.getElementById("wordSelfCheckButton").addEventListener('click', commonFunctions.navigateToLearnWords);
     document.getElementById("userName").addEventListener("change", script.updateLabel);
     document.getElementById("groupGreetingButton").addEventListener("click", commonFunctions.handleGroupGreetingClick);
-    document.getElementById("cameraWarningButton").addEventListener("click", commonFunctions.handleCameraWarningClick);
+    document.getElementById("reviewLateReminderButton").addEventListener("click", commonFunctions.handleReviewLateReminderClick);
     document.getElementById("scheduleNotificationButton").addEventListener("click", script.handleScheduleNotificationClick);
     document.getElementById("stop").addEventListener("click", script.handleStopNotificationClick);
     document.getElementById("lateMeetingReminderButton").addEventListener("click", script.handleLateMeetingReminderClick);

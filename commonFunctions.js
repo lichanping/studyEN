@@ -79,10 +79,13 @@ export function validateLogin() {
 }
 
 
-export function handleCameraWarningClick() {
+export function handleReviewLateReminderClick() {
     const userName = document.getElementById("userName").value;
-    const warningMessage = `尊敬的家长，我们注意到 ${userName} 在课堂上未按要求开启摄像头。为了确保学习效果和教学质量，请您督促 ${userName} 在课堂期间按要求操作。感谢您的理解与配合！⚠`;
+    const warningMessage = `尊敬的${userName}家长，您好！
 
+我们注意到${userName}今天未能按时参加复习。为确保学习效果，建议${userName}使用App📚完成自主复习，并将录屏结果发送至学习群，以便我们了解其学习进度。
+
+📌请您协助${userName}提前规划时间，确保下次按时参加复习。我们将全力支持${userName}的学习成长！如有任何疑问，请随时与我们联系～ 🌟`;
     copyToClipboard(warningMessage);
     showLongText(`${warningMessage}`);
 }
