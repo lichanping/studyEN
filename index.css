@@ -26,12 +26,12 @@ body {
     z-index: 9999; /* Ensure it's on top */
 }
 
-#reviewWord, #reviewforgetWord, #learnedWord,
+#reviewforgetWord, #learnedWord,
 #newWord, #forgetWord, #antiForgettingForgetWord, #daysRangeInput {
     width: 35px; /* Specify the width in pixels */
 }
 
-#preTestWord {
+#preTestWord, #reviewWord {
     width: 100px;
 }
 
