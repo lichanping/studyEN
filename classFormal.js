@@ -200,7 +200,13 @@ export function handleClassFeedbackClick() {
     const courseWordCountLabel = document.getElementById('courseWordCountLabel').textContent;
     const userName = document.getElementById("userName").value;
     const newWord = parseInt(document.getElementById("newWord").value);
-    const reviewWordCount = document.getElementById("reviewWord").value;
+
+    const reviewWordInputText = document.getElementById("reviewWord").value.trim();
+    const reviewWordCount = reviewWordInputText ? reviewWordInputText.split('+').reduce((sum, num) => {
+        const parsedNum = parseInt(num.trim(), 10);
+        return sum + (isNaN(parsedNum) ? 0 : parsedNum);
+    }, 0) : 0;
+
     const reviewforgetWord = document.getElementById("reviewforgetWord").value;
     const reviewCorrectRate = ((reviewWordCount - reviewforgetWord) / reviewWordCount * 100).toFixed(0);
 
