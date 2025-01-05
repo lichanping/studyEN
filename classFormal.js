@@ -42,17 +42,17 @@ const teacherData = {
                 hours: [21, 30],
                 courseWordCount: 4955
             },
+            "硕硕": {
+                schedule: "每周周六下午3点+周日10点 硕硕(四年级)",
+                course: "全册-牛津上海版小学英语四年级（下册）",
+                hours: [15, 0],
+                courseWordCount: 225
+            },
             "王泓俨": {
                 schedule: "每周 王泓俨 (高二)",
                 course: "上海高考英语考纲词汇（乱序版）",
                 hours: [20, 20],
                 courseWordCount: 4955
-            },
-            "硕硕": {
-                schedule: "每周周六下午3点+周日 10点 硕硕 (四年级)",
-                course: "全册-牛津上海版小学英语四年级（上册）",
-                hours: [15, 0],
-                courseWordCount: 260
             }
         }
     },
