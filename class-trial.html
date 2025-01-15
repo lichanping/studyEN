@@ -138,21 +138,6 @@
     import * as script from './classTrial.js';
     import * as commonFunctions from './commonFunctions.js';
 
-    document.addEventListener("keydown", function (event) {
-        const focusedElement = document.activeElement;
-
-        // Check if the focused element is the textarea with id 'forgetWords'
-        if (focusedElement && focusedElement.id === "forgetWords") {
-            return; // Do nothing if the focused element is the textarea
-        }
-
-        if (event.key === "Enter" || event.keyCode === 13) {
-            if (!Swal.isVisible()) {
-                event.preventDefault();
-                document.getElementById("openingSpeechButton").click();
-            }
-        }
-    });
     document.getElementById("navigateToFormalClass").addEventListener("click", commonFunctions.navigateToFormalClass);
     document.getElementById("navigateToReadClass").addEventListener("click", commonFunctions.navigateToReadClass);
     document.getElementById("wordSelfCheckButton").addEventListener('click', commonFunctions.navigateToLearnWords)
