@@ -559,6 +559,7 @@ export function showLongText(longText) {
 export function getRandomMotto() {
     // Replace the following array with your own collection of mottos
     const mottos = [
+        "Don't fear forgetting. Each instance of forgetting is a doorway to new memories.<br><br>别害怕遗忘，每一次遗忘都是记忆的契机！",
         "One clap: You’re great! Two claps: You’re awesome! Three claps: You’re the best!<br><br>一个赞：你很棒！两个赞：你真棒！三个赞：你最棒！",
         "Wonderful, keep it up! Every success is built upon a foundation of consistent effort!<br><br>很棒，坚持！每个成功后面都有着厚积薄发的过程！",
         "Received the record of your efforts! Applause to the best version of you, making progress bit by bit. Great job!<br><br>收到宝贝的打卡啦，掌声送给最棒的你，正在一点一点的进步，很棒哦！",
