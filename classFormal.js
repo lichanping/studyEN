@@ -48,10 +48,10 @@ const teacherData = {
                 hours: [15, 0],
                 courseWordCount: 225
             },
-            "王泓俨": {
-                schedule: "每周 王泓俨 (高二)",
+            "梓言": {
+                schedule: "每周 梓言 (初一)",
                 course: "上海高考英语考纲词汇（乱序版）",
-                hours: [20, 20],
+                hours: [19, 40],
                 courseWordCount: 4955
             }
         }
