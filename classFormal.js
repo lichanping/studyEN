@@ -50,8 +50,8 @@ const teacherData = {
             },
             "梓言": {
                 schedule: "每周 梓言 (初一)",
-                course: "上海高考英语考纲词汇（乱序版）",
-                hours: [19, 40],
+                course: "【新教材】2024秋沪教版英语",
+                hours: [9, 0],
                 courseWordCount: 4955
             }
         }
