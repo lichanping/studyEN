@@ -430,9 +430,9 @@ function formatFeedbackContent(rawContent) {
             })
             .join('\n');
 
-        forgetWordsContent = `\n\n遗忘词\n---------------------\n${sortedWordCounts}`;
+        forgetWordsContent = `\n\n抗遗忘复习的课后重点建议\n-------------------------------\n${sortedWordCounts}`;
     } else {
-        forgetWordsContent = `\n\n遗忘词\n---------------------\n无数据`;
+        forgetWordsContent = `\n\n遗忘词\n-------------------------------\n无数据`;
     }
 
     // Process feedback entries (correct rate content)
@@ -486,20 +486,18 @@ function formatFeedbackContent(rawContent) {
     const sortedFormattedEntries = formattedEntries.map(entry => entry.formatted);
     const averageRate = validEntries > 0 ? (totalCorrectRate / validEntries).toFixed(0) : '无数据';
 
-    const header = `日期              | 正确率 | 词汇量\n-------------------------------`;
+    const header = `抗遗忘复习详情\n日期              | 正确率 | 词汇量\n-------------------------------`;
     const footer = validEntries > 0
         ? `-------------------------------\n平均正确率: ${averageRate} %\n总复习词汇: ${totalWordsReviewed} 词`
         : '';
 
-    const metaInfo = `======================
-   本次总累计: ${totalWordsReviewed} 词
-======================
+    const metaInfo = `【抗遗忘数据统计】
 学员: ${userName}
 教练: ${coachName}
-统计时间: ${currentDate}
+统计时间: ${currentDate}\n${footer}
 `;
 
-    return `${metaInfo}\n${header}\n${sortedFormattedEntries.join('\n')}\n${footer}${forgetWordsContent}`;
+    return `${metaInfo}\n${header}\n${sortedFormattedEntries.join('\n')}${forgetWordsContent}`;
 }
 
 
