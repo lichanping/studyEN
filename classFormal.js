@@ -50,9 +50,9 @@ const teacherData = {
             },
             "梓言": {
                 schedule: "每周 梓言 (初一)",
-                course: "【新教材】2024秋沪教版（五•四学制）七年级上册",
+                course: "【新教材】沪教版七年级下册预测版",
                 hours: [9, 0],
-                courseWordCount: 278
+                courseWordCount: 272
             }
         }
     },
