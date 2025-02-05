@@ -210,42 +210,171 @@ export function handleClassFeedbackClick() {
     const reviewforgetWord = document.getElementById("reviewforgetWord").value;
     const reviewCorrectRate = ((reviewWordCount - reviewforgetWord) / reviewWordCount * 100).toFixed(0);
 
-    const forgetWord = parseInt(document.getElementById("forgetWord").value) || 0; // Default to 0 if no value entered or invalid
-    // Calculate correct rate
+    const forgetWord = parseInt(document.getElementById("forgetWord").value) || 0;
     const correctRate = ((newWord - forgetWord) / newWord * 100).toFixed(0);
 
-    // Get values from input boxes
     let forgetWords = document.getElementById('forgetWords').value.trim();
-
-    // Count the number of English words
     const numberOfEnglishWords = countEnglishWords(forgetWords);
-    // Get the input element to display the result
-    const inputAntiForgettingForgetWord = document.getElementById("antiForgettingForgetWord");
 
-    // Set the calculated value to the input box
+    const inputAntiForgettingForgetWord = document.getElementById("antiForgettingForgetWord");
     inputAntiForgettingForgetWord.value = numberOfEnglishWords;
     const antiForgettingForgetWord = document.getElementById('antiForgettingForgetWord').value;
 
     const learnedWord = parseInt(document.getElementById("learnedWord").value.trim()) || 0;
     const inputText = document.getElementById('preTestWord').value.trim();
-
-    // Default value is 0 if input is empty
     let preTestWord = inputText ? inputText.split('+').reduce((sum, num) => {
-        // Parse the integer and add to sum, default to 0 if NaN
         const parsedNum = parseInt(num.trim(), 10);
         return sum + (isNaN(parsedNum) ? 0 : parsedNum);
     }, 0) : 0;
-    let feedbackMessage
+
+    let feedbackMessage;
     if (learnedWord > 0) {
         let remaining = courseWordCountLabel - learnedWord;
-        feedbackMessage = `【${userName}今日学习-《${course}》的反馈】<br><br>1️⃣.九宫格复习${reviewWordCount} 词，遗忘${reviewforgetWord} 词，正确率${reviewCorrectRate}%；<br><br>2️⃣.学前检测${preTestWord} 词，新学${newWord} 词，遗忘${forgetWord} 词，正确率${correctRate}%<br><br>3️⃣.今天学习的是《${course}》，共${courseWordCountLabel}词，已学习${learnedWord}词，剩余${remaining}词未推送完九宫格。<br><br>4️⃣.🎉陪伴 ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} 认真且努力的${userName}一定能抵达梦想的彼岸。🚀🚀🚀<br><br>5️⃣.严格按照 21 天抗遗忘复习表来复习哟!<br><br><br><br>💟今日寄语💟<br><br>${getRandomMotto()}`
+        feedbackMessage = `【${userName}今日学习-《${course}》的反馈】<br><br>1️⃣.九宫格复习${reviewWordCount} 词，遗忘${reviewforgetWord} 词，正确率${reviewCorrectRate}%；<br><br>2️⃣.学前检测${preTestWord} 词，新学${newWord} 词，遗忘${forgetWord} 词，正确率${correctRate}%<br><br>3️⃣.今天学习的是《${course}》，共${courseWordCountLabel}词，已学习${learnedWord}词，剩余${remaining}词未推送完九宫格。<br><br>4️⃣.🎉陪伴 ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} 认真且努力的${userName}一定能抵达梦想的彼岸。🚀🚀🚀<br><br>5️⃣.严格按照 21 天抗遗忘复习表来复习哟!<br><br><br><br>💟今日寄语💟<br><br>${getRandomMotto()}`;
     } else {
-        feedbackMessage = `【${userName}今日学习-《${course}》的反馈】<br><br>1️⃣.九宫格复习${reviewWordCount} 词，遗忘${reviewforgetWord} 词，正确率${reviewCorrectRate}%；<br><br>2️⃣.学前检测${preTestWord} 词，新学${newWord} 词，遗忘${forgetWord} 词，正确率${correctRate}%<br><br>3️⃣.陪伴 ✨ ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} 认真且努力的${userName}一定能抵达梦想的彼岸。🚀🚀🚀<br><br>4️⃣.严格按照 21 天抗遗忘复习表来复习哟!<br><br><br><br>🌺💎今日寄语💎🌺<br><br>${getRandomMotto()}`
+        feedbackMessage = `【${userName}今日学习-《${course}》的反馈】<br><br>1️⃣.九宫格复习${reviewWordCount} 词，遗忘${reviewforgetWord} 词，正确率${reviewCorrectRate}%；<br><br>2️⃣.学前检测${preTestWord} 词，新学${newWord} 词，遗忘${forgetWord} 词，正确率${correctRate}%<br><br>3️⃣.陪伴 ✨ ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} 认真且努力的${userName}一定能抵达梦想的彼岸。🚀🚀🚀<br><br>4️⃣.严格按照 21 天抗遗忘复习表来复习哟!<br><br><br><br>🌺💎今日寄语💎🌺<br><br>${getRandomMotto()}`;
     }
+
+    // Get the class date from the input field
+    const classDateTime = document.getElementById("classDateTime").value;
+    if (classDateTime) {
+        const classDate = new Date(classDateTime).toISOString().split('T')[0]; // Get the date in YYYY-MM-DD format
+        storeClassStatistics(userName, classDate, newWord, reviewWordCount); // Store the data using the class date
+    } else {
+        alert("Please select a valid course date.");
+        return; // If no date is selected, stop the function
+    }
+
     copyToClipboard(feedbackMessage);
     showLongText(`${feedbackMessage}`);
 }
 
+function storeClassStatistics(userName, date, newWord, reviewWordCount) {
+    try {
+        const statsKey = `${userName}_classStatistics`; // Key to store the statistics in localStorage
+        let classStats = JSON.parse(localStorage.getItem(statsKey)) || {}; // Retrieve existing statistics or initialize empty
+
+        // Check if the date already exists in the stats and override the old record
+        if (classStats[date]) {
+            console.log(`Updating statistics for ${date}`);
+        } else {
+            console.log(`Adding new statistics for ${date}`);
+        }
+
+        // Add or update statistics for the given date (overwrite if it exists)
+        classStats[date] = {
+            newWord: newWord,
+            reviewWordCount: reviewWordCount,
+        };
+
+        // Save updated statistics back to localStorage
+        localStorage.setItem(statsKey, JSON.stringify(classStats));
+    } catch (error) {
+        console.error('Error storing class statistics:', error);
+    }
+}
+
+export function generateReport() {
+    const userName = document.getElementById("userName").value;
+    const teacherNameElement = document.getElementById("teacherName");
+    const coachName = teacherNameElement.options[teacherNameElement.selectedIndex].text;
+
+    // Retrieve the stored class statistics from localStorage
+    const classStats = JSON.parse(localStorage.getItem(`${userName}_classStatistics`)) || {};
+
+    if (Object.keys(classStats).length === 0) {
+        alert("没有找到数据可供下载！");
+        return;
+    }
+
+    // Read day range from input
+    const dayRangeInput = document.getElementById("daysRangeInput");
+    const dayRange = parseInt(dayRangeInput.value) || 7; // Default to 7 days if input is invalid
+
+    // Get today's date and start date for the range
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);  // Ensure time is set to midnight
+    const startDate = new Date();
+    startDate.setDate(today.getDate() - dayRange);
+    startDate.setHours(0, 0, 0, 0);  // Ensure time is set to midnight
+
+    // Initialize valid entries and entries list
+    let validEntries = 0;
+    let sortedEntries = [];
+    let totalNewWords = 0;
+    let totalReviewWords = 0;
+
+    // Filter and format each date's data for the report
+    Object.keys(classStats).forEach(date => {
+        const { newWord, reviewWordCount } = classStats[date];
+        const recordDate = new Date(date);
+
+        // Normalize the recordDate to midnight (remove the time part)
+        recordDate.setHours(0, 0, 0, 0);
+
+        // Normalize the startDate and today to midnight as well
+        const normalizedToday = new Date(today);
+        normalizedToday.setHours(0, 0, 0, 0);
+
+        const normalizedStartDate = new Date(startDate);
+        normalizedStartDate.setHours(0, 0, 0, 0);
+
+        // Only include records within the date range
+        if (recordDate > normalizedStartDate && recordDate <= normalizedToday) {
+            const weekDay = recordDate.toLocaleString('zh-CN', { weekday: 'short' }); // Get the weekday (e.g., 周一)
+
+            sortedEntries.push({
+                date: recordDate,
+                formatted: `${date} (${weekDay}) | ${newWord}   | ${reviewWordCount}`,
+                newWord,
+                reviewWordCount
+            });
+
+            totalNewWords += newWord;
+            totalReviewWords += reviewWordCount;
+            validEntries++;
+        }
+    });
+
+    // If no valid entries within the date range, alert the user
+    if (validEntries === 0) {
+        alert("没有找到数据可供下载！");
+        return;
+    }
+
+    // Sort the entries by date in ascending order
+    sortedEntries.sort((a, b) => a.date - b.date);
+
+    // Prepare the report content (with totals in the title)
+    let reportContent = `【正课学习数据统计】\n`;
+    reportContent += `学员: ${userName}\n`;
+    reportContent += `教练: ${coachName}\n`;
+    reportContent += `--------------------------------\n`
+
+    // Now add the totals after the calculation
+    reportContent += `总计新学：${totalNewWords} 词\n`;
+    reportContent += `总计九宫格复习：${totalReviewWords} 词\n\n`;
+
+    reportContent += `正课学习详情\n`;
+    reportContent += `日期              | 新词 | 九宫格复习\n--------------------------------\n`;
+
+    // Add sorted entries to the report content
+    sortedEntries.forEach(entry => {
+        reportContent += `${entry.formatted}\n`;
+    });
+
+    // Copy the formatted content to the clipboard
+    copyToClipboard(reportContent);
+
+    // Generate the file and trigger download
+    const blob = new Blob([reportContent], { type: 'text/plain' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${userName}_学习报告.txt`; // Use the username as the filename
+
+    // Trigger download
+    link.click();
+}
 
 export function handleUnderstandSituationClick() {
     const userName = document.getElementById("userName").value;
