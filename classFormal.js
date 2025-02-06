@@ -323,9 +323,13 @@ export function generateReport() {
         if (recordDate > normalizedStartDate && recordDate <= normalizedToday) {
             const weekDay = recordDate.toLocaleString('zh-CN', { weekday: 'short' }); // Get the weekday (e.g., 周一)
 
+            // Format date as MM-DD with leading zeros
+            const formattedDate = `${String(recordDate.getMonth() + 1).padStart(2, '0')}-${String(recordDate.getDate()).padStart(2, '0')}`;
+
             sortedEntries.push({
                 date: recordDate,
-                formatted: `${date} (${weekDay}) | ${newWord}   | ${reviewWordCount}`,
+                formatted: `${formattedDate} (${weekDay}) | ${newWord}   | ${reviewWordCount}`,
+                year: recordDate.getFullYear(),
                 newWord,
                 reviewWordCount
             });
@@ -349,7 +353,7 @@ export function generateReport() {
     let reportContent = `【正课学习数据统计】\n`;
     reportContent += `学员: ${userName}\n`;
     reportContent += `教练: ${coachName}\n\n`;
-    reportContent += `📌 本期学习总览\n`
+    reportContent += `📌 本期学习总览\n`;
 
     // Now add the totals after the calculation
     reportContent += `新学单词：${totalNewWords} 词\n`;
@@ -358,12 +362,20 @@ export function generateReport() {
     reportContent += `📅 正课学习详情\n`;
     reportContent += `日期              | 新词  | 九宫格复习\n--------------------------------\n`;
 
+    let currentYear = null;
+
     // Add sorted entries to the report content
     sortedEntries.forEach(entry => {
+        // Add year title if it changes
+        if (entry.year !== currentYear) {
+            currentYear = entry.year;
+            reportContent += `**${currentYear}年**\n`;
+        }
+
         reportContent += `${entry.formatted}\n`;
     });
-    reportContent += `\n📢 以上数据仅统计${userName}在正课中的学习情况，不包含课后的抗遗忘复习。
-🌟 ${userName}，继续稳步积累，保持进步！💪📖`;
+
+    reportContent += `\n📢 以上数据仅统计${userName}在正课中的学习情况，不包含课后的抗遗忘复习。\n🌟 ${userName}，继续稳步积累，保持进步！💪📖`;
 
     // Copy the formatted content to the clipboard
     copyToClipboard(reportContent);
