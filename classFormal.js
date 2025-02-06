@@ -375,7 +375,7 @@ export function generateReport() {
         reportContent += `${entry.formatted}\n`;
     });
 
-    reportContent += `\n📢 以上数据仅统计${userName}在正课中的学习情况，不包含课后的抗遗忘复习。\n🌟 ${userName}，继续稳步积累，保持进步！💪📖`;
+    reportContent += `\n📢 以上数据仅统计${userName}在正课中的学习情况，不包含课后的抗遗忘复习。\n💪 ${userName}，继续稳步积累，保持进步！`;
 
     // Copy the formatted content to the clipboard
     copyToClipboard(reportContent);
