@@ -430,7 +430,7 @@ function formatFeedbackContent(rawContent) {
             })
             .join('\n');
 
-        forgetWordsContent = `\n\n抗遗忘复习的课后重点建议\n-------------------------------\n${sortedWordCounts}`;
+        forgetWordsContent = `\n\n💡 抗遗忘复习的课后重点建议\n-------------------------------\n${sortedWordCounts}\n\n📢 以上数据仅统计${userName}在抗遗忘复习中的情况，请记得复习遗忘词，继续加油，巩固知识，进步会更加迅速！`;
     } else {
         forgetWordsContent = `\n\n遗忘词\n-------------------------------\n无数据`;
     }
@@ -486,9 +486,9 @@ function formatFeedbackContent(rawContent) {
     const sortedFormattedEntries = formattedEntries.map(entry => entry.formatted);
     const averageRate = validEntries > 0 ? (totalCorrectRate / validEntries).toFixed(0) : '无数据';
 
-    const header = `抗遗忘复习详情\n日期              | 正确率 | 词汇量\n-------------------------------`;
+    const header = `📝 抗遗忘复习详情\n日期              | 正确率 | 词汇量\n-------------------------------`;
     const footer = validEntries > 0
-        ? `-------------------------------\n平均正确率: ${averageRate} %\n总复习词汇: ${totalWordsReviewed} 词`
+        ? `\n📌 本期学习总览\n平均正确率: ${averageRate} %\n总复习词汇: ${totalWordsReviewed} 词`
         : '';
 
     const metaInfo = `【抗遗忘数据统计】
