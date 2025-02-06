@@ -348,20 +348,22 @@ export function generateReport() {
     // Prepare the report content (with totals in the title)
     let reportContent = `【正课学习数据统计】\n`;
     reportContent += `学员: ${userName}\n`;
-    reportContent += `教练: ${coachName}\n`;
-    reportContent += `--------------------------------\n`
+    reportContent += `教练: ${coachName}\n\n`;
+    reportContent += `📌 本期学习总览\n`
 
     // Now add the totals after the calculation
-    reportContent += `总计新学：${totalNewWords} 词\n`;
-    reportContent += `总计九宫格复习：${totalReviewWords} 词\n\n`;
+    reportContent += `新学单词：${totalNewWords} 词\n`;
+    reportContent += `九宫格复习（仅包含正课内复习）：${totalReviewWords} 词\n\n`;
 
-    reportContent += `正课学习详情\n`;
-    reportContent += `日期              | 新词 | 九宫格复习\n--------------------------------\n`;
+    reportContent += `📅 正课学习详情\n`;
+    reportContent += `日期              | 新词  | 九宫格复习\n--------------------------------\n`;
 
     // Add sorted entries to the report content
     sortedEntries.forEach(entry => {
         reportContent += `${entry.formatted}\n`;
     });
+    reportContent += `\n📢 以上数据仅包含正课内学习内容，不包含课后抗遗忘复习。
+🌟 ${userName}，继续稳步积累，保持进步！💪📖`;
 
     // Copy the formatted content to the clipboard
     copyToClipboard(reportContent);
