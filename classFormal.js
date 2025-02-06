@@ -353,7 +353,7 @@ export function generateReport() {
 
     // Now add the totals after the calculation
     reportContent += `新学单词：${totalNewWords} 词\n`;
-    reportContent += `九宫格复习（仅包含正课内复习）：${totalReviewWords} 词\n\n`;
+    reportContent += `九宫格复习（仅统计正课内复习）：${totalReviewWords} 词\n\n`;
 
     reportContent += `📅 正课学习详情\n`;
     reportContent += `日期              | 新词  | 九宫格复习\n--------------------------------\n`;
