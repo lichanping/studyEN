@@ -44,9 +44,9 @@ const teacherData = {
             },
             "硕硕": {
                 schedule: "每周周六下午3点+周日10点 硕硕(四年级)",
-                course: "全册-牛津上海版小学英语四年级（下册）",
+                course: "全册-牛津上海版小学英语五年级（上册）",
                 hours: [15, 0],
-                courseWordCount: 225
+                courseWordCount: 210
             },
             "梓言": {
                 schedule: "每周 梓言 (初一)",
