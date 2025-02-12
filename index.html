@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>正式课</title>
     <!-- Include SweetAlert2 CSS and JS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="index.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <link rel="icon" type="image/png" href="sounds/icon.jpg">
@@ -43,7 +43,14 @@
     <button id="groupGreetingButton">入群招呼语</button>
 </div>
 <div>
-    <label for="classDateTime">新课时间:</label> <input type="datetime-local" id="classDateTime" value="">
+    <label for="classDateTime">新课时间:</label> 
+    <input type="datetime-local" id="classDateTime" value="">
+    <!-- 新增课时时长选择 -->
+    <label for="classDuration">课时时长:</label>
+    <select id="classDuration">
+        <option value="1">1小时</option>
+        <option value="0.5">0.5小时</option>
+    </select>
 </div>
 <div>
     <button id="scheduleNotificationButton">排课通知</button>
@@ -116,7 +123,7 @@
     <input id="daysRangeInput" value="7">
     <button id="downloadFileButton">抗遗忘统计</button>
     <button id="downloadFormalButton">正课统计</button>
-
+    <button id="downloadSalaryButton">工资统计</button>
 </div>
 
 <script type="module">
@@ -142,6 +149,7 @@
     document.getElementById("downloadFormalButton").addEventListener("click", script.generateReport);
     document.getElementById("bye").addEventListener("click", commonFunctions.byeClick);
     document.getElementById("teacherName").addEventListener("change", script.updateUserNameOptions);
+    document.getElementById("downloadSalaryButton").addEventListener("click", script.generateSalaryReport);
 
 </script>
 </body>

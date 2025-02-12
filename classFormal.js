@@ -190,36 +190,33 @@ export function handleLateMeetingReminderClick() {
 }
 
 export function selfReviewClick() {
-    const feedbackMessage = `*课后复习方式：<br><br>1️⃣.教练带动进行标准 21 天抗遗忘复习（解决“两会” ：看到英文会读，看到英文知道中文意思）<br><br>2️⃣.家长和学生需将【每日单词表】打印出来，家长打印中文版，让学生书写英文；打印英文版，学生填写中文，家长及学员对应中英文版进行批改，并以拍照的方式发送到群里进行打卡（解决另外“两会” ：会拼会写），建议每天写一遍。<br><br>3️⃣.对于当日抗遗忘复习单词中遗忘的部分，也要加入“生词本”进行重点复习。`
+    const feedbackMessage = `*课后复习方式：<br><br>1️⃣.教练带动进行标准 21 天抗遗忘复习（解决"两会" ：看到英文会读，看到英文知道中文意思）<br><br>2️⃣.家长和学生需将【每日单词表】打印出来，家长打印中文版，让学生书写英文；打印英文版，学生填写中文，家长及学员对应中英文版进行批改，并以拍照的方式发送到群里进行打卡（解决另外"两会" ：会拼会写），建议每天写一遍。<br><br>3️⃣.对于当日抗遗忘复习单词中遗忘的部分，也要加入"生词本"进行重点复习。`
     copyToClipboard(feedbackMessage);
     showLongText(`${feedbackMessage}`);
 }
 
 export function handleClassFeedbackClick() {
+    // 获取课程信息
     const course = document.getElementById('courseLabel').textContent;
     const courseWordCountLabel = document.getElementById('courseWordCountLabel').textContent;
+    
+    // 获取用户输入数据
     const userName = document.getElementById("userName").value;
     const newWord = parseInt(document.getElementById("newWord").value);
-
     const reviewWordInputText = document.getElementById("reviewWord").value.trim();
     const reviewWordCount = reviewWordInputText ? reviewWordInputText.split('+').reduce((sum, num) => {
         const parsedNum = parseInt(num.trim(), 10);
         return sum + (isNaN(parsedNum) ? 0 : parsedNum);
     }, 0) : 0;
-
     const reviewforgetWord = document.getElementById("reviewforgetWord").value;
     const reviewCorrectRate = ((reviewWordCount - reviewforgetWord) / reviewWordCount * 100).toFixed(0);
-
     const forgetWord = parseInt(document.getElementById("forgetWord").value) || 0;
     const correctRate = ((newWord - forgetWord) / newWord * 100).toFixed(0);
-
     let forgetWords = document.getElementById('forgetWords').value.trim();
     const numberOfEnglishWords = countEnglishWords(forgetWords);
-
     const inputAntiForgettingForgetWord = document.getElementById("antiForgettingForgetWord");
     inputAntiForgettingForgetWord.value = numberOfEnglishWords;
     const antiForgettingForgetWord = document.getElementById('antiForgettingForgetWord').value;
-
     const learnedWord = parseInt(document.getElementById("learnedWord").value.trim()) || 0;
     const inputText = document.getElementById('preTestWord').value.trim();
     let preTestWord = inputText ? inputText.split('+').reduce((sum, num) => {
@@ -227,50 +224,47 @@ export function handleClassFeedbackClick() {
         return sum + (isNaN(parsedNum) ? 0 : parsedNum);
     }, 0) : 0;
 
+    // 生成反馈报告
     let feedbackMessage;
     if (learnedWord > 0) {
         let remaining = courseWordCountLabel - learnedWord;
-        feedbackMessage = `【${userName}今日学习-《${course}》的反馈】<br><br>1️⃣.九宫格复习${reviewWordCount} 词，遗忘${reviewforgetWord} 词，正确率${reviewCorrectRate}%；<br><br>2️⃣.学前检测${preTestWord} 词，新学${newWord} 词，遗忘${forgetWord} 词，正确率${correctRate}%<br><br>3️⃣.今天学习的是《${course}》，共${courseWordCountLabel}词，已学习${learnedWord}词，剩余${remaining}词未推送完九宫格。<br><br>4️⃣.🎉陪伴 ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} 认真且努力的${userName}一定能抵达梦想的彼岸。🚀🚀🚀<br><br>5️⃣.严格按照 21 天抗遗忘复习表来复习哟!<br><br><br><br>💟今日寄语💟<br><br>${getRandomMotto()}`;
+        feedbackMessage = `【${userName}今日学习-《${course}》的反馈】<br><br>1️⃣.九宫格复习${reviewWordCount}词，遗忘${reviewforgetWord}词，正确率${reviewCorrectRate}%；<br><br>2️⃣.学前检测${preTestWord}词，新学${newWord}词，遗忘${forgetWord}词，正确率${correctRate}%<br><br>3️⃣.今天学习的是《${course}》，共${courseWordCountLabel}词，已学习${learnedWord}词，剩余${remaining}词未推送完九宫格。<br><br>4️⃣.🎉陪伴 ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} 认真且努力的${userName}一定能抵达梦想的彼岸。🚀🚀🚀<br><br>5️⃣.严格按照 21 天抗遗忘复习表来复习哟!<br><br><br><br>💟今日寄语💟<br><br>${getRandomMotto()}`;
     } else {
-        feedbackMessage = `【${userName}今日学习-《${course}》的反馈】<br><br>1️⃣.九宫格复习${reviewWordCount} 词，遗忘${reviewforgetWord} 词，正确率${reviewCorrectRate}%；<br><br>2️⃣.学前检测${preTestWord} 词，新学${newWord} 词，遗忘${forgetWord} 词，正确率${correctRate}%<br><br>3️⃣.陪伴 ✨ ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} 认真且努力的${userName}一定能抵达梦想的彼岸。🚀🚀🚀<br><br>4️⃣.严格按照 21 天抗遗忘复习表来复习哟!<br><br><br><br>🌺💎今日寄语💎🌺<br><br>${getRandomMotto()}`;
+        feedbackMessage = `【${userName}今日学习-《${course}》的反馈】<br><br>1️⃣.九宫格复习${reviewWordCount}词，遗忘${reviewforgetWord}词，正确率${reviewCorrectRate}%；<br><br>2️⃣.学前检测${preTestWord}词，新学${newWord}词，遗忘${forgetWord}词，正确率${correctRate}%<br><br>3️⃣.陪伴 ✨ ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} 认真且努力的${userName}一定能抵达梦想的彼岸。🚀🚀🚀<br><br>4️⃣.严格按照 21 天抗遗忘复习表来复习哟!<br><br><br><br>🌺💎今日寄语💎🌺<br><br>${getRandomMotto()}`;
     }
 
-    // Get the class date from the input field
+    // 获取课程日期
     const classDateTime = document.getElementById("classDateTime").value;
     if (classDateTime) {
-        const classDate = new Date(classDateTime).toISOString().split('T')[0]; // Get the date in YYYY-MM-DD format
-        storeClassStatistics(userName, classDate, newWord, reviewWordCount); // Store the data using the class date
+        const classDate = new Date(classDateTime).toISOString().split('T')[0]; // 获取日期格式为YYYY-MM-DD
+        storeClassStatistics(userName, classDate, newWord, reviewWordCount); // 使用课程日期存储数据
     } else {
-        alert("Please select a valid course date.");
-        return; // If no date is selected, stop the function
+        alert("请选择有效的课程日期。");
+        return; // 如果没有选择日期，停止函数
     }
 
+    // 复制到剪贴板并弹窗显示
     copyToClipboard(feedbackMessage);
     showLongText(`${feedbackMessage}`);
 }
 
 function storeClassStatistics(userName, date, newWord, reviewWordCount) {
     try {
-        const statsKey = `${userName}_classStatistics`; // Key to store the statistics in localStorage
-        let classStats = JSON.parse(localStorage.getItem(statsKey)) || {}; // Retrieve existing statistics or initialize empty
+        const classDuration = parseFloat(document.getElementById("classDuration").value);
+        const statsKey = `${userName}_classStatistics`;
+        let classStats = JSON.parse(localStorage.getItem(statsKey)) || {};
 
-        // Check if the date already exists in the stats and override the old record
-        if (classStats[date]) {
-            console.log(`Updating statistics for ${date}`);
-        } else {
-            console.log(`Adding new statistics for ${date}`);
-        }
-
-        // Add or update statistics for the given date (overwrite if it exists)
+        // 添加课时类型和时长
         classStats[date] = {
             newWord: newWord,
             reviewWordCount: reviewWordCount,
+            duration: classDuration,
+            type: "词汇课" // 固定类型
         };
 
-        // Save updated statistics back to localStorage
         localStorage.setItem(statsKey, JSON.stringify(classStats));
     } catch (error) {
-        console.error('Error storing class statistics:', error);
+        console.error('存储课程统计信息出错:', error);
     }
 }
 
@@ -353,9 +347,9 @@ export function generateReport() {
     let reportContent = `【正课学习数据统计】\n`;
     reportContent += `学员: ${userName}\n`;
     reportContent += `教练: ${coachName}\n\n`;
-    reportContent += `📌 本期学习总览\n`;
 
     // Now add the totals after the calculation
+    reportContent += `📌 本期学习总览\n`;
     reportContent += `新学单词：${totalNewWords} 词\n`;
     reportContent += `九宫格复习：${totalReviewWords} 词\n\n`;
 
@@ -437,6 +431,96 @@ function formatDateTimeWeekly(dateTimeString) {
     };
     const formattedDateTime = new Date(dateTimeString).toLocaleString('zh-CN', options);
     return `${formattedDateTime}`;
+}
+
+export function generateSalaryReport() {
+    const teacherName = document.getElementById("teacherName").value;
+    const teacherDisplayName = document.getElementById("teacherName").options[document.getElementById("teacherName").selectedIndex].text;
+    const monthToQuery = prompt("请输入要统计的月份（格式：YYYY-MM，例如2025-02）:");
+    if (!monthToQuery) return;
+
+    // 修正：使用teacherName而不是teacherDisplayName来获取用户列表
+    const currentTeacher = teacherData[teacherName];  // 使用value值 'liTeacher' 而不是显示名称
+    const allStudents = Object.keys(currentTeacher.users);
+    
+    let totalHoursAll = 0;
+    let totalSalaryAll = 0;
+    let totalNewWordsAll = 0;
+    let reportContent = `【${teacherDisplayName} 词汇课工资明细】\n`;
+    reportContent += `统计月份: ${monthToQuery}\n\n`;
+    reportContent += "学生姓名 | 日期       | 课程类型 | 课时 | 新词\n";
+    reportContent += "--------------------------------------------------------\n";
+
+    let allRecords = [];
+
+    allStudents.forEach(userName => {
+        const statsKey = `${userName}_classStatistics`;
+        const classStats = JSON.parse(localStorage.getItem(statsKey)) || {};
+        
+        Object.entries(classStats).forEach(([date, stats]) => {
+            // 将日期字符串转换为Date对象
+            const recordDate = new Date(date);
+            const recordYear = recordDate.getFullYear();
+            const recordMonth = recordDate.getMonth() + 1; // 月份从0开始
+            
+            // 解析用户输入的月份
+            const [inputYear, inputMonth] = monthToQuery.split('-').map(Number);
+            
+            // 添加调试信息
+            console.log(`比较日期: 记录=${recordYear}-${recordMonth}, 输入=${inputYear}-${inputMonth}`);
+            
+            // 精确匹配年月
+            if (recordYear === inputYear && recordMonth === inputMonth) {
+                console.log(`匹配成功: ${date}`);
+                // 处理历史数据
+                let duration = stats.duration;
+                if (typeof duration === 'undefined') {
+                    duration = (stats.newWord < 20) ? 0.5 : 1;
+                    console.log(`推断课时: ${stats.newWord} -> ${duration}`);
+                }
+                
+                // 处理类型字段
+                const type = stats.type || "词汇课";
+                
+                const formattedDate = date.split('-').slice(0,3).join('-');
+                
+                // 仅存入数组
+                allRecords.push({
+                    date: date,
+                    formattedDate: formattedDate,
+                    userName: userName,
+                    type: type,
+                    duration: duration,
+                    newWord: stats.newWord
+                });
+            }
+        });
+    });
+
+    // 排序后统一添加记录
+    allRecords.sort((a, b) => new Date(a.date) - new Date(b.date));
+    
+    // 重置总课时计算
+    totalHoursAll = 0;
+    allRecords.forEach(record => {
+        reportContent += `${record.userName.padEnd(6)} | ${record.formattedDate} | ${record.type.padEnd(6)} | ${record.duration.toString().padEnd(6)} | ${record.newWord}\n`;
+        totalHoursAll += record.duration;
+        totalNewWordsAll += record.newWord;
+    });
+
+    totalSalaryAll = totalHoursAll * 50;
+    
+    reportContent += "\n--------------------------------------------------------\n";
+    reportContent += `词汇课总课时: ${totalHoursAll} 小时\n`;
+    reportContent += `课时单价: 50 元/小时\n`;
+    reportContent += `词汇课工资总计: ${totalSalaryAll} 元\n`;
+
+    // 生成下载文件
+    const blob = new Blob([reportContent], { type: 'text/plain;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${teacherDisplayName}_${monthToQuery}_词汇课工资.txt`;
+    link.click();
 }
 
 
