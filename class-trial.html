@@ -132,6 +132,7 @@
     <button id="bye">体验课结束语</button>
     <input id="daysRangeInput" value="7">
     <button id="downloadFileButton">抗遗忘统计</button>
+    <button id="downloadTrialButton">体验课统计</button>
 </div>
 
 <script type="module">
@@ -154,7 +155,7 @@
     document.getElementById("antiForgettingFeedbackButton").addEventListener("click", commonFunctions.handleAntiForgettingFeedbackClick);
     document.getElementById("downloadFileButton").addEventListener("click", commonFunctions.downloadFeedbackFile);
     document.getElementById("bye").addEventListener("click", commonFunctions.byeClick);
-
+    document.getElementById("downloadTrialButton").addEventListener("click", commonFunctions.generateTrialReport);
 
 </script>
 

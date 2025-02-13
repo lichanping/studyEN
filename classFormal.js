@@ -4,7 +4,8 @@ import {
     showAlert,
     getRandomFeedback,
     showLongText,
-    countEnglishWords
+    countEnglishWords,
+    storeClassStatistics
 } from './commonFunctions.js'
 
 const setInitialDateTime = () => {
@@ -236,8 +237,9 @@ export function handleClassFeedbackClick() {
     // 获取课程日期
     const classDateTime = document.getElementById("classDateTime").value;
     if (classDateTime) {
-        const classDate = new Date(classDateTime).toISOString().split('T')[0]; // 获取日期格式为YYYY-MM-DD
-        storeClassStatistics(userName, classDate, newWord, reviewWordCount); // 使用课程日期存储数据
+        const classDate = new Date(classDateTime).toISOString().split('T')[0];
+        const classDuration = parseFloat(document.getElementById("classDuration").value);
+        storeClassStatistics(userName, classDate, newWord, reviewWordCount, classDuration, "词汇课");
     } else {
         alert("请选择有效的课程日期。");
         return; // 如果没有选择日期，停止函数
@@ -246,26 +248,6 @@ export function handleClassFeedbackClick() {
     // 复制到剪贴板并弹窗显示
     copyToClipboard(feedbackMessage);
     showLongText(`${feedbackMessage}`);
-}
-
-function storeClassStatistics(userName, date, newWord, reviewWordCount) {
-    try {
-        const classDuration = parseFloat(document.getElementById("classDuration").value);
-        const statsKey = `${userName}_classStatistics`;
-        let classStats = JSON.parse(localStorage.getItem(statsKey)) || {};
-
-        // 添加课时类型和时长
-        classStats[date] = {
-            newWord: newWord,
-            reviewWordCount: reviewWordCount,
-            duration: classDuration,
-            type: "词汇课" // 固定类型
-        };
-
-        localStorage.setItem(statsKey, JSON.stringify(classStats));
-    } catch (error) {
-        console.error('存储课程统计信息出错:', error);
-    }
 }
 
 export function generateReport() {
@@ -283,53 +265,44 @@ export function generateReport() {
 
     // Read day range from input
     const dayRangeInput = document.getElementById("daysRangeInput");
-    const dayRange = parseInt(dayRangeInput.value) || 7; // Default to 7 days if input is invalid
+    const dayRange = parseInt(dayRangeInput.value) || 7;
 
-    // Get today's date and start date for the range
     const today = new Date();
-    today.setHours(0, 0, 0, 0);  // Ensure time is set to midnight
+    today.setHours(0, 0, 0, 0);
     const startDate = new Date();
     startDate.setDate(today.getDate() - dayRange);
-    startDate.setHours(0, 0, 0, 0);  // Ensure time is set to midnight
+    startDate.setHours(0, 0, 0, 0);
 
-    // Initialize valid entries and entries list
     let validEntries = 0;
     let sortedEntries = [];
     let totalNewWords = 0;
     let totalReviewWords = 0;
 
-    // Filter and format each date's data for the report
-    Object.keys(classStats).forEach(date => {
-        const { newWord, reviewWordCount } = classStats[date];
-        const recordDate = new Date(date);
+    // 修改数据过滤逻辑，兼容新旧格式
+    Object.entries(classStats).forEach(([key, stats]) => {
+        // 检查是否为词汇课数据
+        const isVocabClass = !key.includes('_') || (stats.type === "词汇课");
+        if (!isVocabClass) return;
 
-        // Normalize the recordDate to midnight (remove the time part)
+        // 获取正确的日期
+        const date = stats.date || key;
+        const recordDate = new Date(date);
         recordDate.setHours(0, 0, 0, 0);
 
-        // Normalize the startDate and today to midnight as well
-        const normalizedToday = new Date(today);
-        normalizedToday.setHours(0, 0, 0, 0);
-
-        const normalizedStartDate = new Date(startDate);
-        normalizedStartDate.setHours(0, 0, 0, 0);
-
-        // Only include records within the date range
-        if (recordDate > normalizedStartDate && recordDate <= normalizedToday) {
-            const weekDay = recordDate.toLocaleString('zh-CN', { weekday: 'short' }); // Get the weekday (e.g., 周一)
-
-            // Format date as MM-DD with leading zeros
+        if (recordDate > startDate && recordDate <= today) {
+            const weekDay = recordDate.toLocaleString('zh-CN', { weekday: 'short' });
             const formattedDate = `${String(recordDate.getMonth() + 1).padStart(2, '0')}-${String(recordDate.getDate()).padStart(2, '0')}`;
 
             sortedEntries.push({
                 date: recordDate,
-                formatted: `${formattedDate} (${weekDay}) | ${newWord}   | ${reviewWordCount}`,
+                formatted: `${formattedDate} (${weekDay}) | ${stats.newWord}   | ${stats.reviewWordCount}`,
                 year: recordDate.getFullYear(),
-                newWord,
-                reviewWordCount
+                newWord: stats.newWord,
+                reviewWordCount: stats.reviewWordCount
             });
 
-            totalNewWords += newWord;
-            totalReviewWords += reviewWordCount;
+            totalNewWords += stats.newWord;
+            totalReviewWords += stats.reviewWordCount;
             validEntries++;
         }
     });
@@ -353,8 +326,7 @@ export function generateReport() {
     reportContent += `新学单词：${totalNewWords} 词\n`;
     reportContent += `九宫格复习：${totalReviewWords} 词\n\n`;
 
-    reportContent += `📅 正课学习详情\n`;
-    reportContent += `日期              | 新词  | 九宫格复习\n--------------------------------\n`;
+    reportContent += `📅 正课学习详情\n日期              | 新词  | 九宫格复习\n--------------------------------\n`;
 
     let currentYear = null;
 
@@ -439,87 +411,90 @@ export function generateSalaryReport() {
     const monthToQuery = prompt("请输入要统计的月份（格式：YYYY-MM，例如2025-02）:");
     if (!monthToQuery) return;
 
-    // 修正：使用teacherName而不是teacherDisplayName来获取用户列表
-    const currentTeacher = teacherData[teacherName];  // 使用value值 'liTeacher' 而不是显示名称
+    const currentTeacher = teacherData[teacherName];
     const allStudents = Object.keys(currentTeacher.users);
     
-    let totalHoursAll = 0;
-    let totalSalaryAll = 0;
-    let totalNewWordsAll = 0;
-    let reportContent = `【${teacherDisplayName} 词汇课工资明细】\n`;
+    let reportContent = `【${teacherDisplayName} 综合课工资明细】\n`;
     reportContent += `统计月份: ${monthToQuery}\n\n`;
-    reportContent += "学生姓名 | 日期       | 课程类型 | 课时 | 新词\n";
+    reportContent += "学生姓名 | 日期       | 课程类型 | 课时 | 课时费\n";
     reportContent += "--------------------------------------------------------\n";
 
     let allRecords = [];
+    // 用于存储每个学生的总金额
+    let studentTotals = {};
 
     allStudents.forEach(userName => {
         const statsKey = `${userName}_classStatistics`;
         const classStats = JSON.parse(localStorage.getItem(statsKey)) || {};
+        studentTotals[userName] = 0; // 初始化该学生的总金额
         
-        Object.entries(classStats).forEach(([date, stats]) => {
-            // 将日期字符串转换为Date对象
+        Object.entries(classStats).forEach(([key, stats]) => {
+            // 处理老格式数据
+            const date = stats.date || key.split('_')[0];
             const recordDate = new Date(date);
             const recordYear = recordDate.getFullYear();
-            const recordMonth = recordDate.getMonth() + 1; // 月份从0开始
+            const recordMonth = recordDate.getMonth() + 1;
             
-            // 解析用户输入的月份
             const [inputYear, inputMonth] = monthToQuery.split('-').map(Number);
             
-            // 添加调试信息
-            console.log(`比较日期: 记录=${recordYear}-${recordMonth}, 输入=${inputYear}-${inputMonth}`);
-            
-            // 精确匹配年月
             if (recordYear === inputYear && recordMonth === inputMonth) {
-                console.log(`匹配成功: ${date}`);
-                // 处理历史数据
                 let duration = stats.duration;
                 if (typeof duration === 'undefined') {
                     duration = (stats.newWord < 20) ? 0.5 : 1;
-                    console.log(`推断课时: ${stats.newWord} -> ${duration}`);
                 }
                 
-                // 处理类型字段
-                const type = stats.type || "词汇课";
+                // 处理老格式数据的类型
+                const type = stats.type || (!key.includes('_') ? "词汇课" : key.split('_')[1]);
                 
-                const formattedDate = date.split('-').slice(0,3).join('-');
+                const formattedDate = date.split('T')[0]; // 确保日期格式正确
                 
-                // 仅存入数组
+                // 计算课时费
+                const unitPrice = type === "体验课" ? 40 : 50;
+                const fee = duration * unitPrice;
+                studentTotals[userName] += fee; // 累加到学生总金额
+
                 allRecords.push({
                     date: date,
                     formattedDate: formattedDate,
                     userName: userName,
                     type: type,
                     duration: duration,
-                    newWord: stats.newWord
+                    fee: fee
                 });
             }
         });
     });
 
-    // 排序后统一添加记录
+    // 按日期排序
     allRecords.sort((a, b) => new Date(a.date) - new Date(b.date));
     
-    // 重置总课时计算
-    totalHoursAll = 0;
+    // 计算总计
+    let totalSalaryAll = 0;
+    
+    // 添加所有记录
     allRecords.forEach(record => {
-        reportContent += `${record.userName.padEnd(6)} | ${record.formattedDate} | ${record.type.padEnd(6)} | ${record.duration.toString().padEnd(6)} | ${record.newWord}\n`;
-        totalHoursAll += record.duration;
-        totalNewWordsAll += record.newWord;
+        reportContent += `${record.userName.padEnd(6)} | ${record.formattedDate} | ${record.type.padEnd(6)} | ${record.duration.toString().padEnd(4)} | ${record.fee}元\n`;
+        totalSalaryAll += record.fee;
     });
 
-    totalSalaryAll = totalHoursAll * 50;
-    
+    // 添加每个学生的总计
     reportContent += "\n--------------------------------------------------------\n";
-    reportContent += `词汇课总课时: ${totalHoursAll} 小时\n`;
-    reportContent += `课时单价: 50 元/小时\n`;
-    reportContent += `词汇课工资总计: ${totalSalaryAll} 元\n`;
+    reportContent += "学生总计:\n";
+    Object.entries(studentTotals)
+        .filter(([_, total]) => total > 0) // 只显示有课时费的学生
+        .sort((a, b) => b[1] - a[1]) // 按金额从高到低排序
+        .forEach(([userName, total]) => {
+            reportContent += `${userName.padEnd(6)}: ${total}元\n`;
+        });
+
+    reportContent += "--------------------------------------------------------\n";
+    reportContent += `总课时费: ${totalSalaryAll} 元\n`;
 
     // 生成下载文件
     const blob = new Blob([reportContent], { type: 'text/plain;charset=utf-8' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `${teacherDisplayName}_${monthToQuery}_词汇课工资.txt`;
+    link.download = `${teacherDisplayName}_${monthToQuery}_综合课工资.txt`;
     link.click();
 }
 

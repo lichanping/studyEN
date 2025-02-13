@@ -1,4 +1,4 @@
-import {copyToClipboard, getRandomMotto, showAlert, showLongText} from './commonFunctions.js'
+import {copyToClipboard, getRandomMotto, showAlert, showLongText, storeClassStatistics} from './commonFunctions.js'
 // Attach the function when the page loads
 // window.addEventListener("load", copyToClipboard);
 const setInitialDateTime = () => {
@@ -73,7 +73,7 @@ export function handleVocabularyResultClick() {
 }
 
 export function selfReviewClick() {
-    const feedbackMessage = `*课后复习方式：<br><br>1️⃣.教练带动进行【体验课】3次抗遗忘复习（解决“两会” ：看到英文会读，看到英文知道中文意思）<br><br>2️⃣.家长和学生需将【每日单词表】打印出来，家长打印中文版，让学生书写英文；打印英文版，学生填写中文，家长及学员对应中英文版进行批改，并以拍照的方式发送到群里进行打卡（解决另外“两会” ：会拼会写），建议每天写一遍。<br><br>3️⃣.对于当日抗遗忘复习单词中遗忘的部分，也要加入“生词本”进行重点复习。`
+    const feedbackMessage = `*课后复习方式：<br><br>1️⃣.教练带动进行【体验课】3次抗遗忘复习（解决"两会" ：看到英文会读，看到英文知道中文意思）<br><br>2️⃣.家长和学生需将【每日单词表】打印出来，家长打印中文版，让学生书写英文；打印英文版，学生填写中文，家长及学员对应中英文版进行批改，并以拍照的方式发送到群里进行打卡（解决另外"两会" ：会拼会写），建议每天写一遍。<br><br>3️⃣.对于当日抗遗忘复习单词中遗忘的部分，也要加入"生词本"进行重点复习。`
     copyToClipboard(feedbackMessage);
     showLongText(`${feedbackMessage}`);
 }
@@ -82,10 +82,13 @@ export function selfReviewClick() {
 export function handleClassFeedbackClick() {
     const userName = document.getElementById("userName").value;
     const teacherName = document.getElementById("teacherName").value;
-    const newWord = parseInt(document.getElementById("newWord").value) || 30; // Default to 30 if no value entered or invalid
-    const forgetWord = parseInt(document.getElementById("forgetWord").value) || 0; // Default to 0 if no value entered or invalid
-    const studyTime = parseInt(document.getElementById("studyTime").value) || 30; // Default to 30 if no value entered or invalid
+    const newWord = parseInt(document.getElementById("newWord").value) || 30;
+    const forgetWord = parseInt(document.getElementById("forgetWord").value) || 0;
+    const studyTime = parseInt(document.getElementById("studyTime").value) || 30;
     const inputText = document.getElementById('preTestWord').value.trim();
+    
+    // 添加classDateTime获取
+    const classDateTime = document.getElementById("classDateTime").value;
 
     // Default value is 0 if input is empty
     let preTestWord = inputText ? inputText.split('+').reduce((sum, num) => {
@@ -106,7 +109,14 @@ ${getRandomMotto()}`;
 
     copyToClipboard(feedbackMessage);
     showLongText(`${feedbackMessage}`);
-    // Add your function logic here
+
+    if (classDateTime) {
+        const classDate = new Date(classDateTime).toISOString().split('T')[0];
+        // 体验课固定1小时，单价40元
+        storeClassStatistics(userName, classDate, newWord, 0, 1, "体验课");
+    } else {
+        alert("请选择有效的课程时间");
+    }
 }
 
 
