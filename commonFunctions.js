@@ -93,7 +93,7 @@ export function handleReviewLateReminderClick() {
 export function handleGroupGreetingClick() {
     const teacherNameElement = document.getElementById("teacherName");
     const teacherName = teacherNameElement.options[teacherNameElement.selectedIndex].text;
-    const greetingMessage = `亲爱的家长朋友，您们好！我是${teacherName}，很⾼兴您们加⼊英语快速提升集训营🎉🎉🎉，开启一段快乐、高效的“英语提升之旅”！<br><br>        在此过程中，我会全程陪伴孩⼦进行学新和复习，也会根据学生状态调整上课节奏🐧🕙，从短暂记忆到永久记忆，从被动接收到主动参与，逐渐提高学生的英语能力。💪💪<br><br>        让我们一起努力，⻅证孩子的学习提升和蜕变吧！😉😉😉`;
+    const greetingMessage = `亲爱的家长朋友，您们好！我是${teacherName}，很⾼兴您们加⼊英语快速提升集训营🎉🎉🎉，开启一段快乐、高效的"英语提升之旅"!"<br><br>        在此过程中，我会全程陪伴孩⼦进行学新和复习，也会根据学生状态调整上课节奏🐧🕙，从短暂记忆到永久记忆，从被动接收到主动参与，逐渐提高学生的英语能力。💪💪<br><br>        让我们一起努力，⻅证孩子的学习提升和蜕变吧！😉😉😉`;
 
     copyToClipboard(greetingMessage);
     showLongText(`${greetingMessage}`);
@@ -558,16 +558,16 @@ export function getRandomMotto() {
     // Replace the following array with your own collection of mottos
     const mottos = [
         "Don't fear forgetting. Each instance of forgetting is a doorway to new memories.<br><br>别害怕遗忘，每一次遗忘都是记忆的契机！",
-        "One clap: You’re great! Two claps: You’re awesome! Three claps: You’re the best!<br><br>一个赞：你很棒！两个赞：你真棒！三个赞：你最棒！",
+        "One clap: You're great! Two claps: You're awesome! Three claps: You're the best!<br><br>一个赞：你很棒！两个赞：你真棒！三个赞：你最棒！",
         "Wonderful, keep it up! Every success is built upon a foundation of consistent effort!<br><br>很棒，坚持！每个成功后面都有着厚积薄发的过程！",
         "Received the record of your efforts! Applause to the best version of you, making progress bit by bit. Great job!<br><br>收到宝贝的打卡啦，掌声送给最棒的你，正在一点一点的进步，很棒哦！",
         "Every effort and persistence from you will not be in vain!<br><br>宝贝的每一次努力和坚持都不会被辜负！",
-        "You’re amazing! Such effort and determination make me truly proud of you!<br><br>你真行！这么努力，这么执着，真为你感到骄傲！",
+        "You're amazing! Such effort and determination make me truly proud of you!<br><br>你真行！这么努力，这么执着，真为你感到骄傲！",
         "Your performance is outstanding; you are the best!<br><br>你的表现很出色，你就是最棒的！",
-        "You’re progressing so fast, I’m genuinely happy for you!<br><br>你进步的真快，太为你感到开心啦！",
+        "You're progressing so fast, I'm genuinely happy for you!<br><br>你进步的真快，太为你感到开心啦！",
         "I love seeing your hard-working spirit and look forward to seeing you take another step forward tomorrow!<br><br>我喜欢你努力的样子，期待明天的你更进一步！",
-        "Your recent training has been so dedicated, I’m cheering for you!<br><br>最近训练很认真，我疯狂为你点赞！",
-        "Here’s a little flower for you, as a reward for all your hard work!<br><br>送你一朵小花花，奖励努力的你！",
+        "Your recent training has been so dedicated, I'm cheering for you!<br><br>最近训练很认真，我疯狂为你点赞！",
+        "Here's a little flower for you, as a reward for all your hard work!<br><br>送你一朵小花花，奖励努力的你！",
         "Through continuous efforts, I believe you will become more and more amazing!<br><br>通过一次次努力相信你一定会越来越棒的！",
         "I hope every effort you make becomes a stroke of luck. Keep it up!<br><br>希望你的每一次努力，都是幸运的伏笔，加油！",
         "With hard work, you've perfectly completed your training goal once again!<br><br>经过努力，你又一次完美地完成了训练目标！",
@@ -577,7 +577,7 @@ export function getRandomMotto() {
         "Believe that you are the brightest star!<br><br>相信你就是最亮的那颗星星！",
         "When you're serious, you shine!<br><br>认真起来的你闪闪发光！",
         "Dedication will lead to rewards. I look forward to seeing an even better you!<br><br>用心一定会有收获，期待看到更棒的你！",
-        "Kudos to you for completing your daily tasks so diligently! You’re truly the best!<br><br>表扬每天都认真完成打卡的你，收获满满，你就是最棒的！",
+        "Kudos to you for completing your daily tasks so diligently! You're truly the best!<br><br>表扬每天都认真完成打卡的你，收获满满，你就是最棒的！",
         "Life is a journey, and if you fall in love with the journey, you will be in love forever.<br><br>生活是一场旅程，如果你爱上了这场旅程，你将永远热爱。",
         "Uncertainty is the only certainty there is, and knowing how to live with insecurity is the only security.<br><br>不确定性是唯一确定的，知道如何与不安全感共处是唯一的安全感。",
         "In a time of drastic change it is the learners who inherit the future. The learned usually find themselves equipped to live in a world that no longer exists.<br><br>在剧烈变化的时代，是学习者继承未来。有学识的人通常发现自己准备好生活在一个不再存在的世界里。",
@@ -691,4 +691,74 @@ export function displayToast(message) {
     setTimeout(() => {
         toast.remove();
     }, 3000);
+}
+
+export function generateTrialReport() {
+    const userName = document.getElementById("userName").value;
+    const statsKey = `${userName}_classStatistics`;
+    const classStats = JSON.parse(localStorage.getItem(statsKey)) || {};
+
+    // 过滤出体验课记录
+    const trialEntries = Object.entries(classStats)
+        .filter(([key, stats]) => stats.type === "体验课")
+        .map(([key, stats]) => ({
+            date: new Date(stats.date),
+            newWord: stats.newWord,
+            duration: stats.duration
+        }));
+
+    if (trialEntries.length === 0) {
+        alert("没有找到体验课数据！");
+        return;
+    }
+
+    // 修改报告标题和表头
+    let reportContent = `【体验课学习数据统计】\n学员: ${userName}\n\n`;
+    reportContent += "📅 体验课学习详情\n日期              | 新词  | 课时\n--------------------------------\n";
+
+    trialEntries.sort((a, b) => a.date - b.date).forEach(entry => {
+        const formattedDate = `${String(entry.date.getMonth()+1).padStart(2,'0')}-${String(entry.date.getDate()).padStart(2,'0')} (${entry.date.toLocaleString('zh-CN', {weekday: 'short'})})`;
+        reportContent += `${formattedDate} | ${entry.newWord.toString().padEnd(4)} | 1小时\n`;
+    });
+
+    // 生成下载文件
+    const blob = new Blob([reportContent], { type: 'text/plain' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${userName}_体验课报告.txt`;
+    link.click();
+}
+
+export function storeClassStatistics(userName, date, newWord, reviewWordCount, duration, type) {
+    try {
+        const statsKey = `${userName}_classStatistics`;
+        let classStats = JSON.parse(localStorage.getItem(statsKey)) || {};
+
+        // 使用日期和类型组合作为键
+        const recordKey = `${date}_${type}`;
+
+        // 检查是否存在同类型的记录
+        for (let key in classStats) {
+            if (key.startsWith(date)) {
+                const existingType = key.split('_')[1];
+                if (existingType === type) {
+                    // 同一天同类型课程，覆盖
+                    delete classStats[key];
+                }
+            }
+        }
+
+        // 存储新记录
+        classStats[recordKey] = {
+            newWord: newWord,
+            reviewWordCount: reviewWordCount,
+            duration: duration,
+            type: type,
+            date: date  // 保存原始日期，方便后续处理
+        };
+
+        localStorage.setItem(statsKey, JSON.stringify(classStats));
+    } catch (error) {
+        console.error('存储课程统计信息出错:', error);
+    }
 }
