@@ -408,7 +408,17 @@ function formatDateTimeWeekly(dateTimeString) {
 export function generateSalaryReport() {
     const teacherName = document.getElementById("teacherName").value;
     const teacherDisplayName = document.getElementById("teacherName").options[document.getElementById("teacherName").selectedIndex].text;
-    const monthToQuery = prompt("请输入要统计的月份（格式：YYYY-MM，例如2025-02）:");
+    // 获取当前日期
+    const currentDate = new Date();
+    // 获取当前年份
+    const year = currentDate.getFullYear();
+    // 获取当前月份，注意 getMonth() 返回值是 0 - 11，所以要加 1
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    // 组合成 YYYY-MM 格式的日期
+    const defaultMonth = `${year}-${month}`;
+
+    const monthToQuery = prompt("请输入要统计的月份（格式：YYYY-MM，例如2025-02）:", defaultMonth);
+    console.log(monthToQuery);
     if (!monthToQuery) return;
 
     const currentTeacher = teacherData[teacherName];
