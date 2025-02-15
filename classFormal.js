@@ -278,13 +278,12 @@ export function generateReport() {
     let totalNewWords = 0;
     let totalReviewWords = 0;
 
-    // 修改数据过滤逻辑，兼容新旧格式
+    // Update: Handle both types of classes, including those with the `type` attribute (e.g., "阅读完型语法课")
     Object.entries(classStats).forEach(([key, stats]) => {
-        // 检查是否为词汇课数据
-        const isVocabClass = !key.includes('_') || (stats.type === "词汇课");
+        const isVocabClass = !key.includes('_') || (stats.type === "词汇课" || stats.type === "阅读完型语法课");
         if (!isVocabClass) return;
 
-        // 获取正确的日期
+        // Ensure the correct date is used, and handle missing or alternate formats
         const date = stats.date || key;
         const recordDate = new Date(date);
         recordDate.setHours(0, 0, 0, 0);
@@ -321,7 +320,7 @@ export function generateReport() {
     reportContent += `学员: ${userName}\n`;
     reportContent += `教练: ${coachName}\n\n`;
 
-    // Now add the totals after the calculation
+    // Add the totals after the calculation
     reportContent += `📌 本期学习总览\n`;
     reportContent += `新学单词：${totalNewWords} 词\n`;
     reportContent += `九宫格复习：${totalReviewWords} 词\n\n`;
@@ -424,23 +423,30 @@ export function generateSalaryReport() {
     const currentTeacher = teacherData[teacherName];
     const allStudents = Object.keys(currentTeacher.users);
     
+    let totalHoursVocab = 0;     // 词汇课总课时
+    let totalHoursReading = 0;   // 阅读课总课时
+    let totalHoursTrial = 0;     // 体验课总课时
+    let totalSalaryAll = 0;
     let reportContent = `【${teacherDisplayName} 综合课工资明细】\n`;
     reportContent += `统计月份: ${monthToQuery}\n\n`;
-    reportContent += "学生姓名 | 日期       | 课程类型 | 课时 | 课时费\n";
-    reportContent += "--------------------------------------------------------\n";
 
-    let allRecords = [];
-    // 用于存储每个学生的总金额
-    let studentTotals = {};
-
+    let allRecords = [];  // 用于存储所有记录
+    let studentStats = {};  // 用于存储每个学生的统计数据
+    
     allStudents.forEach(userName => {
+        // 初始化每个学生的总工资
+        studentStats[userName] = 0;
+
         const statsKey = `${userName}_classStatistics`;
         const classStats = JSON.parse(localStorage.getItem(statsKey)) || {};
-        studentTotals[userName] = 0; // 初始化该学生的总金额
         
         Object.entries(classStats).forEach(([key, stats]) => {
-            // 处理老格式数据
-            const date = stats.date || key.split('_')[0];
+            // 获取日期
+            let date = key;
+            if (key.includes('_')) {
+                date = stats.date;
+            }
+
             const recordDate = new Date(date);
             const recordYear = recordDate.getFullYear();
             const recordMonth = recordDate.getMonth() + 1;
@@ -453,58 +459,81 @@ export function generateSalaryReport() {
                     duration = (stats.newWord < 20) ? 0.5 : 1;
                 }
                 
-                // 处理老格式数据的类型
-                const type = stats.type || (!key.includes('_') ? "词汇课" : key.split('_')[1]);
+                const type = stats.type || "词汇课";
                 
-                const formattedDate = date.split('T')[0]; // 确保日期格式正确
-                
-                // 计算课时费
-                const unitPrice = type === "体验课" ? 40 : 50;
-                const fee = duration * unitPrice;
-                studentTotals[userName] += fee; // 累加到学生总金额
-
+                // 将记录添加到数组中
                 allRecords.push({
-                    date: date,
-                    formattedDate: formattedDate,
-                    userName: userName,
-                    type: type,
-                    duration: duration,
-                    fee: fee
+                    userName,
+                    date,
+                    type,
+                    duration,
+                    hourlyRate: type === "词汇课" ? 50 : 
+                               type === "阅读完型语法课" ? 55 : 40
                 });
             }
         });
     });
 
-    // 按日期排序
+    // 按日期排序所有记录
     allRecords.sort((a, b) => new Date(a.date) - new Date(b.date));
-    
-    // 计算总计
-    let totalSalaryAll = 0;
-    
-    // 添加所有记录
+
+    // 生成报表内容
+    reportContent += "学生姓名 | 日期       | 课程类型 | 课时 | 课时费\n";
+    reportContent += "--------------------------------------------------------\n";
+
+    // 输出排序后的记录并统计每个学生的数据
     allRecords.forEach(record => {
-        reportContent += `${record.userName.padEnd(6)} | ${record.formattedDate} | ${record.type.padEnd(6)} | ${record.duration.toString().padEnd(4)} | ${record.fee}元\n`;
-        totalSalaryAll += record.fee;
+        const lessonFee = record.duration * record.hourlyRate;
+        reportContent += `${record.userName.padEnd(6)} | ${record.date} | ${record.type.padEnd(12)} | ${record.duration.toString().padEnd(4)} | ${lessonFee}元\n`;
+        
+        // 累加总课时和学生工资
+        switch(record.type) {
+            case "词汇课":
+                totalHoursVocab += record.duration;
+                break;
+            case "阅读完型语法课":
+                totalHoursReading += record.duration;
+                break;
+            case "体验课":
+                totalHoursTrial += record.duration;
+                break;
+        }
+        studentStats[record.userName] += lessonFee;
     });
 
-    // 添加每个学生的总计
-    reportContent += "\n--------------------------------------------------------\n";
-    reportContent += "学生总计:\n";
-    Object.entries(studentTotals)
-        .filter(([_, total]) => total > 0) // 只显示有课时费的学生
-        .sort((a, b) => b[1] - a[1]) // 按金额从高到低排序
-        .forEach(([userName, total]) => {
-            reportContent += `${userName.padEnd(6)}: ${total}元\n`;
-        });
+    // 添加学生总计
+    reportContent += "\n学生总计:\n";
+    Object.entries(studentStats).forEach(([student, total]) => {
+        reportContent += `${student.padEnd(6)}: ${total}元\n`;
+    });
 
-    reportContent += "--------------------------------------------------------\n";
-    reportContent += `总课时费: ${totalSalaryAll} 元\n`;
+    // 添加总计数据
+    reportContent += "\n========== 总计 ==========\n";
+    
+    // 计算各类课程工资
+    const salaryVocab = totalHoursVocab * 50;    // 词汇课工资
+    const salaryReading = totalHoursReading * 55; // 阅读课工资
+    const salaryTrial = totalHoursTrial * 40;     // 体验课工资
+    totalSalaryAll = salaryVocab + salaryReading + salaryTrial;  // 计算总工资
 
-    // 生成下载文件
+    if (totalHoursVocab > 0) {
+        reportContent += `词汇课总课时: ${totalHoursVocab} 小时\n`;
+        reportContent += `词汇课工资（50元/时）: ${salaryVocab} 元\n`;
+    }
+    if (totalHoursReading > 0) {
+        reportContent += `阅读课总课时: ${totalHoursReading} 小时\n`;
+        reportContent += `阅读课工资（55元/时）: ${salaryReading} 元\n`;
+    }
+    if (totalHoursTrial > 0) {
+        reportContent += `体验课总课时: ${totalHoursTrial} 小时\n`;
+        reportContent += `体验课工资（40元/时）: ${salaryTrial} 元\n`;
+    }
+    reportContent += `\n工资总计: ${totalSalaryAll} 元\n`;
+
     const blob = new Blob([reportContent], { type: 'text/plain;charset=utf-8' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `${teacherDisplayName}_${monthToQuery}_综合课工资.txt`;
+    link.download = `${teacherDisplayName}_${monthToQuery}_课时工资.txt`;
     link.click();
 }
 

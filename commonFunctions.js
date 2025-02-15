@@ -734,27 +734,12 @@ export function storeClassStatistics(userName, date, newWord, reviewWordCount, d
         const statsKey = `${userName}_classStatistics`;
         let classStats = JSON.parse(localStorage.getItem(statsKey)) || {};
 
-        // 使用日期和类型组合作为键
-        const recordKey = `${date}_${type}`;
-
-        // 检查是否存在同类型的记录
-        for (let key in classStats) {
-            if (key.startsWith(date)) {
-                const existingType = key.split('_')[1];
-                if (existingType === type) {
-                    // 同一天同类型课程，覆盖
-                    delete classStats[key];
-                }
-            }
-        }
-
-        // 存储新记录
-        classStats[recordKey] = {
+        // 使用纯日期作为key
+        classStats[date] = {
             newWord: newWord,
             reviewWordCount: reviewWordCount,
             duration: duration,
-            type: type,
-            date: date  // 保存原始日期，方便后续处理
+            type: type
         };
 
         localStorage.setItem(statsKey, JSON.stringify(classStats));
