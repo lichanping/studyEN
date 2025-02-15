@@ -1,4 +1,11 @@
-import {copyToClipboard, getRandomMotto, showAlert, getRandomFeedback, showLongText} from './commonFunctions.js'
+import {
+    copyToClipboard, 
+    getRandomMotto, 
+    showAlert, 
+    getRandomFeedback, 
+    showLongText,
+    storeClassStatistics
+} from './commonFunctions.js'
 
 const setInitialDateTime = () => {
     const currentDate = new Date();
@@ -178,6 +185,21 @@ export function handleReadClassFeedbackClick() {
         "今天表现不错！上课认真，理解到位，翻译自然。词汇积累有提升，仍需加强。多练发音，努力！"
     ];
     let feedback = feedbacks[Math.floor(Math.random() * feedbacks.length)]
+
+    // 在生成反馈前，存储课程数据
+    const classDateTime = document.getElementById("classDateTime").value;
+    if (classDateTime) {
+        const classDate = new Date(classDateTime).toISOString().split('T')[0];
+        storeClassStatistics(
+            userName,
+            classDate,
+            newWord,
+            reviewWordCount,
+            1, // 默认1小时
+            "阅读完型语法课" // 指定课程类型
+        );
+    }
+
     // Generate feedback message
     const feedbackMessage = `【${userName}学习反馈】<br><br>①《${courseLabel}》1篇<br><br>②复习${reviewWordCount} 词，新学${newWord} 词，遗忘${mistakeWords} 词，习题${test}个，错误习题${mistake}个，正确率${correctRate}%💯<br><br>③${userName}⭐${feedback} <br><br><br><br>💟今日寄语💟<br><br>${getRandomMotto()}`
     copyToClipboard(feedbackMessage);
