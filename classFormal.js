@@ -503,7 +503,11 @@ export function generateSalaryReport() {
 
     // 添加学生总计
     reportContent += "\n学生总计:\n";
-    Object.entries(studentStats).forEach(([student, total]) => {
+
+    // Sort studentStats by total fee in descending order
+    const sortedStudentStats = Object.entries(studentStats).sort((a, b) => b[1] - a[1]);
+
+    sortedStudentStats.forEach(([student, total]) => {
         reportContent += `${student.padEnd(6)}: ${total}元\n`;
     });
 
