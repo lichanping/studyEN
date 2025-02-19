@@ -318,12 +318,24 @@ export function generateReport() {
             const weekDay = recordDate.toLocaleString('zh-CN', { weekday: 'short' });
             const formattedDate = `${String(recordDate.getMonth() + 1).padStart(2, '0')}-${String(recordDate.getDate()).padStart(2, '0')}`;
 
+            let courseType = stats.type || "词汇课";
+            if (courseType === "词汇课") {
+                let duration = stats.duration;
+                if (typeof duration === 'undefined') {
+                    duration = (stats.newWord < 20) ? 0.5 : 1;
+                }
+                courseType = duration === 0.5 ? "半词课" : "词汇课";
+            }   else if (courseType === "阅读完型语法课") {
+                courseType = "阅语课";
+            }
+
             sortedEntries.push({
                 date: recordDate,
-                formatted: `${formattedDate} (${weekDay}) | ${stats.newWord}   | ${stats.reviewWordCount}`,
+                formatted: `${formattedDate} (${weekDay}) | ${courseType} | ${stats.newWord} | ${stats.reviewWordCount}`,
                 year: recordDate.getFullYear(),
                 newWord: stats.newWord,
-                reviewWordCount: parseInt(stats.reviewWordCount)
+                reviewWordCount: parseInt(stats.reviewWordCount),
+                courseType
             });
 
             totalNewWords += stats.newWord;
@@ -351,7 +363,7 @@ export function generateReport() {
     reportContent += `新学单词：${totalNewWords} 词\n`;
     reportContent += `九宫格复习：${totalReviewWords} 词\n\n`;
 
-    reportContent += `📅 正课学习详情\n日期              | 新词  | 九宫格复习\n--------------------------------\n`;
+    reportContent += `📅 正课学习详情\n日期     | 课程类型 | 新词  | 九宫格\n--------------------------------\n`;
 
     let currentYear = null;
 
