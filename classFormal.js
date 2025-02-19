@@ -54,6 +54,18 @@ const teacherData = {
                 course: "【新教材】沪教版（五四学制）七年级下册",
                 hours: [9, 0],
                 courseWordCount: 272
+            },
+            "泽瑞": {
+                schedule: "每周五晚上+周日16点 泽瑞 (初三)",
+                course: "中考超纲",
+                hours: [19, 40],
+                courseWordCount: 272
+            },
+            "泽瑞同学": {
+                schedule: "仅用于核对工资，不用于统计抗遗忘复习 泽瑞同学 (初三)",
+                course: "中考超纲",
+                hours: [19, 40],
+                courseWordCount: 272
             }
         }
     },
@@ -255,10 +267,24 @@ export function generateReport() {
     const teacherNameElement = document.getElementById("teacherName");
     const coachName = teacherNameElement.options[teacherNameElement.selectedIndex].text;
 
-    // Retrieve the stored class statistics from localStorage
-    const classStats = JSON.parse(localStorage.getItem(`${userName}_classStatistics`)) || {};
+    // 合并包含所选userName的数据
+    let allClassStats = {};
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.includes(userName)) {
+            const storedValue = localStorage.getItem(key);
+            if (storedValue) { // 检查存储的值是否存在
+                try {
+                    const stats = JSON.parse(storedValue);
+                    Object.assign(allClassStats, stats);
+                } catch (error) {
+                    console.error(`解析 ${key} 时出错:`, error);
+                }
+            }
+        }
+    }
 
-    if (Object.keys(classStats).length === 0) {
+    if (Object.keys(allClassStats).length === 0) {
         alert("没有找到数据可供下载！");
         return;
     }
@@ -279,7 +305,7 @@ export function generateReport() {
     let totalReviewWords = 0;
 
     // Update: Handle both types of classes, including those with the `type` attribute (e.g., "阅读完型语法课")
-    Object.entries(classStats).forEach(([key, stats]) => {
+    Object.entries(allClassStats).forEach(([key, stats]) => {
         const isVocabClass = !key.includes('_') || (stats.type === "词汇课" || stats.type === "阅读完型语法课");
         if (!isVocabClass) return;
 
@@ -297,11 +323,11 @@ export function generateReport() {
                 formatted: `${formattedDate} (${weekDay}) | ${stats.newWord}   | ${stats.reviewWordCount}`,
                 year: recordDate.getFullYear(),
                 newWord: stats.newWord,
-                reviewWordCount: stats.reviewWordCount
+                reviewWordCount: parseInt(stats.reviewWordCount)
             });
 
             totalNewWords += stats.newWord;
-            totalReviewWords += stats.reviewWordCount;
+            totalReviewWords += parseInt(stats.reviewWordCount);
             validEntries++;
         }
     });
