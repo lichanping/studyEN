@@ -747,3 +747,34 @@ export function storeClassStatistics(userName, date, newWord, reviewWordCount, d
         console.error('存储课程统计信息出错:', error);
     }
 }
+
+export function addRightClickPasteEvent(element) {
+    if (!element) return;
+
+    element.addEventListener('contextmenu', async (event) => {
+        event.preventDefault(); // 阻止默认的右键菜单
+
+        try {
+            // 读取剪贴板中的文本内容
+            const clipboardText = await navigator.clipboard.readText();
+
+            // 获取当前元素的选中位置
+            const start = element.selectionStart;
+            const end = element.selectionEnd;
+
+            // 获取当前元素的原有内容
+            const currentValue = element.value;
+
+            // 将剪贴板内容插入到选中位置
+            const newValue = currentValue.slice(0, start) + clipboardText + currentValue.slice(end);
+
+            // 更新元素的值
+            element.value = newValue;
+
+            // 设置新的光标位置
+            element.selectionStart = element.selectionEnd = start + clipboardText.length;
+        } catch (error) {
+            console.error('读取剪贴板内容时出错:', error);
+        }
+    });
+}
