@@ -1,0 +1,22 @@
+【七选五】2. Cloned Voice
+【七选五】2. 克隆声音
+
+Recent advances in generative artificial intelligence(AI)have made speech synthesis so authentic that it's hard to tell if one is speaking with a human or a deep fake.The greater danger lies in the potential for the unauthorized use of the cloned voice for harmful purposes.The risk arises when someone's voice is cloned without permission.
+
+生成式人工智能(AI)的最新进展使得语音合成非常真实，以至于很难分辨出一个人是在和人说话还是在和一个深度伪造的人说话。更大的危险在于有可能未经授权的克隆的声音会被用于有害的目的当某人的声音在未经允许的情况下被克隆时，风险就出现了。
+
+Without a doubt, such technology could be beneficial for creating digital assistants or avatars.However, its misuse is a significant concern.Voice cloning, especially with deep voice software, is likely to be misused.Just a short voice recording can be enough to clone a person's voice convincingly.Thus, anyone who uses voice messaging or speaks on answering machines is at risk of having their voice cloned.
+
+毫无疑问，这种技术对创造数字助理或虚拟形象是有益的。然而，它的滥用是一个重大问题。语音克隆，尤其是深度语音软件，很可能被滥用。一段简短的录音就足以令人信服地克隆出一个人的声音。因此，任何使用语音信息或在答录机上讲话的人都有被克隆声音的风险。
+
+Ning Zhang, a computer scientist at Washington University in St.Louis, has developed AntiFake, a tool designed to prevent unauthorized speech synthesis.In other words, it proactively stops the creation of deepfakes from voice data.It employs techniques similar to those used by cybercriminals, but for the purpose of protecting voices from unauthorized use and counterfeiting.
+
+圣路易斯华盛顿大学(Washington University in St.Louis)的计算机科学家张宁(Ning Zhang)开发了一种名为AntiFake的工具，旨在防止未经授权的语音合成。换句话说，它主动阻止从语音数据中产生深度伪造。它采用了类似于网络罪犯使用的技术，但目的是保护声音免受未经授权的使用和伪造。
+
+AntiFake slightly alters recorded audio.This makes it unsuitable for training voice clones while still sounding normal to human ears.Zhang explained that this use of adversarial Al, typically a tool for cybercriminals, is now being used for defense.This approach is similar to methods used for Internet content protection.
+
+AntiFake稍微改变录制的音频。这使得录音不适合训练声音克隆，但同时人耳听起来仍然是正常的张解释说，这种对抗性人工智能的使用，通常是网络犯罪分子的工具，现在被用于防御。这种方法类似于用于互联网内容保护的方法。
+
+As technologies become more integrated into our daily lives, we can't afford to neglect the risks brought by the misuse of innovations.The creation of AntiFake emphasizes the need for ongoing focus on Al ethics.With the increasing ease of cloning voices, maintaining authenticity and privacy is crucial for individuals and society.
+
+随着技术越来越融入我们的日常生活，我们不能忽视滥用创新带来的风险。AntiFake的创建强调了持续关注人工智能伦理的必要性。随着克隆声音变得越来越容易，保持真实性和隐私对个人和社会都至关重要。
