@@ -32,7 +32,7 @@ const teacherData = {
         users: {
             "泽瑞": {
                 schedule: "每周5、7 泽瑞 (初三)",
-                course: "初中阅读理解",
+                course: "时文阅读",
                 hours: [16, 0]
             },
             "泽瑞同学": {
