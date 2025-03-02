@@ -294,7 +294,7 @@ class GenerateTool:
         # Get all child nodes <ion-item-sliding> with class "md"
         child_nodes = root_node.find_all('ion-item-sliding', class_='md')
         data = []
-        reading_keywords = ['阅读理解', '文化阅读', '阅读真题', '语法', '完型填空']
+        reading_keywords = ['阅读理解', '文化阅读', '时文阅读', '阅读真题', '语法', '完型填空']
 
         # Function to determine the category
         def get_category(course, class_time):
