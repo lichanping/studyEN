@@ -181,7 +181,7 @@ export function handleScheduleNotificationClick() {
 请准时进入会议室，准备好摄像头和一杯水🍵，呵护嗓子。
 💬 请您看到消息后回复确认👌。
 
-📞 #腾讯会议：988-8340-0582`;
+📞 #腾讯会议：762-3777-6304`;
     }
     copyToClipboard(notificationMessage);
     showLongText(`${notificationMessage}`);
