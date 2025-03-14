@@ -8,7 +8,7 @@ body {
     background-color: #f2f2f2;
 }
 
-#classFeedbackButton, #stop, #reviewLateReminderButton {
+#classFeedbackButton, #stop, #noReviewTodayButton {
     background-color: lightblue;
 }
 
