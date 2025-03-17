@@ -179,7 +179,7 @@ export function handleAntiForgettingFeedbackClick() {
         .reduce((sum, input) => sum + (input.value ? parseInt(input.value, 10) : 0), 0);
     let forgetWords = document.getElementById('forgetWords').value.trim();
 
-    // Store forgetWords in localStorage with the key studentName_遗忘词
+    // Store forgetWords in IndexedDB with the key studentName_遗忘词
     storeForgetWords(userName, forgetWords);
 
     let pronounceWords = document.getElementById('pronounceWords').value.trim();
@@ -190,7 +190,7 @@ export function handleAntiForgettingFeedbackClick() {
     // Count the number of English words
     const numberOfEnglishWords = countEnglishWords(forgetWords);
     const numberOfWrongWords = countEnglishWords(pronounceWords);
-    const correctWordsCount = parseInt(antiForgettingReviewWord) - numberOfEnglishWords
+    const correctWordsCount = parseInt(antiForgettingReviewWord) - numberOfEnglishWords;
     const correctRate = (correctWordsCount / antiForgettingReviewWord * 100).toFixed(0);
     // Get the input element to display the result
     const inputAntiForgettingForgetWord = document.getElementById("antiForgettingForgetWord");
@@ -234,7 +234,6 @@ export function handleAntiForgettingFeedbackClick() {
         }).join('<br>') + '<br>';
     }
 
-
     // Combine both sections
     let combinedContent = keyLanguagePointsSection + practiceSection;
     // Generate the message
@@ -264,12 +263,33 @@ export function handleAntiForgettingFeedbackClick() {
     // Show alert with the generated message
     showLongText(`${message}`);
 
-    // Store current date and correct rate in a local file
+    // Store current date and correct rate in IndexedDB
     storeFeedbackInFile(userName, correctRate, antiForgettingReviewWord);
 }
 
-// Function to store forgetWords in localStorage with the student's name as key
-function storeForgetWords(studentName, forgetWords) {
+// 初始化 IndexedDB
+const DB_NAME = 'FeedbackDB';
+const STORE_NAME = 'feedbackData';
+const DB_VERSION = 1;
+
+async function initDB() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+        request.onupgradeneeded = (event) => {
+            const db = event.target.result;
+            if (!db.objectStoreNames.contains(STORE_NAME)) {
+                db.createObjectStore(STORE_NAME, { keyPath: 'userName' });
+            }
+        };
+
+        request.onsuccess = (event) => resolve(event.target.result);
+        request.onerror = (event) => reject(event.target.error);
+    });
+}
+
+// 修改 storeForgetWords 函数以使用 IndexedDB
+async function storeForgetWords(studentName, forgetWords) {
     const reviewTime = document.getElementById('reviewTime').value;
 
     if (!reviewTime) {
@@ -279,16 +299,42 @@ function storeForgetWords(studentName, forgetWords) {
 
     try {
         const currentDate = reviewTime.split('T')[0];
-        // Store the updated list back to localStorage
-        localStorage.setItem(`${studentName}_遗忘词_${currentDate}`, forgetWords);
+        const db = await initDB();
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+
+        const request = store.get(studentName);
+        const existingData = await new Promise((resolve, reject) => {
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
+        });
+
+        const newForgetWords = {
+            [currentDate]: forgetWords
+        };
+
+        const updatedData = {
+            userName: studentName,
+            forgetWords: {
+                ...(existingData ? existingData.forgetWords : {}),
+                ...newForgetWords
+            },
+            feedbackEntries: existingData ? existingData.feedbackEntries : []
+        };
+
+        store.put(updatedData);
+        await new Promise((resolve, reject) => {
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error);
+        });
         console.log('Forget words stored successfully.');
     } catch (error) {
         console.error('Error storing forget words:', error);
     }
 }
 
-// Function to store feedback data (current date and correct rate) in a file
-function storeFeedbackInFile(userName, correctRate, totalWordsReviewed) {
+// 修改 storeFeedbackInFile 函数以使用 IndexedDB
+async function storeFeedbackInFile(userName, correctRate, totalWordsReviewed) {
     const reviewTime = document.getElementById('reviewTime').value;
 
     if (!reviewTime) {
@@ -297,36 +343,47 @@ function storeFeedbackInFile(userName, correctRate, totalWordsReviewed) {
     }
 
     try {
-        // Extract the date part and day of the week
         const currentDate = reviewTime.split('T')[0];
-        const weekDay = getDayOfWeek(currentDate); // Function to get the weekday
-
-        // New entry for the feedback
+        const weekDay = getDayOfWeek(currentDate);
         const newContent = `${currentDate} (${weekDay}): ${correctRate}% | ${totalWordsReviewed}`;
 
-        // Retrieve and parse existing feedback
-        const existingContent = localStorage.getItem(userName) || '';
-        const feedbackEntries = existingContent
-            .split('\n')
-            .filter(entry => entry.trim()); // Remove empty lines
+        const db = await initDB();
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
 
-        // Update or append the current date's entry
+        const request = store.get(userName);
+        const existingData = await new Promise((resolve, reject) => {
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
+        });
+
+        let feedbackEntries = existingData ? existingData.feedbackEntries : [];
+        feedbackEntries = feedbackEntries.filter(entry => entry.trim());
+
         let updated = false;
         const updatedEntries = feedbackEntries.map(entry => {
             if (entry.startsWith(currentDate)) {
-                updated = true; // Mark as updated
+                updated = true;
                 return newContent;
             }
             return entry;
         });
 
-        // If the date does not exist, add the new entry
         if (!updated) {
             updatedEntries.push(newContent);
         }
 
-        // Save back to localStorage
-        localStorage.setItem(userName, updatedEntries.join('\n') + '\n');
+        const updatedData = {
+            userName,
+            forgetWords: existingData ? existingData.forgetWords : {},
+            feedbackEntries: updatedEntries
+        };
+
+        store.put(updatedData);
+        await new Promise((resolve, reject) => {
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error);
+        });
         console.log('Feedback stored successfully.');
     } catch (error) {
         console.error('An error occurred while storing feedback:', error);
@@ -340,39 +397,49 @@ function getDayOfWeek(dateStr) {
 }
 
 
-export function downloadFeedbackFile() {
+export async function downloadFeedbackFile() {
     const userName = document.getElementById("userName").value;
 
-    // Retrieve the stored content from localStorage
-    const rawContent = localStorage.getItem(userName);
+    try {
+        const db = await initDB();
+        const tx = db.transaction(STORE_NAME, 'readonly');
+        const store = tx.objectStore(STORE_NAME);
 
-    // Check if there's any content to download
-    if (!rawContent) {
-        alert("没有找到数据可供下载！");
-        return; // Exit if no content is found
+        const request = store.get(userName);
+        const userData = await new Promise((resolve, reject) => {
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
+        });
+
+        if (!userData) {
+            alert("没有找到数据可供下载！");
+            return;
+        }
+
+        const rawContent = userData.feedbackEntries.join('\n');
+        const formattedContent = await formatFeedbackContent(userData);
+
+        // Copy the formatted content to the clipboard
+        copyToClipboard(formattedContent);
+        console.log("内容已复制到剪贴板！");
+
+        // Create a Blob with the formatted feedback data
+        const blob = new Blob([formattedContent], { type: 'text/plain' });
+
+        // Create an anchor element for downloading the file
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `${userName}_抗遗忘正确率统计详情.txt`; // Use the username as the filename
+
+        // Trigger a click event to download the file
+        link.click();
+    } catch (error) {
+        console.error('下载反馈文件时出错:', error);
     }
-
-    // Generate the formatted content
-    const formattedContent = formatFeedbackContent(rawContent);
-
-    // Copy the formatted content to the clipboard
-    copyToClipboard(formattedContent);
-    console.log("内容已复制到剪贴板！");
-
-    // Create a Blob with the formatted feedback data
-    const blob = new Blob([formattedContent], {type: 'text/plain'});
-
-    // Create an anchor element for downloading the file
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `${userName}_抗遗忘正确率统计详情.txt`; // Use the username as the filename
-
-    // Trigger a click event to download the file
-    link.click();
 }
 
 
-function formatFeedbackContent(rawContent) {
+async function formatFeedbackContent(userData) {
     const userName = document.getElementById("userName").value || "未知用户";
     const teacherNameElement = document.getElementById("teacherName");
     const coachName = teacherNameElement.options[teacherNameElement.selectedIndex].text;
@@ -394,25 +461,20 @@ function formatFeedbackContent(rawContent) {
     // Process forget words
     let forgetWordsContent = '';
     let forgetWordsData = '';
-    for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key.startsWith(`${userName}_遗忘词_`)) {
-            const datePart = key.split('_').pop();
-            const wordDate = new Date(datePart.trim());
-
-            if (wordDate >= startDate && wordDate <= today) {
-                const words = localStorage.getItem(key);
-                if (words) {
-                    forgetWordsData += words + '\n';
-                }
+    const forgetWords = userData.forgetWords;
+    for (const [datePart, words] of Object.entries(forgetWords)) {
+        const wordDate = new Date(datePart.trim());
+        if (wordDate >= startDate && wordDate <= today) {
+            if (words) {
+                forgetWordsData += words + '\n';
             }
         }
     }
 
     if (forgetWordsData) {
         const forgetWordsArray = forgetWordsData.split('\n')
-            .map(word => word.trim())
-            .filter(word => word.length > 0);
+           .map(word => word.trim())
+           .filter(word => word.length > 0);
 
         const wordCounts = forgetWordsArray.reduce((acc, word) => {
             acc[word] = (acc[word] || 0) + 1;
@@ -420,13 +482,13 @@ function formatFeedbackContent(rawContent) {
         }, {});
 
         const sortedWordCounts = Object.entries(wordCounts)
-            .sort(([, a], [, b]) => b - a)
-            .map(([word, count], index) => {
+           .sort(([, a], [, b]) => b - a)
+           .map(([word, count], index) => {
                 return count === 1
-                    ? `${index + 1}. ${word}`
+                   ? `${index + 1}. ${word}`
                     : `${index + 1}. ${word} (遗忘 ${count} 次)`;
             })
-            .join('\n');
+           .join('\n');
 
         forgetWordsContent = `\n\n💡 抗遗忘复习的课后重点建议\n-------------------------------\n${sortedWordCounts}\n\n📢 以上数据仅统计${userName}在抗遗忘复习中的情况，请记得复习遗忘词，继续加油，巩固知识，进步会更加迅速！`;
     } else {
@@ -434,7 +496,7 @@ function formatFeedbackContent(rawContent) {
     }
 
     // Process feedback entries (correct rate content)
-    const feedbackEntries = rawContent.split('\n').filter(entry => entry.trim());
+    const feedbackEntries = userData.feedbackEntries.filter(entry => entry.trim());
     let totalCorrectRate = 0;
     let validEntries = 0;
     let totalWordsReviewed = 0;
@@ -486,7 +548,7 @@ function formatFeedbackContent(rawContent) {
 
     const header = `📝 抗遗忘复习详情\n日期              | 正确率 | 词汇量\n-------------------------------`;
     const footer = validEntries > 0
-        ? `\n📌 本期学习总览\n平均正确率: ${averageRate} %\n总复习词汇: ${totalWordsReviewed} 词`
+       ? `\n📌 本期学习总览\n平均正确率: ${averageRate} %\n总复习词汇: ${totalWordsReviewed} 词`
         : '';
 
     const metaInfo = `【抗遗忘数据统计】
