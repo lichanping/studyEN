@@ -760,12 +760,16 @@ export function generateTrialReport() {
 
     // 过滤出体验课记录
     const trialEntries = Object.entries(classStats)
-        .filter(([key, stats]) => stats.type === "体验课")
-        .map(([key, stats]) => ({
-            date: new Date(stats.date),
-            newWord: stats.newWord,
-            duration: stats.duration
-        }));
+       .filter(([key, stats]) => stats.type === "体验课")
+       .map(([key, stats]) => {
+            const [year, month, day] = key.split('-');
+            const date = new Date(year, month - 1, day);
+            return {
+                date,
+                newWord: stats.newWord,
+                duration: stats.duration
+            };
+        });
 
     if (trialEntries.length === 0) {
         alert("没有找到体验课数据！");
@@ -777,7 +781,7 @@ export function generateTrialReport() {
     reportContent += "📅 体验课学习详情\n日期              | 新词  | 课时\n--------------------------------\n";
 
     trialEntries.sort((a, b) => a.date - b.date).forEach(entry => {
-        const formattedDate = `${String(entry.date.getMonth()+1).padStart(2,'0')}-${String(entry.date.getDate()).padStart(2,'0')} (${entry.date.toLocaleString('zh-CN', {weekday: 'short'})})`;
+        const formattedDate = `${String(entry.date.getMonth() + 1).padStart(2, '0')}-${String(entry.date.getDate()).padStart(2, '0')} (${entry.date.toLocaleString('zh-CN', { weekday: 'short' })})`;
         reportContent += `${formattedDate} | ${entry.newWord.toString().padEnd(4)} | 1小时\n`;
     });
 
