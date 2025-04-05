@@ -236,53 +236,6 @@ class GenerateTool:
         file_path = os.path.join(temp_folder, '每月结算.html')
         self.calc_month_fee(file_path)
 
-    @Test()
-    def export_hot_products_to_excel(self):
-        temp_folder = get_sub_folder_path('temp')
-        file_path = os.path.join(temp_folder, '人气爆款.json')
-        # Load JSON data
-        with open(file_path, "r", encoding="utf-8") as file:
-            data = json.load(file)
-
-        self.export_to_file(data, file_path)
-
-    def export_to_file(self, data, file_path):
-        # Extract the list of products
-        products = data.get("data", {}).get("productSearchV3", {}).get("products", [])
-        # Create a list to store processed product information
-        product_data = []
-        # Process each product and select only the required fields
-        for product in products:
-            name = product.get("name")
-            serial_no = product.get("serialNo")
-            bricks = product.get("bricks")
-            suitable_label = product.get("suitable", {}).get("label")
-            # Append the selected fields to the product_data list
-            product_data.append({
-                "name": name,
-                "serialNo": serial_no,
-                "bricks": bricks,
-                "label": suitable_label
-            })
-        # Convert the product data into a DataFrame
-        df = pd.DataFrame(product_data)
-        # Get the current date and format it as YYYYMMDD
-        date_str = datetime.now().strftime("%Y-%m-%d")
-        # Define the output Excel filename
-        base_name = os.path.splitext(file_path)[0]
-        output_filename = f"{base_name}_{date_str}.xlsx"
-        # Create a pivot table summarizing by 'label' and sort by 'count' in descending order
-        pivot_table = df.pivot_table(index='label', values='bricks', aggfunc='count').reset_index()
-        pivot_table.rename(columns={'bricks': 'count'}, inplace=True)
-        pivot_table.sort_values(by='count', ascending=False, inplace=True)  # Sort by count in descending order
-        # Export to Excel with multiple sheets
-        with pd.ExcelWriter(output_filename, engine='openpyxl') as writer:
-            # Save the raw product data to Sheet1
-            df.to_excel(writer, index=False, sheet_name='Sheet1')
-            # Save the sorted pivot table to Sheet2
-            pivot_table.to_excel(writer, index=False, sheet_name='Sheet2')
-        print(f"Data has been successfully exported to {output_filename}")
-
     def calc_month_fee(self, file_path):
         # Open the HTML file
         with open(file_path, "r", encoding="utf-8") as file:
@@ -379,6 +332,137 @@ class GenerateTool:
             pivot.to_excel(writer, sheet_name='汇总', index=False)
             pivot_by_student.to_excel(writer, sheet_name='按学生汇总', index=False)
         print(f"Data and summary successfully written to {output_file}")
+
+    @Test()
+    def calc_personal_fee_from_training_list(self):
+        temp_folder = get_sub_folder_path('temp')
+        file_path = os.path.join(temp_folder, 'v5.html')
+        self.calc_month_fee_from_training_list(file_path)
+
+    def calc_month_fee_from_training_list(self, file_path):
+        with open(file_path, "r", encoding="utf-8") as file:
+            html_content = file.read()
+
+        soup = BeautifulSoup(html_content, 'html.parser')
+        cards = soup.find_all('uni-view', class_='training-card')
+        data = []
+
+        reading_keywords = ['阅读理解', '文化阅读', '时文阅读', '阅读真题', '语法', '完型填空']
+
+        def get_category(course, tag_texts):
+            if '体验课' in tag_texts:
+                return '体验课'
+            elif any(keyword in course for keyword in reading_keywords):
+                return '阅读完型语法课'
+            else:
+                return '词汇课'
+
+        def get_actual_price(class_time, category):
+            if category == '体验课':
+                return 40
+            duration = 60 if '60分钟' in class_time else 30 if '30分钟' in class_time else None
+            if duration:
+                base_price = 50 if category == '词汇课' else 55
+                return base_price if duration == 60 else base_price / 2
+            return 0
+
+        for card in cards:
+            student = card.find('uni-text', class_='label', string=lambda s: s and '用户' in s)
+            if student:
+                student_val = student.find_next_sibling('uni-text').get_text(strip=True)
+            else:
+                continue  # skip if no student
+
+            course = card.find('uni-text', class_='book-title').get_text(strip=True)
+
+            # Extract all tags
+            tags = card.find_all('uni-text', class_='tag')
+            tag_texts = [tag.get_text(strip=True) for tag in tags]
+
+            # Get class_time based on minutes info
+            class_time = next((text for text in tag_texts if '分钟' in text), '')
+
+            # Extract 开始时间
+            start_time_view = card.find('uni-text', class_='label', string=lambda s: s and '开始时间' in s)
+            if start_time_view:
+                start_time = start_time_view.find_next_sibling('uni-text').get_text(strip=True)
+            else:
+                start_time = ''
+
+            category = get_category(course, tag_texts)
+            actual_price = get_actual_price(class_time, category)
+
+            data.append({
+                '学生': student_val,
+                '课程': course,
+                '开始时间': start_time,
+                '课时': class_time,
+                '类别': category,
+                '实际价格': actual_price
+            })
+
+        df = pd.DataFrame(data)
+        df['时长'] = df['课时'].apply(lambda x: 1 if '60分钟' in x else 0.5 if '30分钟' in x else 1)
+        pivot = pd.pivot_table(df, values='时长', index='类别', aggfunc='sum').reset_index()
+        pivot_by_student = pd.pivot_table(df, values=['实际价格', '时长'], index='学生', aggfunc='sum').reset_index()
+        pivot_by_student = pivot_by_student.sort_values(by='实际价格', ascending=False)
+
+        temp_folder = get_sub_folder_path('temp')
+        base_name = os.path.splitext(os.path.basename(file_path))[0]
+        output_file = os.path.join(temp_folder, f'{base_name}.xlsx')
+
+        with pd.ExcelWriter(output_file, engine='openpyxl', mode='w') as writer:
+            df.to_excel(writer, sheet_name='明细', index=False)
+            pivot.to_excel(writer, sheet_name='汇总', index=False)
+            pivot_by_student.to_excel(writer, sheet_name='按学生汇总', index=False)
+        print(f"Data and summary successfully written to {output_file}")
+
+    @Test()
+    def export_hot_products_to_excel(self):
+        temp_folder = get_sub_folder_path('temp')
+        file_path = os.path.join(temp_folder, '人气爆款.json')
+        # Load JSON data
+        with open(file_path, "r", encoding="utf-8") as file:
+            data = json.load(file)
+
+        self.export_to_file(data, file_path)
+
+    def export_to_file(self, data, file_path):
+        # Extract the list of products
+        products = data.get("data", {}).get("productSearchV3", {}).get("products", [])
+        # Create a list to store processed product information
+        product_data = []
+        # Process each product and select only the required fields
+        for product in products:
+            name = product.get("name")
+            serial_no = product.get("serialNo")
+            bricks = product.get("bricks")
+            suitable_label = product.get("suitable", {}).get("label")
+            # Append the selected fields to the product_data list
+            product_data.append({
+                "name": name,
+                "serialNo": serial_no,
+                "bricks": bricks,
+                "label": suitable_label
+            })
+        # Convert the product data into a DataFrame
+        df = pd.DataFrame(product_data)
+        # Get the current date and format it as YYYYMMDD
+        date_str = datetime.now().strftime("%Y-%m-%d")
+        # Define the output Excel filename
+        base_name = os.path.splitext(file_path)[0]
+        output_filename = f"{base_name}_{date_str}.xlsx"
+        # Create a pivot table summarizing by 'label' and sort by 'count' in descending order
+        pivot_table = df.pivot_table(index='label', values='bricks', aggfunc='count').reset_index()
+        pivot_table.rename(columns={'bricks': 'count'}, inplace=True)
+        pivot_table.sort_values(by='count', ascending=False, inplace=True)  # Sort by count in descending order
+        # Export to Excel with multiple sheets
+        with pd.ExcelWriter(output_filename, engine='openpyxl') as writer:
+            # Save the raw product data to Sheet1
+            df.to_excel(writer, index=False, sheet_name='Sheet1')
+            # Save the sorted pivot table to Sheet2
+            pivot_table.to_excel(writer, index=False, sheet_name='Sheet2')
+        print(f"Data has been successfully exported to {output_filename}")
 
     def create_and_save_pivot_table(self, input_file_path):
         # 读取 Excel 文件中的数据
