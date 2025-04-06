@@ -108,7 +108,8 @@
     <label for="antiForgettingForgetWord">抗遗忘遗忘单词:</label>
     <input type="text" id="antiForgettingForgetWord" value="0">
 </div>
-
+<label for="newLearnedWords">新学单词 (英文+中文):<span style="color: red;">支持右键粘贴</span></label>
+<textarea id="newLearnedWords"></textarea>
 <label for="forgetWords">遗忘词 (英文+中文):<span style="color: red;">支持右键粘贴</span></label>
 <textarea id="forgetWords"></textarea>
 <label for="pronounceWords">发音不标准的词:<span style="color: red;">支持右键粘贴</span></label>
@@ -152,10 +153,12 @@
     document.getElementById("downloadSalaryButton").addEventListener("click", script.generateSalaryReport);
     const forgetWordsTextarea = document.getElementById('forgetWords');
     const pronounceWordsTextarea = document.getElementById('pronounceWords');
+    const newLearnedWordsTextarea = document.getElementById('newLearnedWords');
 
     // 调用封装的函数为 textarea 添加右键粘贴功能
     commonFunctions.addRightClickPasteEvent(forgetWordsTextarea);
     commonFunctions.addRightClickPasteEvent(pronounceWordsTextarea);
+    commonFunctions.addRightClickPasteEvent(newLearnedWordsTextarea);
 
 </script>
 </body>
