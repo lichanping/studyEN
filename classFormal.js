@@ -227,9 +227,8 @@ export function handleClassFeedbackClick() {
     const correctRate = ((newWord - forgetWord) / newWord * 100).toFixed(0);
     let forgetWords = document.getElementById('forgetWords').value.trim();
     const numberOfEnglishWords = countEnglishWords(forgetWords);
-    const inputAntiForgettingForgetWord = document.getElementById("antiForgettingForgetWord");
-    inputAntiForgettingForgetWord.value = numberOfEnglishWords;
-    const antiForgettingForgetWord = document.getElementById('antiForgettingForgetWord').value;
+    document.getElementById("antiForgettingForgetWord").value = numberOfEnglishWords;
+
     const learnedWord = parseInt(document.getElementById("learnedWord").value.trim()) || 0;
     const inputText = document.getElementById('preTestWord').value.trim();
     let preTestWord = inputText ? inputText.split('+').reduce((sum, num) => {
@@ -252,14 +251,90 @@ export function handleClassFeedbackClick() {
         const classDate = new Date(classDateTime).toISOString().split('T')[0];
         const classDuration = parseFloat(document.getElementById("classDuration").value);
         storeClassStatistics(userName, classDate, newWord, reviewWordCount, classDuration, "词汇课");
+
+        // ✅ 存储 newLearnedWords 到 IndexedDB
+        const newLearnedWordsText = document.getElementById('newLearnedWords').value.trim();
+        storeNewLearnedWords(userName, newLearnedWordsText);
     } else {
         alert("请选择有效的课程日期。");
-        return; // 如果没有选择日期，停止函数
+        return;
     }
 
     // 复制到剪贴板并弹窗显示
     copyToClipboard(feedbackMessage);
     showLongText(`${feedbackMessage}`);
+}
+
+const DB_NAME = 'FeedbackDB';
+const DB_VERSION = 1
+const STORE_NAME_FORGET = 'feedbackData';
+const STORE_NAME_LEARNED = 'newLearnedWords';
+
+async function initDB() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+        request.onupgradeneeded = (event) => {
+            const db = event.target.result;
+
+            if (!db.objectStoreNames.contains(STORE_NAME_LEARNED)) {
+                db.createObjectStore(STORE_NAME_LEARNED, { keyPath: 'userName' });
+            }
+
+            if (!db.objectStoreNames.contains(STORE_NAME_FORGET)) {
+                db.createObjectStore(STORE_NAME_FORGET, { keyPath: 'userName' });
+            }
+        };
+
+        request.onsuccess = (event) => resolve(event.target.result);
+        request.onerror = (event) => reject(event.target.error);
+    });
+}
+
+async function storeNewLearnedWords(studentName, newLearnedWordsText) {
+    const classDateInput = document.getElementById("classDateTime").value;
+
+    if (!classDateInput) {
+        console.error('Class date not selected.');
+        return;
+    }
+
+    try {
+        const currentDate = classDateInput.split('T')[0];
+        const db = await initDB();
+        const tx = db.transaction(STORE_NAME_LEARNED, 'readwrite');
+        const store = tx.objectStore(STORE_NAME_LEARNED);
+
+        const request = store.get(studentName);
+        const existingData = await new Promise((resolve, reject) => {
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
+        });
+
+        const newWordsEntry = {
+            [currentDate]: newLearnedWordsText
+        };
+
+        const updatedData = {
+            userName: studentName,
+            newLearnedWords: {
+                ...(existingData?.newLearnedWords || {}),
+                ...newWordsEntry  // newWordsEntry 应该是你要新增的单词
+            },
+            feedbackEntries: existingData?.feedbackEntries || [],
+            forgetWords: existingData?.forgetWords || {}
+        };
+
+        store.put(updatedData);
+        await new Promise((resolve, reject) => {
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error);
+        });
+
+        console.log('✅ New learned words stored successfully.');
+    } catch (error) {
+        console.error('❌ Error storing new learned words:', error);
+    }
 }
 
 export function generateReport() {
@@ -315,7 +390,7 @@ export function generateReport() {
         recordDate.setHours(0, 0, 0, 0);
 
         if (recordDate > startDate && recordDate <= today) {
-            const weekDay = recordDate.toLocaleString('zh-CN', { weekday: 'short' });
+            const weekDay = recordDate.toLocaleString('zh-CN', {weekday: 'short'});
             const formattedDate = `${String(recordDate.getMonth() + 1).padStart(2, '0')}-${String(recordDate.getDate()).padStart(2, '0')}`;
 
             let courseType = stats.type || "词汇课";
@@ -325,7 +400,7 @@ export function generateReport() {
                     duration = (stats.newWord < 20) ? 0.5 : 1;
                 }
                 courseType = duration === 0.5 ? "半词课" : "词汇课";
-            }   else if (courseType === "阅读完型语法课") {
+            } else if (courseType === "阅读完型语法课") {
                 courseType = "阅语课";
             }
 
@@ -384,7 +459,7 @@ export function generateReport() {
     copyToClipboard(reportContent);
 
     // Generate the file and trigger download
-    const blob = new Blob([reportContent], { type: 'text/plain' });
+    const blob = new Blob([reportContent], {type: 'text/plain'});
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = `${userName}_学习报告.txt`; // Use the username as the filename
@@ -460,7 +535,7 @@ export function generateSalaryReport() {
 
     const currentTeacher = teacherData[teacherName];
     const allStudents = Object.keys(currentTeacher.users);
-    
+
     let totalHoursVocab = 0;     // 词汇课总课时
     let totalHoursReading = 0;   // 阅读课总课时
     let totalHoursTrial = 0;     // 体验课总课时
@@ -470,14 +545,14 @@ export function generateSalaryReport() {
 
     let allRecords = [];  // 用于存储所有记录
     let studentStats = {};  // 用于存储每个学生的统计数据
-    
+
     allStudents.forEach(userName => {
         // 初始化每个学生的总工资
         studentStats[userName] = 0;
 
         const statsKey = `${userName}_classStatistics`;
         const classStats = JSON.parse(localStorage.getItem(statsKey)) || {};
-        
+
         Object.entries(classStats).forEach(([key, stats]) => {
             // 获取日期
             let date = key;
@@ -488,25 +563,25 @@ export function generateSalaryReport() {
             const recordDate = new Date(date);
             const recordYear = recordDate.getFullYear();
             const recordMonth = recordDate.getMonth() + 1;
-            
+
             const [inputYear, inputMonth] = monthToQuery.split('-').map(Number);
-            
+
             if (recordYear === inputYear && recordMonth === inputMonth) {
                 let duration = stats.duration;
                 if (typeof duration === 'undefined') {
                     duration = (stats.newWord < 20) ? 0.5 : 1;
                 }
-                
+
                 const type = stats.type || "词汇课";
-                
+
                 // 将记录添加到数组中
                 allRecords.push({
                     userName,
                     date,
                     type,
                     duration,
-                    hourlyRate: type === "词汇课" ? 50 : 
-                               type === "阅读完型语法课" ? 55 : 40
+                    hourlyRate: type === "词汇课" ? 50 :
+                        type === "阅读完型语法课" ? 55 : 40
                 });
             }
         });
@@ -523,9 +598,9 @@ export function generateSalaryReport() {
     allRecords.forEach(record => {
         const lessonFee = record.duration * record.hourlyRate;
         reportContent += `${record.userName.padEnd(6)} | ${record.date} | ${record.type.padEnd(12)} | ${record.duration.toString().padEnd(4)} | ${lessonFee}元\n`;
-        
+
         // 累加总课时和学生工资
-        switch(record.type) {
+        switch (record.type) {
             case "词汇课":
                 totalHoursVocab += record.duration;
                 break;
@@ -551,7 +626,7 @@ export function generateSalaryReport() {
 
     // 添加总计数据
     reportContent += "\n========== 总计 ==========\n";
-    
+
     // 计算各类课程工资
     const salaryVocab = totalHoursVocab * 50;    // 词汇课工资
     const salaryReading = totalHoursReading * 55; // 阅读课工资
@@ -572,7 +647,7 @@ export function generateSalaryReport() {
     }
     reportContent += `\n工资总计: ${totalSalaryAll} 元\n`;
 
-    const blob = new Blob([reportContent], { type: 'text/plain;charset=utf-8' });
+    const blob = new Blob([reportContent], {type: 'text/plain;charset=utf-8'});
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = `${teacherDisplayName}_${monthToQuery}_课时工资.txt`;
