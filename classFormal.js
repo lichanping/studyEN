@@ -266,7 +266,7 @@ export function handleClassFeedbackClick() {
 }
 
 const DB_NAME = 'FeedbackDB';
-const DB_VERSION = 1
+const DB_VERSION = 2
 const STORE_NAME_FORGET = 'feedbackData';
 const STORE_NAME_LEARNED = 'newLearnedWords';
 
