@@ -337,7 +337,7 @@ async function storeNewLearnedWords(studentName, newLearnedWordsText) {
     }
 }
 
-export function generateReport() {
+export async function generateReport() {
     const userName = document.getElementById("userName").value;
     const teacherNameElement = document.getElementById("teacherName");
     const coachName = teacherNameElement.options[teacherNameElement.selectedIndex].text;
@@ -348,7 +348,7 @@ export function generateReport() {
         const key = localStorage.key(i);
         if (key.includes(userName)) {
             const storedValue = localStorage.getItem(key);
-            if (storedValue) { // 检查存储的值是否存在
+            if (storedValue) {
                 try {
                     const stats = JSON.parse(storedValue);
                     Object.assign(allClassStats, stats);
@@ -364,7 +364,6 @@ export function generateReport() {
         return;
     }
 
-    // Read day range from input
     const dayRangeInput = document.getElementById("daysRangeInput");
     const dayRange = parseInt(dayRangeInput.value) || 7;
 
@@ -379,18 +378,16 @@ export function generateReport() {
     let totalNewWords = 0;
     let totalReviewWords = 0;
 
-    // Update: Handle both types of classes, including those with the `type` attribute (e.g., "阅读完型语法课")
     Object.entries(allClassStats).forEach(([key, stats]) => {
         const isVocabClass = !key.includes('_') || (stats.type === "词汇课" || stats.type === "阅读完型语法课");
         if (!isVocabClass) return;
 
-        // Ensure the correct date is used, and handle missing or alternate formats
         const date = stats.date || key;
         const recordDate = new Date(date);
         recordDate.setHours(0, 0, 0, 0);
 
         if (recordDate > startDate && recordDate <= today) {
-            const weekDay = recordDate.toLocaleString('zh-CN', {weekday: 'short'});
+            const weekDay = recordDate.toLocaleString('zh-CN', { weekday: 'short' });
             const formattedDate = `${String(recordDate.getMonth() + 1).padStart(2, '0')}-${String(recordDate.getDate()).padStart(2, '0')}`;
 
             let courseType = stats.type || "词汇课";
@@ -406,6 +403,7 @@ export function generateReport() {
 
             sortedEntries.push({
                 date: recordDate,
+                dateKey: recordDate.toISOString().split('T')[0], // 用于和 indexDB 匹配
                 formatted: `${formattedDate} (${weekDay}) | ${courseType} | ${stats.newWord} | ${stats.reviewWordCount}`,
                 year: recordDate.getFullYear(),
                 newWord: stats.newWord,
@@ -419,52 +417,79 @@ export function generateReport() {
         }
     });
 
-    // If no valid entries within the date range, alert the user
     if (validEntries === 0) {
         alert("没有找到数据可供下载！");
         return;
     }
 
-    // Sort the entries by date in ascending order
     sortedEntries.sort((a, b) => a.date - b.date);
 
-    // Prepare the report content (with totals in the title)
+    // 🔽 获取新学单词数据 from indexDB
+    const db = await initDB();
+    const tx = db.transaction(STORE_NAME_LEARNED, 'readonly');
+    const store = tx.objectStore(STORE_NAME_LEARNED);
+    const request = store.get(userName);
+    const indexDBData = await new Promise((resolve, reject) => {
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+
+    const learnedWordsMap = indexDBData?.newLearnedWords || {};
+
+    // 🔽 构建报告文本内容
     let reportContent = `【正课学习数据统计】\n`;
     reportContent += `学员: ${userName}\n`;
     reportContent += `教练: ${coachName}\n\n`;
 
-    // Add the totals after the calculation
     reportContent += `📌 本期学习总览\n`;
     reportContent += `新学单词：${totalNewWords} 词\n`;
     reportContent += `九宫格复习：${totalReviewWords} 词\n\n`;
 
-    reportContent += `📅 正课学习详情\n日期     | 课程类型 | 新词  | 九宫格\n--------------------------------\n`;
+    reportContent += `📅 正课学习详情\n`;
+    reportContent += `日期     | 课程类型 | 新词  | 九宫格\n`;
+    reportContent += `--------------------------------\n`;
 
     let currentYear = null;
-
-    // Add sorted entries to the report content
     sortedEntries.forEach(entry => {
-        // Add year title if it changes
         if (entry.year !== currentYear) {
             currentYear = entry.year;
             reportContent += `**${currentYear}年**\n`;
         }
-
         reportContent += `${entry.formatted}\n`;
     });
 
-    reportContent += `\n📢 以上数据仅统计${userName}在正课中的学习情况，不包含课后的抗遗忘复习。\n💪 ${userName}，继续稳步积累，保持进步！`;
+    // 🔽 筛选出日期范围内的 newLearnedWords
+    const filteredNewWordsEntries = Object.entries(learnedWordsMap)
+        .filter(([dateStr, words]) => {
+            if (!words || !words.trim()) return false;
+            const date = new Date(dateStr);
+            date.setHours(0, 0, 0, 0);
+            return date > startDate && date <= today;
+        })
+        .sort(([a], [b]) => new Date(a) - new Date(b));
 
-    // Copy the formatted content to the clipboard
+    // 🔽 如果有记录才输出“新学单词明细”区块
+    if (filteredNewWordsEntries.length > 0) {
+        reportContent += `\n📖 新学单词明细\n`;
+        reportContent += `> 以下为每次正课中记录的新学单词（如有记录）：\n\n`;
+
+        filteredNewWordsEntries.forEach(([dateStr, words]) => {
+            reportContent += `🗓 **${dateStr}**\n${words.trim()}\n\n`;
+        });
+    }
+
+    // 结尾说明
+    reportContent += `📢 以上数据仅统计${userName}在正课中的学习情况，不包含课后的抗遗忘复习。\n`;
+    reportContent += `💪 ${userName}，继续稳步积累，保持进步！`;
+
+    // Copy to clipboard
     copyToClipboard(reportContent);
 
-    // Generate the file and trigger download
-    const blob = new Blob([reportContent], {type: 'text/plain'});
+    // Download report
+    const blob = new Blob([reportContent], { type: 'text/plain' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `${userName}_学习报告.txt`; // Use the username as the filename
-
-    // Trigger download
+    link.download = `${userName}_学习报告.txt`;
     link.click();
 }
 
