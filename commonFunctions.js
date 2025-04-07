@@ -270,16 +270,23 @@ export function handleAntiForgettingFeedbackClick() {
 // 初始化 IndexedDB
 const DB_NAME = 'FeedbackDB';
 const STORE_NAME = 'feedbackData';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 async function initDB() {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        const request = indexedDB.open(DB_NAME, DB_VERSION); // Version 2
 
         request.onupgradeneeded = (event) => {
             const db = event.target.result;
-            if (!db.objectStoreNames.contains(STORE_NAME)) {
-                db.createObjectStore(STORE_NAME, { keyPath: 'userName' });
+
+            // Create feedbackData if not exists
+            if (!db.objectStoreNames.contains('feedbackData')) {
+                db.createObjectStore('feedbackData', { keyPath: 'userName' });
+            }
+
+            // Also create newLearnedWords if not exists
+            if (!db.objectStoreNames.contains('newLearnedWords')) {
+                db.createObjectStore('newLearnedWords', { keyPath: 'userName' });
             }
         };
 
