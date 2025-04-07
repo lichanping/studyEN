@@ -470,11 +470,10 @@ export async function generateReport() {
 
     // 🔽 如果有记录才输出“新学单词明细”区块
     if (filteredNewWordsEntries.length > 0) {
-        reportContent += `\n📖 新学单词明细\n`;
-        reportContent += `> 以下为每次正课中记录的新学单词（如有记录）：\n\n`;
+        reportContent += `\n📖 新学重点单词明细：\n`;
 
         filteredNewWordsEntries.forEach(([dateStr, words]) => {
-            reportContent += `🗓 **${dateStr}**\n${words.trim()}\n\n`;
+            reportContent += `**${dateStr}**\n${words.trim()}\n\n`;
         });
     }
 
