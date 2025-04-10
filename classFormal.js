@@ -728,6 +728,12 @@ export async function generateWordReport() {
         })
         .sort(([a], [b]) => new Date(a) - new Date(b));
 
+    // If there are no records, display a message and stop the export
+    if (filteredNewWordsEntries.length === 0) {
+        alert("No record found for the specified period.");
+        return; // Stop the function if there are no records
+    }
+
     const combinedDoc = new Document({
         sections: [{
             children: [
@@ -813,7 +819,7 @@ function generateTableSections(entries, showEnglish, showChinese) {
                 alignment: AlignmentType.LEFT,
             }),
             new Paragraph({
-                text: `日期：${dateStr}`,
+                text: `正课日期：${dateStr}`,
                 alignment: AlignmentType.LEFT,
             }),
             new Table({
