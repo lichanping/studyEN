@@ -739,7 +739,7 @@ export async function generateWordReport() {
             children: [
                 // 学习资料部分
                 new Paragraph({
-                    text: '学习资料',
+                    text: '学习资料（中英文）',
                     heading: 'Heading1',
                     alignment: AlignmentType.CENTER,
                 }),
@@ -747,10 +747,27 @@ export async function generateWordReport() {
                 new Paragraph({text: `教练：${teacherName}`, alignment: AlignmentType.LEFT}),
                 new Paragraph({text: '',}),
                 ...generateTableSections(filteredNewWordsEntries, true, true),
+                new Paragraph({
+                      children: [
+                        new TextRun({
+                          text: '请家长和学生需将文档打印出来，完成词义记忆和拼写练习，并对应中英文版进行批改。',
+                          bold: true,
+                          size: 28, // 字号14pt
+                          color: 'C47F3E', // 橘色
+                        })
+                      ],
+                      spacing: { before: 300 },
+                      alignment: AlignmentType.LEFT,
+                    }),
+                // 在英文默写部分前插入4个空白行
+                new Paragraph({ text: '' }), // 第1个空白行
+                new Paragraph({ text: '' }), // 第2个空白行
+                new Paragraph({ text: '' }), // 第3个空白行
+                new Paragraph({ text: '' }), // 第4个空白行
 
                 // 英文默写部分
                 new Paragraph({
-                    text: '英文默写用',
+                    text: '词义记忆（英文）',
                     heading: 'Heading1',
                     alignment: AlignmentType.CENTER,
                 }),
@@ -761,7 +778,7 @@ export async function generateWordReport() {
 
                 // 中文默写部分
                 new Paragraph({
-                    text: '中文默写用',
+                    text: '拼写练习（中文）',
                     heading: 'Heading1',
                     alignment: AlignmentType.CENTER,
                 }),
@@ -776,7 +793,8 @@ export async function generateWordReport() {
     const combinedBlob = await Packer.toBlob(combinedDoc);
     const combinedLink = document.createElement("a");
     combinedLink.href = URL.createObjectURL(combinedBlob);
-    combinedLink.download = `学习资料-合并-${userName}.docx`;
+    const formattedDate = today.toISOString().slice(0, 10);
+    combinedLink.download = `学习资料_${userName}_${formattedDate}.docx`;
     combinedLink.click();
 }
 
