@@ -786,8 +786,13 @@ function generateTableSections(entries, showEnglish, showChinese) {
 
     return entries.flatMap(([dateStr, words]) => {
         const wordPairs = words.trim().split('\n').map(pair => {
-            const match = pair.match(/^([a-zA-Z\s-]+)([\u4e00-\u9fa5\s；]+)$/);
-            return match ? [match[1].trim(), match[2].trim()] : [];
+            const match = pair.match(/^([a-zA-Z\s-]+)(.*)$/);
+            if (match) {
+                const english = match[1].trim();
+                const chinese = match[2].trim() || '缺失中文';
+                return [english, chinese];
+            }
+            return []; // skip badly formatted lines
         });
 
         const tableRows = wordPairs.map(pair => {
