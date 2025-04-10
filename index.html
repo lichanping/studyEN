@@ -16,7 +16,21 @@
         commonFunctions.checkLoginStatus();
 
     </script>
-
+    <script>
+        const docxScript = document.createElement('script');
+        docxScript.src = "https://unpkg.com/docx@7.7.0/build/index.js";
+        docxScript.onload = () => {
+            window.docx = docx;
+            console.log("✅ docx available?", window.docx);
+            // 触发一个自定义事件，表示 docx 库已经加载完成
+            const docxLoadedEvent = new Event('docxLoaded');
+            window.dispatchEvent(docxLoadedEvent);
+        };
+        docxScript.onerror = () => {
+            console.error("❌ Failed to load docx library");
+        };
+        document.head.appendChild(docxScript);
+    </script>
 </head>
 <body>
 
@@ -123,12 +137,20 @@
     <button id="downloadFileButton">抗遗忘统计</button>
     <button id="downloadFormalButton">正课统计</button>
     <button id="downloadSalaryButton">工资统计</button>
+    <button id="downloadWordButton">导出Word</button>
 </div>
 
 <script type="module">
     import * as script from './classFormal.js';
     import * as commonFunctions from './commonFunctions.js';
 
+    // 监听 docxLoaded 事件
+    window.addEventListener('docxLoaded', () => {
+        // 在这里执行需要使用 docx 库的代码
+        const downloadWordButton = document.getElementById("downloadWordButton");
+        downloadWordButton.addEventListener("click", script.generateWordReport);
+        console.log("generateWordReport method is bound to the downloadWordButton");
+    });
     document.getElementById("navigateToTiyanClass").addEventListener("click", commonFunctions.navigateToTiyanClass);
     document.getElementById("navigateToReadClass").addEventListener("click", commonFunctions.navigateToReadClass);
     document.getElementById("wordSelfCheckButton").addEventListener('click', commonFunctions.navigateToLearnWords);

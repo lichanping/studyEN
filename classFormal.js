@@ -212,7 +212,7 @@ export function handleClassFeedbackClick() {
     // 获取课程信息
     const course = document.getElementById('courseLabel').textContent;
     const courseWordCountLabel = document.getElementById('courseWordCountLabel').textContent;
-    
+
     // 获取用户输入数据
     const userName = document.getElementById("userName").value;
     const newWord = parseInt(document.getElementById("newWord").value);
@@ -278,11 +278,11 @@ async function initDB() {
             const db = event.target.result;
 
             if (!db.objectStoreNames.contains(STORE_NAME_LEARNED)) {
-                db.createObjectStore(STORE_NAME_LEARNED, { keyPath: 'userName' });
+                db.createObjectStore(STORE_NAME_LEARNED, {keyPath: 'userName'});
             }
 
             if (!db.objectStoreNames.contains(STORE_NAME_FORGET)) {
-                db.createObjectStore(STORE_NAME_FORGET, { keyPath: 'userName' });
+                db.createObjectStore(STORE_NAME_FORGET, {keyPath: 'userName'});
             }
         };
 
@@ -387,7 +387,7 @@ export async function generateReport() {
         recordDate.setHours(0, 0, 0, 0);
 
         if (recordDate > startDate && recordDate <= today) {
-            const weekDay = recordDate.toLocaleString('zh-CN', { weekday: 'short' });
+            const weekDay = recordDate.toLocaleString('zh-CN', {weekday: 'short'});
             const formattedDate = `${String(recordDate.getMonth() + 1).padStart(2, '0')}-${String(recordDate.getDate()).padStart(2, '0')}`;
 
             let courseType = stats.type || "词汇课";
@@ -485,7 +485,7 @@ export async function generateReport() {
     copyToClipboard(reportContent);
 
     // Download report
-    const blob = new Blob([reportContent], { type: 'text/plain' });
+    const blob = new Blob([reportContent], {type: 'text/plain'});
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = `${userName}_学习报告.txt`;
@@ -678,5 +678,178 @@ export function generateSalaryReport() {
     link.click();
 }
 
+// 定义 generateWordReport 函数
+export async function generateWordReport() {
+    if (!window.docx) {
+        await new Promise(resolve => {
+            window.addEventListener('docxLoaded', resolve);
+        });
+    }
 
+    const { Document, Packer, Paragraph, TextRun, AlignmentType, Table, TableRow, TableCell, BorderStyle, WidthType } = window.docx;
+
+    const db = await initDB();
+    const tx = db.transaction(STORE_NAME_LEARNED, 'readonly');
+    const store = tx.objectStore(STORE_NAME_LEARNED);
+    const userName = document.getElementById("userName").value;
+    const teacherName = document.getElementById("teacherName").options[document.getElementById("teacherName").selectedIndex].text;
+    const request = store.get(userName);
+    const indexDBData = await new Promise((resolve, reject) => {
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+
+    const learnedWordsMap = indexDBData?.newLearnedWords || {};
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const dayRangeInput = document.getElementById("daysRangeInput");
+    const dayRange = parseInt(dayRangeInput.value) || 7;
+    const startDate = new Date();
+    startDate.setDate(today.getDate() - dayRange);
+    startDate.setHours(0, 0, 0, 0);
+
+    const filteredNewWordsEntries = Object.entries(learnedWordsMap)
+        .filter(([dateStr, words]) => {
+            if (!words || !words.trim()) return false;
+            const date = new Date(dateStr);
+            date.setHours(0, 0, 0, 0);
+            return date > startDate && date <= today;
+        })
+        .sort(([a], [b]) => new Date(a) - new Date(b));
+
+    const combinedDoc = new Document({
+        sections: [{
+            children: [
+                // 学习资料部分
+                new Paragraph({
+                    text: '学习资料',
+                    heading: 'Heading1',
+                    alignment: AlignmentType.CENTER,
+                }),
+                new Paragraph({ text: `用户：${userName}`, alignment: AlignmentType.LEFT }),
+                new Paragraph({ text: `教练：${teacherName}`, alignment: AlignmentType.LEFT }),
+                new Paragraph({text: '',}),
+                ...generateTableSections(filteredNewWordsEntries, true, true),
+
+                // 英文默写部分
+                new Paragraph({
+                    text: '学习资料（英文默写用）',
+                    heading: 'Heading1',
+                    alignment: AlignmentType.CENTER,
+                }),
+                new Paragraph({ text: `用户：${userName}`, alignment: AlignmentType.LEFT }),
+                new Paragraph({ text: `教练：${teacherName}`, alignment: AlignmentType.LEFT }),
+                new Paragraph({text: '',}),
+                ...generateTableSections(filteredNewWordsEntries, true, false),
+
+                // 中文默写部分
+                new Paragraph({
+                    text: '学习资料（中文默写用）',
+                    heading: 'Heading1',
+                    alignment: AlignmentType.CENTER,
+                }),
+                new Paragraph({ text: `用户：${userName}`, alignment: AlignmentType.LEFT }),
+                new Paragraph({ text: `教练：${teacherName}`, alignment: AlignmentType.LEFT }),
+                new Paragraph({text: '',}),
+                ...generateTableSections(filteredNewWordsEntries, false, true),
+            ]
+        }]
+    });
+
+    const combinedBlob = await Packer.toBlob(combinedDoc);
+    const combinedLink = document.createElement("a");
+    combinedLink.href = URL.createObjectURL(combinedBlob);
+    combinedLink.download = `学习资料-合并-${userName}.docx`;
+    combinedLink.click();
+}
+
+// 工具函数：生成词汇表格段落
+function generateTableSections(entries, showEnglish, showChinese) {
+    const { Paragraph, Table, TableRow, TableCell, TextRun, WidthType, BorderStyle, AlignmentType } = window.docx;
+
+    return entries.flatMap(([dateStr, words]) => {
+        const wordPairs = words.trim().split('\n').map(pair => {
+            const match = pair.match(/^([a-zA-Z\s-]+)([\u4e00-\u9fa5\s；]+)$/);
+            return match ? [match[1].trim(), match[2].trim()] : [];
+        });
+
+        const tableRows = wordPairs.map(pair => {
+            if (pair.length >= 2) {
+                return new TableRow({
+                    children: [
+                        new TableCell({
+                            children: [new Paragraph(showEnglish ? pair[0] : '')]
+                        }),
+                        new TableCell({
+                            children: [new Paragraph(showChinese ? pair[1] : '')]
+                        })
+                    ]
+                });
+            } else {
+                return new TableRow({
+                    children: [
+                        new TableCell({ children: [new Paragraph('格式错误')] }),
+                        new TableCell({ children: [new Paragraph('格式错误')] })
+                    ]
+                });
+            }
+        });
+
+        return [
+            new Paragraph({
+            text: `词汇列表`,
+            heading: 'Heading2',
+            alignment: AlignmentType.LEFT,
+        }),
+        new Paragraph({
+            text: `日期：${dateStr}`,
+            alignment: AlignmentType.LEFT,
+        }),
+            new Table({
+                width: { size: 100, type: WidthType.PERCENTAGE },
+                columnWidths: [720, 720],
+                rows: [
+                    new TableRow({
+                        children: [
+                            new TableCell({
+                                width: { size: 50, type: WidthType.PERCENTAGE },
+                                children: [new Paragraph('英语')]
+                            }),
+                            new TableCell({
+                                width: { size: 50, type: WidthType.PERCENTAGE },
+                                children: [new Paragraph('中文')]
+                            })
+                        ]
+                    }),
+                    ...tableRows
+                ],
+                borders: {
+                    top: { style: BorderStyle.SINGLE, size: 1 },
+                    bottom: { style: BorderStyle.SINGLE, size: 1 },
+                    left: { style: BorderStyle.SINGLE, size: 1 },
+                    right: { style: BorderStyle.SINGLE, size: 1 },
+                    insideHorizontal: { style: BorderStyle.SINGLE, size: 1 },
+                    insideVertical: { style: BorderStyle.SINGLE, size: 1 }
+                }
+            }),
+            new Paragraph({ text: "" }) // 空行
+        ];
+    });
+}
+
+
+// 保持 docx 加载逻辑不变
+const docxScript = document.createElement('script');
+docxScript.src = "https://unpkg.com/docx@7.7.0/build/index.js";
+docxScript.onload = () => {
+    window.docx = docx;
+    console.log("✅ docx available?", window.docx);
+    // 触发一个自定义事件，表示 docx 库已经加载完成
+    const docxLoadedEvent = new Event('docxLoaded');
+    window.dispatchEvent(docxLoadedEvent);
+};
+docxScript.onerror = () => {
+    console.error('❌ Failed to load docx library. Check network or CDN.');
+};
+document.head.appendChild(docxScript);
 
