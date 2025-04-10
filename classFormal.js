@@ -33,9 +33,9 @@ const teacherData = {
         users: {
             "悠然": {
                 schedule: "每周一五六日 悠然 (高三)",
-                course: "乱序版-高中英语短语词组&固定搭配",
+                course: "高中超前单词",
                 hours: [19, 30],
-                courseWordCount: 1092
+                courseWordCount: 4610
             },
             "子琦": {
                 schedule: "每周 刘子琦 (初二)",
@@ -51,9 +51,9 @@ const teacherData = {
             },
             "梓言": {
                 schedule: "每周 梓言 (初一)",
-                course: "全册-沪教版初中英语八年级上册",
+                course: "【新教材】沪教版（五四学制）七年级下册",
                 hours: [9, 0],
-                courseWordCount: 229
+                courseWordCount: 283
             },
             "泽瑞": {
                 schedule: "每周五晚上+周日16点 泽瑞 (初三)",
