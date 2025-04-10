@@ -793,7 +793,12 @@ export async function generateWordReport() {
     const combinedBlob = await Packer.toBlob(combinedDoc);
     const combinedLink = document.createElement("a");
     combinedLink.href = URL.createObjectURL(combinedBlob);
-    const formattedDate = today.toISOString().slice(0, 10);
+    const localDate = new Date();
+    const formattedDate = new Intl.DateTimeFormat('zh-CN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+    }).format(localDate).replace(/\//g, '-'); // 格式化为 'YYYY-MM-DD' 形式
     combinedLink.download = `学习资料_${userName}_${formattedDate}.docx`;
     combinedLink.click();
 }
