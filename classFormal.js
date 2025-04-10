@@ -686,7 +686,18 @@ export async function generateWordReport() {
         });
     }
 
-    const { Document, Packer, Paragraph, TextRun, AlignmentType, Table, TableRow, TableCell, BorderStyle, WidthType } = window.docx;
+    const {
+        Document,
+        Packer,
+        Paragraph,
+        TextRun,
+        AlignmentType,
+        Table,
+        TableRow,
+        TableCell,
+        BorderStyle,
+        WidthType
+    } = window.docx;
 
     const db = await initDB();
     const tx = db.transaction(STORE_NAME_LEARNED, 'readonly');
@@ -726,30 +737,30 @@ export async function generateWordReport() {
                     heading: 'Heading1',
                     alignment: AlignmentType.CENTER,
                 }),
-                new Paragraph({ text: `用户：${userName}`, alignment: AlignmentType.LEFT }),
-                new Paragraph({ text: `教练：${teacherName}`, alignment: AlignmentType.LEFT }),
+                new Paragraph({text: `用户：${userName}`, alignment: AlignmentType.LEFT}),
+                new Paragraph({text: `教练：${teacherName}`, alignment: AlignmentType.LEFT}),
                 new Paragraph({text: '',}),
                 ...generateTableSections(filteredNewWordsEntries, true, true),
 
                 // 英文默写部分
                 new Paragraph({
-                    text: '学习资料（英文默写用）',
+                    text: '英文默写用',
                     heading: 'Heading1',
                     alignment: AlignmentType.CENTER,
                 }),
-                new Paragraph({ text: `用户：${userName}`, alignment: AlignmentType.LEFT }),
-                new Paragraph({ text: `教练：${teacherName}`, alignment: AlignmentType.LEFT }),
+                new Paragraph({text: `用户：${userName}`, alignment: AlignmentType.LEFT}),
+                new Paragraph({text: `教练：${teacherName}`, alignment: AlignmentType.LEFT}),
                 new Paragraph({text: '',}),
                 ...generateTableSections(filteredNewWordsEntries, true, false),
 
                 // 中文默写部分
                 new Paragraph({
-                    text: '学习资料（中文默写用）',
+                    text: '中文默写用',
                     heading: 'Heading1',
                     alignment: AlignmentType.CENTER,
                 }),
-                new Paragraph({ text: `用户：${userName}`, alignment: AlignmentType.LEFT }),
-                new Paragraph({ text: `教练：${teacherName}`, alignment: AlignmentType.LEFT }),
+                new Paragraph({text: `用户：${userName}`, alignment: AlignmentType.LEFT}),
+                new Paragraph({text: `教练：${teacherName}`, alignment: AlignmentType.LEFT}),
                 new Paragraph({text: '',}),
                 ...generateTableSections(filteredNewWordsEntries, false, true),
             ]
@@ -765,7 +776,7 @@ export async function generateWordReport() {
 
 // 工具函数：生成词汇表格段落
 function generateTableSections(entries, showEnglish, showChinese) {
-    const { Paragraph, Table, TableRow, TableCell, TextRun, WidthType, BorderStyle, AlignmentType } = window.docx;
+    const {Paragraph, Table, TableRow, TableCell, TextRun, WidthType, BorderStyle, AlignmentType} = window.docx;
 
     return entries.flatMap(([dateStr, words]) => {
         const wordPairs = words.trim().split('\n').map(pair => {
@@ -788,8 +799,8 @@ function generateTableSections(entries, showEnglish, showChinese) {
             } else {
                 return new TableRow({
                     children: [
-                        new TableCell({ children: [new Paragraph('格式错误')] }),
-                        new TableCell({ children: [new Paragraph('格式错误')] })
+                        new TableCell({children: [new Paragraph('格式错误')]}),
+                        new TableCell({children: [new Paragraph('格式错误')]})
                     ]
                 });
             }
@@ -797,42 +808,64 @@ function generateTableSections(entries, showEnglish, showChinese) {
 
         return [
             new Paragraph({
-            text: `词汇列表`,
-            heading: 'Heading2',
-            alignment: AlignmentType.LEFT,
-        }),
-        new Paragraph({
-            text: `日期：${dateStr}`,
-            alignment: AlignmentType.LEFT,
-        }),
+                text: `词汇列表`,
+                heading: 'Heading2',
+                alignment: AlignmentType.LEFT,
+            }),
+            new Paragraph({
+                text: `日期：${dateStr}`,
+                alignment: AlignmentType.LEFT,
+            }),
             new Table({
-                width: { size: 100, type: WidthType.PERCENTAGE },
+                width: {size: 100, type: WidthType.PERCENTAGE},
                 columnWidths: [720, 720],
                 rows: [
                     new TableRow({
                         children: [
                             new TableCell({
-                                width: { size: 50, type: WidthType.PERCENTAGE },
-                                children: [new Paragraph('英语')]
+                                width: {size: 50, type: WidthType.PERCENTAGE},
+                                shading: {
+                                    fill: "ADD8E6",  // 蓝色背景（可以替换为其他颜色代码）
+                                    transparency: 0,
+                                },
+                                children: [new Paragraph({
+                                    children: [
+                                        new TextRun({
+                                            text: '英语',
+                                            bold: true,  // 加粗
+                                        }),
+                                    ],
+                                })]
                             }),
                             new TableCell({
-                                width: { size: 50, type: WidthType.PERCENTAGE },
-                                children: [new Paragraph('中文')]
+                                width: {size: 50, type: WidthType.PERCENTAGE},
+                                shading: {
+                                    fill: "ADD8E6",  // 蓝色背景（可以替换为其他颜色代码）
+                                    transparency: 0,
+                                },
+                                children: [new Paragraph({
+                                    children: [
+                                        new TextRun({
+                                            text: '中文',
+                                            bold: true,  // 加粗
+                                        }),
+                                    ],
+                                })]
                             })
                         ]
                     }),
                     ...tableRows
                 ],
                 borders: {
-                    top: { style: BorderStyle.SINGLE, size: 1 },
-                    bottom: { style: BorderStyle.SINGLE, size: 1 },
-                    left: { style: BorderStyle.SINGLE, size: 1 },
-                    right: { style: BorderStyle.SINGLE, size: 1 },
-                    insideHorizontal: { style: BorderStyle.SINGLE, size: 1 },
-                    insideVertical: { style: BorderStyle.SINGLE, size: 1 }
+                    top: {style: BorderStyle.SINGLE, size: 1},
+                    bottom: {style: BorderStyle.SINGLE, size: 1},
+                    left: {style: BorderStyle.SINGLE, size: 1},
+                    right: {style: BorderStyle.SINGLE, size: 1},
+                    insideHorizontal: {style: BorderStyle.SINGLE, size: 1},
+                    insideVertical: {style: BorderStyle.SINGLE, size: 1}
                 }
             }),
-            new Paragraph({ text: "" }) // 空行
+            new Paragraph({text: ""}) // 空行
         ];
     });
 }
