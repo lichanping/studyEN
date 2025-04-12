@@ -237,13 +237,33 @@ export function handleClassFeedbackClick() {
     }, 0) : 0;
 
     // 生成反馈报告
-    let feedbackMessage;
+    let feedbackMessage = `【${userName}今日学习-《${course}》的反馈】<br><br>`;
+
+    // Initialize the index counter
+    let index = 1;
+
+    // Only include review word feedback if reviewWordCount is more than 0
+    if (reviewWordCount > 0) {
+        feedbackMessage += `${index++}.九宫格复习${reviewWordCount}词，遗忘${reviewforgetWord}词，正确率${reviewCorrectRate}%；<br><br>`;
+    }
+
+    // Always include the pre-test and new word feedback
+    feedbackMessage += `${index++}.学前检测${preTestWord}词，新学${newWord}词，遗忘${forgetWord}词，正确率${correctRate}%<br><br>`;
+
+    // Include learned word and remaining words feedback only if learnedWord > 0
     if (learnedWord > 0) {
         let remaining = courseWordCountLabel - learnedWord;
-        feedbackMessage = `【${userName}今日学习-《${course}》的反馈】<br><br>1.九宫格复习${reviewWordCount}词，遗忘${reviewforgetWord}词，正确率${reviewCorrectRate}%；<br><br>2.学前检测${preTestWord}词，新学${newWord}词，遗忘${forgetWord}词，正确率${correctRate}%<br><br>3.今天学习的是《${course}》，共${courseWordCountLabel}词，已学习${learnedWord}词，剩余${remaining}词未推送完九宫格。<br><br>4.🎉陪伴 ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} 认真且努力的${userName}一定能抵达梦想的彼岸。🚀🚀🚀<br><br>5.严格按照 21 天抗遗忘复习表来复习哟!<br><br><br><br>💟今日寄语💟<br><br>${getRandomMotto()}`;
-    } else {
-        feedbackMessage = `【${userName}今日学习-《${course}》的反馈】<br><br>1.九宫格复习${reviewWordCount}词，遗忘${reviewforgetWord}词，正确率${reviewCorrectRate}%；<br><br>2.学前检测${preTestWord}词，新学${newWord}词，遗忘${forgetWord}词，正确率${correctRate}%<br><br>3.陪伴 ✨ ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} 认真且努力的${userName}一定能抵达梦想的彼岸。🚀🚀🚀<br><br>4.严格按照 21 天抗遗忘复习表来复习哟!<br><br><br><br>🌺💎今日寄语💎🌺<br><br>${getRandomMotto()}`;
+        feedbackMessage += `${index++}.今天学习的是《${course}》，共${courseWordCountLabel}词，已学习${learnedWord}词，剩余${remaining}词未推送完九宫格。<br><br>`;
     }
+
+    // Include the motivational message
+    feedbackMessage += `${index++}.🎉陪伴 ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} 认真且努力的${userName}一定能抵达梦想的彼岸。🚀🚀🚀<br><br>`;
+
+    // Always include the reminder for the 21-day review
+    feedbackMessage += `${index++}.严格按照 21 天抗遗忘复习表来复习哟!<br><br><br><br>`;
+
+    // Always include the motto
+    feedbackMessage += `💟今日寄语💟<br><br>${getRandomMotto()}`;
 
     // 获取课程日期
     const classDateTime = document.getElementById("classDateTime").value;
