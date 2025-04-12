@@ -748,22 +748,22 @@ export async function generateWordReport() {
                 new Paragraph({text: '',}),
                 ...generateTableSections(filteredNewWordsEntries, true, true),
                 new Paragraph({
-                      children: [
+                    children: [
                         new TextRun({
-                          text: '请家长和学生需将文档打印出来，完成词义记忆和拼写练习，并对应中英文版进行批改。',
-                          bold: true,
-                          size: 28, // 字号14pt
-                          color: 'C47F3E', // 橘色
+                            text: '请家长和学生需将文档打印出来，完成词义记忆和拼写练习，并对应中英文版进行批改。',
+                            bold: true,
+                            size: 28, // 字号14pt
+                            color: 'C47F3E', // 橘色
                         })
-                      ],
-                      spacing: { before: 300 },
-                      alignment: AlignmentType.LEFT,
-                    }),
+                    ],
+                    spacing: {before: 300},
+                    alignment: AlignmentType.LEFT,
+                }),
                 // 在英文默写部分前插入4个空白行
-                new Paragraph({ text: '' }), // 第1个空白行
-                new Paragraph({ text: '' }), // 第2个空白行
-                new Paragraph({ text: '' }), // 第3个空白行
-                new Paragraph({ text: '' }), // 第4个空白行
+                new Paragraph({text: ''}), // 第1个空白行
+                new Paragraph({text: ''}), // 第2个空白行
+                new Paragraph({text: ''}), // 第3个空白行
+                new Paragraph({text: ''}), // 第4个空白行
 
                 // 英文默写部分
                 new Paragraph({
@@ -795,9 +795,9 @@ export async function generateWordReport() {
     combinedLink.href = URL.createObjectURL(combinedBlob);
     const localDate = new Date();
     const formattedDate = new Intl.DateTimeFormat('zh-CN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit'
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
     }).format(localDate).replace(/\//g, '-'); // 格式化为 'YYYY-MM-DD' 形式
     combinedLink.download = `学习资料_${userName}_${formattedDate}.docx`;
     combinedLink.click();
@@ -805,7 +805,16 @@ export async function generateWordReport() {
 
 // 工具函数：生成词汇表格段落
 function generateTableSections(entries, showEnglish, showChinese) {
-    const {Paragraph, Table, TableRow, TableCell, TextRun, WidthType, BorderStyle, AlignmentType} = window.docx;
+    const {
+        Paragraph,
+        Table,
+        TableRow,
+        TableCell,
+        TextRun,
+        WidthType,
+        BorderStyle,
+        AlignmentType
+    } = window.docx;
 
     return entries.flatMap(([dateStr, words]) => {
         const wordPairs = words.trim().split('\n').map(pair => {
@@ -818,10 +827,13 @@ function generateTableSections(entries, showEnglish, showChinese) {
             return []; // skip badly formatted lines
         });
 
-        const tableRows = wordPairs.map(pair => {
+        const tableRows = wordPairs.map((pair, index) => {
             if (pair.length >= 2) {
                 return new TableRow({
                     children: [
+                        new TableCell({  // Index column
+                            children: [new Paragraph(String(index + 1))]
+                        }),
                         new TableCell({
                             children: [new Paragraph(showEnglish ? pair[0] : '')]
                         }),
@@ -833,6 +845,7 @@ function generateTableSections(entries, showEnglish, showChinese) {
             } else {
                 return new TableRow({
                     children: [
+                        new TableCell({children: [new Paragraph(String(index + 1))]}),
                         new TableCell({children: [new Paragraph('格式错误')]}),
                         new TableCell({children: [new Paragraph('格式错误')]})
                     ]
@@ -852,38 +865,44 @@ function generateTableSections(entries, showEnglish, showChinese) {
             }),
             new Table({
                 width: {size: 100, type: WidthType.PERCENTAGE},
-                columnWidths: [720, 720],
+                columnWidths: [500, 800, 800],  // Adjusted for 3 columns
                 rows: [
                     new TableRow({
                         children: [
                             new TableCell({
-                                width: {size: 50, type: WidthType.PERCENTAGE},
+                                width: {size: 3, type: WidthType.PERCENTAGE},
                                 shading: {
-                                    fill: "ADD8E6",  // 蓝色背景（可以替换为其他颜色代码）
+                                    fill: "ADD8E6",
                                     transparency: 0,
                                 },
                                 children: [new Paragraph({
-                                    children: [
-                                        new TextRun({
-                                            text: '英语',
-                                            bold: true,  // 加粗
-                                        }),
-                                    ],
+                                    children: [new TextRun({text: '序', bold: true})]
                                 })]
                             }),
                             new TableCell({
-                                width: {size: 50, type: WidthType.PERCENTAGE},
+                                width: {size: 48.5, type: WidthType.PERCENTAGE},
+                                margins: {
+                                    left: 200,  // 单位是 1/20 point，200 大约等于 0.25 cm
+                                },
                                 shading: {
-                                    fill: "ADD8E6",  // 蓝色背景（可以替换为其他颜色代码）
+                                    fill: "ADD8E6",
                                     transparency: 0,
                                 },
                                 children: [new Paragraph({
-                                    children: [
-                                        new TextRun({
-                                            text: '中文',
-                                            bold: true,  // 加粗
-                                        }),
-                                    ],
+                                    children: [new TextRun({text: '英语', bold: true})]
+                                })]
+                            }),
+                            new TableCell({
+                                width: {size: 48.5, type: WidthType.PERCENTAGE},
+                                margins: {
+                                    left: 200,
+                                },
+                                shading: {
+                                    fill: "ADD8E6",
+                                    transparency: 0,
+                                },
+                                children: [new Paragraph({
+                                    children: [new TextRun({text: '中文', bold: true})]
                                 })]
                             })
                         ]
