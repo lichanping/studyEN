@@ -746,7 +746,7 @@ export async function generateWordReport() {
             date.setHours(0, 0, 0, 0);
             return date > startDate && date <= today;
         })
-        .sort(([a], [b]) => new Date(a) - new Date(b));
+        .sort(([a], [b]) => new Date(b) - new Date(a)); // Change this line to sort in descending order
 
     // If there are no records, display a message and stop the export
     if (filteredNewWordsEntries.length === 0) {
