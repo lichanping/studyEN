@@ -215,7 +215,19 @@ export function handleClassFeedbackClick() {
 
     // 获取用户输入数据
     const userName = document.getElementById("userName").value;
-    const newWord = parseInt(document.getElementById("newWord").value);
+    const newLearnedWordsText = document.getElementById('newLearnedWords').value.trim();
+    const newWordCountFromText = countEnglishWords(newLearnedWordsText);
+    const newWordInput = document.getElementById("newWord");
+    let newWord = parseInt(newWordInput.value);
+
+    if (newWordCountFromText!== newWord) {
+        const confirmReplace = confirm(`新学单词实际数量为 ${newWordCountFromText}，与手动输入的 ${newWord} 不同。是否要自动替换？`);
+        if (confirmReplace) {
+            newWordInput.value = newWordCountFromText;
+            newWord = newWordCountFromText; // 重新赋值给 newWord 变量
+        }
+    }
+
     const reviewWordInputText = document.getElementById("reviewWord").value.trim();
     const reviewWordCount = reviewWordInputText ? reviewWordInputText.split('+').reduce((sum, num) => {
         const parsedNum = parseInt(num.trim(), 10);
@@ -273,7 +285,6 @@ export function handleClassFeedbackClick() {
         storeClassStatistics(userName, classDate, newWord, reviewWordCount, classDuration, "词汇课");
 
         // ✅ 存储 newLearnedWords 到 IndexedDB
-        const newLearnedWordsText = document.getElementById('newLearnedWords').value.trim();
         storeNewLearnedWords(userName, newLearnedWordsText);
     } else {
         alert("请选择有效的课程日期。");
