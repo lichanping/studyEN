@@ -1062,7 +1062,7 @@ export async function generateForgetWordsReport() {
     const formattedDate = new Intl.DateTimeFormat('zh-CN', {
         year: 'numeric', month: '2-digit', day: '2-digit'
     }).format(new Date()).replace(/\//g, '-');
-    link.download = `忘记词汇_${userName}_${formattedDate}.docx`;
+    link.download = `复习课遗忘词汇_${userName}_${formattedDate}.docx`;
     link.click();
 }
 
