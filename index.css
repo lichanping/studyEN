@@ -30,6 +30,9 @@ body {
 #newWord, #forgetWord, #antiForgettingForgetWord, #daysRangeInput {
     width: 35px; /* Specify the width in pixels */
 }
+#daysRangeInput{
+    width: 18px;
+}
 
 #preTestWord, #reviewWord {
     width: 150px;
@@ -67,7 +70,7 @@ h1 {
     line-height: 1; /* Adjust line height to reduce vertical spacing */
 }
 
-#forgetWords, #pronounceWords, #keyLanguagePoints, #practiceArea {
+#forgetWords {
     width: 400px; /* Adjust the width as needed */
     height: 60px; /* Adjust the height as needed */
     font-size: 18px; /* Adjust the font size as needed */
