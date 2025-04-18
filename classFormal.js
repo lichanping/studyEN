@@ -523,30 +523,6 @@ export async function generateReport() {
     link.click();
 }
 
-export function handleUnderstandSituationClick() {
-    const userName = document.getElementById("userName").value;
-    // const studentLevel = document.querySelector('input[name="studentLevel"]:checked').value;
-    const studentLevel = document.getElementById("studentLevel").value;
-
-    let message = "";
-
-    if (studentLevel === "middleHigh") {
-        // If student is in 初高中
-        message = `${userName}，我想了解一下，你现在几年级了呢?你现在的语言成绩在哪一个阶段呢?那我说三个段,如果对了你只用点头就行，好吗?<br><br>150 总分:90分以下，90-120，120以上<br><br>[问]:XX(和XX妈妈)你错的阅读、完型等等这些题目，你觉得错的原因是什么?<br><br>
-[总结]:嗯，好的。其实归根结底是我们单词量不够的原因。如果有这样的一种方法，它能让你一分钟记住一个单词，全程有教练来陪伴学习和陪伴复习，并且全部记住消化不遗忘。你愿不愿意尝试一下?<br><br>
-那我们体验课正式开始吧！`;
-    } else if (studentLevel === "primary") {
-        // If student is 小学生
-        message = `${userName}，我想了解一下，你现在几年级了呢?你考试的时候错题的原因是什么呢?<br><br>
-嗯，好的。<br><br>
-其实归根结底是我们单词量不够的原因。<br><br>
-接下来，我们就一起来尝试一下高效快速地提高我们的单词量，${userName}，${userName}妈妈，那我们体验课正式开始吧!`;
-    }
-
-    copyToClipboard(message);
-    showAlert(message);
-}
-
 function formatDateTime(dateTimeString) {
     const options = {
         weekday: 'long',
