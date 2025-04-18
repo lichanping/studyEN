@@ -770,7 +770,7 @@ export async function generateWordReport() {
             children: [
                 // 学习资料部分
                 new Paragraph({
-                    text: '学习资料（中英文）',
+                    text: '正课资料（中英文）',
                     heading: 'Heading1',
                     alignment: AlignmentType.CENTER,
                 }),
@@ -891,7 +891,7 @@ function generateTableSections(entries, showEnglish, showChinese) {
                 alignment: AlignmentType.LEFT,
             }),
             new Paragraph({
-                text: `正课日期：${dateStr}`,
+                text: `日期：${dateStr}`,
                 alignment: AlignmentType.LEFT,
             }),
             new Table({
@@ -954,6 +954,117 @@ function generateTableSections(entries, showEnglish, showChinese) {
     });
 }
 
+export async function generateForgetWordsReport() {
+    if (!window.docx) {
+        await new Promise(resolve => {
+            window.addEventListener('docxLoaded', resolve);
+        });
+    }
+
+    const {
+        Document,
+        Packer,
+        Paragraph,
+        TextRun,
+        AlignmentType,
+    } = window.docx;
+
+    const db = await initDB();
+    const tx = db.transaction(STORE_NAME_FORGET, 'readonly');
+    const store = tx.objectStore(STORE_NAME_FORGET);
+    const userName = document.getElementById("userName").value;
+    const teacherName = document.getElementById("teacherName").options[document.getElementById("teacherName").selectedIndex].text;
+    const request = store.get(userName);
+
+    const indexDBData = await new Promise((resolve, reject) => {
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+
+    const forgetWordsMap = indexDBData?.forgetWords || {};
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const dayRangeInput = document.getElementById("daysRangeInput");
+    const dayRange = parseInt(dayRangeInput.value) || 7;
+    const startDate = new Date();
+    startDate.setDate(today.getDate() - dayRange);
+    startDate.setHours(0, 0, 0, 0);
+
+    const filteredForgetEntries = Object.entries(forgetWordsMap)
+        .filter(([dateStr, words]) => {
+            if (!words || !words.trim()) return false;
+            const date = new Date(dateStr);
+            date.setHours(0, 0, 0, 0);
+            return date > startDate && date <= today;
+        })
+        .sort(([a], [b]) => new Date(b) - new Date(a));
+
+    if (filteredForgetEntries.length === 0) {
+        alert("No forget word record found for the specified period.");
+        return;
+    }
+
+    const doc = new Document({
+        sections: [{
+            children: [
+                new Paragraph({
+                    text: '复习课遗忘词（中英文）',
+                    heading: 'Heading1',
+                    alignment: AlignmentType.CENTER,
+                }),
+                new Paragraph({text: `用户：${userName}`, alignment: AlignmentType.LEFT}),
+                new Paragraph({text: `教练：${teacherName}`, alignment: AlignmentType.LEFT}),
+                new Paragraph({text: ''}),
+                ...generateTableSections(filteredForgetEntries, true, true),
+                new Paragraph({
+                    children: [
+                        new TextRun({
+                            text: '请家长和学生需将文档打印出来，复习遗忘词汇，并对应中英文版进行默写练习。',
+                            bold: true,
+                            size: 28,
+                            color: 'C47F3E',
+                        })
+                    ],
+                    spacing: {before: 300},
+                    alignment: AlignmentType.LEFT,
+                }),
+                new Paragraph({text: ''}),
+                new Paragraph({text: ''}),
+                new Paragraph({text: ''}),
+                new Paragraph({text: ''}),
+
+                new Paragraph({
+                    text: '词义记忆（英文）',
+                    heading: 'Heading1',
+                    alignment: AlignmentType.CENTER,
+                }),
+                new Paragraph({text: `用户：${userName}`, alignment: AlignmentType.LEFT}),
+                new Paragraph({text: `教练：${teacherName}`, alignment: AlignmentType.LEFT}),
+                new Paragraph({text: ''}),
+                ...generateTableSections(filteredForgetEntries, true, false),
+
+                new Paragraph({
+                    text: '拼写练习（中文）',
+                    heading: 'Heading1',
+                    alignment: AlignmentType.CENTER,
+                }),
+                new Paragraph({text: `用户：${userName}`, alignment: AlignmentType.LEFT}),
+                new Paragraph({text: `教练：${teacherName}`, alignment: AlignmentType.LEFT}),
+                new Paragraph({text: ''}),
+                ...generateTableSections(filteredForgetEntries, false, true),
+            ]
+        }]
+    });
+
+    const blob = await Packer.toBlob(doc);
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    const formattedDate = new Intl.DateTimeFormat('zh-CN', {
+        year: 'numeric', month: '2-digit', day: '2-digit'
+    }).format(new Date()).replace(/\//g, '-');
+    link.download = `忘记词汇_${userName}_${formattedDate}.docx`;
+    link.click();
+}
 
 // 保持 docx 加载逻辑不变
 const docxScript = document.createElement('script');

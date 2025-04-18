@@ -138,6 +138,7 @@
     <button id="downloadFormalButton">正课统计</button>
     <button id="downloadSalaryButton">工资统计</button>
     <button id="downloadWordButton">导出Word</button>
+    <button id="downloadForgetWordButton">导出遗忘Word</button>
 </div>
 
 <script type="module">
@@ -150,6 +151,10 @@
         const downloadWordButton = document.getElementById("downloadWordButton");
         downloadWordButton.addEventListener("click", script.generateWordReport);
         console.log("generateWordReport method is bound to the downloadWordButton");
+
+        const downloadForgetWordButton = document.getElementById("downloadForgetWordButton");
+        downloadForgetWordButton.addEventListener("click", script.generateForgetWordsReport);
+        console.log("generateForgetWordReport method is bound to the downloadForgetWordButton");
     });
     document.getElementById("navigateToTiyanClass").addEventListener("click", commonFunctions.navigateToTiyanClass);
     document.getElementById("navigateToReadClass").addEventListener("click", commonFunctions.navigateToReadClass);
