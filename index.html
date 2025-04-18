@@ -100,16 +100,6 @@
     <button id="managementGroupTemplateButton">抗遗忘通知</button>
     <button id="openingSpeechButton">开场话术</button>
 </div>
-
-<div>
-    <label for="studentLevel">学生级别:</label>
-    <select id="studentLevel" name="studentLevel">
-        <option value="primary" selected>小学生</option>
-        <option value="middleHigh">初高中</option>
-    </select>
-    <button id="understandSituationButton">了解概况</button>
-</div>
-
 <div>
     <!-- Add input boxes for 抗遗忘复习单词 and 抗遗忘遗忘单词 -->
     <label for="antiForgettingReviewWord">抗遗忘复习单词:</label>
@@ -170,7 +160,6 @@
     document.getElementById("classFeedbackButton").addEventListener("click", script.handleClassFeedbackClick);
     document.getElementById("selfReview").addEventListener("click", script.selfReviewClick);
     document.getElementById("openingSpeechButton").addEventListener("click", commonFunctions.handleOpeningSpeechClick);
-    document.getElementById("understandSituationButton").addEventListener("click", script.handleUnderstandSituationClick);
     document.getElementById("managementGroupTemplateButton").addEventListener("click", commonFunctions.handleManagementGroupTemplateClick);
     document.getElementById("antiForgettingFeedbackButton").addEventListener("click", commonFunctions.handleAntiForgettingFeedbackClick);
     document.getElementById("downloadFileButton").addEventListener("click", commonFunctions.downloadFeedbackFile);
