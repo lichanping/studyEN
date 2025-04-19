@@ -150,6 +150,15 @@ export function updateLabel() {
     const formattedCurrentDate = `${year}-${month}-${day}T${hours}:${minutes}`;
     document.getElementById("classDateTime").value = formattedCurrentDate;
     document.getElementById("reviewTime").value = formattedCurrentDate;
+
+    // 获取 localStorage 中 ${userName}_末次复习 的值
+    const lastReviewDate = localStorage.getItem(`${userName}_末次复习`);
+    const reviewDateLabel = document.getElementById('reviewDateLabel');
+    if (lastReviewDate) {
+        reviewDateLabel.textContent = `末次复习: ${lastReviewDate}`;
+    } else {
+        reviewDateLabel.textContent = '';
+    }
 }
 
 // JavaScript code for the button click functions
@@ -286,6 +295,21 @@ export function handleClassFeedbackClick() {
 
         // ✅ 存储 newLearnedWords 到 IndexedDB
         storeNewLearnedWords(userName, newLearnedWordsText);
+
+        // 计算第21天的复习日期
+        const reviewDate = new Date(classDateTime);
+        reviewDate.setDate(reviewDate.getDate() + 21);
+        // 将复习日期格式化为 YYYY-MM-DD 格式
+        const formattedReviewDate = reviewDate.toISOString().split('T')[0];
+        // 获取 localStorage 中现有的末次复习日期
+        const existingReviewDate = localStorage.getItem(`${userName}_末次复习`);
+
+        // 仅当 formattedReviewDate 大于现有日期时，才更新 localStorage
+        if (!existingReviewDate || formattedReviewDate > existingReviewDate) {
+            localStorage.setItem(`${userName}_末次复习`, formattedReviewDate);
+        }
+        // 显示复习日期
+        document.getElementById('reviewDateLabel').textContent = `末次复习: ${localStorage.getItem(`${userName}_末次复习`)}`;
     } else {
         alert("请选择有效的课程日期。");
         return;
