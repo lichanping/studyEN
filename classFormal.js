@@ -341,9 +341,12 @@ async function storeNewLearnedWords(studentName, newLearnedWordsText) {
             request.onsuccess = () => resolve(request.result);
             request.onerror = () => reject(request.error);
         });
+        // Normalize input into one-line English+Chinese
+        const normalizedLines = normalizeOneLineEntries(newLearnedWordsText);
+        const finalTextToStore = normalizedLines.join('\n');
 
         const newWordsEntry = {
-            [currentDate]: newLearnedWordsText
+            [currentDate]: finalTextToStore
         };
 
         const updatedData = {
@@ -362,10 +365,38 @@ async function storeNewLearnedWords(studentName, newLearnedWordsText) {
             tx.onerror = () => reject(tx.error);
         });
 
-        console.log('✅ New learned words stored successfully.');
+        console.log('✅ New learned words stored successfully:\n', finalTextToStore);
     } catch (error) {
         console.error('❌ Error storing new learned words:', error);
     }
+}
+
+function normalizeOneLineEntries(text) {
+    const lines = text.trim().split('\n').map(line => line.trim()).filter(Boolean);
+    const result = [];
+
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+
+        const hasChinese = /[\u4e00-\u9fa5]/.test(line);
+        const hasEnglish = /[a-zA-Z]/.test(line);
+
+        // One-line case: contains both English and Chinese
+        if (hasChinese && hasEnglish) {
+            result.push(line);
+        }
+        // Two-line case: English first, then Chinese
+        else if (hasEnglish && i + 1 < lines.length && /[\u4e00-\u9fa5]/.test(lines[i + 1])) {
+            result.push(lines[i] + lines[i + 1]);
+            i++; // Skip the next line (Chinese explanation)
+        }
+        // If only English or only Chinese, keep as-is (optional)
+        else {
+            result.push(line);
+        }
+    }
+
+    return result;
 }
 
 export async function generateReport() {

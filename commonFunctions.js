@@ -281,12 +281,12 @@ async function initDB() {
 
             // Create feedbackData if not exists
             if (!db.objectStoreNames.contains('feedbackData')) {
-                db.createObjectStore('feedbackData', { keyPath: 'userName' });
+                db.createObjectStore('feedbackData', {keyPath: 'userName'});
             }
 
             // Also create newLearnedWords if not exists
             if (!db.objectStoreNames.contains('newLearnedWords')) {
-                db.createObjectStore('newLearnedWords', { keyPath: 'userName' });
+                db.createObjectStore('newLearnedWords', {keyPath: 'userName'});
             }
         };
 
@@ -431,7 +431,7 @@ export async function downloadFeedbackFile() {
         console.log("内容已复制到剪贴板！");
 
         // Create a Blob with the formatted feedback data
-        const blob = new Blob([formattedContent], { type: 'text/plain' });
+        const blob = new Blob([formattedContent], {type: 'text/plain'});
 
         // Create an anchor element for downloading the file
         const link = document.createElement('a');
@@ -480,8 +480,8 @@ async function formatFeedbackContent(userData) {
 
     if (forgetWordsData) {
         const forgetWordsArray = forgetWordsData.split('\n')
-           .map(word => word.trim())
-           .filter(word => word.length > 0);
+            .map(word => word.trim())
+            .filter(word => word.length > 0);
 
         const wordCounts = forgetWordsArray.reduce((acc, word) => {
             acc[word] = (acc[word] || 0) + 1;
@@ -489,13 +489,13 @@ async function formatFeedbackContent(userData) {
         }, {});
 
         const sortedWordCounts = Object.entries(wordCounts)
-           .sort(([, a], [, b]) => b - a)
-           .map(([word, count], index) => {
+            .sort(([, a], [, b]) => b - a)
+            .map(([word, count], index) => {
                 return count === 1
-                   ? `${index + 1}. ${word}`
+                    ? `${index + 1}. ${word}`
                     : `${index + 1}. ${word} (遗忘 ${count} 次)`;
             })
-           .join('\n');
+            .join('\n');
 
         forgetWordsContent = `\n\n💡 抗遗忘复习的课后重点建议\n-------------------------------\n${sortedWordCounts}\n\n📢 以上数据仅统计${userName}在抗遗忘复习中的情况，请记得复习遗忘词，继续加油，巩固知识，进步会更加迅速！`;
     } else {
@@ -555,7 +555,7 @@ async function formatFeedbackContent(userData) {
 
     const header = `📝 抗遗忘复习详情\n日期              | 正确率 | 词汇量\n-------------------------------`;
     const footer = validEntries > 0
-       ? `\n📌 本期学习总览\n平均正确率: ${averageRate} %\n总复习词汇: ${totalWordsReviewed} 词`
+        ? `\n📌 本期学习总览\n平均正确率: ${averageRate} %\n总复习词汇: ${totalWordsReviewed} 词`
         : '';
 
     const metaInfo = `【抗遗忘数据统计】
@@ -735,14 +735,36 @@ export function getRandomMotto() {
 
 
 export function countEnglishWords(text) {
-    const wordsArray = extractEnglishWords(text)
-    const len = wordsArray.length;
-    return len;
+    const wordsArray = extractEnglishWords(text);
+    return wordsArray.length;
 }
 
 function extractEnglishWords(text) {
-    const wordsArray = text.split(/\r?\n/).filter(element => element);
-    return wordsArray;
+    const lines = text.trim().split('\n').map(line => line.trim()).filter(Boolean);
+    const englishWords = [];
+
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+
+        // Case 1: Mixed line - English followed by Chinese (single line)
+        const match = line.match(/^([\w\s.,;:()'"\-…]+)[^\u0000-\u007F]+/);
+        if (match) {
+            englishWords.push(match[1].trim());
+            continue;
+        }
+
+        // Case 2: Two-line format - English then Chinese
+        if (/^[\w\s.,;:()'"\-…]+$/.test(line)) {
+            if (i + 1 < lines.length && /[\u4e00-\u9fa5]/.test(lines[i + 1])) {
+                englishWords.push(line.trim());
+                i++; // Skip Chinese explanation line
+            } else {
+                englishWords.push(line.trim());
+            }
+        }
+    }
+
+    return englishWords;
 }
 
 export function displayToast(message) {
@@ -767,8 +789,8 @@ export function generateTrialReport() {
 
     // 过滤出体验课记录
     const trialEntries = Object.entries(classStats)
-       .filter(([key, stats]) => stats.type === "体验课")
-       .map(([key, stats]) => {
+        .filter(([key, stats]) => stats.type === "体验课")
+        .map(([key, stats]) => {
             const [year, month, day] = key.split('-');
             const date = new Date(year, month - 1, day);
             return {
@@ -788,12 +810,12 @@ export function generateTrialReport() {
     reportContent += "📅 体验课学习详情\n日期              | 新词  | 课时\n--------------------------------\n";
 
     trialEntries.sort((a, b) => a.date - b.date).forEach(entry => {
-        const formattedDate = `${String(entry.date.getMonth() + 1).padStart(2, '0')}-${String(entry.date.getDate()).padStart(2, '0')} (${entry.date.toLocaleString('zh-CN', { weekday: 'short' })})`;
+        const formattedDate = `${String(entry.date.getMonth() + 1).padStart(2, '0')}-${String(entry.date.getDate()).padStart(2, '0')} (${entry.date.toLocaleString('zh-CN', {weekday: 'short'})})`;
         reportContent += `${formattedDate} | ${entry.newWord.toString().padEnd(4)} | 1小时\n`;
     });
 
     // 生成下载文件
-    const blob = new Blob([reportContent], { type: 'text/plain' });
+    const blob = new Blob([reportContent], {type: 'text/plain'});
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = `${userName}_体验课报告.txt`;
