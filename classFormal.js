@@ -220,7 +220,7 @@ export function handleClassFeedbackClick() {
     const newWordInput = document.getElementById("newWord");
     let newWord = parseInt(newWordInput.value);
 
-    if (newWordCountFromText!== newWord) {
+    if (newWordCountFromText !== newWord) {
         const confirmReplace = confirm(`新学单词实际数量为 ${newWordCountFromText}，与手动输入的 ${newWord} 不同。是否要自动替换？`);
         if (confirmReplace) {
             newWordInput.value = newWordCountFromText;
@@ -825,7 +825,7 @@ function generateTableSections(entries, showEnglish, showChinese) {
 
     return entries.flatMap(([dateStr, words]) => {
         const wordPairs = words.trim().split('\n').map(pair => {
-            const match = pair.match(/^([a-zA-Z\s-]+)(.*)$/);
+            const match = pair.match(/^([\w\s\-…\.]+)(.*)$/);
             if (match) {
                 const english = match[1].trim();
                 const chinese = match[2].trim() || '缺失中文';
