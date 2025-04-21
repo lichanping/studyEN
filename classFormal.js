@@ -870,7 +870,7 @@ export async function generateWordReport() {
         const combinedBlob = await Packer.toBlob(combinedDoc);
         const combinedLink = document.createElement("a");
         combinedLink.href = URL.createObjectURL(combinedBlob);
-        const formattedDate = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+        const formattedDate = new Date().toISOString().slice(0, 10);
         combinedLink.download = `学习资料_${userName}_${formattedDate}.docx`;
         combinedLink.click();
 
@@ -932,12 +932,8 @@ function generateTableSections(entries, showEnglish, showChinese) {
 
         return [
             new Paragraph({
-                text: `词汇列表`,
+                text: `词汇日期：${dateStr}`,
                 heading: 'Heading2',
-                alignment: AlignmentType.LEFT,
-            }),
-            new Paragraph({
-                text: `日期：${dateStr}`,
                 alignment: AlignmentType.LEFT,
             }),
             new Table({
