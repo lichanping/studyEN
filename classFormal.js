@@ -742,130 +742,142 @@ export function generateSalaryReport() {
 
 // 定义 generateWordReport 函数
 export async function generateWordReport() {
-    if (!window.docx) {
-        await new Promise(resolve => {
-            window.addEventListener('docxLoaded', resolve);
+    try {
+        // ===== 增强docx库加载逻辑（添加5秒超时）===== [2,3](@ref)
+        if (!window.docx) {
+            await new Promise((resolve, reject) => {
+                const timeoutId = setTimeout(() =>
+                    reject(new Error('docx库加载超时')), 5000
+                );
+                window.addEventListener('docxLoaded', () => {
+                    clearTimeout(timeoutId);
+                    resolve();
+                });
+            });
+        }
+
+        const {
+            Document,
+            Packer,
+            Paragraph,
+            TextRun,
+            AlignmentType
+        } = window.docx;
+
+        // ===== 数据获取增强 ===== [6,8](@ref)
+        const db = await initDB();
+        const tx = db.transaction(STORE_NAME_LEARNED, 'readonly');
+        const store = tx.objectStore(STORE_NAME_LEARNED);
+        const userName = document.getElementById("userName")?.value || '未命名用户';
+        const teacherSelect = document.getElementById("teacherName");
+        const teacherName = teacherSelect?.options[teacherSelect.selectedIndex]?.text || '未指定教练';
+
+        const indexDBData = await new Promise((resolve, reject) => {
+            const request = store.get(userName);
+            request.onsuccess = () => resolve(request.result || {});
+            request.onerror = () => reject(request.error);
         });
+
+        // ===== 关键空值保护 ===== [6,8](@ref)
+        const learnedWordsMap = indexDBData?.newLearnedWords || {};
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const dayRangeInput = document.getElementById("daysRangeInput");
+        const dayRange = parseInt(dayRangeInput?.value) || 7;
+        const startDate = new Date(today);
+        startDate.setDate(today.getDate() - dayRange);
+        startDate.setHours(0, 0, 0, 0);
+
+        // ===== 数据过滤增强 ===== [6,8](@ref)
+        const filteredNewWordsEntries = Object.entries(learnedWordsMap)
+            .filter(([dateStr, words]) => {
+                const date = new Date(dateStr);
+                date.setHours(0, 0, 0, 0);
+                return date >= startDate &&
+                       date <= today &&
+                       typeof words === 'string' &&
+                       words.trim().length > 0; // 严格过滤空字符串
+            })
+            .sort(([a], [b]) => new Date(b) - new Date(a));
+
+        if (filteredNewWordsEntries.length === 0) {
+            alert(`在${dayRange}天内未找到学习记录`);
+            return;
+        }
+
+        // ===== 文档生成空值保护 ===== [6](@ref)
+        const combinedDoc = new Document({
+            sections: [{
+                children: [
+                    // 学习资料部分
+                    new Paragraph({
+                        text: '正课资料（中英文）',
+                        heading: 'Heading1',
+                        alignment: AlignmentType.CENTER,
+                    }),
+                    new Paragraph({ text: `用户：${userName}`, alignment: AlignmentType.LEFT }),
+                    new Paragraph({ text: `教练：${teacherName}`, alignment: AlignmentType.LEFT }),
+                    new Paragraph({ text: '' }),
+                    ...generateTableSections(filteredNewWordsEntries, true, true),
+                    new Paragraph({
+                        children: [
+                            new TextRun({
+                                text: '请家长和学生需将文档打印出来，完成词义记忆和拼写练习，并对应中英文版进行批改。',
+                                bold: true,
+                                size: 28,
+                                color: 'C47F3E',
+                            })
+                        ],
+                        spacing: { before: 300 },
+                        alignment: AlignmentType.LEFT,
+                    }),
+                    // 英文默写部分前空白行（使用数组展开简化代码）
+                    ...[...Array(4)].map(() => new Paragraph({ text: '' })),
+
+                    // 英文默写部分
+                    new Paragraph({
+                        text: '词义记忆（英文）',
+                        heading: 'Heading1',
+                        alignment: AlignmentType.CENTER,
+                    }),
+                    new Paragraph({ text: `用户：${userName}`, alignment: AlignmentType.LEFT }),
+                    new Paragraph({ text: `教练：${teacherName}`, alignment: AlignmentType.LEFT }),
+                    new Paragraph({ text: '' }),
+                    ...generateTableSections(filteredNewWordsEntries, true, false),
+
+                    // 中文默写部分
+                    new Paragraph({
+                        text: '拼写练习（中文）',
+                        heading: 'Heading1',
+                        alignment: AlignmentType.CENTER,
+                    }),
+                    new Paragraph({ text: `用户：${userName}`, alignment: AlignmentType.LEFT }),
+                    new Paragraph({ text: `教练：${teacherName}`, alignment: AlignmentType.LEFT }),
+                    new Paragraph({ text: '' }),
+                    ...generateTableSections(filteredNewWordsEntries, false, true),
+                    new Paragraph({ text: '' }),
+                    new Paragraph({ text: '' }),
+                    // 添加空值保护[6](@ref)
+                    ...(filteredNewWordsEntries.length === 1 && createReviewScheduleTable(filteredNewWordsEntries[0][0], userName)
+                        ? [createReviewScheduleTable(filteredNewWordsEntries[0][0], userName)]
+                        : [])
+                ]
+            }]
+        });
+
+        // ===== 文件导出 =====
+        const combinedBlob = await Packer.toBlob(combinedDoc);
+        const combinedLink = document.createElement("a");
+        combinedLink.href = URL.createObjectURL(combinedBlob);
+        const formattedDate = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+        combinedLink.download = `学习资料_${userName}_${formattedDate}.docx`;
+        combinedLink.click();
+
+    } catch (error) {
+        console.error('生成报告失败:', error);
+        alert(`报告生成失败: ${error.message}`);
     }
-
-    const {
-        Document,
-        Packer,
-        Paragraph,
-        TextRun,
-        AlignmentType,
-        Table,
-        TableRow,
-        TableCell,
-        BorderStyle,
-        WidthType
-    } = window.docx;
-
-    const db = await initDB();
-    const tx = db.transaction(STORE_NAME_LEARNED, 'readonly');
-    const store = tx.objectStore(STORE_NAME_LEARNED);
-    const userName = document.getElementById("userName").value;
-    const teacherName = document.getElementById("teacherName").options[document.getElementById("teacherName").selectedIndex].text;
-    const request = store.get(userName);
-    const indexDBData = await new Promise((resolve, reject) => {
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error);
-    });
-
-    const learnedWordsMap = indexDBData?.newLearnedWords || {};
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const dayRangeInput = document.getElementById("daysRangeInput");
-    const dayRange = parseInt(dayRangeInput.value) || 7;
-    const startDate = new Date();
-    startDate.setDate(today.getDate() - dayRange);
-    startDate.setHours(0, 0, 0, 0);
-
-    const filteredNewWordsEntries = Object.entries(learnedWordsMap)
-        .filter(([dateStr, words]) => {
-            if (!words || !words.trim()) return false;
-            const date = new Date(dateStr);
-            date.setHours(0, 0, 0, 0);
-            return date > startDate && date <= today;
-        })
-        .sort(([a], [b]) => new Date(b) - new Date(a)); // Change this line to sort in descending order
-
-    // If there are no records, display a message and stop the export
-    if (filteredNewWordsEntries.length === 0) {
-        alert("No record found for the specified period.");
-        return; // Stop the function if there are no records
-    }
-
-    const combinedDoc = new Document({
-        sections: [{
-            children: [
-                // 学习资料部分
-                new Paragraph({
-                    text: '正课资料（中英文）',
-                    heading: 'Heading1',
-                    alignment: AlignmentType.CENTER,
-                }),
-                new Paragraph({text: `用户：${userName}`, alignment: AlignmentType.LEFT}),
-                new Paragraph({text: `教练：${teacherName}`, alignment: AlignmentType.LEFT}),
-                new Paragraph({text: '',}),
-                ...generateTableSections(filteredNewWordsEntries, true, true),
-                new Paragraph({
-                    children: [
-                        new TextRun({
-                            text: '请家长和学生需将文档打印出来，完成词义记忆和拼写练习，并对应中英文版进行批改。',
-                            bold: true,
-                            size: 28, // 字号14pt
-                            color: 'C47F3E', // 橘色
-                        })
-                    ],
-                    spacing: {before: 300},
-                    alignment: AlignmentType.LEFT,
-                }),
-                // 在英文默写部分前插入4个空白行
-                new Paragraph({text: ''}), // 第1个空白行
-                new Paragraph({text: ''}), // 第2个空白行
-                new Paragraph({text: ''}), // 第3个空白行
-                new Paragraph({text: ''}), // 第4个空白行
-
-                // 英文默写部分
-                new Paragraph({
-                    text: '词义记忆（英文）',
-                    heading: 'Heading1',
-                    alignment: AlignmentType.CENTER,
-                }),
-                new Paragraph({text: `用户：${userName}`, alignment: AlignmentType.LEFT}),
-                new Paragraph({text: `教练：${teacherName}`, alignment: AlignmentType.LEFT}),
-                new Paragraph({text: '',}),
-                ...generateTableSections(filteredNewWordsEntries, true, false),
-
-                // 中文默写部分
-                new Paragraph({
-                    text: '拼写练习（中文）',
-                    heading: 'Heading1',
-                    alignment: AlignmentType.CENTER,
-                }),
-                new Paragraph({text: `用户：${userName}`, alignment: AlignmentType.LEFT}),
-                new Paragraph({text: `教练：${teacherName}`, alignment: AlignmentType.LEFT}),
-                new Paragraph({text: '',}),
-                ...generateTableSections(filteredNewWordsEntries, false, true),
-                new Paragraph({text: '',}),
-                new Paragraph({text: '',}),
-                ...(filteredNewWordsEntries.length === 1 ? [createReviewScheduleTable(filteredNewWordsEntries[0][0], userName)] : []),
-            ]
-        }]
-    });
-
-    const combinedBlob = await Packer.toBlob(combinedDoc);
-    const combinedLink = document.createElement("a");
-    combinedLink.href = URL.createObjectURL(combinedBlob);
-    const localDate = new Date();
-    const formattedDate = new Intl.DateTimeFormat('zh-CN', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit'
-    }).format(localDate).replace(/\//g, '-'); // 格式化为 'YYYY-MM-DD' 形式
-    combinedLink.download = `学习资料_${userName}_${formattedDate}.docx`;
-    combinedLink.click();
 }
 
 // 工具函数：生成词汇表格段落
