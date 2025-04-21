@@ -848,6 +848,9 @@ export async function generateWordReport() {
                 new Paragraph({text: `教练：${teacherName}`, alignment: AlignmentType.LEFT}),
                 new Paragraph({text: '',}),
                 ...generateTableSections(filteredNewWordsEntries, false, true),
+                new Paragraph({text: '',}),
+                new Paragraph({text: '',}),
+                ...(filteredNewWordsEntries.length === 1 ? [createReviewScheduleTable(filteredNewWordsEntries[0][0], userName)] : []),
             ]
         }]
     });
@@ -982,6 +985,99 @@ function generateTableSections(entries, showEnglish, showChinese) {
             }),
             new Paragraph({text: ""}) // 空行
         ];
+    });
+}
+
+function createReviewScheduleTable(dateStr, userName) {
+    const {
+        Document,
+        Packer,
+        Paragraph,
+        Table,
+        TableRow,
+        TableCell,
+        TextRun,
+        WidthType,
+        BorderStyle,
+        AlignmentType,
+        VerticalAlign
+    } = window.docx;
+
+    // 检查是否是当日数据
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const entryDate = new Date(dateStr);
+    entryDate.setHours(0, 0, 0, 0);
+    if (entryDate.getTime() !== today.getTime()) return null;
+
+    // 生成复习日期数组
+    const intervals = [1, 2, 3, 5, 7, 9, 12, 14, 17, 21];
+    const reviewDates = intervals.map(offset => {
+        const d = new Date(today);
+        d.setDate(d.getDate() + offset);
+        return new Intl.DateTimeFormat('zh-CN', {month: '2-digit', day: '2-digit'}).format(d);
+    });
+
+    // 创建带样式的段落（复用函数）
+    const createCenteredParagraph = (text) => {
+        return new Paragraph({
+            alignment: AlignmentType.CENTER,
+            children: [new TextRun({text, font: '微软雅黑', size: 22})]
+        });
+    };
+
+    return new Table({
+        width: {size: 100, type: WidthType.PERCENTAGE},
+        columnWidths: [2000, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800],
+        rows: [
+            // 第几天行
+            new TableRow({
+                children: [
+                    new TableCell({
+                        verticalAlign: VerticalAlign.CENTER,
+                        children: [createCenteredParagraph('第几天')]
+                    }),
+                    ...intervals.map(num => new TableCell({
+                        verticalAlign: VerticalAlign.CENTER,
+                        children: [createCenteredParagraph(num.toString())]
+                    }))
+                ]
+            }),
+            // 复习日期行
+            new TableRow({
+                children: [
+                    new TableCell({
+                        verticalAlign: VerticalAlign.CENTER,
+                        children: [createCenteredParagraph('复习日期')]
+                    }),
+                    ...reviewDates.map(date => new TableCell({
+                        verticalAlign: VerticalAlign.CENTER,
+                        children: [createCenteredParagraph(date)]
+                    }))
+                ]
+            }),
+            // 遗忘词数行
+            new TableRow({
+                children: [
+                    new TableCell({
+                        verticalAlign: VerticalAlign.CENTER,
+                        children: [createCenteredParagraph('遗忘词数')]
+                    }),
+                    ...Array(10).fill().map(() => new TableCell({
+                        verticalAlign: VerticalAlign.CENTER,
+                        children: [createCenteredParagraph('')]
+                    }))
+                ]
+            })
+        ],
+        borders: {
+            top: {style: BorderStyle.SINGLE, size: 1, color: "000000"},      // 黑色实线
+            bottom: {style: BorderStyle.SINGLE, size: 1, color: "000000"},
+            left: {style: BorderStyle.SINGLE, size: 1, color: "000000"},
+            right: {style: BorderStyle.SINGLE, size: 1, color: "000000"},
+            insideHorizontal: {style: BorderStyle.SINGLE, size: 1, color: "666666"}, // 灰色内边框
+            insideVertical: {style: BorderStyle.SINGLE, size: 1, color: "666666"}
+        }
     });
 }
 
