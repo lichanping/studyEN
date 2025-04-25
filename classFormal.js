@@ -60,12 +60,6 @@ const teacherData = {
                 course: "2025年上海中考考纲词汇（乱序版）",
                 hours: [19, 40],
                 courseWordCount: 2299
-            },
-            "泽瑞同学": {
-                schedule: "仅用于核对工资，不用于统计抗遗忘复习 泽瑞同学 (初三)",
-                course: "中考超纲",
-                hours: [19, 40],
-                courseWordCount: 272
             }
         }
     },
@@ -154,8 +148,15 @@ export function updateLabel() {
     // 获取 localStorage 中 ${userName}_末次复习 的值
     const lastReviewDate = localStorage.getItem(`${userName}_末次复习`);
     const reviewDateLabel = document.getElementById('reviewDateLabel');
+    reviewDateLabel.style.color = '';
+    reviewDateLabel.className = '';
     if (lastReviewDate) {
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate()+1);
+        const isExpired = new Date(lastReviewDate) <= tomorrow;
         reviewDateLabel.textContent = `末次复习: ${lastReviewDate}`;
+        reviewDateLabel.style.color = isExpired ? 'red' : 'green';
     } else {
         reviewDateLabel.textContent = '';
     }
@@ -795,9 +796,9 @@ export async function generateWordReport() {
                 const date = new Date(dateStr);
                 date.setHours(0, 0, 0, 0);
                 return date >= startDate &&
-                       date <= today &&
-                       typeof words === 'string' &&
-                       words.trim().length > 0; // 严格过滤空字符串
+                    date <= today &&
+                    typeof words === 'string' &&
+                    words.trim().length > 0; // 严格过滤空字符串
             })
             .sort(([a], [b]) => new Date(b) - new Date(a));
 
@@ -816,9 +817,9 @@ export async function generateWordReport() {
                         heading: 'Heading1',
                         alignment: AlignmentType.CENTER,
                     }),
-                    new Paragraph({ text: `用户：${userName}`, alignment: AlignmentType.LEFT }),
-                    new Paragraph({ text: `教练：${teacherName}`, alignment: AlignmentType.LEFT }),
-                    new Paragraph({ text: '' }),
+                    new Paragraph({text: `用户：${userName}`, alignment: AlignmentType.LEFT}),
+                    new Paragraph({text: `教练：${teacherName}`, alignment: AlignmentType.LEFT}),
+                    new Paragraph({text: ''}),
                     ...generateTableSections(filteredNewWordsEntries, true, true),
                     new Paragraph({
                         children: [
@@ -829,11 +830,11 @@ export async function generateWordReport() {
                                 color: 'C47F3E',
                             })
                         ],
-                        spacing: { before: 300 },
+                        spacing: {before: 300},
                         alignment: AlignmentType.LEFT,
                     }),
                     // 英文默写部分前空白行（使用数组展开简化代码）
-                    ...[...Array(4)].map(() => new Paragraph({ text: '' })),
+                    ...[...Array(4)].map(() => new Paragraph({text: ''})),
 
                     // 英文默写部分
                     new Paragraph({
@@ -841,9 +842,9 @@ export async function generateWordReport() {
                         heading: 'Heading1',
                         alignment: AlignmentType.CENTER,
                     }),
-                    new Paragraph({ text: `用户：${userName}`, alignment: AlignmentType.LEFT }),
-                    new Paragraph({ text: `教练：${teacherName}`, alignment: AlignmentType.LEFT }),
-                    new Paragraph({ text: '' }),
+                    new Paragraph({text: `用户：${userName}`, alignment: AlignmentType.LEFT}),
+                    new Paragraph({text: `教练：${teacherName}`, alignment: AlignmentType.LEFT}),
+                    new Paragraph({text: ''}),
                     ...generateTableSections(filteredNewWordsEntries, true, false),
 
                     // 中文默写部分
@@ -852,12 +853,12 @@ export async function generateWordReport() {
                         heading: 'Heading1',
                         alignment: AlignmentType.CENTER,
                     }),
-                    new Paragraph({ text: `用户：${userName}`, alignment: AlignmentType.LEFT }),
-                    new Paragraph({ text: `教练：${teacherName}`, alignment: AlignmentType.LEFT }),
-                    new Paragraph({ text: '' }),
+                    new Paragraph({text: `用户：${userName}`, alignment: AlignmentType.LEFT}),
+                    new Paragraph({text: `教练：${teacherName}`, alignment: AlignmentType.LEFT}),
+                    new Paragraph({text: ''}),
                     ...generateTableSections(filteredNewWordsEntries, false, true),
-                    new Paragraph({ text: '' }),
-                    new Paragraph({ text: '' }),
+                    new Paragraph({text: ''}),
+                    new Paragraph({text: ''}),
                     // 添加空值保护[6](@ref)
                     ...(filteredNewWordsEntries.length === 1 && createReviewScheduleTable(filteredNewWordsEntries[0][0], userName)
                         ? [createReviewScheduleTable(filteredNewWordsEntries[0][0], userName)]
