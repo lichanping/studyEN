@@ -153,7 +153,7 @@ export function updateLabel() {
     if (lastReviewDate) {
         const today = new Date();
         const tomorrow = new Date(today);
-        tomorrow.setDate(today.getDate()+1);
+        tomorrow.setDate(today.getDate() + 1);
         const isExpired = new Date(lastReviewDate) <= tomorrow;
         reviewDateLabel.textContent = `末次复习: ${lastReviewDate}`;
         reviewDateLabel.style.color = isExpired ? 'red' : 'green';
@@ -199,9 +199,13 @@ export function handleScheduleNotificationClick() {
 
 export function handleStopNotificationClick() {
     const userName = document.getElementById("userName").value;
-    const notificationMessage = `${userName}和${userName}妈妈，我遇到了一些突发状况，导致接下来的 n 天无法正常进行正课教学，需要暂停课程。对于给你们造成的不便，我由衷地表示歉意，带来不便，还望理解！`;
+    const notificationMessage =
+        `感谢${userName}妈妈一直以来的支持与配合，也感谢${userName}的积极投入与努力。
+在这段共同学习与成长的旅程中，你们的理解与宽容让每一步都充满力量。
+很荣幸能陪伴${userName}一同进步，愿你在未来的道路上，继续绽放光芒，收获无尽的美好与成功，一路繁花相送，前景无限光明。`;
+
     copyToClipboard(notificationMessage);
-    showLongText(`${notificationMessage}`);
+    showLongText(notificationMessage);
 }
 
 export function handleLateMeetingReminderClick() {
