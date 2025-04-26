@@ -160,6 +160,55 @@ export function updateLabel() {
     } else {
         reviewDateLabel.textContent = '';
     }
+    showTodayReviewDates(userName)
+}
+
+function showTodayReviewDates(userName) {
+    try {
+        const statsKey = `${userName}_classStatistics`;
+        const classStats = JSON.parse(localStorage.getItem(statsKey)) || {};
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const reviewOffsets = [1, 2, 3, 5, 7, 9, 12, 14, 17, 21];
+        const matchedStudyDates = [];
+
+        Object.keys(classStats).forEach(dateStr => {
+            const studyDate = new Date(dateStr);
+            studyDate.setHours(0, 0, 0, 0);
+
+            reviewOffsets.forEach(offset => {
+                const reviewDate = new Date(studyDate);
+                reviewDate.setDate(reviewDate.getDate() + offset);
+
+                if (reviewDate.getTime() === today.getTime()) {
+                    matchedStudyDates.push(studyDate);
+                }
+            });
+        });
+
+        // Sort the matched dates ascending (first month, then day)
+        matchedStudyDates.sort((a, b) => a - b);
+
+        // Format for display: "4-5", "4-12" etc.
+        const formattedDates = matchedStudyDates.map(date => `${date.getMonth() + 1}-${date.getDate()}`);
+
+        const labelElement = document.getElementById('todayReviewDates');
+        labelElement.style.color = '';
+        labelElement.className = '';
+        if (labelElement) {
+            if (formattedDates.length > 0) {
+                labelElement.textContent = `需复习的训练日期：${formattedDates.join('，')}`;
+                labelElement.style.color = 'green';
+            } else {
+                labelElement.textContent = '今天没有需要复习的训练内容。';
+                labelElement.style.color = 'red';
+            }
+        }
+    } catch (error) {
+        console.error('生成今天复习训练日期列表出错:', error);
+    }
 }
 
 // JavaScript code for the button click functions
