@@ -347,7 +347,7 @@ class GenerateTool:
         cards = soup.find_all('uni-view', class_='training-card')
         data = []
 
-        reading_keywords = ['阅读理解', '文化阅读', '时文阅读', '阅读真题', '语法', '完型填空']
+        reading_keywords = ['阅读理解', '文化阅读', '时文阅读', '阅读真题', '语法', '完型填空', '阅读']
 
         def get_category(course, tag_texts):
             if '体验课' in tag_texts:
