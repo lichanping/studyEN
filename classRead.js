@@ -1,8 +1,8 @@
 import {
-    copyToClipboard, 
-    getRandomMotto, 
-    showAlert, 
-    getRandomFeedback, 
+    copyToClipboard,
+    getRandomMotto,
+    showAlert,
+    getRandomFeedback,
     showLongText,
     storeClassStatistics
 } from './commonFunctions.js'
@@ -131,6 +131,22 @@ export function updateLabel2() {
     const formattedCurrentDate = `${year}-${month}-${day}T${hours}:${minutes}`;
     document.getElementById("classDateTime").value = formattedCurrentDate;
     document.getElementById("reviewTime").value = formattedCurrentDate;
+
+    // 获取 localStorage 中 ${userName}_末次复习 的值
+    const lastReviewDate = localStorage.getItem(`${userName}_末次复习`);
+    const reviewDateLabel = document.getElementById('reviewDateLabel');
+    reviewDateLabel.style.color = '';
+    reviewDateLabel.className = '';
+    if (lastReviewDate) {
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+        const isExpired = new Date(lastReviewDate) <= tomorrow;
+        reviewDateLabel.textContent = `末次复习: ${lastReviewDate}`;
+        reviewDateLabel.style.color = isExpired ? 'red' : 'green';
+    } else {
+        reviewDateLabel.textContent = '';
+    }
 }
 
 
@@ -203,6 +219,21 @@ export function handleReadClassFeedbackClick() {
             1, // 默认1小时
             "阅读完型语法课" // 指定课程类型
         );
+
+        // 计算第21天的复习日期
+        const reviewDate = new Date(classDateTime);
+        reviewDate.setDate(reviewDate.getDate() + 21);
+        // 将复习日期格式化为 YYYY-MM-DD 格式
+        const formattedReviewDate = reviewDate.toISOString().split('T')[0];
+        // 获取 localStorage 中现有的末次复习日期
+        const existingReviewDate = localStorage.getItem(`${userName}_末次复习`);
+
+        // 仅当 formattedReviewDate 大于现有日期时，才更新 localStorage
+        if (!existingReviewDate || formattedReviewDate > existingReviewDate) {
+            localStorage.setItem(`${userName}_末次复习`, formattedReviewDate);
+        }
+        // 显示复习日期
+        document.getElementById('reviewDateLabel').textContent = `末次复习: ${localStorage.getItem(`${userName}_末次复习`)}`;
     }
 
     // Generate feedback message

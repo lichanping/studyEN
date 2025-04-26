@@ -494,7 +494,6 @@ export async function generateReport() {
 
             sortedEntries.push({
                 date: recordDate,
-                dateKey: recordDate.toISOString().split('T')[0], // 用于和 indexDB 匹配
                 formatted: `${formattedDate} (${weekDay}) | ${courseType} | ${stats.newWord} | ${stats.reviewWordCount}`,
                 year: recordDate.getFullYear(),
                 newWord: stats.newWord,
@@ -515,19 +514,7 @@ export async function generateReport() {
 
     sortedEntries.sort((a, b) => a.date - b.date);
 
-    // 🔽 获取新学单词数据 from indexDB
-    const db = await initDB();
-    const tx = db.transaction(STORE_NAME_LEARNED, 'readonly');
-    const store = tx.objectStore(STORE_NAME_LEARNED);
-    const request = store.get(userName);
-    const indexDBData = await new Promise((resolve, reject) => {
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error);
-    });
-
-    const learnedWordsMap = indexDBData?.newLearnedWords || {};
-
-    // 🔽 构建报告文本内容
+    // 构建报告文本内容
     let reportContent = `【正课学习数据统计】\n`;
     reportContent += `学员: ${userName}\n`;
     reportContent += `教练: ${coachName}\n\n`;
@@ -549,27 +536,8 @@ export async function generateReport() {
         reportContent += `${entry.formatted}\n`;
     });
 
-    // 🔽 筛选出日期范围内的 newLearnedWords
-    const filteredNewWordsEntries = Object.entries(learnedWordsMap)
-        .filter(([dateStr, words]) => {
-            if (!words || !words.trim()) return false;
-            const date = new Date(dateStr);
-            date.setHours(0, 0, 0, 0);
-            return date > startDate && date <= today;
-        })
-        .sort(([a], [b]) => new Date(a) - new Date(b));
-
-    // 🔽 如果有记录才输出“新学单词明细”区块
-    if (filteredNewWordsEntries.length > 0) {
-        reportContent += `\n📖 新学重点单词明细：\n`;
-
-        filteredNewWordsEntries.forEach(([dateStr, words]) => {
-            reportContent += `**${dateStr}**\n${words.trim()}\n\n`;
-        });
-    }
-
     // 结尾说明
-    reportContent += `📢 以上数据仅统计${userName}在正课中的学习情况，不包含课后的抗遗忘复习。\n`;
+    reportContent += `\n📢 以上数据仅统计${userName}在正课中的学习情况，不包含课后的抗遗忘复习。\n`;
     reportContent += `💪 ${userName}，继续稳步积累，保持进步！`;
 
     // Copy to clipboard
