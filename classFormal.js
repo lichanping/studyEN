@@ -31,12 +31,6 @@ window.addEventListener("load", updateLabel);
 const teacherData = {
     "liTeacher": {
         users: {
-            "悠然": {
-                schedule: "每周一五六日 悠然 (高三)",
-                course: "高中超前单词",
-                hours: [19, 30],
-                courseWordCount: 4610
-            },
             "子琦": {
                 schedule: "每周 刘子琦 (初二)",
                 course: "上海高考英语考纲词汇（乱序版）",
@@ -60,7 +54,13 @@ const teacherData = {
                 course: "2025年上海中考考纲词汇（乱序版）",
                 hours: [19, 40],
                 courseWordCount: 2299
-            }
+            },
+            "悠然": {
+                schedule: "每周一五六日 悠然 (高三)",
+                course: "高中超前单词",
+                hours: [19, 30],
+                courseWordCount: 4610
+            },
         }
     },
     "shiTeacher": {
