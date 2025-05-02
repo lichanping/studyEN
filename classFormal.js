@@ -34,7 +34,7 @@ const teacherData = {
             "子琦": {
                 schedule: "每周 刘子琦 (初二)",
                 course: "上海高考英语考纲词汇（乱序版）",
-                hours: [21, 30],
+                hours: [19, 30],
                 courseWordCount: 4955
             },
             "硕硕": {
