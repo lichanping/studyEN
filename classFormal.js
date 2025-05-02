@@ -37,17 +37,17 @@ const teacherData = {
                 hours: [19, 30],
                 courseWordCount: 4955
             },
-            "硕硕": {
-                schedule: "每周周六下午3点+周日10点 硕硕(四年级)",
-                course: "牛津上海版小学英语五年级（下册）",
-                hours: [15, 0],
-                courseWordCount: 92
-            },
             "梓言": {
                 schedule: "每周 梓言 (初一)",
                 course: "【新教材】沪教版（五四学制）七年级下册",
                 hours: [9, 0],
                 courseWordCount: 283
+            },
+            "硕硕": {
+                schedule: "每周周六下午3点+周日10点 硕硕(四年级)",
+                course: "牛津上海版小学英语五年级（下册）",
+                hours: [15, 0],
+                courseWordCount: 92
             },
             "泽瑞": {
                 schedule: "每周五晚上+周日16点 泽瑞 (初三)",
@@ -233,7 +233,7 @@ export function handleScheduleNotificationClick() {
         notificationMessage =
             `【${thisDateTime}】
 亲爱的 ✨ ${userName} 用户您好！
-📖 课程名称：《${course}》
+🔤 课程名称：《单词记忆训练课》
 🔔 重要提醒：
 如需取消或调整上课时间，请至少提前4小时告知学员服务中心负责人，否则系统将无法更改，仍会消耗课时。
 🗣️ 上课小贴士：
