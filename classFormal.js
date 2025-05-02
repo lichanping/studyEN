@@ -233,7 +233,7 @@ export function handleScheduleNotificationClick() {
         notificationMessage =
             `【${thisDateTime}】
 亲爱的 ✨ ${userName} 用户您好！
-📖 课程名称：《${course}》
+🔤 课程名称：《单词记忆训练课》
 🔔 重要提醒：
 如需取消或调整上课时间，请至少提前4小时告知学员服务中心负责人，否则系统将无法更改，仍会消耗课时。
 🗣️ 上课小贴士：
