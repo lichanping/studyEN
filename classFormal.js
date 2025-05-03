@@ -49,12 +49,6 @@ const teacherData = {
                 hours: [15, 0],
                 courseWordCount: 92
             },
-            "泽瑞": {
-                schedule: "每周五晚上+周日16点 泽瑞 (初三)",
-                course: "2025年上海中考考纲词汇（乱序版）",
-                hours: [19, 40],
-                courseWordCount: 2299
-            },
             "悠然": {
                 schedule: "每周一五六日 悠然 (高三)",
                 course: "高中超前单词",
