@@ -35,11 +35,6 @@ const teacherData = {
                 course: "【5.0】【中级】小学阅读50篇",
                 hours: [11, 0]
             },
-            "泽瑞同学": {
-                schedule: "每周5、7 泽瑞同学 (初三)",
-                course: "初中完型填空",
-                hours: [16, 0]
-            },
             "悠然": {
                 schedule: "每周6、7 悠然 (高二)",
                 course: "高中高级阅读理解",
