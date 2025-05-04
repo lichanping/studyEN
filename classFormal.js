@@ -911,7 +911,7 @@ function generateTableSections(entries, showEnglish, showChinese) {
 
     return entries.flatMap(([dateStr, words]) => {
         const wordPairs = words.trim().split('\n').map(pair => {
-            const match = pair.match(/^([\w\s\-…\.]+)(.*)$/);
+            const match = pair.match(/^([^\u4e00-\u9fa5\r\n]+)(.*)$/);
             if (match) {
                 const english = match[1].trim();
                 const chinese = match[2].trim() || '缺失中文';
