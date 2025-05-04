@@ -39,7 +39,7 @@ const teacherData = {
             },
             "梓言": {
                 schedule: "每周 梓言 (初一)",
-                course: "【新教材】沪教版（五四学制）七年级下册",
+                course: "全册-沪教版初中英语八年级下册",
                 hours: [9, 0],
                 courseWordCount: 283
             },
