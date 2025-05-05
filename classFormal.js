@@ -32,27 +32,27 @@ const teacherData = {
     "liTeacher": {
         users: {
             "子琦": {
-                schedule: "每周 刘子琦 (初二)",
+                schedule: "每周4/6 刘子琦 (初二)",
                 course: "上海高考英语考纲词汇（乱序版）",
                 hours: [19, 30],
                 courseWordCount: 4955
             },
             "梓言": {
-                schedule: "每周 梓言 (初一)",
+                schedule: "每周日9点 梓言 (初一)",
                 course: "全册-沪教版初中英语八年级下册",
                 hours: [9, 0],
                 courseWordCount: 283
             },
             "硕硕": {
-                schedule: "每周周六下午3点+周日10点 硕硕(四年级)",
+                schedule: "每周日10点 硕硕(四年级)",
                 course: "牛津上海版小学英语五年级（下册）",
                 hours: [15, 0],
                 courseWordCount: 92
             },
-            "悠然": {
-                schedule: "每周一五六日 悠然 (高三)",
-                course: "高中超前单词",
-                hours: [19, 30],
+            "Camille": {
+                schedule: "每天 Camille (高一)",
+                course: "法语A2",
+                hours: [21, 30],
                 courseWordCount: 4610
             },
         }
