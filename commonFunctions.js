@@ -270,6 +270,7 @@ export function handleAntiForgettingFeedbackClick() {
 // 初始化 IndexedDB
 const DB_NAME = 'FeedbackDB';
 const STORE_NAME = 'feedbackData';
+const STORE_NAME_LEARNED = 'newLearnedWords';
 const DB_VERSION = 2;
 
 async function initDB() {
@@ -285,14 +286,91 @@ async function initDB() {
             }
 
             // Also create newLearnedWords if not exists
-            if (!db.objectStoreNames.contains('newLearnedWords')) {
-                db.createObjectStore('newLearnedWords', {keyPath: 'userName'});
+            if (!db.objectStoreNames.contains(STORE_NAME_LEARNED)) {
+                db.createObjectStore(STORE_NAME_LEARNED, {keyPath: 'userName'});
             }
         };
 
         request.onsuccess = (event) => resolve(event.target.result);
         request.onerror = (event) => reject(event.target.error);
     });
+}
+
+export async function storeNewLearnedWords(studentName, newLearnedWordsText) {
+    const classDateInput = document.getElementById("classDateTime").value;
+
+    if (!classDateInput) {
+        console.error('Class date not selected.');
+        return;
+    }
+
+    try {
+        const currentDate = classDateInput.split('T')[0];
+        const db = await initDB();
+        const tx = db.transaction(STORE_NAME_LEARNED, 'readwrite');
+        const store = tx.objectStore(STORE_NAME_LEARNED);
+
+        const request = store.get(studentName);
+        const existingData = await new Promise((resolve, reject) => {
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
+        });
+        // Normalize input into one-line English+Chinese
+        const normalizedLines = normalizeOneLineEntries(newLearnedWordsText);
+        const finalTextToStore = normalizedLines.join('\n');
+
+        const newWordsEntry = {
+            [currentDate]: finalTextToStore
+        };
+
+        const updatedData = {
+            userName: studentName,
+            newLearnedWords: {
+                ...(existingData?.newLearnedWords || {}),
+                ...newWordsEntry  // newWordsEntry 应该是你要新增的单词
+            },
+            feedbackEntries: existingData?.feedbackEntries || [],
+            forgetWords: existingData?.forgetWords || {}
+        };
+
+        store.put(updatedData);
+        await new Promise((resolve, reject) => {
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error);
+        });
+
+        console.log('✅ New learned words stored successfully:\n', finalTextToStore);
+    } catch (error) {
+        console.error('❌ Error storing new learned words:', error);
+    }
+}
+
+function normalizeOneLineEntries(text) {
+    const lines = text.trim().split('\n').map(line => line.trim()).filter(Boolean);
+    const result = [];
+
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+
+        const hasChinese = /[\u4e00-\u9fa5]/.test(line);
+        const hasEnglish = /[a-zA-Z]/.test(line);
+
+        // One-line case: contains both English and Chinese
+        if (hasChinese && hasEnglish) {
+            result.push(line);
+        }
+        // Two-line case: English first, then Chinese
+        else if (hasEnglish && i + 1 < lines.length && /[\u4e00-\u9fa5]/.test(lines[i + 1])) {
+            result.push(lines[i] + lines[i + 1]);
+            i++; // Skip the next line (Chinese explanation)
+        }
+        // If only English or only Chinese, keep as-is (optional)
+        else {
+            result.push(line);
+        }
+    }
+
+    return result;
 }
 
 // 修改 storeForgetWords 函数以使用 IndexedDB
