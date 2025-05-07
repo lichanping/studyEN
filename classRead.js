@@ -4,7 +4,8 @@ import {
     showAlert,
     getRandomFeedback,
     showLongText,
-    storeClassStatistics
+    storeClassStatistics,
+    storeNewLearnedWords
 } from './commonFunctions.js'
 
 const setInitialDateTime = () => {
@@ -229,6 +230,9 @@ export function handleReadClassFeedbackClick() {
         }
         // 显示复习日期
         document.getElementById('reviewDateLabel').textContent = `末次复习: ${localStorage.getItem(`${userName}_末次复习`)}`;
+        // ✅ Store the new learned words
+        const newLearnedWordsText = document.getElementById("newLearnedWords").value.trim();
+        storeNewLearnedWords(userName, newLearnedWordsText);
     }
 
     // Generate feedback message
