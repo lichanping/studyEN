@@ -1,5 +1,4 @@
 import asyncio
-import json
 import os
 import random
 import re
@@ -8,13 +7,10 @@ from datetime import datetime
 from os.path import dirname, abspath
 
 import edge_tts
-import numpy as np
 import pandas as pd
+from bs4 import BeautifulSoup
 from edge_tts import VoicesManager
 from openpyxl import load_workbook
-from openpyxl.utils import get_column_letter
-from ptest.decorator import TestClass, Test
-from bs4 import BeautifulSoup
 
 
 def get_sub_folder_path(sub_dir_name='user_data'):
@@ -185,10 +181,8 @@ class TextToSpeechConverter:
         print(f"Audio file '{output_file}' created successfully.")
 
 
-@TestClass(run_mode='singleline')
-class GenerateTool:
-    @Test()
-    def simplify_words(self):
+class TestGenerateTool:
+    def test_simplify_words(self):
         # remove duplicate words
         tool = TxtToXLSX()
         tool.remove_duplicates_or_merge_translations('雅思全部.txt')
@@ -198,8 +192,7 @@ class GenerateTool:
         tool.remove_duplicates_or_merge_translations('中考作文高频词汇.txt')
         tool.remove_duplicates_or_merge_translations('中考词汇新增.txt')
 
-    @Test()
-    def calculate_missing_words(self):
+    def test_calculate_missing_words(self):
         tool = TxtToXLSX()
         # generate missing sounds
         tool.convert('雅思全部.txt')
@@ -207,8 +200,7 @@ class GenerateTool:
         tool.convert('高中考纲词组.txt')
         tool.convert('敏珺语言点.txt')
 
-    @Test()
-    def generate_media_word_list(self):
+    def test_generate_media_word_list(self):
         def en_and_cn(file, max_items):
             start_time = time.time()  # Record start time
             converter = TextToSpeechConverter(tool)
@@ -221,8 +213,7 @@ class GenerateTool:
         en_and_cn('敏珺语言点.txt', max_items=None)
         # en_and_cn('高中考纲词组.txt', max_items=10)
 
-    @Test()
-    def calculate_class_fee(self):
+    def test_calculate_class_fee(self):
         temp_folder = get_sub_folder_path('temp')
         file_path = os.path.join(temp_folder, '6月练习记录.xlsx')
         columns_to_remove = ['30分钟软件时长', '60分钟软件时长', '软件体验时长', '佣金总额', '身份证号码', '陪练手机号']
@@ -230,8 +221,7 @@ class GenerateTool:
         self.separate_classes_into_sheets(file_path)
         self.create_and_save_pivot_table(file_path)
 
-    @Test()
-    def calc_personal_fee(self):
+    def test_calc_personal_fee(self):
         temp_folder = get_sub_folder_path('temp')
         file_path = os.path.join(temp_folder, '每月结算.html')
         self.calc_month_fee(file_path)
@@ -333,8 +323,7 @@ class GenerateTool:
             pivot_by_student.to_excel(writer, sheet_name='按学生汇总', index=False)
         print(f"Data and summary successfully written to {output_file}")
 
-    @Test()
-    def calc_personal_fee_from_training_list(self):
+    def test_v5_calc_personal_fee_from_training_list(self):
         temp_folder = get_sub_folder_path('temp')
         file_path = os.path.join(temp_folder, 'v5.html')
         self.calc_month_fee_from_training_list(file_path)
@@ -350,7 +339,7 @@ class GenerateTool:
         reading_keywords = ['阅读理解', '文化阅读', '时文阅读', '阅读真题', '语法', '完型填空', '阅读']
 
         def get_category(course, tag_texts):
-            if '体验课' in tag_texts:
+            if any('体验' in s for s in tag_texts):
                 return '体验课'
             elif any(keyword in course for keyword in reading_keywords):
                 return '阅读完型语法课'
@@ -416,53 +405,6 @@ class GenerateTool:
             pivot.to_excel(writer, sheet_name='汇总', index=False)
             pivot_by_student.to_excel(writer, sheet_name='按学生汇总', index=False)
         print(f"Data and summary successfully written to {output_file}")
-
-    @Test()
-    def export_hot_products_to_excel(self):
-        temp_folder = get_sub_folder_path('temp')
-        file_path = os.path.join(temp_folder, '人气爆款.json')
-        # Load JSON data
-        with open(file_path, "r", encoding="utf-8") as file:
-            data = json.load(file)
-
-        self.export_to_file(data, file_path)
-
-    def export_to_file(self, data, file_path):
-        # Extract the list of products
-        products = data.get("data", {}).get("productSearchV3", {}).get("products", [])
-        # Create a list to store processed product information
-        product_data = []
-        # Process each product and select only the required fields
-        for product in products:
-            name = product.get("name")
-            serial_no = product.get("serialNo")
-            bricks = product.get("bricks")
-            suitable_label = product.get("suitable", {}).get("label")
-            # Append the selected fields to the product_data list
-            product_data.append({
-                "name": name,
-                "serialNo": serial_no,
-                "bricks": bricks,
-                "label": suitable_label
-            })
-        # Convert the product data into a DataFrame
-        df = pd.DataFrame(product_data)
-        # Get the current date and format it as YYYYMMDD
-        date_str = datetime.now().strftime("%Y-%m-%d")
-        # Define the output Excel filename
-        base_name = os.path.splitext(file_path)[0]
-        output_filename = f"{base_name}_{date_str}.xlsx"
-        # Create a pivot table summarizing by 'label' and sort by 'count' in descending order
-        pivot_table = df.pivot_table(index='label', values='bricks', aggfunc='count').reset_index()
-        pivot_table.rename(columns={'bricks': 'count'}, inplace=True)
-        pivot_table.sort_values(by='count', ascending=False, inplace=True)  # Sort by count in descending order
-        # Export to Excel with multiple sheets
-        with pd.ExcelWriter(output_filename, engine='openpyxl') as writer:
-            # Save the raw product data to Sheet1
-            df.to_excel(writer, index=False, sheet_name='Sheet1')
-            # Save the sorted pivot table to Sheet2
-            pivot_table.to_excel(writer, index=False, sheet_name='Sheet2')
-        print(f"Data has been successfully exported to {output_filename}")
 
     def create_and_save_pivot_table(self, input_file_path):
         # 读取 Excel 文件中的数据
