@@ -50,10 +50,10 @@ const teacherData = {
                 hours: [15, 0],
                 courseWordCount: 92
             },
-            "Camille": {
-                schedule: "每天 Camille (高一)",
-                course: "法语A2",
-                hours: [21, 30],
+            "皓棠": {
+                schedule: "皓棠 (2年级)",
+                course: "小学英语",
+                hours: [14, 0],
                 courseWordCount: 4610
             },
         }
