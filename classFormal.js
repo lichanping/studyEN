@@ -52,7 +52,7 @@ const teacherData = {
             },
             "皓棠": {
                 schedule: "皓棠 (2年级)",
-                course: "全册-牛津上海版小学英语二年级（下册）",
+                course: "全册-牛津上海版小学英语三年级（上册）",
                 hours: [14, 0],
                 courseWordCount: 51
             },
