@@ -630,12 +630,12 @@ async function formatFeedbackContent(userData) {
                     // 三位数或以上
                     return {
                         date: datePart,
-                        formatted: `${datePart.padEnd(12)}|${correctWords}/${wordsReviewed}（${String(correctRate).padEnd(2)}%)`
+                        formatted: `${datePart.padEnd(12)}|${correctWords}/${wordsReviewed}(${String(correctRate).padEnd(2)}%)`
                     };
                 }
                 return {
                     date: datePart,
-                    formatted: `${datePart.padEnd(12)} | ${correctWords}/${wordsReviewed}（${String(correctRate).padEnd(2)}%)`
+                    formatted: `${datePart.padEnd(12)} | ${correctWords}/${wordsReviewed}(${String(correctRate).padEnd(2)}%)`
                 };
             }
         }
