@@ -264,7 +264,7 @@ export function handleAntiForgettingFeedbackClick() {
     showLongText(`${message}`);
 
     // Store current date and correct rate in IndexedDB
-    storeFeedbackInFile(userName, correctRate, antiForgettingReviewWord);
+    storeFeedbackInFile(userName, correctRate, antiForgettingReviewWord, correctWordsCount);
 }
 
 // 初始化 IndexedDB
@@ -419,7 +419,7 @@ async function storeForgetWords(studentName, forgetWords) {
 }
 
 // 修改 storeFeedbackInFile 函数以使用 IndexedDB
-async function storeFeedbackInFile(userName, correctRate, totalWordsReviewed) {
+async function storeFeedbackInFile(userName, correctRate, totalWordsReviewed, correctWordsCount) {
     const reviewTime = document.getElementById('reviewTime').value;
 
     if (!reviewTime) {
@@ -430,7 +430,7 @@ async function storeFeedbackInFile(userName, correctRate, totalWordsReviewed) {
     try {
         const currentDate = reviewTime.split('T')[0];
         const weekDay = getDayOfWeek(currentDate);
-        const newContent = `${currentDate} (${weekDay}): ${correctRate}% | ${totalWordsReviewed}`;
+        const newContent = `${currentDate}(${weekDay}): ${correctRate}% | ${totalWordsReviewed}|${correctWordsCount}`;
 
         const db = await initDB();
         const tx = db.transaction(STORE_NAME, 'readwrite');
@@ -477,7 +477,7 @@ async function storeFeedbackInFile(userName, correctRate, totalWordsReviewed) {
 
 function getDayOfWeek(dateStr) {
     const dateObj = new Date(dateStr);
-    const daysOfWeek = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
+    const daysOfWeek = ["日", "一", "二", "三", "四", "五", "六"];
     return daysOfWeek[dateObj.getDay()];
 }
 
@@ -609,20 +609,36 @@ async function formatFeedbackContent(userData) {
             wordsReviewed = parseInt(wordsPart) || 0;
         }
 
+        let correctWords = 0;
+        if (!isNaN(correctRate) && wordsReviewed > 0) {
+            // 优先从记录中解析correctWords（如有），否则用correctRate计算
+            const correctWordsFromEntry = entry.split('|')[2]?.trim();
+            if (correctWordsFromEntry && !isNaN(parseInt(correctWordsFromEntry))) {
+                correctWords = parseInt(correctWordsFromEntry);
+            } else {
+                correctWords = Math.round(wordsReviewed * correctRate / 100);
+            }
+        }
+
         if (!isNaN(correctRate)) {
             const entryDate = new Date(datePart);
             if (entryDate >= startDate && entryDate <= today) {
                 totalCorrectRate += correctRate;
                 validEntries++;
                 totalWordsReviewed += wordsReviewed;
-
+                if (wordsReviewed >= 100) {
+                    // 三位数或以上
+                    return {
+                        date: datePart,
+                        formatted: `${datePart.padEnd(12)}|${correctWords}/${wordsReviewed}（${String(correctRate).padEnd(2)}%)`
+                    };
+                }
                 return {
                     date: datePart,
-                    formatted: `${datePart.padEnd(12)} | ${String(correctRate).padEnd(4)}% | ${wordsReviewed}`
+                    formatted: `${datePart.padEnd(12)} | ${correctWords}/${wordsReviewed}（${String(correctRate).padEnd(2)}%)`
                 };
             }
         }
-
         return null;
     }).filter(entry => entry);
 
@@ -631,7 +647,7 @@ async function formatFeedbackContent(userData) {
     const sortedFormattedEntries = formattedEntries.map(entry => entry.formatted);
     const averageRate = validEntries > 0 ? (totalCorrectRate / validEntries).toFixed(0) : '无数据';
 
-    const header = `📝 抗遗忘复习详情\n日期              | 正确率 | 词汇量\n-------------------------------`;
+    const header = `📝 抗遗忘复习详情\n日期（星期）          | 正确率\n-------------------------------`;
     const footer = validEntries > 0
         ? `\n📌 本期学习总览\n平均正确率: ${averageRate} %\n总复习词汇: ${totalWordsReviewed} 词`
         : '';
