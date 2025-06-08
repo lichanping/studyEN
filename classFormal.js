@@ -56,6 +56,12 @@ const teacherData = {
                 hours: [14, 0],
                 courseWordCount: 51
             },
+            "哲昕": {
+                schedule: "哲昕 (3年级)",
+                course: "小学英语",
+                hours: [15, 0],
+                courseWordCount: 51
+            }
         }
     },
     "shiTeacher": {
