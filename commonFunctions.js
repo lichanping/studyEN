@@ -840,19 +840,21 @@ function extractEnglishWords(text) {
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
 
-        // Case 1: Mixed line - English followed by Chinese (single line)
-        const match = line.match(/^([\w\s.,;:()'"\-…]+)[^\u0000-\u007F]+/);
-        if (match) {
-            englishWords.push(match[1].trim());
+        // 改进的单行中英文混合匹配
+        const mixedMatch = line.match(/^([\w\s.,;:()'"\-…\?]+?)(?:[\u4e00-\u9fa5]|$)/);
+        if (mixedMatch) {
+            englishWords.push(mixedMatch[1].trim());
             continue;
         }
 
-        // Case 2: Two-line format - English then Chinese
-        if (/^[\w\s.,;:()'"\-…]+$/.test(line)) {
+        // 改进的英文行匹配 - 允许末尾有标点符号
+        if (/^[\w\s.,;:()'"\-…\?]+$/.test(line)) {
+            // 如果下一行是中文，则跳过
             if (i + 1 < lines.length && /[\u4e00-\u9fa5]/.test(lines[i + 1])) {
                 englishWords.push(line.trim());
-                i++; // Skip Chinese explanation line
+                i++; // 跳过中文解释行
             } else {
+                // 单独的英文行也添加
                 englishWords.push(line.trim());
             }
         }
