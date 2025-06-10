@@ -182,6 +182,32 @@ class TextToSpeechConverter:
 
 
 class TestGenerateTool:
+    def test_more_words(self):
+        # 定义文件路径
+        temp_dir = "temp"
+        less_path = os.path.join(temp_dir, "less.txt")
+        more_path = os.path.join(temp_dir, "more.txt")
+        diff_path = os.path.join(temp_dir, "diff.txt")
+
+        # 读取less.txt中的单词到集合
+        with open(less_path, 'r') as f:
+            less_words = set(word.strip().lower() for word in f.readlines())
+
+        # 读取more.txt中的单词并找出差异
+        diff_words = []
+        with open(more_path, 'r') as f:
+            for line in f:
+                word = line.strip().lower()
+                # 只处理有效的单词行
+                if word and word not in less_words:
+                    diff_words.append(word)
+
+        # Write the valid words to diff.txt
+        with open(diff_path, 'w') as f:
+            f.write("\n".join(diff_words))
+
+        print(f"Valid words written to {diff_path}")
+
     def test_simplify_words(self):
         # remove duplicate words
         tool = TxtToXLSX()
