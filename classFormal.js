@@ -282,7 +282,11 @@ export function handleClassFeedbackClick() {
     const newLearnedWordsText = document.getElementById('newLearnedWords').value.trim();
     const newWordCountFromText = countEnglishWords(newLearnedWordsText);
     const newWordInput = document.getElementById("newWord");
-    let newWord = parseInt(newWordInput.value);
+    const newWordInputText = newWordInput.value.trim();
+    let newWord = newWordInputText ? newWordInputText.split('+').reduce((sum, num) => {
+        const parsedNum = parseInt(num.trim(), 10);
+        return sum + (isNaN(parsedNum) ? 0 : parsedNum);
+    }, 0) : 0;
 
     if (newWordCountFromText !== newWord) {
         const confirmReplace = confirm(`新学单词实际数量为 ${newWordCountFromText}，与手动输入的 ${newWord} 不同。是否要自动替换？`);
