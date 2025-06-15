@@ -305,9 +305,6 @@ export function handleClassFeedbackClick() {
     const reviewCorrectRate = ((reviewWordCount - reviewforgetWord) / reviewWordCount * 100).toFixed(0);
     const forgetWord = parseInt(document.getElementById("forgetWord").value) || 0;
     const correctRate = ((newWord - forgetWord) / newWord * 100).toFixed(0);
-    let forgetWords = document.getElementById('forgetWords').value.trim();
-    const numberOfEnglishWords = countEnglishWords(forgetWords);
-    document.getElementById("antiForgettingForgetWord").value = numberOfEnglishWords;
 
     const learnedWord = parseInt(document.getElementById("learnedWord").value.trim()) || 0;
     const inputText = document.getElementById('preTestWord').value.trim();
@@ -736,7 +733,7 @@ export async function generateWordReport() {
         const dayRangeInput = document.getElementById("daysRangeInput");
         const dayRange = parseInt(dayRangeInput?.value) || 7;
         const startDate = new Date(today);
-        startDate.setDate(today.getDate() - dayRange);
+        startDate.setDate(today.getDate() - (dayRange - 1)); // 向前推 n-1 天
         startDate.setHours(0, 0, 0, 0);
 
         // ===== 数据过滤增强 ===== [6,8](@ref)
