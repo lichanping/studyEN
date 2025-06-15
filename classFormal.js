@@ -40,7 +40,7 @@ const teacherData = {
             },
             "梓言": {
                 schedule: "每周日9点 梓言 (初一)",
-                course: "全册-沪教版初中英语九年级上册",
+                course: "全册-沪教版初中英语九年级下册",
                 hours: [9, 0],
                 courseWordCount: 283
             },
@@ -52,7 +52,7 @@ const teacherData = {
             },
             "皓棠": {
                 schedule: "皓棠 (2年级)",
-                course: "全册-牛津上海版小学英语三年级（上册）",
+                course: "全册-牛津上海版小学英语三年级（下册）",
                 hours: [14, 0],
                 courseWordCount: 51
             },
