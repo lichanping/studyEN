@@ -840,12 +840,40 @@ function generateTableSections(entries, showEnglish, showChinese) {
         AlignmentType
     } = window.docx;
 
+    // 替代正则方式的更智能分词逻辑
+    function parseWordPair(pair) {
+        pair = pair.trim();
+        const chineseCharIndex = pair.search(/[\u4e00-\u9fa5]/);
+        if (chineseCharIndex === -1) {
+            return [pair.trim(), '缺失中文'];
+        }
+
+        let leftPart = pair.slice(0, chineseCharIndex).trim();
+        let rightPart = pair.slice(chineseCharIndex).trim();
+
+        // 判断括号数量是否匹配
+        const openParens = (leftPart.match(/\(/g) || []).length;
+        const closeParens = (leftPart.match(/\)/g) || []).length;
+
+        // 如果左括号多于右括号，把最后一个左括号移入 rightPart
+        if (openParens > closeParens) {
+            const lastOpenIndex = leftPart.lastIndexOf('(');
+            if (lastOpenIndex !== -1) {
+                // 拆出括号和剩余英文部分
+                const removedParen = leftPart.slice(lastOpenIndex);
+                leftPart = leftPart.slice(0, lastOpenIndex).trim();
+                rightPart = removedParen + rightPart;
+            }
+        }
+
+        return [leftPart.trim(), rightPart.trim()];
+    }
+
+
     return entries.flatMap(([dateStr, words]) => {
         const wordPairs = words.trim().split('\n').map(pair => {
-            const match = pair.match(/^([^\u4e00-\u9fa5\r\n]+)(.*)$/);
-            if (match) {
-                const english = match[1].trim().replace(/\（$/, '');
-                const chinese = match[2].trim().replace(/\）$/, '') || '缺失中文';
+            const [english, chinese] = parseWordPair(pair);
+            if (english && chinese) {
                 return [english, chinese];
             }
             return []; // skip badly formatted lines
@@ -855,7 +883,7 @@ function generateTableSections(entries, showEnglish, showChinese) {
             if (pair.length >= 2) {
                 return new TableRow({
                     children: [
-                        new TableCell({  // Index column
+                        new TableCell({
                             children: [new Paragraph(String(index + 1))]
                         }),
                         new TableCell({
@@ -885,7 +913,7 @@ function generateTableSections(entries, showEnglish, showChinese) {
             }),
             new Table({
                 width: {size: 100, type: WidthType.PERCENTAGE},
-                columnWidths: [500, 800, 800],  // Adjusted for 3 columns
+                columnWidths: [500, 800, 800],
                 rows: [
                     new TableRow({
                         children: [
@@ -902,7 +930,7 @@ function generateTableSections(entries, showEnglish, showChinese) {
                             new TableCell({
                                 width: {size: 48.5, type: WidthType.PERCENTAGE},
                                 margins: {
-                                    left: 200,  // 单位是 1/20 point，200 大约等于 0.25 cm
+                                    left: 200,
                                 },
                                 shading: {
                                     fill: "ADD8E6",
