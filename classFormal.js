@@ -36,31 +36,36 @@ const teacherData = {
                 schedule: "每周4/6 刘子琦 (初二)",
                 course: "上海高考英语考纲词汇（乱序版）",
                 hours: [19, 30],
-                courseWordCount: 4955
+                courseWordCount: 4955,
+                duration: 1
             },
             "梓言": {
                 schedule: "每周日9点 梓言 (初一)",
                 course: "全册-沪教版初中英语九年级下册",
                 hours: [9, 0],
-                courseWordCount: 283
+                courseWordCount: 283,
+                duration: 1
             },
             "硕硕": {
                 schedule: "每周日10点 硕硕(四年级)",
                 course: "牛津上海版小学英语五年级（下册）",
                 hours: [15, 0],
-                courseWordCount: 92
+                courseWordCount: 92,
+                duration: 1
             },
             "皓棠": {
                 schedule: "皓棠 (2年级)",
                 course: "全册-牛津上海版小学英语三年级（下册）",
                 hours: [14, 0],
-                courseWordCount: 51
+                courseWordCount: 51,
+                duration: 0.5
             },
             "哲昕": {
                 schedule: "哲昕 (3年级)",
                 course: "小学英语",
                 hours: [15, 0],
-                courseWordCount: 51
+                courseWordCount: 51,
+                duration: 1
             }
         }
     },
@@ -132,6 +137,9 @@ export function updateLabel() {
         courseLabel.textContent = userDataForSelectedUser.course;
         courseWordCountLabel.textContent = userDataForSelectedUser.courseWordCount;
         currentDate.setHours(...userDataForSelectedUser.hours, 0, 0);
+        let duration = userInfo.duration.toString()
+        const durationSelect = document.getElementById("classDuration");
+        durationSelect.value = duration
     } else {
         courseLabel.textContent = '';
     }
