@@ -855,7 +855,7 @@ function extractEnglishWords(text) {
         }
 
         // Mixed line — starts with English, then Chinese
-        const mixedMatch = line.match(/^([\w\s.,;:()'"\-…\?]+)[\u4e00-\u9fa5]/);
+        const mixedMatch = line.match(/^([\w\s.,;:()'"\-…\?]+)(?:[\u4e00-\u9fa5\uFF08\uFF09]|；)/);
         if (mixedMatch) {
             englishWords.push(mixedMatch[1].trim());
         }
