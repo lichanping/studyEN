@@ -41,7 +41,7 @@ const teacherData = {
             },
             "胡贝妮": {
                 schedule: "胡贝妮 (新初一)",
-                course: "上海中考英语考纲词汇",
+                course: "新版初中考纲单词（升序版）",
                 hours: [19, 45],
                 courseWordCount: 4955,
                 duration: 1
