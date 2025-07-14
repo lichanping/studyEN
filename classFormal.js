@@ -39,6 +39,13 @@ const teacherData = {
                 courseWordCount: 4955,
                 duration: 1
             },
+            "胡贝妮": {
+                schedule: "胡贝妮 (新初一)",
+                course: "上海中考英语考纲词汇",
+                hours: [19, 45],
+                courseWordCount: 4955,
+                duration: 1
+            },
             "梓言": {
                 schedule: "每周日9点 梓言 (初一)",
                 course: "全册-沪教版初中英语九年级下册",
