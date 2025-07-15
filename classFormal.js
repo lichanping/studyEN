@@ -41,9 +41,9 @@ const teacherData = {
             },
             "胡贝妮": {
                 schedule: "胡贝妮 (新初一)",
-                course: "新版初中考纲单词（升序版）",
+                course: "全册-牛津上海版小学英语六年级（上册）",
                 hours: [19, 45],
-                courseWordCount: 4955,
+                courseWordCount: 183,
                 duration: 1
             },
             "梓言": {
