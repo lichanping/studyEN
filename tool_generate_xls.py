@@ -391,10 +391,11 @@ class TestGenerateTool:
             course = card.find('uni-text', class_='book-title').get_text(strip=True)
 
             # Extract all tags
-            tags = card.find_all('uni-text', class_='tag')
+            # 修复：查找uni-view元素，class为tag
+            tags = card.find_all('uni-view', class_='tag')
             tag_texts = [tag.get_text(strip=True) for tag in tags]
 
-            # Get class_time based on minutes info
+            # 获取包含分钟的课时信息
             class_time = next((text for text in tag_texts if '分钟' in text), '')
 
             # Extract 开始时间
