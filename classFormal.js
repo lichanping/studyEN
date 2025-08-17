@@ -334,7 +334,7 @@ export function handleClassFeedbackClick() {
 
     // Always include the pre-test and new word feedback
     feedbackMessage += `${index++}.`
-    if (preTestWord >= newWord) {
+    if (preTestWord > newWord) {
       feedbackMessage += `学前检测${preTestWord}词，`
     }
     feedbackMessage += `新学${newWord}词，遗忘${forgetWord}词，正确率${correctRate}%<br><br>`;
