@@ -31,8 +31,8 @@ window.addEventListener("load", updateLabel2);
 const teacherData = {
     "liTeacher": {
         users: {
-            "贝妮": {
-                schedule: "每周7 贝妮 (七年级)",
+            "胡贝妮": {
+                schedule: "每周1 胡贝妮 (七年级)",
                 course: "【初级】初中分级阅读",
                 hours: [19, 0]
             },
