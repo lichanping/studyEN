@@ -837,25 +837,31 @@ function extractEnglishWords(text) {
     const lines = text.trim().split('\n').map(line => line.trim()).filter(Boolean);
     const englishWords = [];
 
+    // 1) 纯中文行：补充了全角分号 ；
+    const CHINESE_ONLY = /^[\u4e00-\u9fa5\s，。！？；、“”‘’（）【】《》·…—]+$/;
+
+    // 2) 全英文行：补充了感叹号 !
+    const FULL_EN = /^[\w\s.,;:()'"\-…\?!]+$/;
+
+    // 3) 英文起头 + 后接中文：同样补充了感叹号 !，并保留对全角括号与全角分号的判断
+    const MIXED = /^([\w\s.,;:()'"\-…\?!]+)(?:[\u4e00-\u9fa5\uFF08\uFF09]|；)/;
+
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
 
-        // Skip if the whole line is Chinese
-        if (/^[\u4e00-\u9fa5\s，。！？、“”‘’（）【】《》·…—]+$/.test(line)) {
+        if (CHINESE_ONLY.test(line)) {
             continue;
         }
 
-        // Full English line (possibly followed by Chinese)
-        if (/^[\w\s.,;:()'"\-…\?]+$/.test(line)) {
+        if (FULL_EN.test(line)) {
             englishWords.push(line);
             if (i + 1 < lines.length && /[\u4e00-\u9fa5]/.test(lines[i + 1])) {
-                i++; // Skip the next Chinese explanation line
+                i++; // 跳过下一行中文释义
             }
             continue;
         }
 
-        // Mixed line — starts with English, then Chinese
-        const mixedMatch = line.match(/^([\w\s.,;:()'"\-…\?]+)(?:[\u4e00-\u9fa5\uFF08\uFF09]|；)/);
+        const mixedMatch = line.match(MIXED);
         if (mixedMatch) {
             englishWords.push(mixedMatch[1].trim());
         }
