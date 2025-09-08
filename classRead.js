@@ -34,22 +34,26 @@ const teacherData = {
             "胡贝妮": {
                 schedule: "每周1 胡贝妮 (七年级)",
                 course: "【初级】初中分级阅读",
-                hours: [19, 0]
+                hours: [19, 0],
+                duration: 1
             },
             "硕硕": {
                 schedule: "每周7 硕硕 (四年级)",
                 course: "【5.0】【中级】小学阅读50篇",
-                hours: [11, 0]
+                hours: [11, 0],
+                duration: 1
             },
-            "悠然": {
-                schedule: "每周6、7 悠然 (高二)",
+            "子琦": {
+                schedule: "每周6、7 子琦 (高二)",
                 course: "高中高级阅读理解",
-                hours: [11, 0]
+                hours: [11, 0],
+                duration: 0.5
             },
             "悠然同学": {
                 schedule: "每周6、7 10:30 悠然同学 (高二)",
                 course: "高中高级完型填空",
-                hours: [10, 30]
+                hours: [10, 30],
+                duration: 1
             },
         }
     },
@@ -119,6 +123,9 @@ export function updateLabel2() {
         courseLabel.textContent = userDataForSelectedUser.course;
         courseWordCountLabel.textContent = userDataForSelectedUser.courseWordCount;
         currentDate.setHours(...userDataForSelectedUser.hours, 0, 0);
+        let duration = userInfo.duration.toString()
+        const durationSelect = document.getElementById("classDuration");
+        durationSelect.value = duration
     } else {
         courseLabel.textContent = '';
     }
@@ -212,12 +219,14 @@ export function handleReadClassFeedbackClick() {
     const classDateTime = document.getElementById("classDateTime").value;
     if (classDateTime) {
         const classDate = new Date(classDateTime).toISOString().split('T')[0];
+        const classDuration = parseFloat(document.getElementById("classDuration").value);
+
         storeClassStatistics(
             userName,
             classDate,
             newWord,
             reviewWordCount,
-            1, // 默认1小时
+            classDuration,
             "阅读完型语法课" // 指定课程类型
         );
 
