@@ -32,12 +32,12 @@ window.addEventListener("load", updateLabel);
 const teacherData = {
     "liTeacher": {
         users: {
-            "子琦": {
-                schedule: "每周4/6 刘子琦 (初二)",
-                course: "上海高考英语考纲词汇（乱序版）",
-                hours: [19, 30],
+            "胡亦辰": {
+                schedule: "胡亦辰 (8年级)",
+                course: "词汇",
+                hours: [21, 10],
                 courseWordCount: 4955,
-                duration: 1
+                duration: 0.5
             },
             "胡贝妮": {
                 schedule: "胡贝妮 (新初一)",
