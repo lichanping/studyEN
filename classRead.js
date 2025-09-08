@@ -45,7 +45,7 @@ const teacherData = {
             },
             "胡亦辰": {
                 schedule: "胡亦辰 (8年级)",
-                course: "阅读理解",
+                course: "【中级】初中阅读50篇",
                 hours: [21, 10],
                 duration: 0.5
             },
