@@ -67,7 +67,7 @@ body {
 }
 
 #reviewforgetWord, #learnedWord,
-#newWord, #forgetWord, #antiForgettingForgetWord, #daysRangeInput {
+#newWord, #forgetWord, #antiForgettingForgetWord, #daysRangeInput, #totalHours {
     width: 35px; /* Specify the width in pixels */
 }
 

@@ -170,6 +170,11 @@ export function updateLabel() {
         reviewDateLabel.textContent = '';
     }
     showTodayReviewDates(userName)
+    // 获取 localStorage 中 ${userName}_总课时的值，放入id="totalHours"的标签中，支持 float
+    let totalHours = localStorage.getItem(`${userName}_总课时`) || '0';
+    totalHours = parseFloat(totalHours).toFixed(1);
+    let totalHoursLabel = document.getElementById('totalHours');
+    totalHoursLabel.value = totalHours;
 }
 
 function showTodayReviewDates(userName) {
@@ -335,7 +340,7 @@ export function handleClassFeedbackClick() {
     // Always include the pre-test and new word feedback
     feedbackMessage += `${index++}.`
     if (preTestWord > newWord) {
-      feedbackMessage += `学前检测${preTestWord}词，`
+        feedbackMessage += `学前检测${preTestWord}词，`
     }
     feedbackMessage += `新学${newWord}词，遗忘${forgetWord}词，正确率${correctRate}%<br><br>`;
 
@@ -454,6 +459,8 @@ export async function generateReport() {
     let sortedEntries = [];
     let totalNewWords = 0;
     let totalReviewWords = 0;
+    let totalUsedHours = 0; // 新增：统计已用课时
+
 
     Object.entries(allClassStats).forEach(([key, stats]) => {
         const isVocabClass = !key.includes('_') || (stats.type === "词汇课" || stats.type === "阅读完型语法课");
@@ -464,6 +471,9 @@ export async function generateReport() {
         recordDate.setHours(0, 0, 0, 0);
 
         if (recordDate > startDate && recordDate <= today) {
+            // 累加已用课时（处理可能的未定义情况）
+            totalUsedHours += parseFloat(stats.duration) || 0;
+
             const weekDay = recordDate.toLocaleString('zh-CN', {weekday: 'short'});
             const formattedDate = `${String(recordDate.getMonth() + 1).padStart(2, '0')}-${String(recordDate.getDate()).padStart(2, '0')}`;
 
@@ -487,6 +497,7 @@ export async function generateReport() {
                 courseType
             });
 
+
             totalNewWords += stats.newWord;
             totalReviewWords += parseInt(stats.reviewWordCount);
             validEntries++;
@@ -499,6 +510,12 @@ export async function generateReport() {
     }
 
     sortedEntries.sort((a, b) => a.date - b.date);
+
+    // 获取总课时（从input获取）
+    const totalHoursInput = localStorage.getItem(`${userName}_总课时`) || '0';
+    const totalHours = parseFloat(totalHoursInput) || 0;
+    // 计算剩余课时
+    const remainingHours = (totalHours - totalUsedHours).toFixed(1);
 
     // 构建报告文本内容
     let reportContent = `【正课学习数据统计】\n`;
@@ -524,12 +541,18 @@ export async function generateReport() {
 
     // 结尾说明
     reportContent += `\n📢 以上数据仅统计${userName}在正课中的学习情况，不包含课后的抗遗忘复习。\n`;
-    reportContent += `💪 ${userName}，继续稳步积累，保持进步！`;
+    reportContent += `💪 ${userName}，继续稳步积累，保持进步！\n\n`;
 
-    // Copy to clipboard
+    // 新增：课时统计部分
+    reportContent += `⏰ 课时统计\n`;
+    reportContent += `总课时：${totalHours.toFixed(1)} 小时\n`;
+    reportContent += `已用课时：${totalUsedHours.toFixed(1)} 小时\n`;
+    reportContent += `剩余课时：${remainingHours} 小时`;
+
+    // 复制到剪贴板
     copyToClipboard(reportContent);
 
-    // Download report
+    // 下载报告
     const blob = new Blob([reportContent], {type: 'text/plain'});
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
@@ -1186,6 +1209,21 @@ export async function generateForgetWordsReport() {
     }).format(new Date()).replace(/\//g, '-');
     link.download = `复习课遗忘词汇_${userName}_${formattedDate}.docx`;
     link.click();
+}
+
+export function resetTotalButton() {
+    const userName = document.getElementById("userName").value;
+    //获取totalHours控件的值
+    const totalHoursElement = parseFloat(document.getElementById("totalHours").value) || 0;
+    let totalHours = localStorage.getItem(`${userName}_总课时`) || '0';
+    if (parseFloat(totalHours) > 0) {
+        if (!confirm(`当前总课时为 ${totalHours} 小时，确定要重置为 ${totalHoursElement} 小时吗？`)) {
+            alert("操作已取消，未修改总课时。");
+            return;
+        }
+    }
+    localStorage.setItem(`${userName}_总课时`, totalHoursElement.toString());
+    alert(`总课时已重置为 ${totalHoursElement} 小时`);
 }
 
 // 保持 docx 加载逻辑不变
