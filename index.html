@@ -40,7 +40,7 @@
     <button id="navigateToReadClass">阅读课</button>
     <button id="wordSelfCheckButton">单词自检</button>
 </div>
-<div class="form-group fixed-display" >
+<div class="form-group fixed-display">
     <label for="userName">User Name:</label>
     <select id="userName"></select>
     <button id="noReviewTodayButton">今日无复习</button>
@@ -134,6 +134,12 @@
     <button id="downloadWordButton">导出Word</button>
     <button id="downloadForgetWordButton">导出遗忘Word</button>
 </div>
+<div class="bottom-controls">
+    <label for="totalHours">总课时:</label>
+    <input type="text" id="totalHours" placeholder="请输入总课时">
+    <button id="resetTotalButton">Reset总课时</button>
+    <button id="useHoursButton">扣减课时</button>
+</div>
 
 <script type="module">
     import * as script from './classFormal.js';
@@ -169,6 +175,8 @@
     document.getElementById("bye").addEventListener("click", commonFunctions.byeClick);
     document.getElementById("teacherName").addEventListener("change", script.updateUserNameOptions);
     document.getElementById("downloadSalaryButton").addEventListener("click", script.generateSalaryReport);
+    document.getElementById("resetTotalButton").addEventListener("click", script.resetTotalButton);
+
     const forgetWordsTextarea = document.getElementById('forgetWords');
     const pronounceWordsTextarea = document.getElementById('pronounceWords');
     const newLearnedWordsTextarea = document.getElementById('newLearnedWords');
