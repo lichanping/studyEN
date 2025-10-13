@@ -33,7 +33,7 @@ const teacherData = {
     "liTeacher": {
         users: {
             "胡亦辰": {
-                schedule: "胡亦辰 (8年级)",
+                schedule: "人教版单词八年级上册",
                 course: "词汇",
                 hours: [21, 10],
                 courseWordCount: 4955,
