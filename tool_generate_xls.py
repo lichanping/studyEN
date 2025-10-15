@@ -355,19 +355,23 @@ class TestGenerateTool:
         self.calc_month_fee_from_training_list(file_path)
 
     def calc_month_fee_from_training_list(self, file_path):
+        # 1️⃣ 读取 HTML
         with open(file_path, "r", encoding="utf-8") as file:
             html_content = file.read()
 
+        # 2️⃣ 解析 HTML
         soup = BeautifulSoup(html_content, 'html.parser')
         cards = soup.find_all('uni-view', class_='training-card')
         data = []
 
+        # 3️⃣ 定义课程关键词分类规则
         reading_keywords = ['阅读理解', '文化阅读', '时文阅读', '阅读真题', '语法', '完型填空', '阅读']
+        reading_pattern = re.compile('|'.join(map(re.escape, reading_keywords)))
 
-        def get_category(course, tag_texts):
-            if any('体验' in s for s in tag_texts):
+        def get_category(course):
+            if '体验' in course:
                 return '体验课'
-            elif any(keyword in course for keyword in reading_keywords):
+            elif reading_pattern.search(course):
                 return '阅读完型语法课'
             else:
                 return '词汇课'
@@ -381,48 +385,61 @@ class TestGenerateTool:
                 return base_price if duration == 60 else base_price / 2
             return 0
 
+        # 4️⃣ 循环提取每张卡片的信息
         for card in cards:
-            student = card.find('uni-text', class_='label', string=lambda s: s and '用户' in s)
-            if student:
-                student_val = student.find_next_sibling('uni-text').get_text(strip=True)
-            else:
-                continue  # skip if no student
+            course = card.find('uni-text', class_='book-title')
+            course_name = course.get_text(strip=True) if course else ''
 
-            course = card.find('uni-text', class_='book-title').get_text(strip=True)
+            # 默认值
+            student_val = ''
+            start_time = ''
+            class_time = ''
 
-            # Extract all tags
-            # 修复：查找uni-view元素，class为tag
-            tags = card.find_all('uni-view', class_='tag')
-            tag_texts = [tag.get_text(strip=True) for tag in tags]
+            info_rows = card.find_all('uni-view', class_='info-row')
+            for row in info_rows:
+                label = row.find('uni-text', class_='label')
+                value = row.find('uni-text', class_='value')
+                label_text = label.get_text(strip=True) if label else ''
+                value_text = value.get_text(strip=True) if value else ''
 
-            # 获取包含分钟的课时信息
-            class_time = next((text for text in tag_texts if '分钟' in text), '')
+                if '用户' in label_text:
+                    student_val = value_text
+                elif '开始时间' in label_text:
+                    start_time = value_text
+                elif '训练时间' in label_text:
+                    class_time = value_text
 
-            # Extract 开始时间
-            start_time_view = card.find('uni-text', class_='label', string=lambda s: s and '开始时间' in s)
-            if start_time_view:
-                start_time = start_time_view.find_next_sibling('uni-text').get_text(strip=True)
-            else:
-                start_time = ''
+            # 跳过没有学生名的记录
+            if not student_val:
+                continue
 
-            category = get_category(course, tag_texts)
+            category = get_category(course_name)
             actual_price = get_actual_price(class_time, category)
 
             data.append({
                 '学生': student_val,
-                '课程': course,
+                '课程': course_name,
                 '开始时间': start_time,
                 '课时': class_time,
                 '类别': category,
                 '实际价格': actual_price
             })
 
+        # 5️⃣ 转为 DataFrame
         df = pd.DataFrame(data)
+        if df.empty:
+            print("⚠️ 没有从 HTML 中提取到任何课程数据，请检查 HTML 结构或选择的文件。")
+            return
+
+        # 6️⃣ 计算课时
         df['时长'] = df['课时'].apply(lambda x: 1 if '60分钟' in x else 0.5 if '30分钟' in x else 1)
+
+        # 7️⃣ 汇总
         pivot = pd.pivot_table(df, values='时长', index='类别', aggfunc='sum').reset_index()
         pivot_by_student = pd.pivot_table(df, values=['实际价格', '时长'], index='学生', aggfunc='sum').reset_index()
         pivot_by_student = pivot_by_student.sort_values(by='实际价格', ascending=False)
 
+        # 8️⃣ 导出 Excel
         temp_folder = get_sub_folder_path('temp')
         base_name = os.path.splitext(os.path.basename(file_path))[0]
         output_file = os.path.join(temp_folder, f'{base_name}.xlsx')
@@ -431,7 +448,8 @@ class TestGenerateTool:
             df.to_excel(writer, sheet_name='明细', index=False)
             pivot.to_excel(writer, sheet_name='汇总', index=False)
             pivot_by_student.to_excel(writer, sheet_name='按学生汇总', index=False)
-        print(f"Data and summary successfully written to {output_file}")
+
+        print(f"✅ Data and summary successfully written to {output_file}")
 
     def create_and_save_pivot_table(self, input_file_path):
         # 读取 Excel 文件中的数据
@@ -478,7 +496,8 @@ class TestGenerateTool:
 
         # Add a new column '课程类别' based on '资料名称'
         df_removed['课程类别'] = df_removed['资料名称'].apply(
-            lambda x: '阅读完型语法课' if any(word in x for word in ['阅读理解', '文化阅读', '阅读真题', '语法', '完型填空']) else '词汇课')
+            lambda x: '阅读完型语法课' if any(
+                word in x for word in ['阅读理解', '文化阅读', '阅读真题', '语法', '完型填空']) else '词汇课')
 
         # Add a new column '课时' based on '陪练类型'
         df_removed['课时'] = df_removed['陪练类型'].apply(
