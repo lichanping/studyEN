@@ -105,7 +105,7 @@ function generateSentence() {
             `只差${money.toFixed(1)}啦～一点点就能圆梦！✨一起听歌happy吧！`,
             `就差${money.toFixed(1)}，让我离目标更近一点吧～🎶`,
             `目标近在咫尺，就差${money.toFixed(1)}！💫来首歌给我加个Buff吧！`,
-            `距离完成任务只差${money.toFixed(1)}元，帮我冲冲冲～💪🎧`
+            `距离完成任务只差${money.toFixed(1)}，帮我冲一下～💪🎧`
         ];
         intro = moneyTemplates[Math.floor(Math.random() * moneyTemplates.length)];
         intro += " 今日推荐：";
