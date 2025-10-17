@@ -39,28 +39,46 @@ function getRandomSongs() {
         sheetInfo.textContent = "⚠️ 请先上传 Excel 文件！";
         return;
     }
-    if (isNaN(sheetIndex)) {
-        sheetInfo.textContent = "⚠️ 请选择一个工作表！";
-        return;
-    }
     if (isNaN(count) || count <= 0) {
         sheetInfo.textContent = "⚠️ 请输入有效的歌曲数量！";
         return;
     }
 
-    const sheetName = workbookData.SheetNames[sheetIndex];
-    const sheet = workbookData.Sheets[sheetName];
-    const jsonData = XLSX.utils.sheet_to_json(sheet, {header: 1, defval: ""});
+    let allSongs = [];
 
-    const allSongs = jsonData.flat().filter(v => v && v.toString().trim() !== "");
+    // ✅ If no specific sheet selected → combine all sheets
+    if (isNaN(sheetIndex)) {
+        workbookData.SheetNames.forEach((sheetName) => {
+            const sheet = workbookData.Sheets[sheetName];
+            const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+            const songs = jsonData.flat().filter(v => v && v.toString().trim() !== "");
+            allSongs = allSongs.concat(songs);
+        });
 
-    if (allSongs.length === 0) {
-        sheetInfo.textContent = `⚠️ 工作表《${sheetName}》为空！`;
-        return;
+        if (allSongs.length === 0) {
+            sheetInfo.textContent = "⚠️ 所有工作表均为空！";
+            return;
+        }
+
+        sheetInfo.textContent = `🎵 已从所有 ${workbookData.SheetNames.length} 个工作表中共加载 ${allSongs.length} 首歌`;
+    }
+    // ✅ Otherwise, use the selected sheet only
+    else {
+        const sheetName = workbookData.SheetNames[sheetIndex];
+        const sheet = workbookData.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+
+        allSongs = jsonData.flat().filter(v => v && v.toString().trim() !== "");
+
+        if (allSongs.length === 0) {
+            sheetInfo.textContent = `⚠️ 工作表《${sheetName}》为空！`;
+            return;
+        }
+
+        sheetInfo.textContent = `🎵 当前工作表《${sheetName}》共有 ${allSongs.length} 首歌`;
     }
 
-    sheetInfo.textContent = `🎵 当前工作表《${sheetName}》共有 ${allSongs.length} 首歌`;
-
+    // 🎲 Random shuffle and select
     const shuffled = allSongs.sort(() => 0.5 - Math.random());
     const selected = shuffled.slice(0, count);
 
@@ -78,11 +96,14 @@ function renderSongList() {
 
     selectedSongs.forEach((name, i) => {
         const li = document.createElement('li');
-        li.innerHTML = `<span class="song-name">${i + 1}. ${name}</span>
-    <button class="delete-btn" onclick="deleteSong(${i})">删</button>`;
+        li.innerHTML = `
+            <span class="song-name">${i + 1}. ${name}</span>
+            <button class="delete-btn" onclick="deleteSong(${i})">删</button>
+        `;
         songList.appendChild(li);
     });
 }
+
 
 function deleteSong(index) {
     selectedSongs.splice(index, 1);
