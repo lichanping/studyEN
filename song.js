@@ -27,7 +27,7 @@ function handleFile(event) {
     reader.readAsArrayBuffer(file);
 }
 
-function getRandomSongs() {
+async function getRandomSongs() {
     const count = parseInt(document.getElementById('songCount').value);
     const sheetIndex = parseInt(document.getElementById('sheetSelect').value);
     const songList = document.getElementById('songList');
@@ -35,22 +35,51 @@ function getRandomSongs() {
     songList.innerHTML = "";
     selectedSongs = [];
 
-    if (!workbookData) {
-        sheetInfo.textContent = "⚠️ 请先上传 Excel 文件！";
-        return;
-    }
     if (isNaN(count) || count <= 0) {
         sheetInfo.textContent = "⚠️ 请输入有效的歌曲数量！";
         return;
     }
 
+    // ✅ 情况1：没有上传 Excel 文件，尝试读取 default_songs.txt
+    if (!workbookData) {
+        try {
+            const response = await fetch("default_songs.txt");
+            if (!response.ok) throw new Error("文件不存在或无法读取");
+            const text = await response.text();
+
+            const allSongs = text
+                .split("\n")
+                .map(line => line.trim())
+                .filter(line => line.length > 0);
+
+            if (allSongs.length === 0) {
+                sheetInfo.textContent = "⚠️ default_songs.txt 文件为空！";
+                return;
+            }
+
+            // 随机抽取歌曲
+            const shuffled = allSongs.sort(() => 0.5 - Math.random());
+            const selected = shuffled.slice(0, Math.min(count, allSongs.length));
+
+            selectedSongs = selected;
+            renderSongList();
+            sheetInfo.textContent = `🎵 从 default_songs.txt 中随机抽取了 ${selectedSongs.length} 首歌`;
+            document.getElementById('generateSentenceBtn').disabled = false;
+            return;
+        } catch (error) {
+            console.error("读取 default_songs.txt 失败:", error);
+            sheetInfo.textContent = "⚠️ 未上传 Excel 且未找到 default_songs.txt 文件！";
+            return;
+        }
+    }
+
+    // ✅ 情况2：上传了 Excel 文件
     let allSongs = [];
 
-    // ✅ If no specific sheet selected → combine all sheets
     if (isNaN(sheetIndex)) {
         workbookData.SheetNames.forEach((sheetName) => {
             const sheet = workbookData.Sheets[sheetName];
-            const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+            const jsonData = XLSX.utils.sheet_to_json(sheet, {header: 1, defval: ""});
             const songs = jsonData.flat().filter(v => v && v.toString().trim() !== "");
             allSongs = allSongs.concat(songs);
         });
@@ -61,12 +90,10 @@ function getRandomSongs() {
         }
 
         sheetInfo.textContent = `🎵 已从所有 ${workbookData.SheetNames.length} 个工作表中共加载 ${allSongs.length} 首歌`;
-    }
-    // ✅ Otherwise, use the selected sheet only
-    else {
+    } else {
         const sheetName = workbookData.SheetNames[sheetIndex];
         const sheet = workbookData.Sheets[sheetName];
-        const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+        const jsonData = XLSX.utils.sheet_to_json(sheet, {header: 1, defval: ""});
 
         allSongs = jsonData.flat().filter(v => v && v.toString().trim() !== "");
 
@@ -78,17 +105,14 @@ function getRandomSongs() {
         sheetInfo.textContent = `🎵 当前工作表《${sheetName}》共有 ${allSongs.length} 首歌`;
     }
 
-    // 🎲 Random shuffle and select
     const shuffled = allSongs.sort(() => 0.5 - Math.random());
     const selected = shuffled.slice(0, count);
-
-    selected.forEach((name) => {
-        selectedSongs.push(name);
-    });
+    selectedSongs = selected;
 
     renderSongList();
     document.getElementById('generateSentenceBtn').disabled = false;
 }
+
 
 function renderSongList() {
     const songList = document.getElementById('songList');
