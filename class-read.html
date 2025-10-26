@@ -58,6 +58,7 @@
     <button id="scheduleNotificationButton">排课通知</button>
     <button id="lateMeetingReminderButton">迟到10分钟后</button>
     <button id="classFeedbackButton">课堂反馈</button>
+    <button id="selfReview">课后复习方式</button>
 </div>
 <div>
     <label for="reviewWord">复习单词:</label>
@@ -123,6 +124,7 @@
     document.getElementById("scheduleNotificationButton").addEventListener("click", scriptR.handleScheduleNotificationClick);
     document.getElementById("lateMeetingReminderButton").addEventListener("click", scriptR.handleLateMeetingReminderClick);
     document.getElementById("classFeedbackButton").addEventListener("click", scriptR.handleReadClassFeedbackClick);
+    document.getElementById("selfReview").addEventListener("click", commonFunctions.selfReviewClick);
     document.getElementById("openingSpeechButton").addEventListener("click", commonFunctions.handleOpeningSpeechClick);
     document.getElementById("understandSituationButton").addEventListener("click", scriptR.handleUnderstandSituationClick);
     document.getElementById("managementGroupTemplateButton").addEventListener("click", commonFunctions.handleManagementGroupTemplateClick);
