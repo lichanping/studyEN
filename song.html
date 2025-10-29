@@ -4,12 +4,6 @@
     <meta charset="UTF-8">
     <title>🎵 随机抽取歌单歌曲</title>
     <link rel="stylesheet" href="song.css">
-    <script type="module">
-        import * as commonFunctions from './commonFunctions.js';
-
-        commonFunctions.checkLoginStatus();
-
-    </script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
@@ -31,6 +25,7 @@
 
     <div class="buttons-container">
         <button id="getSongsBtn">随机抽取</button>
+        <button id="supplementSongsBtn">补充抽取</button>
         <button id="generateSentenceBtn" disabled>生成文案</button>
     </div>
 
