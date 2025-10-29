@@ -4,6 +4,72 @@ let selectedSongs = [];
 document.getElementById('excelFile').addEventListener('change', handleFile);
 document.getElementById('getSongsBtn').addEventListener('click', getRandomSongs);
 document.getElementById('generateSentenceBtn').addEventListener('click', generateSentence);
+document.getElementById('supplementSongsBtn').addEventListener('click', supplementSongs);
+
+async function supplementSongs() {
+    const songCount = parseInt(document.getElementById('songCount').value);
+    const currentCount = selectedSongs.length;
+
+    if (isNaN(songCount) || songCount <= currentCount) {
+        showTemporaryMessage("⚠️ 当前歌曲数量已满足或输入无效！");
+        return;
+    }
+
+    const additionalCount = songCount - currentCount;
+    let allSongs = [];
+
+    // ✅ 情况1：没有上传 Excel 文件，尝试读取 default_songs.txt
+    if (!workbookData) {
+        try {
+            const response = await fetch("default_songs.txt");
+            if (!response.ok) throw new Error("文件不存在或无法读取");
+            const text = await response.text();
+
+            allSongs = text
+                .split("\n")
+                .map(line => line.trim())
+                .filter(line => line.length > 0);
+        } catch (error) {
+            console.error("读取 default_songs.txt 失败:", error);
+            showTemporaryMessage("⚠️ 未上传 Excel 且未找到 default_songs.txt 文件！");
+            return;
+        }
+    } else {
+        // ✅ 情况2：上传了 Excel 文件
+        const sheetIndex = parseInt(document.getElementById('sheetSelect').value);
+
+        if (isNaN(sheetIndex)) {
+            workbookData.SheetNames.forEach((sheetName) => {
+                const sheet = workbookData.Sheets[sheetName];
+                const jsonData = XLSX.utils.sheet_to_json(sheet, {header: 1, defval: ""});
+                const songs = jsonData.flat().filter(v => v && v.toString().trim() !== "");
+                allSongs = allSongs.concat(songs);
+            });
+        } else {
+            const sheetName = workbookData.SheetNames[sheetIndex];
+            const sheet = workbookData.Sheets[sheetName];
+            const jsonData = XLSX.utils.sheet_to_json(sheet, {header: 1, defval: ""});
+            allSongs = jsonData.flat().filter(v => v && v.toString().trim() !== "");
+        }
+    }
+
+    // 去重，排除已选歌曲
+    const uniqueSongs = allSongs.filter(song => !selectedSongs.includes(song));
+
+    if (uniqueSongs.length === 0) {
+        showTemporaryMessage("⚠️ 无法补充，所有可用歌曲已被选中！");
+        return;
+    }
+
+    // 随机抽取补充的歌曲
+    const shuffled = uniqueSongs.sort(() => 0.5 - Math.random());
+    const additionalSongs = shuffled.slice(0, Math.min(additionalCount, uniqueSongs.length));
+
+    selectedSongs = selectedSongs.concat(additionalSongs);
+    renderSongList();
+    showTemporaryMessage(`🎵 已补充 ${additionalSongs.length} 首歌，当前总数为 ${selectedSongs.length} 首！`);
+    document.getElementById('sheetInfo').textContent = `🎵 随机抽取了 ${additionalSongs.length} 首歌`;
+}
 
 function handleFile(event) {
     const file = event.target.files[0];
