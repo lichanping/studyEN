@@ -33,6 +33,10 @@ export function navigateToSong() {
     window.location.href = "song.html";
 }
 
+export function navigateToSongLearning() {
+    window.location.href = "jpn.html";
+}
+
 export function checkLoginStatus() {
     const currentDate = new Date().toDateString(); // Get today's date
 
