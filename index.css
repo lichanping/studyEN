@@ -76,7 +76,7 @@ body {
 }
 
 #preTestWord, #reviewWord, #newWord {
-    width: 150px;
+    width: 100px;
 }
 
 .antiForgettingReviewWord {
