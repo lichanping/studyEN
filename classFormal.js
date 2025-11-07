@@ -32,9 +32,16 @@ window.addEventListener("load", updateLabel);
 const teacherData = {
     "liTeacher": {
         users: {
+            "陈怡睿": {
+                schedule: "陈怡睿-每天7点后/周二8点后",
+                course: "托福词汇",
+                hours: [19, 35],
+                courseWordCount: 4955,
+                duration: 0.5
+            },
             "胡亦辰": {
-                schedule: "【定制】2025新八上人教英语",
-                course: "词汇",
+                schedule: "胡亦辰",
+                course: "定制】2025新八上人教英语",
                 hours: [21, 10],
                 courseWordCount: 4955,
                 duration: 0.5
