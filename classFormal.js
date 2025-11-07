@@ -34,7 +34,7 @@ const teacherData = {
         users: {
             "陈怡睿": {
                 schedule: "陈怡睿-每天7点后/周二8点后",
-                course: "托福词汇",
+                course: "托福高频词汇",
                 hours: [19, 35],
                 courseWordCount: 4955,
                 duration: 0.5
