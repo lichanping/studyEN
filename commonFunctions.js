@@ -109,14 +109,7 @@ async function loginApp() {
     let phone = localStorage.getItem('lx_phone');
     let password = localStorage.getItem('lx_pw');
 
-    if (!phone) {
-        phone = 'XT144620'; // 示例初始化
-        localStorage.setItem('lx_phone', phone);
-    }
-    if (!password) {
-        password = '88888888'; // 示例初始化
-        localStorage.setItem('lx_pw', password);
-    }
+
 
     if (!phone || !password) {
         alert('缺少登录凭据(lx_phone 或 lx_pw)');
