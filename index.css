@@ -24,32 +24,38 @@ body {
     gap: 10px;
     align-items: center;
 }
+
 #userName {
-  /* 尺寸与间距 */
-  width: 120px; /* 加宽控件 */
-  height: 54px; /* 增加高度 */
-  padding: 12px 20px; /* 内边距优化 */
+    /* 尺寸与间距 */
+    width: 120px; /* 加宽控件 */
+    height: 54px; /* 增加高度 */
+    padding: 12px 20px; /* 内边距优化 */
 
-  /* 字体与文本 */
-  font-size: 22px; /* 放大字体 */
-  font-weight: bold; /* 加粗文字 */
-  color: #2980B9; /* 深色文字 */
+    /* 字体与文本 */
+    font-size: 22px; /* 放大字体 */
+    font-weight: bold; /* 加粗文字 */
+    color: #2980B9; /* 深色文字 */
 
-  /* 边框与背景 */
-  background: #ffffff;
-  border: 3px solid #3498db; /* 加粗亮色边框 */
-  border-radius: 10px; /* 大圆角 */
+    /* 边框与背景 */
+    background: #ffffff;
+    border: 3px solid #3498db; /* 加粗亮色边框 */
+    border-radius: 10px; /* 大圆角 */
 
-  /* 移除默认样式 */
-  appearance: none;
-  outline: none;
-  cursor: pointer;
+    /* 移除默认样式 */
+    appearance: none;
+    outline: none;
+    cursor: pointer;
 
-  /* 阴影增强立体感 */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    /* 阴影增强立体感 */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
+
 #classFeedbackButton, #stop, #noReviewTodayButton {
     background-color: lightblue;
+}
+
+#viewTotalHoursButton {
+    background-color: #ff9800;
 }
 
 /* Add more styles as needed */

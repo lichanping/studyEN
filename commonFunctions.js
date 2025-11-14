@@ -104,6 +104,157 @@ export function handleGroupGreetingClick() {
     showLongText(`${greetingMessage}`);
 }
 
+// 通过本地存储的 lx_phone 与 lx_pw 执行登录，获取并缓存 token 与 userId
+async function loginApp() {
+    let phone = localStorage.getItem('lx_phone');
+    let password = localStorage.getItem('lx_pw');
+
+    if (!phone) {
+        phone = 'XT144620'; // 示例初始化
+        localStorage.setItem('lx_phone', phone);
+    }
+    if (!password) {
+        password = '88888888'; // 示例初始化
+        localStorage.setItem('lx_pw', password);
+    }
+
+    if (!phone || !password) {
+        alert('缺少登录凭据(lx_phone 或 lx_pw)');
+        return;
+    }
+
+    try {
+        const resp = await fetch('https://api.lxll.com/request/CustomerLoginByPhoneAndPassword', {
+            method: 'POST',
+            headers: {
+                'accept': '*/*',
+                'content-type': 'application/json',
+                'x-ua': 'ct=1&version=5.0.6'
+                // 浏览器环境下无需也无法设置 curl 中的部分受保护头(sec-fetch-*, user-agent 等)
+            },
+            body: JSON.stringify({
+                phone,
+                password,
+                loginAs: ['TEACHER'],
+                inviteUserId: ''
+            })
+        });
+
+        if (!resp.ok) throw new Error('登录失败: ' + resp.status);
+        const data = await resp.json();
+
+        if (!data?.success) throw new Error('登录失败: 接口返回 success=false');
+        const token = data?.data?.token;
+        if (!token) throw new Error('登录失败: 未获取到 token');
+
+        localStorage.setItem('x-token-c', token);
+
+        alert('登录成功');
+        return data;
+    } catch (e) {
+        console.error('登录错误:', e);
+        alert('登录失败，请检查账号与密码');
+        throw e;
+    }
+}
+
+export async function viewTotalHoursClick() {
+    let token = localStorage.getItem('x-token-c');
+    if (!token) {
+        await loginApp().catch(() => {
+        });
+        token = localStorage.getItem('x-token-c');
+        if (!token) {
+            alert('未找到 token，登录失败或未配置。');
+            return;
+        }
+    }
+
+    fetch('https://api.lxll.com/request/CustomerTeacherListClient', {
+        method: 'POST',
+        headers: {
+            accept: 'application/json, text/plain, */*',
+            'content-type': 'application/json',
+            'x-token-c': token,
+            'x-ua': 'ct=1&version=5.0.6',
+            'x-user-id': localStorage.getItem('x-user-id') || '144620'
+        },
+        body: JSON.stringify({
+            pageNumber: 1,
+            pageSize: 100,
+            whereCriteria: {studentName: ''}
+        })
+    })
+        .then(r => {
+            if (!r.ok) throw new Error('网络错误 ' + r.status);
+            return r.json();
+        })
+        .then(data => {
+            console.log('教师列表数据:', data);
+            displayToast('教师列表获取成功');
+
+            const list = Array.isArray(data?.data?.data) ? data.data.data : [];
+            const anomaliesDetails = [];
+
+            const whiteList = new Set(['陈怡睿', '胡贝妮', '俞新硕']);
+
+            const isZero = (v) => {
+                const s = String(v ?? '').trim();
+                const n = parseFloat(s);
+                return s === '0' || (Number.isFinite(n) && n === 0);
+            };
+
+            for (const item of list) {
+                const userName = (item?.userName || '').trim();
+                if (!whiteList.has(userName)) continue;
+
+                const q30 = item?.quota30;
+                const q60 = item?.quota60;
+                const qAcc = item?.quotaAccompany;
+
+                const zeroFields = [];
+                if (isZero(q30)) zeroFields.push('quota30');
+                if (isZero(q60)) zeroFields.push('quota60');
+                if (isZero(qAcc)) zeroFields.push('quotaAccompany');
+
+                // 判定异常条件：30\+60 都为 0 或陪伴课为 0
+                if ((isZero(q30) && isZero(q60)) || isZero(qAcc)) {
+                    anomaliesDetails.push({
+                        userName,
+                        quota30: q30,
+                        quota60: q60,
+                        quotaAccompany: qAcc,
+                        zeroFields
+                    });
+                }
+            }
+
+            console.table(anomaliesDetails);
+
+            const summary = {
+                total: data?.data?.total ?? list.length,
+                anomaliesCount: anomaliesDetails.length,
+                anomalies: anomaliesDetails
+            };
+
+            showLongText(JSON.stringify(summary, null, 2));
+
+            if (anomaliesDetails.length > 0) {
+                const detailLines = anomaliesDetails.map(d =>
+                    `请武教练帮忙为${d.userName}充值：当前“30分钟剩余”为 ${d.quota30 ?? '-'}、“60分钟剩余”为 ${d.quota60 ?? '-'}，“陪练服务时长剩余”为${d.quotaAccompany ?? '-'}`
+                );
+                const alertMsg = `发现异常学生(${anomaliesDetails.length})：\n${detailLines.join('\n')}`;
+                copyToClipboard(alertMsg);
+                alert(alertMsg);
+            }
+        })
+        .catch(err => {
+            console.error('获取教师列表失败:', err);
+            alert('获取教师列表失败');
+        });
+}
+
+
 export function handleOpeningSpeechClick() {
     const userName = document.getElementById("userName").value;
     const teacherNameElement = document.getElementById("teacherName");
