@@ -58,6 +58,7 @@
         <option value="shiTeacher">英语提升施教练</option>
     </select>
     <button id="groupGreetingButton">入群招呼语</button>
+    <button id="viewTotalHoursButton">查看课时数</button>
 </div>
 <div>
     <label for="classDateTime">新课时间:</label>
@@ -165,6 +166,7 @@
     document.getElementById("songLearning").addEventListener('click', commonFunctions.navigateToSongLearning)
     document.getElementById("userName").addEventListener("change", script.updateLabel);
     document.getElementById("groupGreetingButton").addEventListener("click", commonFunctions.handleGroupGreetingClick);
+    document.getElementById("viewTotalHoursButton").addEventListener("click", commonFunctions.viewTotalHoursClick);
     document.getElementById("noReviewTodayButton").addEventListener("click", commonFunctions.handleReviewLateReminderClick);
     document.getElementById("scheduleNotificationButton").addEventListener("click", script.handleScheduleNotificationClick);
     document.getElementById("stop").addEventListener("click", script.handleStopNotificationClick);
