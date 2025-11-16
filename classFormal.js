@@ -547,9 +547,12 @@ export async function generateReport() {
 
     // 新增：课时统计部分
     reportContent += `⏰ 课时统计\n`;
-    reportContent += `总课时：${totalHours.toFixed(1)} 小时\n`;
     reportContent += `已用课时：${totalUsedHours.toFixed(1)} 小时\n`;
-    reportContent += `剩余课时：${remainingHours} 小时`;
+    const includeHoursInfo = document.getElementById("includeHoursInfo")?.checked;
+    if (includeHoursInfo) {
+        reportContent += `总课时：${totalHours.toFixed(1)} 小时\n`;
+        reportContent += `剩余课时：${remainingHours} 小时`;
+    }
 
     // 复制到剪贴板
     copyToClipboard(reportContent);
