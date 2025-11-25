@@ -189,7 +189,7 @@ export async function viewTotalHoursClick() {
             const list = Array.isArray(data?.data?.data) ? data.data.data : [];
             const anomaliesDetails = [];
 
-            const whiteList = new Set(['陈怡睿', '胡贝妮', '俞新硕']);
+            const whiteList = new Set(['陈怡睿', '胡贝妮', '俞新硕','吴瑜鑫']);
 
             const isZero = (v) => {
                 const s = String(v ?? '').trim();
