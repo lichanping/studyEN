@@ -36,14 +36,14 @@ const teacherData = {
                 schedule: "陈怡睿-每天7点后/周二8点后",
                 course: "托福高频词汇",
                 hours: [19, 35],
-                courseWordCount: 4955,
+                courseWordCount: 3573,
                 duration: 0.5
             },
             "吴瑜鑫": {
                 schedule: "吴瑜鑫-每周二四晚7:30",
                 course: "新版小学考纲单词",
                 hours: [19, 35],
-                courseWordCount: 4955,
+                courseWordCount: 706,
                 duration: 1
             },
             "胡亦辰": {
@@ -60,26 +60,12 @@ const teacherData = {
                 courseWordCount: 183,
                 duration: 1
             },
-            "梓言": {
-                schedule: "每周日9点 梓言 (初一)",
-                course: "全册-沪教版初中英语九年级下册",
-                hours: [9, 0],
-                courseWordCount: 283,
-                duration: 1
-            },
             "硕硕": {
                 schedule: "每周日10点 硕硕(四年级)",
                 course: "牛津上海版小学英语五年级（下册）",
                 hours: [15, 0],
                 courseWordCount: 92,
                 duration: 1
-            },
-            "皓棠": {
-                schedule: "皓棠 (2年级)",
-                course: "全册-牛津上海版小学英语三年级（下册）",
-                hours: [14, 0],
-                courseWordCount: 51,
-                duration: 0.5
             }
         }
     },
