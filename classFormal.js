@@ -39,6 +39,13 @@ const teacherData = {
                 courseWordCount: 4955,
                 duration: 0.5
             },
+            "吴瑜鑫": {
+                schedule: "吴瑜鑫-每周二四晚7:30",
+                course: "新版小学考纲单词",
+                hours: [19, 35],
+                courseWordCount: 4955,
+                duration: 1
+            },
             "胡亦辰": {
                 schedule: "胡亦辰",
                 course: "定制】2025新八上人教英语",
