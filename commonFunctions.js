@@ -189,7 +189,34 @@ export async function viewTotalHoursClick() {
             const list = Array.isArray(data?.data?.data) ? data.data.data : [];
             const anomaliesDetails = [];
 
-            const whiteList = new Set(['陈怡睿', '胡贝妮', '俞新硕','吴瑜鑫']);
+            // 修改点：合并固定白名单和动态获取的白名单，并去重
+            const getWhiteListFromSelect = () => {
+                // 固定白名单
+                const fixedWhiteList = ['陈怡睿', '胡贝妮', '俞新硕', '吴瑜鑫'];
+
+                const selectElement = document.getElementById('userName');
+                let dynamicWhiteList = [];
+
+                if (selectElement) {
+                    const options = selectElement.options;
+                    for (let i = 0; i < options.length; i++) {
+                        const value = options[i].value;
+                        if (value && value.trim()) {
+                            dynamicWhiteList.push(value.trim());
+                        }
+                    }
+                    console.log('从select获取的白名单:', dynamicWhiteList);
+                } else {
+                    console.warn('未找到id为userName的select元素，仅使用固定白名单');
+                }
+
+                // 合并固定白名单和动态白名单，并去重
+                const mergedWhiteList = [...new Set([...fixedWhiteList, ...dynamicWhiteList])];
+                console.log('合并后的白名单:', mergedWhiteList);
+                return new Set(mergedWhiteList);
+            };
+
+            const whiteList = getWhiteListFromSelect();
 
             const isZero = (v) => {
                 const s = String(v ?? '').trim();
@@ -210,7 +237,7 @@ export async function viewTotalHoursClick() {
                 if (isZero(q60)) zeroFields.push('quota60');
                 if (isZero(qAcc)) zeroFields.push('quotaAccompany');
 
-                // 判定异常条件：30\+60 都为 0 或陪伴课为 0
+                // 判定异常条件：30+60 都为 0 或陪伴课为 0
                 if ((isZero(q30) && isZero(q60)) || isZero(qAcc)) {
                     anomaliesDetails.push({
                         userName,
@@ -234,7 +261,7 @@ export async function viewTotalHoursClick() {
 
             if (anomaliesDetails.length > 0) {
                 const detailLines = anomaliesDetails.map(d =>
-                    `请武教练帮忙为${d.userName}充值：当前“30分钟剩余”为 ${d.quota30 ?? '-'}、“60分钟剩余”为 ${d.quota60 ?? '-'}，“陪练服务时长剩余”为${d.quotaAccompany ?? '-'}`
+                    `请武教练帮忙为${d.userName}充值：当前"30分钟剩余"为 ${d.quota30 ?? '-'}、"60分钟剩余"为 ${d.quota60 ?? '-'}，"陪练服务时长剩余"为${d.quotaAccompany ?? '-'}`
                 );
                 const alertMsg = `发现异常学生(${anomaliesDetails.length})：\n${detailLines.join('\n')}`;
                 copyToClipboard(alertMsg);
