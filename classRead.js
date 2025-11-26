@@ -49,10 +49,10 @@ const teacherData = {
                 hours: [21, 10],
                 duration: 0.5
             },
-            "悠然同学": {
-                schedule: "每周6、7 10:30 悠然同学 (高二)",
-                course: "高中高级完型填空",
-                hours: [10, 30],
+            "吴瑜鑫": {
+                schedule: "每周2、4 19:30 吴瑜鑫 (六年级)",
+                course: "【5.0】【高级】小学阅读20篇",
+                hours: [19, 35],
                 duration: 1
             },
         }
