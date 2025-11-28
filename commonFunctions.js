@@ -269,9 +269,25 @@ export async function viewTotalHoursClick() {
                 alert(alertMsg);
             }
         })
-        .catch(err => {
+        .catch(async (err) => {
             console.error('获取教师列表失败:', err);
-            alert('获取教师列表失败');
+
+            // 检查是否是 token 失效导致的错误
+            if (err.message && err.message.includes('401')) {
+                console.warn('检测到 token 失效，尝试重新登录...');
+                try {
+                    await loginApp(); // 重新获取 login token
+                    const token = localStorage.getItem('x-token-c');
+                    if (token) {
+                        console.log('重新登录成功，重新尝试获取教师列表...');
+                        return viewTotalHoursClick(); // 重新执行剩余时长检测
+                    } else {
+                        console.error('重新登录失败，未获取到 token');
+                    }
+                } catch (loginError) {
+                    console.error('重新登录时发生错误:', loginError);
+                }
+            }
         });
 }
 
