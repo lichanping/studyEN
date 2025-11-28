@@ -110,7 +110,6 @@ async function loginApp() {
     let password = localStorage.getItem('lx_pw');
 
 
-
     if (!phone || !password) {
         alert('缺少登录凭据(lx_phone 或 lx_pw)');
         return;
@@ -166,8 +165,10 @@ export async function viewTotalHoursClick() {
     fetch('https://api.lxll.com/request/CustomerTeacherListClient', {
         method: 'POST',
         headers: {
-            accept: 'application/json, text/plain, */*',
+            'accept': 'application/json, text/plain, */*',
             'content-type': 'application/json',
+            'origin': 'https://h5.lxll.com',
+            'referer': 'https://h5.lxll.com/',
             'x-token-c': token,
             'x-ua': 'ct=1&version=5.0.6',
             'x-user-id': localStorage.getItem('x-user-id') || '144620'
