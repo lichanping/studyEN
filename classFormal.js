@@ -46,12 +46,12 @@ const teacherData = {
                 courseWordCount: 706,
                 duration: 1
             },
-            "胡亦辰": {
-                schedule: "胡亦辰",
-                course: "定制】2025新八上人教英语",
-                hours: [21, 10],
+            "孙雨彤": {
+                schedule: "孙雨彤-待定",
+                course: "【定制】2025新八上人教英语",
+                hours: [9, 0],
                 courseWordCount: 4955,
-                duration: 0.5
+                duration: 1
             },
             "胡贝妮": {
                 schedule: "胡贝妮 (新初一)",
