@@ -47,7 +47,7 @@ const teacherData = {
                 duration: 1
             },
             "孙雨彤": {
-                schedule: "孙雨彤-待定",
+                schedule: "孙雨彤，女，4年级-华江小学，D",
                 course: "【定制】2025新八上人教英语",
                 hours: [9, 0],
                 courseWordCount: 4955,
