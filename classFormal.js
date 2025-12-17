@@ -66,6 +66,13 @@ const teacherData = {
                 hours: [15, 0],
                 courseWordCount: 92,
                 duration: 1
+            },
+            "邸睿": {
+                schedule: "每周3 邸睿(6年级)",
+                course: "沪教牛津深圳版小学英语六年级上册（三年级起点）",
+                hours: [21, 0],
+                courseWordCount: 92,
+                duration: 1
             }
         }
     },
