@@ -89,6 +89,7 @@
         <option value="middleHigh" selected>初高中</option>
     </select>
     <button id="understandSituationButton">了解概况</button>
+    <button id="antiForgettingSpeechButton">抗遗忘话术</button>
 </div>
 <div>
     <button id="startVocabularyTestButton">词汇量检测</button>
@@ -155,6 +156,7 @@
     document.getElementById("selfReview").addEventListener("click", script.selfReviewClick);
     document.getElementById("openingSpeechButton").addEventListener("click", commonFunctions.handleOpeningSpeechClick);
     document.getElementById("understandSituationButton").addEventListener("click", script.handleUnderstandSituationClick);
+    document.getElementById("antiForgettingSpeechButton").addEventListener("click", script.handleAntiForgettingSpeechClick);
     document.getElementById("startVocabularyTestButton").addEventListener("click", script.startVocabularyTest);
     document.getElementById("antiForgettingFeedbackButton").addEventListener("click", commonFunctions.handleAntiForgettingFeedbackClick);
     document.getElementById("downloadFileButton").addEventListener("click", commonFunctions.downloadFeedbackFile);

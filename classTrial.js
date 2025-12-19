@@ -86,7 +86,7 @@ export function handleClassFeedbackClick() {
     const forgetWord = parseInt(document.getElementById("forgetWord").value) || 0;
     const studyTime = parseInt(document.getElementById("studyTime").value) || 30;
     const inputText = document.getElementById('preTestWord').value.trim();
-    
+
     // 添加classDateTime获取
     const classDateTime = document.getElementById("classDateTime").value;
 
@@ -136,6 +136,16 @@ export function handleUnderstandSituationClick() {
         message = `${userName}，我想了解一下，你现在几年级了呢?你考试的时候错题的原因是什么呢?嗯，好的。<br>其实归根结底是我们单词量不够的原因。<br>接下来，我们就一起来尝试一下高效快速地提高我们的单词量，${userName}，${userName}妈妈，那我们体验课正式开始吧!`;
     }
 
+    copyToClipboard(message);
+    showAlert(`${message}`);
+}
+
+export function handleAntiForgettingSpeechClick() {
+    const userName = document.getElementById("userName").value;
+    const studyTime = document.getElementById("studyTime").value || 40;
+    const newWord = parseInt(document.getElementById("newWord").value) || 30;
+    const forgetWord = parseInt(document.getElementById("forgetWord").value) || 0;
+    let message = `好的，那我们今天的体验之旅就到此结束啦。<br>${userName}今天的表现非常棒哦！<br>在${studyTime}分钟内就记住了${newWord - forgetWord}个单词，专注且高效，为你点赞！<br>希望你喜欢李校来啦这个平台，也<span style="color:red; font-weight:bold;">对我今天的陪伴服务感到满意</span>，相信你在持续使用这个产品的过程中，还能得到更大的提升！<br>加油！<br>接下来我们会有连续三天的抗遗忘复习，我也会陪伴你完成，${userName}什么时间方便来进行抗遗忘呢。<br>期待下次的见面哦，拜拜！<br>`;
     copyToClipboard(message);
     showAlert(`${message}`);
 }

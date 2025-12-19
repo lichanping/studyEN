@@ -9,7 +9,7 @@ input[type="radio"] {
     margin-right: 15px; /* Adjust the margin for spacing */
 }
 
-#classFeedbackButton {
+#classFeedbackButton, #antiForgettingSpeechButton {
     background-color: lightblue;
 }
 
@@ -87,9 +87,11 @@ button, input, select {
     height: 60px; /* Adjust the height as needed */
     font-size: 18px; /* Adjust the font size as needed */
 }
+
 #preTestWord {
     width: 100px;
 }
+
 /* Style for the button container */
 .button-container {
     display: flex;
