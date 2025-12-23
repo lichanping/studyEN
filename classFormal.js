@@ -72,7 +72,7 @@ const teacherData = {
                 course: "2024秋沪教版（五•四学制）六年级上册",
                 hours: [21, 0],
                 courseWordCount: 92,
-                duration: 1
+                duration: 0.5
             }
         }
     },
