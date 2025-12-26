@@ -73,6 +73,13 @@ const teacherData = {
                 hours: [21, 0],
                 courseWordCount: 92,
                 duration: 0.5
+            },
+            "毛沁妍": {
+                schedule: "每周5 毛沁妍(高一女)",
+                course: "2024新高一英语（人教版RJ）",
+                hours: [18, 30],
+                courseWordCount: 92,
+                duration: 1
             }
         }
     },
