@@ -76,7 +76,7 @@ const teacherData = {
             },
             "毛沁妍": {
                 schedule: "每周5 毛沁妍(高一女)",
-                course: "2024新高一英语（人教版RJ）",
+                course: "上海高考英语考纲词汇（乱序版）",
                 hours: [18, 30],
                 courseWordCount: 92,
                 duration: 1
