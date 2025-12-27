@@ -80,6 +80,13 @@ const teacherData = {
                 hours: [18, 30],
                 courseWordCount: 92,
                 duration: 1
+            },
+            "张允墨": {
+                schedule: "每周6 张允墨()",
+                course: "上海高考英语考纲词汇（乱序版）",
+                hours: [18, 30],
+                courseWordCount: 92,
+                duration: 1
             }
         }
     },
