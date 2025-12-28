@@ -49,6 +49,12 @@ const teacherData = {
                 hours: [17, 0],
                 duration: 1
             },
+            "邸睿": {
+                schedule: "邸睿(6年级)",
+                course: "【5.0】【初级】初中分级阅读_阅读理解_25篇",
+                hours: [19, 0],
+                duration: 1
+            },
             "吴瑜鑫": {
                 schedule: "每周2、4 19:30 吴瑜鑫 (六年级)",
                 course: "【5.0】【高级】小学阅读20篇",
