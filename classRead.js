@@ -43,11 +43,11 @@ const teacherData = {
                 hours: [11, 0],
                 duration: 1
             },
-            "胡亦辰": {
-                schedule: "胡亦辰 (8年级)",
-                course: "【中级】初中阅读50篇",
-                hours: [21, 10],
-                duration: 0.5
+            "张允墨": {
+                schedule: "张允墨 (5年级)",
+                course: "【5.0】【初级】初中分级阅读_阅读理解_25篇",
+                hours: [17, 0],
+                duration: 1
             },
             "吴瑜鑫": {
                 schedule: "每周2、4 19:30 吴瑜鑫 (六年级)",
