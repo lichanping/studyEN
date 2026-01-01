@@ -888,6 +888,20 @@ export function copyToClipboard(text) {
     document.body.removeChild(textarea);
 }
 
+export function handleAppointmentSchedulingClick({classType} = {}) {
+    const userName = document.getElementById("userName").value;
+    const classDuration = String(parseFloat(document.getElementById("classDuration").value));
+    const classDateTime = document.getElementById("classDateTime").value;
+    const dateObj = new Date(classDateTime);
+    const month = dateObj.getMonth() + 1;
+    const day = dateObj.getDate();
+    const weekDay = "日一二三四五六".charAt(dateObj.getDay());
+    const formattedDate = `${month}月${day}日（周${weekDay}）`;
+    const appointmentMessage = `【排课申请】\n学员：【${userName}】\n时间：${formattedDate}\n课程与时长：${classType || '课程'}（${classDuration}小时），谢谢～`;
+    copyToClipboard(appointmentMessage);
+    showLongText(`${appointmentMessage}`);
+}
+
 export function showAlert(message) {
     Swal.fire({
         html: `<div style="height: 500px; overflow-y: auto; text-align: left;">${message}</div>`, // Adjust the height as needed

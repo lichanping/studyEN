@@ -104,6 +104,7 @@
 <div>
     <button id="managementGroupTemplateButton">抗遗忘通知</button>
     <button id="openingSpeechButton">开场话术</button>
+    <button id="appointmentSchedulingButton">预约排课</button>
 </div>
 <div>
     <!-- Add input boxes for 抗遗忘复习单词 and 抗遗忘遗忘单词 -->
@@ -173,6 +174,9 @@
     document.getElementById("stop").addEventListener("click", script.handleStopNotificationClick);
     document.getElementById("lateMeetingReminderButton").addEventListener("click", script.handleLateMeetingReminderClick);
     document.getElementById("classFeedbackButton").addEventListener("click", script.handleClassFeedbackClick);
+    document.getElementById("appointmentSchedulingButton").addEventListener("click", () => {
+        commonFunctions.handleAppointmentSchedulingClick({classType: '单词课'});
+    });
     document.getElementById("selfReview").addEventListener("click", commonFunctions.selfReviewClick);
     document.getElementById("openingSpeechButton").addEventListener("click", commonFunctions.handleOpeningSpeechClick);
     document.getElementById("managementGroupTemplateButton").addEventListener("click", commonFunctions.handleManagementGroupTemplateClick);
