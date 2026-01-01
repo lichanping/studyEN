@@ -80,6 +80,7 @@
 <div>
     <button id="managementGroupTemplateButton">抗遗忘通知</button>
     <button id="openingSpeechButton">开场话术</button>
+    <button id="appointmentSchedulingButton">预约排课</button>
 </div>
 <div>
     <label for="studentLevel">学生级别:</label>
@@ -130,7 +131,9 @@
     document.getElementById("managementGroupTemplateButton").addEventListener("click", commonFunctions.handleManagementGroupTemplateClick);
     document.getElementById("antiForgettingFeedbackButton").addEventListener("click", commonFunctions.handleAntiForgettingFeedbackClick);
     document.getElementById("teacherName").addEventListener("change", scriptR.updateUserNameOptions2);
-
+    document.getElementById("appointmentSchedulingButton").addEventListener("click", () => {
+        commonFunctions.handleAppointmentSchedulingClick({classType: '阅读课'});
+    });
     const forgetWordsTextarea = document.getElementById('forgetWords');
     const pronounceWordsTextarea = document.getElementById('pronounceWords');
     const newLearnedWordsTextarea = document.getElementById('newLearnedWords');

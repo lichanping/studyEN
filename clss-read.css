@@ -8,7 +8,7 @@ body {
     background-color: #f2f2f2;
 }
 
-#classFeedbackButton, #noReviewTodayButton{
+#classFeedbackButton, #noReviewTodayButton, #appointmentSchedulingButton {
     background-color: lightblue;
 }
 
