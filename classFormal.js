@@ -62,7 +62,7 @@ const teacherData = {
             },
             "邸睿": {
                 schedule: "每周3 邸睿(6年级)",
-                course: "2024秋沪教版（五•四学制）六年级上册",
+                course: "【推荐】2024版沪教版（五•四学制）六年级下册（单元顺序）",
                 hours: [21, 0],
                 courseWordCount: 92,
                 duration: 0.5
