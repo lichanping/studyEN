@@ -48,7 +48,7 @@ const teacherData = {
             },
             "胡贝妮": {
                 schedule: "胡贝妮 (新初一)",
-                course: "全册-牛津上海版八年级上册",
+                course: "【推荐】2024版沪教版七年级上册（单元顺序）",
                 hours: [19, 45],
                 courseWordCount: 183,
                 duration: 1
