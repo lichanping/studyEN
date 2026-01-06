@@ -47,7 +47,7 @@ const teacherData = {
                 duration: 1
             },
             "胡贝妮": {
-                schedule: "胡贝妮 (新初一)",
+                schedule: "胡贝妮 (七年级)",
                 course: "【推荐】2024版沪教版七年级上册（单元顺序）",
                 hours: [19, 45],
                 courseWordCount: 183,
@@ -62,7 +62,7 @@ const teacherData = {
             },
             "邸睿": {
                 schedule: "每周3 邸睿(6年级)",
-                course: "【推荐】2024版沪教版（五•四学制）六年级下册（单元顺序）",
+                course: "二刷_新版小学考纲单词",
                 hours: [21, 0],
                 courseWordCount: 92,
                 duration: 0.5
