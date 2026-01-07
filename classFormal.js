@@ -41,9 +41,9 @@ const teacherData = {
             },
             "吴瑜鑫": {
                 schedule: "吴瑜鑫-每周二四晚7:30",
-                course: "新版小学考纲单词",
+                course: "【推荐】2013版人教版六年级上册（单元顺序）",
                 hours: [19, 35],
-                courseWordCount: 706,
+                courseWordCount: 147,
                 duration: 1
             },
             "胡贝妮": {
