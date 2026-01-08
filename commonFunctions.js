@@ -262,7 +262,7 @@ export async function viewTotalHoursClick() {
 
             if (anomaliesDetails.length > 0) {
                 const detailLines = anomaliesDetails.map(d =>
-                    `请武教练帮忙为${d.userName}充值：当前"30分钟剩余"为 ${d.quota30 ?? '-'}、"60分钟剩余"为 ${d.quota60 ?? '-'}，"陪练服务时长剩余"为${d.quotaAccompany ?? '-'}`
+                    `请帮忙为${d.userName}充值：当前"30分钟剩余"为 ${d.quota30 ?? '-'}、"60分钟剩余"为 ${d.quota60 ?? '-'}，"陪练服务时长剩余"为${d.quotaAccompany ?? '-'}`
                 );
                 const alertMsg = `发现异常学生(${anomaliesDetails.length})：\n${detailLines.join('\n')}`;
                 copyToClipboard(alertMsg);
