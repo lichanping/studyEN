@@ -41,8 +41,6 @@ test-output
 .idea
 *.csv
 #*.xlsx
-*.wav
-*.png
 *.dir
 *.bak
 *.dat
