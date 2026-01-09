@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MP3 Audio Player</title>
+    <link rel="stylesheet" href="player.css">
+</head>
+<body>
+    <div id="player-container">
+        <div id="current-song">
+            <img id="current-cover" src="" alt="Album Cover">
+            <div id="song-info">
+                <h2 id="song-title">Song Title</h2>
+                <p id="song-time">00:00 / 00:00</p>
+            </div>
+        </div>
+        <div id="controls">
+            <button id="prev">Prev</button>
+            <button id="play-pause">Play</button>
+            <button id="next">Next</button>
+            <button id="mode">Mode</button>
+            <input id="volume" type="range" min="0" max="1" step="0.01">
+        </div>
+        <div id="progress-container">
+            <input id="progress" type="range" min="0" max="100" step="1">
+        </div>
+        <div id="playlist">
+            <!-- Playlist will be dynamically generated -->
+        </div>
+    </div>
+    <script src="player.js"></script>
+</body>
+</html>
+
