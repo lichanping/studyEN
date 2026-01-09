@@ -8,6 +8,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const songsDir = `${basePath}songs/`;
     const imagesDir = `${basePath}images/`;
 
+    // ========== 新增：GitHub Pages 路径验证日志 ==========
+    console.log('GitHub Pages 路径验证：');
+    console.log('basePath:', basePath); // 原basePath变量，无需改basePathStr
+    console.log('imagesDir:', imagesDir);
+    console.log('当前页面URL:', window.location.href);
+    console.log('仓库名是否匹配:', window.location.pathname.includes('studyEN'));
+    // ========== 新增结束 ==========
+
     console.log('初始化播放器...');
     console.log('Base path:', basePath);
     console.log('Songs dir:', songsDir);
