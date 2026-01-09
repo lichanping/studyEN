@@ -41,6 +41,7 @@
     <button id="wordSelfCheckButton">单词自检</button>
     <button id="song">歌曲</button>
     <button id="songLearning">歌曲学习</button>
+    <button id="navigateToSongPlayer">播放器</button>
 </div>
 <div class="form-group fixed-display">
     <label for="userName">User Name:</label>
@@ -166,6 +167,7 @@
     document.getElementById("wordSelfCheckButton").addEventListener('click', commonFunctions.navigateToLearnWords);
     document.getElementById("song").addEventListener('click', commonFunctions.navigateToSong);
     document.getElementById("songLearning").addEventListener('click', commonFunctions.navigateToSongLearning)
+    document.getElementById("navigateToSongPlayer").addEventListener('click', commonFunctions.navigateToSongPlayer)
     document.getElementById("userName").addEventListener("change", script.updateLabel);
     document.getElementById("groupGreetingButton").addEventListener("click", commonFunctions.handleGroupGreetingClick);
     document.getElementById("viewTotalHoursButton").addEventListener("click", commonFunctions.viewTotalHoursClick);
