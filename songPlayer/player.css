@@ -1,119 +1,295 @@
-/* General Styles */
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f4f4f4;
+/* 基础布局与视图切换 */
+:root {
+    color-scheme: light dark;
+    --bg: #0b0b0d;
+    --fg: #ffffff;
+    --muted: #cfcfd6;
+    --accent: #4f8cff;
+    --card: rgba(255, 255, 255, 0.08);
+    --blur: 16px;
 }
 
-#player-container {
-    width: 90%;
-    max-width: 600px;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     overflow: hidden;
 }
 
-/* Current Song Display */
-#current-song {
+#bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-position: center;
+    background-size: cover;
+    filter: blur(var(--blur)) brightness(0.85);
+    transform: scale(1.05);
+    opacity: 0;
+    transition: opacity 280ms ease;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.view {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(2px);
+    opacity: 1;
+    z-index: 1;
+}
+
+/* 索引切换控制 */
+.index-controls {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index: 100;
     display: flex;
     align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
+    gap: 6px;
+    background: var(--card);
+    padding: 8px 12px;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.index-controls:hover {
+    opacity: 1;
+}
+
+#song-index {
+    width: 60px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    color: var(--fg);
+    padding: 4px 8px;
+    font-size: 14px;
+    text-align: center;
+}
+
+#switch-song {
+    background: var(--accent);
+    border: none;
+    border-radius: 6px;
+    color: white;
+    padding: 4px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+#switch-song:hover {
+    background: #3a7cff;
+}
+
+#total-count {
+    font-size: 14px;
+    color: var(--muted);
+    min-width: 30px;
+}
+
+/* 播放页 */
+.player-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 20px;
+    z-index: 2;
+}
+
+.cover-wrap {
+    width: min(72vw, 360px);
+    height: min(72vw, 360px);
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+    background-color: #111;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.cover-wrap::before {
+    content: '♪';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 80px;
+    color: #333;
+    z-index: 1;
+    opacity: 0.3;
 }
 
 #current-cover {
-    width: 60px;
-    height: 60px;
-    border-radius: 5px;
-    margin-right: 10px;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    position: relative;
+    z-index: 2;
 }
 
-#song-info {
-    flex: 1;
+.cover-rotating {
+    animation: slow-rotate 24s linear infinite;
+}
+
+@keyframes slow-rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.meta {
+    text-align: center;
+    margin: 20px 0 30px;
+    z-index: 2;
 }
 
 #song-title {
+    font-size: 24px;
     margin: 0;
-    font-size: 1.2em;
-    color: #333;
+    font-weight: 600;
 }
 
-#song-time {
-    margin: 5px 0 0;
-    font-size: 0.9em;
-    color: #666;
+#song-singer {
+    font-size: 16px;
+    margin: 8px 0 0;
+    color: var(--muted);
 }
 
-/* Controls */
-#controls {
-    display: flex;
-    justify-content: space-around;
+.controls {
+    width: 100%;
+    max-width: 560px;
+    display: grid;
+    grid-template-rows: auto auto auto;
+    gap: 20px;
+    padding: 20px;
+    border-radius: 16px;
+    background: var(--card);
+    backdrop-filter: blur(10px);
+    z-index: 2;
+}
+
+.time {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
-    padding: 10px;
-    background: #f9f9f9;
-}
-
-#controls button {
-    background: #007BFF;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    padding: 10px;
-    cursor: pointer;
-    font-size: 1em;
-}
-
-#controls button:hover {
-    background: #0056b3;
-}
-
-#volume {
-    width: 100px;
-}
-
-/* Progress Bar */
-#progress-container {
-    padding: 10px;
-    background: #f9f9f9;
+    gap: 12px;
 }
 
 #progress {
     width: 100%;
-}
-
-/* Playlist */
-#playlist {
-    max-height: 200px;
-    overflow-y: auto;
-    border-top: 1px solid #ddd;
-}
-
-#playlist div {
-    display: flex;
-    align-items: center;
-    padding: 10px;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.2);
+    -webkit-appearance: none;
+    appearance: none;
+    outline: none;
     cursor: pointer;
-    border-bottom: 1px solid #ddd;
 }
 
-#playlist div:hover {
-    background: #f1f1f1;
+#progress::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
 }
 
-#playlist img {
-    width: 40px;
-    height: 40px;
-    border-radius: 5px;
-    margin-right: 10px;
+.buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
 }
 
-#playlist span {
-    flex: 1;
-    color: #333;
+.buttons button {
+    appearance: none;
+    border: none;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--fg);
+    padding: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.buttons button:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.buttons button:active {
+    transform: scale(0.95);
+}
+
+#play-pause {
+    background: var(--accent);
+    color: white;
+}
+
+#play-pause:hover {
+    background: #3a7cff;
+}
+
+.volume {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 12px;
+    align-items: center;
+}
+
+#volume {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.2);
+    -webkit-appearance: none;
+    appearance: none;
+    outline: none;
+    cursor: pointer;
+}
+
+#volume::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+}
+
+/* 触控优化 */
+button, input[type="range"] {
+    touch-action: manipulation;
+}
+
+/* 背景显示 */
+#player-view.active ~ #bg {
+    opacity: 1;
 }
