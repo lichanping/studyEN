@@ -56,20 +56,19 @@ html, body {
 
 /* 索引切换控制 */
 .index-controls {
-    position: fixed;
-    top: 12px;
-    right: 12px;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--card);
-    padding: 8px 12px;
-    border-radius: 12px;
-    backdrop-filter: blur(10px);
-    opacity: 0.7;
-    transition: opacity 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: #000;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  transition: width 0.3s, min-width 0.3s;
+  overflow: hidden;
+  min-width: 180px;
+  width: auto;
+  z-index: 10;
 }
 
 .index-controls:hover {
@@ -341,4 +340,16 @@ button, input[type="range"] {
 
 .index-controls.collapsed button#toggle-index-controls {
   transform: rotate(180deg);
+}
+.controls-row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 16px;
+    margin-top: 8px;
+}
+
+.index-controls {
+    position: static;
+    margin-left: auto;
 }
