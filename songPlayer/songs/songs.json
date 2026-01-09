@@ -1,6 +1,17 @@
 [
-  "骗我.mp3",
-  "花开忘忧.mp3",
-  "Faded.wav"
+  {
+    "file": "骗我.mp3",
+    "title": "骗我",
+    "singer": "甜歌"
+  },
+  {
+    "file": "花开忘忧.mp3",
+    "title": "花开忘忧",
+    "singer": "甜歌"
+  },
+  {
+    "file": "Faded.wav",
+    "title": "Faded",
+    "singer": "甜歌"
+  }
 ]
-

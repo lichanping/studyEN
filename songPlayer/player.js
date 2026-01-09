@@ -8,13 +8,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const songsDir = `${basePath}songs/`;
     const imagesDir = `${basePath}images/`;
 
-    // ========== 新增：GitHub Pages 路径验证日志 ==========
+    // GitHub Pages 路径验证日志
     console.log('GitHub Pages 路径验证：');
-    console.log('basePath:', basePath); // 原basePath变量，无需改basePathStr
+    console.log('basePath:', basePath);
     console.log('imagesDir:', imagesDir);
     console.log('当前页面URL:', window.location.href);
     console.log('仓库名是否匹配:', window.location.pathname.includes('studyEN'));
-    // ========== 新增结束 ==========
 
     console.log('初始化播放器...');
     console.log('Base path:', basePath);
@@ -136,26 +135,29 @@ document.addEventListener('DOMContentLoaded', function () {
             const res = await fetch(`${songsDir}songs.json`);
             if (!res.ok) throw new Error(`无法加载 songs.json: ${res.status}`);
 
-            const files = await res.json();
-            console.log('从 songs.json 读取到的文件列表:', files);
+            const songsData = await res.json();
+            console.log('从 songs.json 读取到的歌曲数据:', songsData);
 
-            // 构建播放列表
-            state.playlist = files
-                .filter(f => /\.(mp3|wav|ogg|m4a)$/i.test(f))
-                .map(file => {
-                    const base = file.replace(/\.[^/.]+$/, ""); // 去掉扩展名
-                    const lastUnderscore = base.lastIndexOf('_');
-                    const title = lastUnderscore > 0 ? base.slice(0, lastUnderscore) : base;
-                    const singer = lastUnderscore > 0 ? base.slice(lastUnderscore + 1) : '';
-
-                    return {
-                        file,
-                        base,
-                        title: title || base,
-                        singer: singer || '未知歌手',
-                        audioUrl: `${songsDir}${file}`,
-                    };
-                });
+            // 构建播放列表 - 支持两种格式：简单文件名数组或带详细信息的对象数组
+            if (Array.isArray(songsData)) {
+                state.playlist = songsData.map(item => {
+                    // 如果是字符串，视为文件名
+                    if (typeof item === 'string') {
+                        return parseSongFromFilename(item);
+                    }
+                    // 如果是对象，使用提供的信息
+                    else if (typeof item === 'object' && item.file) {
+                        return {
+                            file: item.file,
+                            base: item.file.replace(/\.[^/.]+$/, ""),
+                            title: item.title || item.file.replace(/\.[^/.]+$/, ""),
+                            singer: item.singer || "未知歌手",
+                            audioUrl: `${songsDir}${item.file}`,
+                        };
+                    }
+                    return null;
+                }).filter(Boolean); // 过滤无效项
+            }
 
             console.log('构建的播放列表:', state.playlist);
 
@@ -165,26 +167,47 @@ document.addEventListener('DOMContentLoaded', function () {
             try {
                 console.log('尝试从 songs 文件夹自动检测音频文件...');
                 const manualFiles = ['song1.mp3', 'song2.mp3', 'Faded.wav'];
-                state.playlist = manualFiles.map(file => {
-                    const base = file.replace(/\.[^/.]+$/, "");
-                    const lastUnderscore = base.lastIndexOf('_');
-                    const title = lastUnderscore > 0 ? base.slice(0, lastUnderscore) : base;
-                    const singer = lastUnderscore > 0 ? base.slice(lastUnderscore + 1) : '';
-
-                    return {
-                        file,
-                        base,
-                        title: title || base,
-                        singer: singer || '未知歌手',
-                        audioUrl: `${songsDir}${file}`,
-                    };
-                });
+                state.playlist = manualFiles.map(file => parseSongFromFilename(file));
                 console.log('手动构建的播放列表:', state.playlist);
             } catch (e) {
                 console.error('手动构建播放列表失败:', e);
                 state.playlist = [];
             }
         }
+    }
+
+    // 从文件名解析歌曲信息的辅助函数
+    function parseSongFromFilename(file) {
+        const base = file.replace(/\.[^/.]+$/, ""); // 去掉扩展名
+
+        // 尝试多种分隔符解析歌手和歌名
+        const separators = ['-', '_', '–', '—']; // 包含各种连字符和下划线
+        let title = base;
+        let singer = "未知歌手";
+
+        for (const sep of separators) {
+            const parts = base.split(sep).map(part => part.trim());
+            if (parts.length >= 2) {
+                // 常见格式: "歌手 - 歌名" 或 "歌名 - 歌手"
+                // 简单判断：较短的部分更可能是歌手名
+                if (parts[0].length <= parts[1].length) {
+                    singer = parts[0];
+                    title = parts.slice(1).join(sep);
+                } else {
+                    title = parts[0];
+                    singer = parts.slice(1).join(sep);
+                }
+                break; // 找到第一个有效分隔符后停止
+            }
+        }
+
+        return {
+            file,
+            base,
+            title,
+            singer,
+            audioUrl: `${songsDir}${file}`,
+        };
     }
 
     function updateIndexControls() {
@@ -414,5 +437,16 @@ document.addEventListener('DOMContentLoaded', function () {
         const m = Math.floor(sec / 60);
         const s = Math.floor(sec % 60);
         return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    }
+});
+
+// 折叠/展开 index-controls
+document.addEventListener('DOMContentLoaded', function () {
+    const indexControls = document.getElementById('index-controls');
+    const toggleBtn = document.getElementById('toggle-index-controls');
+    if (indexControls && toggleBtn) {
+        toggleBtn.addEventListener('click', function () {
+            indexControls.classList.toggle('collapsed');
+        });
     }
 });
