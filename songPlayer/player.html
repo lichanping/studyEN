@@ -10,15 +10,6 @@
 <!-- 背景层 -->
 <div id="bg"></div>
 
-<!-- 索引切换控制 -->
-<div class="index-controls collapsed" id="index-controls">
-    <button id="toggle-index-controls" aria-label="展开/折叠">⟨</button>
-    <div class="index-content">
-        <input type="number" id="song-index" min="1" value="1" placeholder="序号">
-        <button id="switch-song">切换</button>
-        <span id="total-count">/ 0</span>
-    </div>
-</div>
 
 <!-- 播放页 -->
 <section id="player-view" class="view active">
@@ -41,11 +32,21 @@
                 <input id="progress" type="range" min="0" max="100" step="1" value="0" aria-label="进度条">
                 <span id="total-time">00:00</span>
             </div>
-            <div class="buttons">
-                <button id="mode" aria-label="播放模式">循环</button>
-                <button id="prev" aria-label="上一首">⟨</button>
-                <button id="play-pause" aria-label="播放/暂停">▶</button>
-                <button id="next" aria-label="下一首">⟩</button>
+            <div class="controls-row">
+                <div class="buttons">
+                    <button id="mode" aria-label="播放模式">循环</button>
+                    <button id="prev" aria-label="上一首">⟨</button>
+                    <button id="play-pause" aria-label="播放/暂停">▶</button>
+                    <button id="next" aria-label="下一首">⟩</button>
+                </div>
+                <div class="index-controls collapsed" id="index-controls">
+                    <button id="toggle-index-controls" aria-label="展开/折叠">⟨</button>
+                    <div class="index-content">
+                        <input type="number" id="song-index" min="1" value="1" placeholder="序号">
+                        <button id="switch-song">切换</button>
+                        <span id="total-count">/ 0</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
