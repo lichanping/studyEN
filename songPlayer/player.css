@@ -173,14 +173,16 @@ html, body {
 
 #song-title {
     font-size: 24px;
-    margin: 0;
+    margin: 0 0 12px 0; /* 增加底部外边距 12px，可根据需要调整数值 */
     font-weight: 600;
 }
 
 #song-singer {
     font-size: 16px;
-    margin: 8px 0 0;
+    margin: 0;           /* 去除默认外边距 */
+    line-height: 1;      /* 紧凑行高，基线对齐 */
     color: var(--muted);
+    display: block;      /* 保证与span对齐 */
 }
 
 .controls {
@@ -316,6 +318,7 @@ button, input[type="range"] {
   align-items: center;
   gap: 6px;
   transition: opacity 0.3s;
+  height: 100%; /* 继承父容器高度 */
 }
 
 .index-controls button#toggle-index-controls {
@@ -354,4 +357,30 @@ button, input[type="range"] {
 .index-controls {
     position: static;
     margin-left: auto;
+    height: 45px; /* 与播放按钮高度一致 */
+}
+
+.singer-label {
+    display: flex;
+    flex-direction: row;      /* 横向排列 */
+    align-items: center;      /* 垂直居中 */
+    justify-content: center;  /* 水平居中 */
+    gap: 6px;                 /* 歌手和标签间距 */
+}
+
+#yueyin-label {
+    display: inline-block;
+    background: #fffbe6;
+    color: #bfa100;
+    font-size: 0.78em;
+    padding: 1px 7px;
+    border-radius: 10px;
+    border: 1px solid #ffe066;
+    margin-left: 2px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    line-height: 1;         /* 保证高度紧凑 */
+    vertical-align: middle; /* 基线对齐 */
+    position: relative;
+    top: 1px;               /* 微调向下1px，可根据实际效果调整 */
 }
