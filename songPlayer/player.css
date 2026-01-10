@@ -128,6 +128,7 @@ html, body {
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
     background-color: #111;
     position: relative;
+    margin-top: 15px; /* 新增：整体下移10px */
     margin-bottom: 20px;
 }
 
