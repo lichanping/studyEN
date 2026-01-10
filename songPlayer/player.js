@@ -264,77 +264,53 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    async function loadCoverImage(item) {
-        if (!item) {
-            console.error('loadCoverImage: item为空');
-            return;
-        }
+	async function loadCoverImage(item) {
+	    if (!item) {
+	        console.error('loadCoverImage: item为空');
+	        return;
+	    }
 
-        const songName = item.base; // 例如 "song1" 或 "Faded"
-        console.log(`正在查找歌曲"${songName}"的封面图片...`);
+	    const songName = item.base;
+	    const extensions = ['png', 'jpg'];
+	    const imageUrls = extensions.map(ext => `${imagesDir}${songName}.${ext}`);
 
-        // 尝试加载同名图片
-        const imageUrl = `${imagesDir}${songName}.png`;
-        console.log(`尝试加载图片: ${imageUrl}`);
+	    // 图片加载Promise
+	    function tryLoad(url) {
+	        return new Promise((resolve) => {
+	            const img = new Image();
+	            img.onload = () => resolve({success: true, url});
+	            img.onerror = () => resolve({success: false, url});
+	            img.src = url;
+	        });
+	    }
 
-        // 使用Image对象预加载
-        return new Promise((resolve) => {
-            const img = new Image();
+	    // 依次尝试加载封面图片
+	    for (const imageUrl of imageUrls) {
+	        const result = await tryLoad(imageUrl);
+	        if (result.success) {
+	            if (els.cover) els.cover.src = imageUrl;
+	            if (els.bg) els.bg.style.backgroundImage = `url("${imageUrl}")`;
+	            return true;
+	        }
+	    }
 
-            img.onload = function () {
-                console.log(`图片加载成功: ${imageUrl}`);
-                // 检查元素是否存在
-                if (els.cover) {
-                    console.log('设置封面图片到els.cover');
-                    els.cover.src = imageUrl;
-                } else {
-                    console.error('错误: els.cover为null，无法设置图片');
-                }
+	    // 默认图片支持 png 和 jpg
+	    const defaultExtensions = ['png', 'jpg'];
+	    for (const ext of defaultExtensions) {
+	        const defaultUrl = `${imagesDir}default.${ext}`;
+	        const defaultResult = await tryLoad(defaultUrl);
+	        if (defaultResult.success) {
+	            if (els.cover) els.cover.src = defaultUrl;
+	            if (els.bg) els.bg.style.backgroundImage = `url("${defaultUrl}")`;
+	            return false;
+	        }
+	    }
 
-                // 更新背景
-                if (els.bg) {
-                    console.log('设置背景图片');
-                    els.bg.style.backgroundImage = `url("${imageUrl}")`;
-                }
-                resolve(true);
-            };
-
-            img.onerror = function () {
-                console.warn(`图片加载失败: ${imageUrl}，尝试使用默认图片`);
-                // 使用默认图片
-                const defaultUrl = `${imagesDir}default.png`;
-                console.log(`尝试加载默认图片: ${defaultUrl}`);
-
-                const defaultImg = new Image();
-                defaultImg.onload = function () {
-                    console.log(`使用默认图片: ${defaultUrl}`);
-                    if (els.cover) {
-                        els.cover.src = defaultUrl;
-                    }
-                    if (els.bg) {
-                        els.bg.style.backgroundImage = `url("${defaultUrl}")`;
-                    }
-                    resolve(false);
-                };
-
-                defaultImg.onerror = function () {
-                    console.error(`默认图片也加载失败: ${defaultUrl}`);
-                    // 清空图片
-                    if (els.cover) {
-                        els.cover.src = '';
-                    }
-                    if (els.bg) {
-                        els.bg.style.backgroundImage = '';
-                    }
-                    resolve(false);
-                };
-
-                defaultImg.src = defaultUrl;
-            };
-
-            img.src = imageUrl;
-        });
-    }
+	    // 都失败则清空
+	    if (els.cover) els.cover.src = '';
+	    if (els.bg) els.bg.style.backgroundImage = '';
+	    return false;
+	}
 
     function togglePlay() {
         if (audio.paused) {
