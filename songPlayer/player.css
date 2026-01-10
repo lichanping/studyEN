@@ -7,6 +7,10 @@
     --accent: #4f8cff;
     --card: rgba(255, 255, 255, 0.08);
     --blur: 16px;
+    /* 更亮的歌手文字色（接近白色） */
+    --singer-color: #f5f5f7;
+    /* 爱心符号颜色（粉色系，更醒目） */
+    --heart-color: #ff69b4;
 }
 
 * {
@@ -178,12 +182,32 @@ html, body {
     font-weight: 600;
 }
 
+/* 歌手名称容器：整合爱心+歌手名+悦音标签的排版 */
+.singer-label {
+    display: flex;
+    flex-direction: row;      /* 横向排列 */
+    align-items: center;      /* 垂直居中 */
+    justify-content: center;  /* 水平居中 */
+    gap: 4px;                 /* 缩小间距，让爱心和文字更紧凑 */
+}
+
+/* 歌手名称样式（包含爱心） */
 #song-singer {
     font-size: 16px;
-    margin: 0;           /* 去除默认外边距 */
-    line-height: 1;      /* 紧凑行高，基线对齐 */
-    color: var(--muted);
-    display: block;      /* 保证与span对齐 */
+    margin: 0;
+    line-height: 1;
+    color: var(--singer-color);
+    display: inline-flex;     /* 改为inline-flex，兼容爱心和文字同行 */
+    align-items: center;
+    gap: 4px;                 /* 爱心和歌手名的间距 */
+}
+
+/* 爱心符号样式（可单独控制） */
+#song-singer::before {
+    content: '💗';            /* 爱心符号 */
+    color: var(--heart-color);/* 自定义爱心颜色 */
+    font-size: 14px;          /* 爱心字号略小于歌手名，更协调 */
+    display: inline-block;
 }
 
 .controls {
@@ -361,15 +385,8 @@ button, input[type="range"] {
     height: 45px; /* 与播放按钮高度一致 */
 }
 
-.singer-label {
-    display: flex;
-    flex-direction: row;      /* 横向排列 */
-    align-items: center;      /* 垂直居中 */
-    justify-content: center;  /* 水平居中 */
-    gap: 6px;                 /* 歌手和标签间距 */
-}
-
-#yueyin-label {
+/* 悦音标签样式（保留原有，无需修改） */
+#yueyin-label,#vip-label {
     display: inline-block;
     background: #fffbe6;
     color: #bfa100;
@@ -380,8 +397,13 @@ button, input[type="range"] {
     margin-left: 2px;
     font-weight: 500;
     letter-spacing: 1px;
-    line-height: 1;         /* 保证高度紧凑 */
-    vertical-align: middle; /* 基线对齐 */
+    line-height: 1;
+    vertical-align: middle;
     position: relative;
-    top: 1px;               /* 微调向下1px，可根据实际效果调整 */
+    top: 1px;
+}
+
+/* 微调歌手标签容器间距（可选，让三个元素更紧凑） */
+.singer-label {
+    gap: 4px !important; /* 覆盖原有gap，爱心/歌手名/悦音/VIP间距统一为4px */
 }
