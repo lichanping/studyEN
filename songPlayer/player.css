@@ -28,7 +28,7 @@ html, body {
     overflow: hidden;
 }
 
-/* 直接让 #bg 默认可见，排查选择器问题 */
+/* 背景显示 */
 #bg {
     position: fixed;
     top: 0;
@@ -57,15 +57,16 @@ html, body {
     background: rgba(0, 0, 0, 0.2);
     backdrop-filter: blur(2px);
     opacity: 1;
-    z-index: 1;
+    z-index: 2; /* 高于雪花 */
 }
 
-/* 索引切换控制 */
+/* 索引切换控制 - 已修改背景色和按钮样式 */
 .index-controls {
   position: absolute;
   top: 20px;
   right: 20px;
-  background: #000;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 6px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   display: flex;
@@ -113,6 +114,46 @@ html, body {
     min-width: 30px;
 }
 
+/* 折叠/展开按钮样式统一 */
+.index-controls button#toggle-index-controls {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 6px 8px;
+  color: var(--fg);
+  transition: transform 0.3s, background 0.2s ease;
+  border-radius: 4px;
+}
+
+.index-controls button#toggle-index-controls:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.index-controls .index-content {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: opacity 0.3s;
+  height: 100%; /* 继承父容器高度 */
+}
+
+.index-controls.collapsed {
+  min-width: 36px;
+  width: 36px;
+}
+
+.index-controls.collapsed .index-content {
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  margin: 0;
+}
+
+.index-controls.collapsed button#toggle-index-controls {
+  transform: rotate(180deg);
+}
+
 /* 播放页 */
 .player-stage {
     display: flex;
@@ -121,7 +162,7 @@ html, body {
     justify-content: center;
     height: 100%;
     padding: 20px;
-    z-index: 2;
+    z-index: 3; /* 确保播放器在最上层 */
 }
 
 .cover-wrap {
@@ -322,55 +363,6 @@ button, input[type="range"] {
     opacity: 1;
 }
 
-.index-controls {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background: rgba(255,255,255,0.9);
-  border-radius: 6px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  display: flex;
-  align-items: center;
-  transition: width 0.3s, min-width 0.3s;
-  overflow: hidden;
-  min-width: 180px;
-  width: auto;
-  z-index: 10;
-}
-
-.index-controls .index-content {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: opacity 0.3s;
-  height: 100%; /* 继承父容器高度 */
-}
-
-.index-controls button#toggle-index-controls {
-  background: none;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
-  padding: 6px 8px;
-  color: #333;
-  transition: transform 0.3s;
-}
-
-.index-controls.collapsed {
-  min-width: 36px;
-  width: 36px;
-}
-
-.index-controls.collapsed .index-content {
-  opacity: 0;
-  pointer-events: none;
-  width: 0;
-  margin: 0;
-}
-
-.index-controls.collapsed button#toggle-index-controls {
-  transform: rotate(180deg);
-}
 .controls-row {
     display: flex;
     align-items: center;
@@ -383,6 +375,7 @@ button, input[type="range"] {
     position: static;
     margin-left: auto;
     height: 45px; /* 与播放按钮高度一致 */
+    background: rgba(255, 255, 255, 0.1) !important;
 }
 
 /* 悦音标签样式（保留原有，无需修改） */
