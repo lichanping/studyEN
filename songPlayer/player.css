@@ -11,6 +11,8 @@
     --singer-color: #f5f5f7;
     /* 爱心符号颜色（粉色系，更醒目） */
     --heart-color: #ff69b4;
+    /* 统一按钮高度变量 */
+    --btn-height: 24px;
 }
 
 * {
@@ -60,12 +62,11 @@ html, body {
     z-index: 2; /* 高于雪花 */
 }
 
-/* 索引切换控制 - 已修改背景色和按钮样式 */
+/* 索引切换控制 - 核心调整：与播放按钮高度一致 */
 .index-controls {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background: rgba(255, 255, 255, 0.1);
+  position: static;
+  margin-left: auto;
+  background: rgba(255, 255, 255, 0.1) !important;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 6px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -76,6 +77,8 @@ html, body {
   min-width: 180px;
   width: auto;
   z-index: 10;
+  /* 核心：与播放按钮高度统一 */
+  height: var(--btn-height);
 }
 
 .index-controls:hover {
@@ -88,9 +91,12 @@ html, body {
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 6px;
     color: var(--fg);
-    padding: 4px 8px;
+    padding: 0 8px; /* 垂直padding清零，靠height撑高度 */
     font-size: 14px;
     text-align: center;
+    /* 与容器高度一致 */
+    height: calc(var(--btn-height) - 4px);
+    line-height: calc(var(--btn-height) - 4px);
 }
 
 #switch-song {
@@ -98,10 +104,13 @@ html, body {
     border: none;
     border-radius: 6px;
     color: white;
-    padding: 4px 12px;
+    padding: 0 12px; /* 垂直padding清零，靠height撑高度 */
     font-size: 14px;
     cursor: pointer;
     transition: background 0.2s ease;
+    /* 与容器高度一致 */
+    height: calc(var(--btn-height) - 4px);
+    line-height: calc(var(--btn-height) - 4px);
 }
 
 #switch-song:hover {
@@ -112,6 +121,7 @@ html, body {
     font-size: 14px;
     color: var(--muted);
     min-width: 30px;
+    line-height: var(--btn-height);
 }
 
 /* 折叠/展开按钮样式统一 */
@@ -120,10 +130,13 @@ html, body {
   border: none;
   font-size: 18px;
   cursor: pointer;
-  padding: 6px 8px;
+  padding: 0 8px; /* 垂直padding清零 */
   color: var(--fg);
   transition: transform 0.3s, background 0.2s ease;
   border-radius: 4px;
+  /* 与容器高度一致 */
+  height: var(--btn-height);
+  line-height: var(--btn-height);
 }
 
 .index-controls button#toggle-index-controls:hover {
@@ -136,11 +149,12 @@ html, body {
   gap: 6px;
   transition: opacity 0.3s;
   height: 100%; /* 继承父容器高度 */
+  padding: 0 4px;
 }
 
 .index-controls.collapsed {
-  min-width: 36px;
-  width: 36px;
+  min-width: calc(var(--btn-height));
+  width: calc(var(--btn-height));
 }
 
 .index-controls.collapsed .index-content {
@@ -297,16 +311,20 @@ html, body {
     gap: 12px;
 }
 
+/* 核心修改：播放按钮高度减半 + 统一高度 */
 .buttons button {
     appearance: none;
     border: none;
     border-radius: 12px;
     background: rgba(255, 255, 255, 0.12);
     color: var(--fg);
-    padding: 12px;
+    padding: 0 12px; /* 垂直padding清零，靠height控制高度 */
     font-size: 16px;
     cursor: pointer;
     transition: background 0.2s ease, transform 0.1s ease;
+    /* 核心：高度减半且与索引控制区统一 */
+    height: var(--btn-height);
+    line-height: var(--btn-height); /* 文字垂直居中 */
 }
 
 .buttons button:hover {
@@ -369,13 +387,6 @@ button, input[type="range"] {
     width: 100%;
     gap: 16px;
     margin-top: 8px;
-}
-
-.index-controls {
-    position: static;
-    margin-left: auto;
-    height: 45px; /* 与播放按钮高度一致 */
-    background: rgba(255, 255, 255, 0.1) !important;
 }
 
 /* 悦音标签样式（保留原有，无需修改） */
