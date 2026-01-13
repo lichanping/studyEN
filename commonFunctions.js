@@ -1194,3 +1194,22 @@ export function addRightClickPasteEvent(element) {
         }
     });
 }
+
+export function handleNewVersionFeedbackClick() {
+    const userNameInput = document.getElementById("userName");
+    const userName = userNameInput ? userNameInput.value : "同学";
+
+    // Sum up antiForgettingReviewWord values (same logic as handleAntiForgettingFeedbackClick)
+    const antiForgettingReviewWord = Array.from(document.querySelectorAll('.antiForgettingReviewWord'))
+        .reduce((sum, input) => sum + (input && input.value ? parseInt(input.value, 10) : 0), 0);
+
+    // Build message
+    const motto = getRandomMotto();
+    const message = `1. 复习 ${antiForgettingReviewWord} 词\n2. ${userName}同学表现很好，整节课注意力都很在线，我们的课堂也进步神速！要继续保持哦！\n📚知识小船📚\n${motto}`;
+
+    // Copy the message to clipboard
+    copyToClipboard(message);
+    // Show alert with the generated message
+    showLongText(`${message}`);
+}
+

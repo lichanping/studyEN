@@ -129,6 +129,7 @@
 <textarea id="practiceArea" name="practiceArea"></textarea>
 <div>
     <button id="antiForgettingFeedbackButton">抗遗忘课堂反馈</button>
+    <button id="newFeedbackButton">新版反馈</button>
     <button id="bye">体验课结束语</button>
     <input id="daysRangeInput" value="1">
     <button id="downloadFileButton">抗遗忘统计</button>
@@ -183,6 +184,7 @@
     document.getElementById("openingSpeechButton").addEventListener("click", commonFunctions.handleOpeningSpeechClick);
     document.getElementById("managementGroupTemplateButton").addEventListener("click", commonFunctions.handleManagementGroupTemplateClick);
     document.getElementById("antiForgettingFeedbackButton").addEventListener("click", commonFunctions.handleAntiForgettingFeedbackClick);
+    document.getElementById("newFeedbackButton").addEventListener("click", commonFunctions.handleNewVersionFeedbackClick);
     document.getElementById("downloadFileButton").addEventListener("click", commonFunctions.downloadFeedbackFile);
     document.getElementById("downloadFormalButton").addEventListener("click", script.generateReport);
     document.getElementById("bye").addEventListener("click", commonFunctions.byeClick);
