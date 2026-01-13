@@ -1199,9 +1199,16 @@ export function handleNewVersionFeedbackClick() {
     const userNameInput = document.getElementById("userName");
     const userName = userNameInput ? userNameInput.value : "同学";
 
-    // Sum up antiForgettingReviewWord values (same logic as handleAntiForgettingFeedbackClick)
-    const antiForgettingReviewWord = Array.from(document.querySelectorAll('.antiForgettingReviewWord'))
-        .reduce((sum, input) => sum + (input && input.value ? parseInt(input.value, 10) : 0), 0);
+    const reviewInputs = Array.from(document.querySelectorAll('.antiForgettingReviewWord'));
+    const hasFilled = reviewInputs.some(input => input && input.value && input.value.trim() !== '');
+    if (!hasFilled) {
+        alert('请先填写复习词数');
+        return;
+    }
+    const antiForgettingReviewWord = reviewInputs.reduce((sum, input) => {
+        const v = parseInt((input.value || '').trim(), 10);
+        return sum + (Number.isFinite(v) ? v : 0);
+    }, 0);
 
     // Build message
     const motto = getRandomMotto();
