@@ -1194,3 +1194,29 @@ export function addRightClickPasteEvent(element) {
         }
     });
 }
+
+export function handleNewVersionFeedbackClick() {
+    const userNameInput = document.getElementById("userName");
+    const userName = userNameInput ? userNameInput.value : "同学";
+
+    const reviewInputs = Array.from(document.querySelectorAll('.antiForgettingReviewWord'));
+    const hasFilled = reviewInputs.some(input => input && input.value && input.value.trim() !== '');
+    if (!hasFilled) {
+        alert('请先填写复习词数');
+        return;
+    }
+    const antiForgettingReviewWord = reviewInputs.reduce((sum, input) => {
+        const v = parseInt((input.value || '').trim(), 10);
+        return sum + (Number.isFinite(v) ? v : 0);
+    }, 0);
+
+    // Build message
+    const motto = getRandomMotto();
+    const message = `1. 复习 ${antiForgettingReviewWord} 词\n2. ${userName}同学表现很好，整节课注意力都很在线，我们的课堂也进步神速！要继续保持哦！\n📚知识小船📚\n${motto}`;
+
+    // Copy the message to clipboard
+    copyToClipboard(message);
+    // Show alert with the generated message
+    showLongText(`${message}`);
+}
+
