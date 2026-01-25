@@ -6,7 +6,9 @@ import {
     showLongText,
     countEnglishWords,
     storeClassStatistics,
-    storeNewLearnedWords
+    storeNewLearnedWords,
+    loginApp,
+    displayToast
 } from './commonFunctions.js'
 
 const setInitialDateTime = () => {
@@ -1253,3 +1255,157 @@ docxScript.onerror = () => {
 };
 document.head.appendChild(docxScript);
 
+// 新版 viewTotalHoursClick: 根据 teacherData 中每个学生的 duration 精确判断 quota30 或 quota60
+export async function viewTotalHoursClick() {
+    let token = localStorage.getItem('x-token-c');
+    if (!token) {
+        await loginApp().catch(() => {});
+        token = localStorage.getItem('x-token-c');
+        if (!token) {
+            alert('未找到 token，登录失败或未配置。');
+            return;
+        }
+    }
+
+    // 获取当前选中的教师
+    const selectedTeacher = document.getElementById("teacherName")?.value || 'liTeacher';
+    const currentTeacherUsers = teacherData[selectedTeacher]?.users || {};
+
+    // 构建学生名称到 duration 的映射
+    const studentDurationMap = {};
+    Object.entries(currentTeacherUsers).forEach(([userName, userData]) => {
+        studentDurationMap[userName] = userData.duration;
+    });
+
+    fetch('https://api.lxll.com/request/CustomerTeacherListClient', {
+        method: 'POST',
+        headers: {
+            'accept': 'application/json, text/plain, */*',
+            'content-type': 'application/json',
+            'origin': 'https://h5.lxll.com',
+            'referer': 'https://h5.lxll.com/',
+            'x-token-c': token,
+            'x-ua': 'ct=1&version=5.0.6',
+            'x-user-id': localStorage.getItem('x-user-id') || '144620'
+        },
+        body: JSON.stringify({
+            pageNumber: 1,
+            pageSize: 100,
+            whereCriteria: {studentName: ''}
+        })
+    })
+        .then(r => {
+            if (!r.ok) throw new Error('网络错误 ' + r.status);
+            return r.json();
+        })
+        .then(data => {
+            console.log('教师列表数据:', data);
+            displayToast('教师列表获取成功');
+
+            const list = Array.isArray(data?.data?.data) ? data.data.data : [];
+            const anomaliesDetails = [];
+
+            // 获取白名单：当前教师下的所有学生
+            const whiteList = new Set(Object.keys(currentTeacherUsers));
+            console.log('当前教师学生白名单:', [...whiteList]);
+
+            const isZero = (v) => {
+                const s = String(v ?? '').trim();
+                const n = parseFloat(s);
+                return s === '0' || (Number.isFinite(n) && n === 0);
+            };
+
+            for (const item of list) {
+                const userName = (item?.userName || '').trim();
+                if (!whiteList.has(userName)) continue;
+
+                const q30 = item?.quota30;
+                const q60 = item?.quota60;
+                const qAcc = item?.quotaAccompany;
+
+                // 获取该学生配置的 duration
+                const studentDuration = studentDurationMap[userName];
+
+                const zeroFields = [];
+                let hasQuotaIssue = false;
+
+                // 根据 duration 精确判断需要检查哪个 quota
+                if (studentDuration === 0.5) {
+                    // 半小时课程，只检查 quota30
+                    if (isZero(q30)) {
+                        zeroFields.push('quota30');
+                        hasQuotaIssue = true;
+                    }
+                } else if (studentDuration === 1) {
+                    // 1小时课程，只检查 quota60
+                    if (isZero(q60)) {
+                        zeroFields.push('quota60');
+                        hasQuotaIssue = true;
+                    }
+                } else {
+                    // 未配置 duration 或其他情况，检查两者都为0才报警（保持兼容）
+                    if (isZero(q30) && isZero(q60)) {
+                        zeroFields.push('quota30', 'quota60');
+                        hasQuotaIssue = true;
+                    }
+                }
+
+                // 陪伴课为0也需要报警
+                if (isZero(qAcc)) {
+                    zeroFields.push('quotaAccompany');
+                    hasQuotaIssue = true;
+                }
+
+                if (hasQuotaIssue) {
+                    anomaliesDetails.push({
+                        userName,
+                        duration: studentDuration,
+                        quota30: q30,
+                        quota60: q60,
+                        quotaAccompany: qAcc,
+                        zeroFields
+                    });
+                }
+            }
+
+            console.table(anomaliesDetails);
+
+            const summary = {
+                total: data?.data?.total ?? list.length,
+                anomaliesCount: anomaliesDetails.length,
+                anomalies: anomaliesDetails
+            };
+
+            showLongText(JSON.stringify(summary, null, 2));
+
+            if (anomaliesDetails.length > 0) {
+                const detailLines = anomaliesDetails.map(d => {
+                    const durationDesc = d.duration === 0.5 ? '(半小时课)' : d.duration === 1 ? '(1小时课)' : '';
+                    return `请帮忙为${d.userName}${durationDesc}充值：当前"30分钟剩余"为 ${d.quota30 ?? '-'}、"60分钟剩余"为 ${d.quota60 ?? '-'}，"陪练服务时长剩余"为${d.quotaAccompany ?? '-'}`;
+                });
+                const alertMsg = `发现异常学生(${anomaliesDetails.length})：\n${detailLines.join('\n')}`;
+                copyToClipboard(alertMsg);
+                alert(alertMsg);
+            }
+        })
+        .catch(async (err) => {
+            console.error('获取教师列表失败:', err);
+
+            // 检查是否是 token 失效导致的错误
+            if (err.message && err.message.includes('401')) {
+                console.warn('检测到 token 失效，尝试重新登录...');
+                try {
+                    await loginApp();
+                    const token = localStorage.getItem('x-token-c');
+                    if (token) {
+                        console.log('重新登录成功，重新尝试获取教师列表...');
+                        return viewTotalHoursClick();
+                    } else {
+                        console.error('重新登录失败，未获取到 token');
+                    }
+                } catch (loginError) {
+                    console.error('重新登录时发生错误:', loginError);
+                }
+            }
+        });
+}

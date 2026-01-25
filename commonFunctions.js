@@ -109,7 +109,7 @@ export function handleGroupGreetingClick() {
 }
 
 // 通过本地存储的 lx_phone 与 lx_pw 执行登录，获取并缓存 token 与 userId
-async function loginApp() {
+export async function loginApp() {
     let phone = localStorage.getItem('lx_phone');
     let password = localStorage.getItem('lx_pw');
 
@@ -1219,4 +1219,3 @@ export function handleNewVersionFeedbackClick() {
     // Show alert with the generated message
     showLongText(`${message}`);
 }
-
