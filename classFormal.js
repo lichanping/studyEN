@@ -82,6 +82,13 @@ const teacherData = {
                 hours: [18, 30],
                 courseWordCount: 92,
                 duration: 1
+            },
+            "徐智浩": {
+                schedule: "徐智浩(体验课)",
+                course: "初中中级体验",
+                hours: [19, 30],
+                courseWordCount: 92,
+                duration: 1
             }
         }
     },
