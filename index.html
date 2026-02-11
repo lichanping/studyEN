@@ -12,9 +12,7 @@
     <!-- Add script to check login status -->
     <script type="module">
         import * as commonFunctions from './commonFunctions.js';
-
         commonFunctions.checkLoginStatus();
-
     </script>
     <script>
         const docxScript = document.createElement('script');
@@ -22,7 +20,6 @@
         docxScript.onload = () => {
             window.docx = docx;
             console.log("✅ docx available?", window.docx);
-            // 触发一个自定义事件，表示 docx 库已经加载完成
             const docxLoadedEvent = new Event('docxLoaded');
             window.dispatchEvent(docxLoadedEvent);
         };
@@ -35,115 +32,159 @@
 <body>
 
 <h1>正式课（词汇）</h1>
+
+<!-- 顶部固定：用户选择 -->
+<div class="form-group fixed-display">
+    <label for="userName">学员:</label>
+    <select id="userName"></select>
+    <button id="noReviewTodayButton">今日无复习</button>
+    <label id="reviewDateLabel"></label>
+</div>
+
+<!-- 导航按钮 -->
 <div id="button-container">
     <button id="navigateToTiyanClass">体验课</button>
     <button id="navigateToReadClass">阅读课</button>
     <button id="wordSelfCheckButton">单词自检</button>
 </div>
-<div class="form-group fixed-display">
-    <label for="userName">User Name:</label>
-    <select id="userName"></select>
-    <button id="noReviewTodayButton">今日无复习</button>
-    <label id="reviewDateLabel"></label>
-</div>
-<div><label id="courseLabel"></label>
-    <label id="courseWordCountLabel"></label></div>
-<div class="scheduleLabels"></div>
-<div class="form-group">
-    <label for="teacherName">教师名称:</label>
-    <select id="teacherName">
-        <option value="liTeacher">英语提升李教练</option>
-        <option value="shiTeacher">英语提升施教练</option>
-    </select>
-    <button id="groupGreetingButton">入群招呼语</button>
-    <button id="viewTotalHoursButton">查看课时数</button>
-</div>
-<div>
-    <label for="classDateTime">新课时间:</label>
-    <input type="datetime-local" id="classDateTime" value="">
-    <!-- 新增课时时长选择 -->
-    <label for="classDuration">课时时长:</label>
-    <select id="classDuration">
-        <option value="1">1小时</option>
-        <option value="0.5">0.5小时</option>
-    </select>
-</div>
-<div>
-    <button id="scheduleNotificationButton">排课通知</button>
-    <button id="stop">结束语</button>
-    <button id="lateMeetingReminderButton">迟到10分钟后</button>
-    <label id="todayReviewDates"></label>
-</div>
 
-<div>
-    <label for="reviewWord">复习单词:</label>
-    <input type="text" id="reviewWord" placeholder="Enter review words" value="0">
-    <!-- Add an input field for 遗忘单词 -->
-    <label for="reviewforgetWord">复习所遗忘单词:</label>
-    <input type="text" id="reviewforgetWord" value="0">
-    <label for="learnedWord">已学单词:</label>
-    <input type="text" id="learnedWord" value="0">
-</div>
-<div>
-    <label for="newWord">新学单词:</label>
-    <input type="text" id="newWord" placeholder="Enter new words" value="30">
-    <!-- Add an input field for 遗忘单词 -->
-    <label for="forgetWord">遗忘单词:</label>
-    <input type="text" id="forgetWord" value="0">
-    <button id="classFeedbackButton">课堂反馈</button>
-    <button id="selfReview">课后复习方式</button>
-</div>
-<div>
-    <label for="preTestWord">学前检测:</label>
-    <input type="text" id="preTestWord" value="0">
-    <label for="reviewTime">复习时间:</label>
-    <input type="datetime-local" id="reviewTime" value="2024-02-28T18:00">
-</div>
-<div>
-    <button id="managementGroupTemplateButton">抗遗忘通知</button>
-    <button id="openingSpeechButton">开场话术</button>
-    <button id="appointmentSchedulingButton">预约排课</button>
-</div>
-<div>
-    <!-- Add input boxes for 抗遗忘复习单词 and 抗遗忘遗忘单词 -->
-    <label for="antiForgettingReviewWord">抗遗忘复习单词:</label>
-    <input type="text" class="antiForgettingReviewWord" value="">
-    <input type="text" class="antiForgettingReviewWord" value="">
-    <input type="text" class="antiForgettingReviewWord" value="">
-    <input type="text" class="antiForgettingReviewWord" value="">
-    <label for="antiForgettingForgetWord">抗遗忘遗忘单词:</label>
-    <input type="text" id="antiForgettingForgetWord" value="0">
-</div>
-<label for="newLearnedWords">新学单词 (英文+中文):<span style="color: red;">支持右键粘贴</span></label>
-<textarea id="newLearnedWords"></textarea>
-<label for="forgetWords">遗忘词 (英文+中文):<span style="color: red;">支持右键粘贴</span></label>
-<textarea id="forgetWords"></textarea>
-<label for="pronounceWords">发音不标准的词:<span style="color: red;">支持右键粘贴</span></label>
-<textarea id="pronounceWords"></textarea>
-<label for="keyLanguagePoints">重点语言点:</label>
-<textarea id="keyLanguagePoints" name="keyLanguagePoints"></textarea>
-<label for="practiceArea">语言点实战区:</label>
-<textarea id="practiceArea" name="practiceArea"></textarea>
-<div>
-    <button id="antiForgettingFeedbackButton">抗遗忘课堂反馈</button>
-    <button id="newFeedbackButton">新版反馈</button>
-    <button id="bye">体验课结束语</button>
-    <input id="daysRangeInput" value="1">
-    <button id="downloadFileButton">抗遗忘统计</button>
-    <button id="downloadFormalButton">正课统计</button>
-</div>
-<div>
-    <button id="downloadSalaryButton">工资统计</button>
-    <button id="downloadWordButton">导出Word</button>
-    <button id="downloadForgetWordButton">导出遗忘Word</button>
-</div>
-<div class="bottom-controls">
-    <label for="totalHours">总课时:</label>
-    <input type="text" id="totalHours" placeholder="请输入总课时">
-    <button id="resetTotalButton">Reset总课时</button>
-    <button id="useHoursButton">扣减课时</button>
-    <input type="checkbox" id="includeHoursInfo">
-</div>
+<!-- 课程信息区 -->
+<fieldset class="section-group">
+    <legend>📚 课程信息</legend>
+    <div class="scheduleLabels"></div>
+    <div>
+        <label id="courseLabel"></label>
+        <label id="courseWordCountLabel"></label>
+    </div>
+    <div class="form-row">
+        <label for="teacherName">教师:</label>
+        <select id="teacherName">
+            <option value="liTeacher">英语提升李教练</option>
+            <option value="shiTeacher">英语提升施教练</option>
+        </select>
+        <button id="groupGreetingButton">入群招呼语</button>
+        <button id="viewTotalHoursButton">查看课时数</button>
+    </div>
+    <div class="form-row">
+        <label for="classDateTime">新课时间:</label>
+        <input type="datetime-local" id="classDateTime" value="">
+        <label for="classDuration">时长:</label>
+        <select id="classDuration">
+            <option value="1">1小时</option>
+            <option value="0.5">0.5小时</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="reviewTime">复习时间:</label>
+        <input type="datetime-local" id="reviewTime" value="2024-02-28T18:00">
+    </div>
+    <div class="form-row">
+        <button id="scheduleNotificationButton">排课通知</button>
+        <button id="managementGroupTemplateButton">抗遗忘通知</button>
+        <button id="appointmentSchedulingButton">预约排课</button>
+        <button id="openingSpeechButton">开场话术</button>
+        <button id="stop">结束语</button>
+        <button id="lateMeetingReminderButton">迟到10分钟后</button>
+    </div>
+    <div class="form-row">
+        <label id="todayReviewDates"></label>
+    </div>
+</fieldset>
+
+<!-- 课堂反馈区 -->
+<fieldset class="section-group">
+    <legend>📝 课堂反馈</legend>
+    <div class="form-row">
+        <label for="preTestWord">学前检测:</label>
+        <input type="text" id="preTestWord" value="0">
+        <label for="reviewWord">复习单词:</label>
+        <input type="text" id="reviewWord" placeholder="0" value="0">
+        <label for="reviewforgetWord">复习遗忘:</label>
+        <input type="text" id="reviewforgetWord" value="0">
+    </div>
+    <div class="form-row">
+        <label for="newWord">新学单词:</label>
+        <input type="text" id="newWord" placeholder="30" value="30">
+        <label for="forgetWord">遗忘:</label>
+        <input type="text" id="forgetWord" value="0">
+        <label for="learnedWord">已学单词:</label>
+        <input type="text" id="learnedWord" value="0">
+    </div>
+    <div class="form-row">
+        <button id="classFeedbackButton">课堂反馈</button>
+        <button id="selfReview">课后复习方式</button>
+        <button id="bye">体验课结束语</button>
+    </div>
+    <div>
+        <label for="newLearnedWords">新学单词 (英文+中文):<span style="color: red;">支持右键粘贴</span></label>
+        <textarea id="newLearnedWords"></textarea>
+    </div>
+</fieldset>
+
+<!-- 抗遗忘复习区 -->
+<fieldset class="section-group">
+    <legend>🔄 抗遗忘复习</legend>
+    <div class="form-row">
+        <label>复习单词:</label>
+        <input type="text" class="antiForgettingReviewWord" value="">
+        <input type="text" class="antiForgettingReviewWord" value="">
+        <input type="text" class="antiForgettingReviewWord" value="">
+        <input type="text" class="antiForgettingReviewWord" value="">
+        <label>遗忘:</label>
+        <input type="text" id="antiForgettingForgetWord" value="0">
+    </div>
+    <div>
+        <label for="forgetWords">遗忘词 (英文+中文):<span style="color: red;">支持右键粘贴</span></label>
+        <textarea id="forgetWords"></textarea>
+    </div>
+    <div>
+        <label for="pronounceWords">发音不标准的词:<span style="color: red;">支持右键粘贴</span></label>
+        <textarea id="pronounceWords"></textarea>
+    </div>
+    <div>
+        <label for="keyLanguagePoints">重点语言点:</label>
+        <br>
+        <textarea id="keyLanguagePoints" name="keyLanguagePoints"></textarea>
+    </div>
+    <div>
+        <label for="practiceArea">语言点实战区:</label>
+        <br>
+        <textarea id="practiceArea" name="practiceArea"></textarea>
+    </div>
+    <div class="form-row">
+        <button id="antiForgettingFeedbackButton">抗遗忘课堂反馈</button>
+        <button id="newFeedbackButton">新版反馈</button>
+    </div>
+</fieldset>
+
+<!-- 数据统计区 -->
+<fieldset class="section-group">
+    <legend>📊 数据统计</legend>
+    <div class="form-row">
+        <input id="daysRangeInput" value="1" style="width:30px;">
+        <span>天</span>
+        <button id="downloadFileButton">抗遗忘统计</button>
+        <button id="downloadFormalButton">正课统计</button>
+        <button id="downloadSalaryButton">工资统计</button>
+    </div>
+    <div class="form-row">
+        <button id="downloadWordButton">导出Word</button>
+        <button id="downloadForgetWordButton">导出遗忘Word</button>
+    </div>
+</fieldset>
+
+<!-- 课时管理区 -->
+<fieldset class="section-group bottom-controls">
+    <legend>⏰ 课时管理</legend>
+    <div class="form-row">
+        <label for="totalHours">总课时:</label>
+        <input type="text" id="totalHours" placeholder="请输入总课时">
+        <button id="resetTotalButton">Reset总课时</button>
+        <button id="useHoursButton">扣减课时</button>
+        <input type="checkbox" id="includeHoursInfo">
+        <label for="includeHoursInfo">显示课时详情</label>
+    </div>
+</fieldset>
 
 <script type="module">
     import * as script from './classFormal.js';
@@ -151,7 +192,6 @@
 
     // 监听 docxLoaded 事件
     window.addEventListener('docxLoaded', () => {
-        // 在这里执行需要使用 docx 库的代码
         const downloadWordButton = document.getElementById("downloadWordButton");
         downloadWordButton.addEventListener("click", script.generateWordReport);
         console.log("generateWordReport method is bound to the downloadWordButton");
@@ -192,13 +232,11 @@
     const keyLanguagePoints = document.getElementById('keyLanguagePoints');
     const practiceArea = document.getElementById('practiceArea');
 
-    // 调用封装的函数为 textarea 添加右键粘贴功能
     commonFunctions.addRightClickPasteEvent(forgetWordsTextarea);
     commonFunctions.addRightClickPasteEvent(pronounceWordsTextarea);
     commonFunctions.addRightClickPasteEvent(newLearnedWordsTextarea);
     commonFunctions.addRightClickPasteEvent(keyLanguagePoints);
     commonFunctions.addRightClickPasteEvent(practiceArea);
-
 </script>
 </body>
 </html>
