@@ -29,18 +29,6 @@ export function navigateToReadClass() {
     window.location.href = "class-read.html";
 }
 
-export function navigateToSong() {
-    window.location.href = "song.html";
-}
-
-export function navigateToSongLearning() {
-    window.location.href = "jpn.html";
-}
-
-export function navigateToSongPlayer() {
-    window.location.href = "songPlayer/player.html";
-}
-
 export function checkLoginStatus() {
     const currentDate = new Date().toDateString(); // Get today's date
 
