@@ -313,9 +313,9 @@ export function handleClassFeedbackClick() {
     const newLearnedWordsText = document.getElementById('newLearnedWords').value.trim();
     const newWordCountFromText = countEnglishWords(newLearnedWordsText);
     const newWordInput = document.getElementById("newWord");
-    const newWordInputText = newWordInput.value.trim();
+    const newWordInputText = newWordInput.value.replace(/\s/g, ''); // 移除所有空格
     let newWord = newWordInputText ? newWordInputText.split('+').reduce((sum, num) => {
-        const parsedNum = parseInt(num.trim(), 10);
+        const parsedNum = parseInt(num, 10);
         return sum + (isNaN(parsedNum) ? 0 : parsedNum);
     }, 0) : 0;
 
@@ -327,9 +327,9 @@ export function handleClassFeedbackClick() {
         }
     }
 
-    const reviewWordInputText = document.getElementById("reviewWord").value.trim();
+    const reviewWordInputText = document.getElementById("reviewWord").value.replace(/\s/g, ''); // 移除所有空格
     const reviewWordCount = reviewWordInputText ? reviewWordInputText.split('+').reduce((sum, num) => {
-        const parsedNum = parseInt(num.trim(), 10);
+        const parsedNum = parseInt(num, 10);
         return sum + (isNaN(parsedNum) ? 0 : parsedNum);
     }, 0) : 0;
     const reviewforgetWord = document.getElementById("reviewforgetWord").value;
@@ -338,9 +338,9 @@ export function handleClassFeedbackClick() {
     const correctRate = ((newWord - forgetWord) / newWord * 100).toFixed(0);
 
     const learnedWord = parseInt(document.getElementById("learnedWord").value.trim()) || 0;
-    const inputText = document.getElementById('preTestWord').value.trim();
+    const inputText = document.getElementById('preTestWord').value.replace(/\s/g, ''); // 移除所有空格
     let preTestWord = inputText ? inputText.split('+').reduce((sum, num) => {
-        const parsedNum = parseInt(num.trim(), 10);
+        const parsedNum = parseInt(num, 10);
         return sum + (isNaN(parsedNum) ? 0 : parsedNum);
     }, 0) : 0;
 
@@ -408,7 +408,22 @@ export function handleClassFeedbackClick() {
 
     // 复制到剪贴板并弹窗显示
     copyToClipboard(feedbackMessage);
-    showLongText(`${feedbackMessage}`);
+    // 课堂反馈使用10秒显示时间
+    showLongTextWithDuration(feedbackMessage, 10000);
+}
+
+// 自定义显示时长的弹窗函数
+function showLongTextWithDuration(longText, duration) {
+    const textElement = document.createElement('div');
+    textElement.innerHTML = longText;
+    textElement.classList.add('long-text');
+    document.body.appendChild(textElement);
+    setTimeout(() => {
+        textElement.style.opacity = '0';
+        setTimeout(() => {
+            textElement.remove();
+        }, 300);
+    }, duration);
 }
 
 const DB_NAME = 'FeedbackDB';

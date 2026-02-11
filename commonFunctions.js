@@ -913,7 +913,7 @@ export function showLongText(longText) {
         setTimeout(() => {
             textElement.remove(); // Remove the text after hiding
         }, 300); // Adjust the timing of removal as needed (300 milliseconds in this case)
-    }, 2000); // Adjust the timing of visibility as needed (2000 milliseconds in this case)
+    }, 2000); // 弹框显示2秒
 }
 
 export function getRandomMotto() {
