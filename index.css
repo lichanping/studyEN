@@ -78,7 +78,7 @@ body {
 }
 
 #daysRangeInput {
-    width: 22px;
+    width: 30px;
 }
 
 #preTestWord, #reviewWord, #newWord {
@@ -131,7 +131,8 @@ input:focus, select:focus {
 }
 
 textarea {
-    width: 450px;
+    width: 100%;
+    max-width: 500px;
     height: 70px;
     font-size: 17px;
     padding: 8px;
@@ -158,15 +159,37 @@ h1 {
     display: flex;
     flex-wrap: wrap;
     gap: 5px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+/* 分组样式 */
+.section-group {
+    width: 100%;
+    max-width: 700px;
+    margin-bottom: 15px;
+    padding: 15px;
+    background-color: #f5f3ef;
+    border: 1px solid #c5c0b8;
+    border-radius: 8px;
+}
+
+.section-group legend {
+    font-size: 17px;
+    font-weight: 600;
+    color: #4a4a4a;
+    padding: 0 10px;
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 8px;
 }
 
 .bottom-controls {
-    margin-top: 15px;
-    padding: 10px;
-    background-color: #f5f3ef;
-    border-radius: 6px;
-    border: 1px solid #c5c0b8;
+    margin-top: 10px;
 }
 
 input[type="checkbox"] {
@@ -179,4 +202,33 @@ input[type="datetime-local"] {
     background-color: #f5f3ef;
     color: #3d3d3d;
     border: 1px solid #c5c0b8;
+}
+
+/* 课程标签样式 */
+.scheduleLabels {
+    margin-bottom: 8px;
+}
+
+.scheduleLabel {
+    color: red;
+    font-weight: 500;
+}
+
+#courseLabel {
+    font-weight: 600;
+    color: #4a4a4a;
+}
+
+#courseWordCountLabel {
+    margin-left: 10px;
+    color: #666;
+}
+
+#todayReviewDates {
+    font-size: 15px;
+}
+
+/* 统计区域天数输入 */
+#daysRangeInput {
+    text-align: center;
 }
