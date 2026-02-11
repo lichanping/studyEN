@@ -64,15 +64,15 @@
         </select>
         <button id="groupGreetingButton">入群招呼语</button>
         <button id="viewTotalHoursButton">查看课时数</button>
-    </div>
-    <div class="form-row">
-        <label for="classDateTime">新课时间:</label>
-        <input type="datetime-local" id="classDateTime" value="">
         <label for="classDuration">时长:</label>
         <select id="classDuration">
             <option value="1">1小时</option>
             <option value="0.5">0.5小时</option>
         </select>
+    </div>
+    <div class="form-row">
+        <label for="classDateTime">新课时间:</label>
+        <input type="datetime-local" id="classDateTime" value="">
     </div>
     <div class="form-row">
         <label for="reviewTime">复习时间:</label>
@@ -117,6 +117,7 @@
     </div>
     <div>
         <label for="newLearnedWords">新学单词 (英文+中文):<span style="color: red;">支持右键粘贴</span></label>
+        <br>
         <textarea id="newLearnedWords"></textarea>
     </div>
 </fieldset>
@@ -135,10 +136,12 @@
     </div>
     <div>
         <label for="forgetWords">遗忘词 (英文+中文):<span style="color: red;">支持右键粘贴</span></label>
+        <br>
         <textarea id="forgetWords"></textarea>
     </div>
     <div>
         <label for="pronounceWords">发音不标准的词:<span style="color: red;">支持右键粘贴</span></label>
+        <br>
         <textarea id="pronounceWords"></textarea>
     </div>
     <div>

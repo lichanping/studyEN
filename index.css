@@ -17,8 +17,9 @@ body {
 .form-group.fixed-display {
     position: fixed;
     top: 10px;
-    left: 10px;
-    right: 10px;
+    left: 20px;
+    width: 100%;
+    max-width: 700px;
     background-color: #f5f3ef;
     padding: 10px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
