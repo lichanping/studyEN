@@ -1,84 +1,84 @@
+/* 护眼淡雅主题 */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Arial, sans-serif;
     text-align: left;
     margin: 20px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    background-color: #f2f2f2;
-    position: relative; /* 为固定定位元素创建参考坐标系 */
-    padding-top: 100px; /* 为固定元素预留顶部空间 */
+    background-color: #e8e4dc; /* 米色护眼背景 */
+    color: #3d3d3d;
+    font-size: 17px;
+    line-height: 1.6;
+    position: relative;
+    padding-top: 100px;
 }
 
 .form-group.fixed-display {
     position: fixed;
-    top: 10px; /* 调整距离顶部的距离 */
-    left: 10px; /* 距离页面左侧的距离 */
-    right: 10px; /* 添加右侧距离防止溢出 */
-    background-color: #fff;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    background-color: #f5f3ef;
     padding: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
     z-index: 1000;
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
     align-items: center;
+    border: 1px solid #c5c0b8;
+    border-radius: 6px;
 }
 
 #userName {
-    /* 尺寸与间距 */
-    width: 120px; /* 加宽控件 */
-    height: 54px; /* 增加高度 */
-    padding: 12px 20px; /* 内边距优化 */
-
-    /* 字体与文本 */
-    font-size: 22px; /* 放大字体 */
-    font-weight: bold; /* 加粗文字 */
-    color: #2980B9; /* 深色文字 */
-
-    /* 边框与背景 */
-    background: #ffffff;
-    border: 3px solid #3498db; /* 加粗亮色边框 */
-    border-radius: 10px; /* 大圆角 */
-
-    /* 移除默认样式 */
+    width: 120px;
+    height: 50px;
+    padding: 10px 16px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #4a4a4a;
+    background: #f5f3ef;
+    border: 2px solid #b8b3a9;
+    border-radius: 8px;
     appearance: none;
     outline: none;
     cursor: pointer;
-
-    /* 阴影增强立体感 */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 #classFeedbackButton, #appointmentSchedulingButton, #stop, #noReviewTodayButton, #newFeedbackButton {
-    background-color: lightblue;
+    background-color: #b8ccd8; /* 淡灰蓝 */
 }
 
 #viewTotalHoursButton {
-    background-color: #ff9800;
+    background-color: #c9a86c; /* 稍深的暖棕色，更醒目 */
+    font-weight: 600;
 }
 
 /* Add more styles as needed */
 .long-text {
     position: fixed;
     top: 50%;
-    left: 0; /* Align to the left */
+    left: 0;
     transform: translateY(-50%);
-    max-width: 40%; /* Adjust the maximum width as needed */
-    background-color: #fff; /* Background color */
-    padding: 10px; /* Padding */
-    border: 1px solid #ccc; /* Border */
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Box shadow */
-    z-index: 9999; /* Ensure it's on top */
+    max-width: 40%;
+    background-color: #f5f3ef;
+    padding: 12px;
+    border: 1px solid #c5c0b8;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    border-radius: 6px;
+    font-size: 17px;
 }
 
 #reviewforgetWord, #learnedWord,
 #newWord, #forgetWord, #antiForgettingForgetWord, #daysRangeInput, #totalHours {
-    width: 35px; /* Specify the width in pixels */
+    width: 40px;
 }
 
 #daysRangeInput {
-    width: 18px;
+    width: 22px;
 }
 
 #preTestWord, #reviewWord, #newWord {
@@ -86,71 +86,97 @@ body {
 }
 
 .antiForgettingReviewWord {
-    width: 27px;
+    width: 32px;
 }
 
 button {
-    background-color: #D0F0C0;
+    background-color: #d4cfc5; /* 淡米灰 */
+    color: #3d3d3d;
     margin: 5px;
-    font-size: 16px; /* Adjust the font size as needed */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Enhanced 3D effect */
-    border: none; /* Remove default button border */
-    padding: 5px 10px; /* Adjust padding as needed */
-    transition: all 0.3s ease; /* Add transition for smooth effect */
+    font-size: 16px;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    border: 1px solid #b8b3a9;
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    cursor: pointer;
 }
 
 button:hover {
-    transform: translateY(-2px); /* Add slight upward movement on hover */
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.5); /* Further enhance shadow effect on hover */
-}
-
-#teacherName {
-    width: 145px; /* Adjust the width as needed */
-}
-
-h1 {
-    font-size: 28px; /* Increase font size */
-    color: #333; /* Darken the color */
-    text-transform: uppercase; /* Convert text to uppercase */
-    letter-spacing: 2px; /* Add letter spacing for emphasis */
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Add a subtle shadow effect */
-    line-height: 1; /* Adjust line height to reduce vertical spacing */
-    margin-top: 0px; /* 确保标题不与固定元素重叠 */
-    padding-top: 0px; /* 标题顶部内边距 */
-}
-
-#forgetWords {
-    width: 200px; /* Adjust the width as needed */
-    height: 60px; /* Adjust the height as needed */
-    font-size: 18px; /* Adjust the font size as needed */
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    background-color: #cac5bb;
 }
 
 label {
-    margin-right: 10px; /* Add margin to labels for better spacing */
+    margin-right: 10px;
+    font-size: 16px;
+    color: #4a4a4a;
 }
 
-button, input, select {
+input, select {
     margin: 5px;
-    font-size: 16px; /* Adjust the font size as needed */
+    font-size: 16px;
+    padding: 6px 10px;
+    background-color: #f5f3ef;
+    color: #3d3d3d;
+    border: 1px solid #c5c0b8;
+    border-radius: 4px;
 }
 
-/* Style for the button container */
-.button-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start; /* Align buttons to the left */
-    margin-top: 10px; /* Add margin for separation from radio buttons */
+input:focus, select:focus {
+    border-color: #a0a0a0;
+    outline: none;
 }
 
-/* Style for individual buttons in the container */
-.button-container button {
-    margin: 5px;
+textarea {
+    width: 450px;
+    height: 70px;
+    font-size: 17px;
+    padding: 8px;
+    background-color: #f5f3ef;
+    color: #3d3d3d;
+    border: 1px solid #c5c0b8;
+    border-radius: 4px;
+}
+
+textarea:focus {
+    border-color: #a0a0a0;
+    outline: none;
+}
+
+h1 {
+    font-size: 26px;
+    color: #4a4a4a;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
 }
 
 #button-container {
     display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 10px;
 }
 
-#button-container button {
-    margin-right: 10px; /* Add some space between buttons */
+.bottom-controls {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #f5f3ef;
+    border-radius: 6px;
+    border: 1px solid #c5c0b8;
+}
+
+input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+input[type="datetime-local"] {
+    background-color: #f5f3ef;
+    color: #3d3d3d;
+    border: 1px solid #c5c0b8;
 }

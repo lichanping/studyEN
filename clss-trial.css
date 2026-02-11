@@ -1,108 +1,153 @@
+/* 护眼淡雅主题 */
 input[type="radio"] {
     display: inline-block;
-    margin-right: 5px; /* Add spacing between radio buttons and labels */
+    margin-right: 5px;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
 }
 
-/* Add a class to the radio button labels for styling */
 .radio-label {
     display: inline-block;
-    margin-right: 15px; /* Adjust the margin for spacing */
+    margin-right: 15px;
+    color: #4a4a4a;
+    font-size: 16px;
 }
 
 #classFeedbackButton, #antiForgettingSpeechButton {
-    background-color: lightblue;
+    background-color: #b8ccd8; /* 淡灰蓝 */
 }
 
 body {
-    font-family: Arial, sans-serif;
-    text-align: left; /* Change to left alignment */
+    font-family: 'Segoe UI', Arial, sans-serif;
+    text-align: left;
     margin: 20px;
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Align items to the left */
-    background-color: #f2f2f2; /* Set background color to a light gray */
+    align-items: flex-start;
+    background-color: #e8e4dc; /* 米色护眼背景 */
+    color: #3d3d3d;
+    font-size: 17px;
+    line-height: 1.6;
 }
 
 .long-text {
     position: fixed;
     top: 50%;
-    left: 0; /* Align to the left */
+    left: 0;
     transform: translateY(-50%);
-    max-width: 40%; /* Adjust the maximum width as needed */
-    background-color: #fff; /* Background color */
-    padding: 10px; /* Padding */
-    border: 1px solid #ccc; /* Border */
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Box shadow */
-    z-index: 9999; /* Ensure it's on top */
+    max-width: 40%;
+    background-color: #f5f3ef;
+    padding: 12px;
+    border: 1px solid #c5c0b8;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    border-radius: 6px;
+    font-size: 17px;
 }
 
 #teacherName {
-    width: 145px; /* Adjust the width as needed */
+    width: 150px;
 }
 
 #vocabularyCount, #studyTime {
-    width: 40px; /* Adjust the width as needed */
+    width: 45px;
 }
 
 #reviewWord,
 #newWord, #forgetWord, #antiForgettingForgetWord, #daysRangeInput {
-    width: 40px; /* Specify the width in pixels */
+    width: 45px;
 }
 
 .antiForgettingReviewWord {
-    width: 27px;
+    width: 32px;
 }
 
 button {
-    background-color: #D0F0C0;
+    background-color: #d4cfc5; /* 淡米灰 */
+    color: #3d3d3d;
     margin: 5px;
-    font-size: 16px; /* Adjust the font size as needed */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Enhanced 3D effect */
-    border: none; /* Remove default button border */
-    padding: 5px 10px; /* Adjust padding as needed */
-    transition: all 0.3s ease; /* Add transition for smooth effect */
+    font-size: 16px;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    border: 1px solid #b8b3a9;
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    cursor: pointer;
 }
 
 button:hover {
-    transform: translateY(-2px); /* Add slight upward movement on hover */
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.5); /* Further enhance shadow effect on hover */
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    background-color: #cac5bb;
 }
 
 label {
-    margin-right: 10px; /* Add margin to labels for better spacing */
+    margin-right: 10px;
+    font-size: 16px;
+    color: #4a4a4a;
 }
 
-button, input, select {
+input, select {
     margin: 5px;
-    font-size: 16px; /* Adjust the font size as needed */
+    font-size: 16px;
+    padding: 6px 10px;
+    background-color: #f5f3ef;
+    color: #3d3d3d;
+    border: 1px solid #c5c0b8;
+    border-radius: 4px;
+}
 
+input:focus, select:focus {
+    border-color: #a0a0a0;
+    outline: none;
 }
 
 #userName {
-    width: 150px; /* Adjust the width as needed */
+    width: 155px;
+    font-size: 17px;
+    font-weight: bold;
+    color: #4a4a4a;
 }
 
 #forgetWords, #pronounceWords, #keyLanguagePoints, #practiceArea {
-    width: 400px; /* Adjust the width as needed */
-    height: 60px; /* Adjust the height as needed */
-    font-size: 18px; /* Adjust the font size as needed */
+    width: 450px;
+    height: 70px;
+    font-size: 17px;
+    padding: 8px;
+    background-color: #f5f3ef;
+    color: #3d3d3d;
+    border: 1px solid #c5c0b8;
+    border-radius: 4px;
+}
+
+#forgetWords:focus, #pronounceWords:focus, #keyLanguagePoints:focus, #practiceArea:focus {
+    border-color: #a0a0a0;
+    outline: none;
 }
 
 #preTestWord {
     width: 100px;
 }
 
-/* Style for the button container */
 .button-container {
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-start; /* Align buttons to the left */
-    margin-top: 10px; /* Add margin for separation from radio buttons */
+    justify-content: flex-start;
+    margin-top: 10px;
 }
 
-/* Style for individual buttons in the container */
-.button-container button {
-    margin: 5px;
+h1 {
+    font-size: 26px;
+    color: #4a4a4a;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
 }
 
-
+input[type="datetime-local"] {
+    background-color: #f5f3ef;
+    color: #3d3d3d;
+    border: 1px solid #c5c0b8;
+}
