@@ -34,19 +34,19 @@ window.addEventListener("load", updateLabel);
 const teacherData = {
     "liTeacher": {
         users: {
+            "徐智浩": {
+                schedule: "徐智浩(体验课)",
+                course: "【推荐】2020版沪外教版必修二（单元顺序）",
+                hours: [19, 30],
+                courseWordCount: 92,
+                duration: 1
+            },
             "陈怡睿": {
                 schedule: "陈怡睿-每天7点后/周二8点后",
                 course: "托福高频词汇",
                 hours: [19, 35],
                 courseWordCount: 3573,
                 duration: 0.5
-            },
-            "吴瑜鑫": {
-                schedule: "吴瑜鑫-每周二四晚7:30",
-                course: "【推荐】2013版人教版六年级上册（单元顺序）",
-                hours: [19, 35],
-                courseWordCount: 147,
-                duration: 1
             },
             "胡贝妮": {
                 schedule: "胡贝妮 (七年级)",
@@ -68,27 +68,6 @@ const teacherData = {
                 hours: [21, 0],
                 courseWordCount: 92,
                 duration: 0.5
-            },
-            "毛沁妍": {
-                schedule: "每周5 毛沁妍(高一女)",
-                course: "上海高考英语考纲词汇（乱序版）",
-                hours: [18, 30],
-                courseWordCount: 92,
-                duration: 1
-            },
-            "张允墨": {
-                schedule: "每周6 张允墨(六年级)",
-                course: "2024秋沪教版（五•四学制）六年级上册",
-                hours: [18, 30],
-                courseWordCount: 92,
-                duration: 1
-            },
-            "徐智浩": {
-                schedule: "徐智浩(体验课)",
-                course: "初中中级体验",
-                hours: [19, 30],
-                courseWordCount: 92,
-                duration: 1
             }
         }
     },
@@ -1281,7 +1260,8 @@ document.head.appendChild(docxScript);
 export async function viewTotalHoursClick() {
     let token = localStorage.getItem('x-token-c');
     if (!token) {
-        await loginApp().catch(() => {});
+        await loginApp().catch(() => {
+        });
         token = localStorage.getItem('x-token-c');
         if (!token) {
             alert('未找到 token，登录失败或未配置。');
