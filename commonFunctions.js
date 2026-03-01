@@ -29,18 +29,6 @@ export function navigateToReadClass() {
     window.location.href = "class-read.html";
 }
 
-export function navigateToSong() {
-    window.location.href = "song.html";
-}
-
-export function navigateToSongLearning() {
-    window.location.href = "jpn.html";
-}
-
-export function navigateToSongPlayer() {
-    window.location.href = "songPlayer/player.html";
-}
-
 export function checkLoginStatus() {
     const currentDate = new Date().toDateString(); // Get today's date
 
@@ -925,7 +913,7 @@ export function showLongText(longText) {
         setTimeout(() => {
             textElement.remove(); // Remove the text after hiding
         }, 300); // Adjust the timing of removal as needed (300 milliseconds in this case)
-    }, 2000); // Adjust the timing of visibility as needed (2000 milliseconds in this case)
+    }, 2000); // 弹框显示2秒
 }
 
 export function getRandomMotto() {

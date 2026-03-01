@@ -85,7 +85,7 @@ export function handleClassFeedbackClick() {
     const newWord = parseInt(document.getElementById("newWord").value) || 30;
     const forgetWord = parseInt(document.getElementById("forgetWord").value) || 0;
     const studyTime = parseInt(document.getElementById("studyTime").value) || 30;
-    const inputText = document.getElementById('preTestWord').value.trim();
+    const inputText = document.getElementById('preTestWord').value.replace(/\s/g, ''); // 移除所有空格
 
     // 添加classDateTime获取
     const classDateTime = document.getElementById("classDateTime").value;
@@ -93,7 +93,7 @@ export function handleClassFeedbackClick() {
     // Default value is 0 if input is empty
     let preTestWord = inputText ? inputText.split('+').reduce((sum, num) => {
         // Parse the integer and add to sum, default to 0 if NaN
-        const parsedNum = parseInt(num.trim(), 10);
+        const parsedNum = parseInt(num, 10);
         return sum + (isNaN(parsedNum) ? 0 : parsedNum);
     }, 0) : 0;
     // Calculate correct rate
