@@ -13,6 +13,7 @@
     <script type="module">
         import * as commonFunctions from './commonFunctions.js';
         commonFunctions.checkLoginStatus();
+
     </script>
     <script>
         const docxScript = document.createElement('script');
@@ -27,6 +28,7 @@
             console.error("❌ Failed to load docx library");
         };
         document.head.appendChild(docxScript);
+
     </script>
 </head>
 <body>
@@ -133,6 +135,10 @@
         <input type="text" class="antiForgettingReviewWord" value="">
         <label>遗忘:</label>
         <input type="text" id="antiForgettingForgetWord" value="0">
+        <div class="form-row">
+            <button id="antiForgettingFeedbackButton">抗遗忘课堂反馈</button>
+            <button id="newFeedbackButton">新版反馈</button>
+        </div>
     </div>
     <div>
         <label for="forgetWords">遗忘词 (英文+中文):<span style="color: red;">支持右键粘贴</span></label>
@@ -154,10 +160,7 @@
         <br>
         <textarea id="practiceArea" name="practiceArea"></textarea>
     </div>
-    <div class="form-row">
-        <button id="antiForgettingFeedbackButton">抗遗忘课堂反馈</button>
-        <button id="newFeedbackButton">新版反馈</button>
-    </div>
+
 </fieldset>
 
 <!-- 数据统计区 -->
@@ -240,6 +243,7 @@
     commonFunctions.addRightClickPasteEvent(newLearnedWordsTextarea);
     commonFunctions.addRightClickPasteEvent(keyLanguagePoints);
     commonFunctions.addRightClickPasteEvent(practiceArea);
+
 </script>
 </body>
 </html>
