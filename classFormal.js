@@ -34,19 +34,19 @@ window.addEventListener("load", updateLabel);
 const teacherData = {
     "liTeacher": {
         users: {
-            "徐智浩": {
-                schedule: "徐智浩(体验课)",
-                course: "【推荐】2020版沪外教版必修二（单元顺序）",
-                hours: [19, 30],
-                courseWordCount: 92,
-                duration: 1
-            },
             "陈怡睿": {
-                schedule: "陈怡睿-每天7点后/周二8点后",
+                schedule: "陈怡睿-每天半小时",
                 course: "托福高频词汇",
                 hours: [19, 35],
                 courseWordCount: 3573,
                 duration: 0.5
+            },
+            "徐智浩": {
+                schedule: "徐智浩(每周五到周日)",
+                course: "【推荐】2020版沪外教版必修三（单元顺序）",
+                hours: [19, 30],
+                courseWordCount: 92,
+                duration: 1
             },
             "胡贝妮": {
                 schedule: "胡贝妮 (七年级)",
@@ -56,14 +56,14 @@ const teacherData = {
                 duration: 1
             },
             "硕硕": {
-                schedule: "每周日10点 硕硕(四年级)",
+                schedule: "周三、五半小时，周六1小时 硕硕(四年级)",
                 course: "牛津上海版小学英语五年级（下册）",
                 hours: [15, 0],
                 courseWordCount: 92,
                 duration: 1
             },
             "邸睿": {
-                schedule: "每周3 邸睿(6年级)",
+                schedule: "周四一小时，周六周日上午半小时 邸睿(6年级)",
                 course: "二刷_新版小学考纲单词",
                 hours: [21, 0],
                 courseWordCount: 92,
