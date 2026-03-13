@@ -43,10 +43,10 @@ const teacherData = {
                 hours: [11, 0],
                 duration: 1
             },
-            "张允墨": {
-                schedule: "张允墨 (5年级)",
-                course: "【5.0】【初级】初中分级阅读_阅读理解_25篇",
-                hours: [17, 0],
+            "徐智浩": {
+                schedule: "徐智浩 (高一)",
+                course: "待定",
+                hours: [20, 0],
                 duration: 1
             },
             "邸睿": {
