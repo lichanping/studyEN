@@ -45,7 +45,7 @@ const teacherData = {
             },
             "徐智浩": {
                 schedule: "徐智浩 (高一)",
-                course: "待定",
+                course: "【5.0】【高级】高中分级阅读_阅读理解_40篇",
                 hours: [20, 0],
                 duration: 1
             },
