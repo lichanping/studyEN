@@ -60,7 +60,7 @@ const teacherData = {
                 course: "牛津上海版小学英语五年级（下册）",
                 hours: [15, 0],
                 courseWordCount: 92,
-                duration: 1
+                duration: 0.5
             },
             "邸睿": {
                 schedule: "周四一小时，周六周日上午半小时 邸睿(6年级)",
@@ -68,6 +68,13 @@ const teacherData = {
                 hours: [21, 0],
                 courseWordCount: 92,
                 duration: 0.5
+            },
+            "施博睿": {
+                schedule: "施博睿-三年级小学男生，周末1小时的单词课",
+                course: "二刷_新版小学考纲单词",
+                hours: [13, 30],
+                courseWordCount: 92,
+                duration: 1
             }
         }
     },
