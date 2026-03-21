@@ -50,14 +50,14 @@ const teacherData = {
             },
             "胡贝妮": {
                 schedule: "胡贝妮 (七年级)",
-                course: "【推荐】2024版沪教版七年级上册（单元顺序）",
+                course: "【推荐】2024版沪教版英语单词课程",
                 hours: [19, 45],
                 courseWordCount: 327,
                 duration: 1
             },
             "硕硕": {
                 schedule: "周三、五半小时，周六1小时 硕硕(四年级)222",
-                course: "牛津上海版小学英语五年级（下册）",
+                course: "牛津上海版小学英语单词课程",
                 hours: [15, 0],
                 courseWordCount: 92,
                 duration: 0.5
@@ -71,7 +71,7 @@ const teacherData = {
             },
             "施博睿": {
                 schedule: "施博睿-三年级小学男生，周末1小时的单词课",
-                course: "二刷_新版小学考纲单词",
+                course: "人教版单词课程",
                 hours: [13, 30],
                 courseWordCount: 92,
                 duration: 1
