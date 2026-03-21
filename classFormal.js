@@ -331,7 +331,7 @@ export function handleClassFeedbackClick() {
     }, 0) : 0;
 
     // 生成反馈报告
-    let feedbackMessage = `【${userName}今日学习-《${course}》的反馈】<br><br>`;
+    let feedbackMessage = `【${userName}今日学习反馈】<br><br>`;
 
     // Initialize the index counter
     let index = 1;
