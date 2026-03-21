@@ -64,7 +64,7 @@ const teacherData = {
             },
             "邸睿": {
                 schedule: "周四一小时，周六周日上午半小时 邸睿(6年级)",
-                course: "二刷_新版小学考纲单词",
+                course: "【推荐】沪教版单词课程",
                 hours: [21, 0],
                 courseWordCount: 92,
                 duration: 0.5
