@@ -37,7 +37,7 @@ const teacherData = {
             "陈怡睿": {
                 schedule: "陈怡睿-每天半小时",
                 course: "托福高频词汇",
-                hours: [19, 35],
+                hours: [19, 30],
                 courseWordCount: 3573,
                 duration: 0.5
             },
