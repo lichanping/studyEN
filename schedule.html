@@ -35,10 +35,39 @@
             padding: 0 16px 24px;
         }
 
+        .page-header {
+            position: relative;
+            margin-bottom: 10px;
+        }
+
         h1 {
-            margin: 0 0 10px;
+            margin: 0;
             font-size: 26px;
             text-align: center;
+        }
+
+        .top-nav {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 7px 12px;
+            color: var(--text);
+            text-decoration: none;
+            background: #fff;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            background: #f3f4f6;
         }
 
         .hint {
@@ -271,7 +300,12 @@
 </head>
 <body>
 <div class="container">
-    <h1>每周排课总览</h1>
+    <div class="page-header">
+        <h1>每周排课总览</h1>
+        <div class="top-nav">
+            <a class="back-link" href="index.html">返回</a>
+        </div>
+    </div>
 
     <section class="panel">
         <div class="controls">
