@@ -45,6 +45,7 @@
 
 <!-- 导航按钮 -->
 <div id="button-container">
+    <button id="navigateToSchedulePage">排课总览</button>
     <button id="navigateToTiyanClass">体验课</button>
     <button id="navigateToReadClass">阅读课</button>
     <button id="wordSelfCheckButton">单词自检</button>
@@ -205,6 +206,9 @@
         const downloadForgetWordButton = document.getElementById("downloadForgetWordButton");
         downloadForgetWordButton.addEventListener("click", script.generateForgetWordsReport);
         console.log("generateForgetWordReport method is bound to the downloadForgetWordButton");
+    });
+    document.getElementById("navigateToSchedulePage").addEventListener("click", () => {
+        window.location.href = "schedule.html";
     });
     document.getElementById("navigateToTiyanClass").addEventListener("click", commonFunctions.navigateToTiyanClass);
     document.getElementById("navigateToReadClass").addEventListener("click", commonFunctions.navigateToReadClass);

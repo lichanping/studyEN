@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>排课总览</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #f6f8fc;
+            --card: #ffffff;
+            --text: #1f2937;
+            --subtle: #6b7280;
+            --line: #e5e7eb;
+            --accent: #2563eb;
+            --chip: #eef2ff;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 1080px;
+            margin: 24px auto;
+            padding: 0 16px 24px;
+        }
+
+        h1 {
+            margin: 0 0 10px;
+            font-size: 26px;
+        }
+
+        .hint {
+            margin: 0 0 16px;
+            color: var(--subtle);
+            font-size: 14px;
+        }
+
+        .panel {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 16px;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .controls label {
+            font-weight: 600;
+        }
+
+        .controls input[type="date"] {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 7px 10px;
+            font-size: 14px;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px;
+            padding: 5px 10px;
+            background: var(--chip);
+            color: #3730a3;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .empty {
+            color: var(--subtle);
+            font-size: 14px;
+        }
+
+        .two-day-grid {
+            margin-top: 12px;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .day-column {
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: #fff;
+            padding: 10px;
+        }
+
+        .day-column-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 0 0 10px;
+            font-size: 16px;
+        }
+
+        .column-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .class-item {
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            background: #fff;
+        }
+
+        .time {
+            font-weight: 700;
+            min-width: 110px;
+        }
+
+        .student {
+            font-weight: 700;
+        }
+
+        .course {
+            color: #1d4ed8;
+            font-weight: 600;
+        }
+
+        .duration {
+            color: var(--subtle);
+        }
+
+        .class-item.cancelled {
+            background: #fff7ed;
+            border-color: #fdba74;
+        }
+
+        .status-tag {
+            border-radius: 999px;
+            padding: 3px 8px;
+            font-size: 12px;
+            font-weight: 700;
+            background: #ecfdf5;
+            color: #047857;
+        }
+
+        .status-tag.cancelled {
+            background: #ffedd5;
+            color: #c2410c;
+        }
+
+        .action-btn {
+            margin-left: auto;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 5px 10px;
+            font-size: 12px;
+            background: #fff;
+            cursor: pointer;
+        }
+
+        .action-btn.cancel {
+            color: #b45309;
+            border-color: #fdba74;
+            background: #fff7ed;
+        }
+
+        .action-btn.restore {
+            color: #065f46;
+            border-color: #6ee7b7;
+            background: #ecfdf5;
+        }
+
+        .week-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: 10px;
+            overflow-x: visible;
+            padding-bottom: 4px;
+        }
+
+        .day-card {
+            min-height: 220px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: #fff;
+            padding: 10px;
+        }
+
+        @media (max-width: 1200px) {
+            .week-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        }
+
+        @media (max-width: 900px) {
+            .week-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
+
+        @media (max-width: 680px) {
+            .week-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+
+        @media (max-width: 480px) {
+            .week-grid { grid-template-columns: 1fr; }
+            .day-card { min-height: auto; padding: 9px; }
+            .mini-item { font-size: 12px; }
+            .two-day-grid { grid-template-columns: 1fr; }
+            .action-btn { margin-left: 0; }
+        }
+
+        .day-card h3 {
+            margin: 0 0 8px;
+            font-size: 15px;
+        }
+
+        .day-meta {
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: var(--subtle);
+        }
+
+        .mini-item {
+            border-top: 1px dashed var(--line);
+            padding-top: 8px;
+            margin-top: 8px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .mini-item.cancelled {
+            color: #9a3412;
+            background: #fff7ed;
+            border-radius: 6px;
+            padding: 8px;
+            border: 1px solid #fdba74;
+        }
+
+        .mini-status {
+            display: inline-block;
+            margin-top: 4px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .mini-item:first-of-type {
+            border-top: none;
+            margin-top: 0;
+            padding-top: 0;
+        }
+
+        code {
+            background: #f3f4f6;
+            border-radius: 5px;
+            padding: 1px 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>每周排课总览</h1>
+    <p class="hint">修改本页底部 <code>schedule-config</code> 的内容即可调整排课，不需要改渲染逻辑。</p>
+
+    <section class="panel">
+        <div class="controls">
+            <label for="datePicker">选择日期：</label>
+            <input id="datePicker" type="date">
+            <span id="selectedDayText" class="pill"></span>
+            <span id="dailyTotal" class="pill"></span>
+        </div>
+        <div class="hint" style="margin-top: 8px;">今日/明日每节课可标记请假，状态会同步体现在当周视图。</div>
+        <div class="two-day-grid">
+            <article class="day-column">
+                <h3 id="todayColumnTitle" class="day-column-title"></h3>
+                <div id="todayList" class="column-list"></div>
+            </article>
+            <article class="day-column">
+                <h3 id="tomorrowColumnTitle" class="day-column-title"></h3>
+                <div id="tomorrowList" class="column-list"></div>
+            </article>
+        </div>
+    </section>
+
+    <section class="panel">
+        <span id="weeklyTotal" class="pill"></span>
+        <div id="weekGrid" class="week-grid" style="margin-top: 10px;"></div>
+    </section>
+</div>
+
+<script id="schedule-config" type="application/json">
+{
+  "entries": [
+    {
+      "student": "陈怡睿",
+      "course": "单词",
+      "durationMinutes": 30,
+      "days": ["周一", "周二", "周三", "周四", "周五", "周六", "周日"],
+      "period": "晚上",
+      "time": ""
+    },
+    {
+      "student": "硕硕",
+      "course": "单词",
+      "durationMinutes": 30,
+      "days": ["周三"],
+      "period": "晚上",
+      "time": ""
+    },
+    {
+      "student": "硕硕",
+      "course": "阅读",
+      "durationMinutes": 60,
+      "days": ["周六"],
+      "period": "晚上",
+      "time": "20:00"
+    },
+    {
+      "student": "邸睿",
+      "course": "阅读",
+      "durationMinutes": 60,
+      "days": ["周四"],
+      "period": "晚上",
+      "time": ""
+    },
+    {
+      "student": "邸睿",
+      "course": "单词",
+      "durationMinutes": 60,
+      "days": ["周六"],
+      "period": "上午",
+      "time": ""
+    },
+    {
+      "student": "徐智浩",
+      "course": "单词",
+      "durationMinutes": 60,
+      "days": ["周五", "周六"],
+      "period": "晚上",
+      "time": ""
+    },
+    {
+      "student": "胡贝妮",
+      "course": "单词",
+      "durationMinutes": 60,
+      "days": ["周六", "周日"],
+      "period": "上午",
+      "time": "10:00"
+    },
+    {
+      "student": "施博睿",
+      "course": "单词",
+      "durationMinutes": 60,
+      "days": ["周六"],
+      "period": "下午",
+      "time": "13:30"
+    }
+  ]
+}
+</script>
+
+<script>
+    const WEEK_DAYS = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
+    const PERIOD_ORDER = { "上午": 1, "中午": 2, "下午": 3, "晚上": 4 };
+    const CANCELLATION_STORAGE_KEY = "schedule-cancellations-v1";
+    let cancellationState = {};
+
+    function getConfig() {
+        const raw = document.getElementById("schedule-config").textContent;
+        return JSON.parse(raw);
+    }
+
+    function toHoursText(minutes) {
+        const h = minutes / 60;
+        if (Number.isInteger(h)) return h + "小时";
+        return h.toFixed(1).replace(".0", "") + "小时";
+    }
+
+    function getDayFromDateInput(value) {
+        if (!value) return "";
+        const date = new Date(value + "T00:00:00");
+        const day = date.getDay();
+        return WEEK_DAYS[(day + 6) % 7];
+    }
+
+    function getDateLabel(value) {
+        const date = new Date(value + "T00:00:00");
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        return y + "-" + m + "-" + d;
+    }
+
+    function addDays(value, days) {
+        const date = new Date(value + "T00:00:00");
+        date.setDate(date.getDate() + days);
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        return y + "-" + m + "-" + d;
+    }
+
+    function formatTime(entry) {
+        return entry.time ? entry.time : entry.period;
+    }
+
+    function getEntryId(entry) {
+        if (entry.id) return String(entry.id);
+        return [
+            entry.student,
+            entry.course,
+            entry.durationMinutes,
+            entry.period || "",
+            entry.time || "",
+            (entry.days || []).join("|")
+        ].join("__");
+    }
+
+    function getCancellationKey(entry, dateValue) {
+        return dateValue + "::" + getEntryId(entry);
+    }
+
+    function loadCancellations() {
+        try {
+            const raw = localStorage.getItem(CANCELLATION_STORAGE_KEY);
+            const parsed = raw ? JSON.parse(raw) : {};
+            if (parsed && typeof parsed === "object") return parsed;
+        } catch (error) {
+            console.warn("取消状态读取失败，已重置", error);
+        }
+        return {};
+    }
+
+    function saveCancellations() {
+        localStorage.setItem(CANCELLATION_STORAGE_KEY, JSON.stringify(cancellationState));
+    }
+
+    function isCancelled(entry, dateValue) {
+        const key = getCancellationKey(entry, dateValue);
+        return Boolean(cancellationState[key]);
+    }
+
+    function toggleCancellation(entry, dateValue) {
+        const key = getCancellationKey(entry, dateValue);
+        if (cancellationState[key]) {
+            delete cancellationState[key];
+        } else {
+            cancellationState[key] = { cancelled: true, updatedAt: new Date().toISOString() };
+        }
+        saveCancellations();
+    }
+
+    function buildDayMap(entries) {
+        const dayMap = Object.fromEntries(WEEK_DAYS.map((d) => [d, []]));
+        for (const entry of entries) {
+            for (const day of entry.days) {
+                if (dayMap[day]) {
+                    dayMap[day].push(entry);
+                }
+            }
+        }
+
+        for (const day of WEEK_DAYS) {
+            dayMap[day].sort((a, b) => {
+                const p = (PERIOD_ORDER[a.period] || 99) - (PERIOD_ORDER[b.period] || 99);
+                if (p !== 0) return p;
+                if (a.time && b.time) return a.time.localeCompare(b.time);
+                if (a.time) return -1;
+                if (b.time) return 1;
+                return a.student.localeCompare(b.student, "zh-CN");
+            });
+        }
+
+        return dayMap;
+    }
+
+    function renderDayEntries(list, entries, dateValue, onChange) {
+        if (entries.length === 0) {
+            list.innerHTML = '<div class="empty">这一天没有排课。</div>';
+            return;
+        }
+
+        list.innerHTML = "";
+        entries.forEach((item) => {
+            const cancelled = isCancelled(item, dateValue);
+
+            const row = document.createElement("div");
+            row.className = "class-item" + (cancelled ? " cancelled" : "");
+
+            const time = document.createElement("span");
+            time.className = "time";
+            time.textContent = formatTime(item);
+
+            const student = document.createElement("span");
+            student.className = "student";
+            student.textContent = item.student;
+
+            const course = document.createElement("span");
+            course.className = "course";
+            course.textContent = item.course;
+
+            const duration = document.createElement("span");
+            duration.className = "duration";
+            duration.textContent = "(" + toHoursText(item.durationMinutes) + ")";
+
+            const status = document.createElement("span");
+            status.className = "status-tag" + (cancelled ? " cancelled" : "");
+            status.textContent = cancelled ? "已请假" : "正常";
+
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "action-btn " + (cancelled ? "restore" : "cancel");
+            button.textContent = cancelled ? "恢复上课" : "标记请假";
+            button.addEventListener("click", () => {
+                toggleCancellation(item, dateValue);
+                onChange();
+            });
+
+            row.append(time, student, course, duration, status, button);
+            list.appendChild(row);
+        });
+    }
+
+    function renderToday(dayMap, baseDate) {
+        const todayList = document.getElementById("todayList");
+        const tomorrowList = document.getElementById("tomorrowList");
+        const todayColumnTitle = document.getElementById("todayColumnTitle");
+        const tomorrowColumnTitle = document.getElementById("tomorrowColumnTitle");
+        const selectedDayText = document.getElementById("selectedDayText");
+        const dailyTotal = document.getElementById("dailyTotal");
+        const todayDay = getDayFromDateInput(baseDate);
+        const tomorrowDate = addDays(baseDate, 1);
+        const tomorrowDay = getDayFromDateInput(tomorrowDate);
+
+        const todayEntries = dayMap[todayDay] || [];
+        const tomorrowEntries = dayMap[tomorrowDay] || [];
+
+        const todayMinutes = todayEntries
+            .filter((item) => !isCancelled(item, baseDate))
+            .reduce((sum, item) => sum + item.durationMinutes, 0);
+        const todayCancelledCount = todayEntries.filter((item) => isCancelled(item, baseDate)).length;
+
+        const tomorrowMinutes = tomorrowEntries
+            .filter((item) => !isCancelled(item, tomorrowDate))
+            .reduce((sum, item) => sum + item.durationMinutes, 0);
+        const tomorrowCancelledCount = tomorrowEntries.filter((item) => isCancelled(item, tomorrowDate)).length;
+
+        selectedDayText.textContent = "今日对应：" + todayDay;
+        dailyTotal.textContent = "今日应上：" + toHoursText(todayMinutes) + "（请假" + todayCancelledCount + "节）";
+
+        todayColumnTitle.textContent = "今日（" + getDateLabel(baseDate) + " · " + todayDay + " · 应上" + toHoursText(todayMinutes) + "）";
+        tomorrowColumnTitle.textContent = "明日（" + getDateLabel(tomorrowDate) + " · " + tomorrowDay + " · 应上" + toHoursText(tomorrowMinutes) + "）";
+        if (tomorrowCancelledCount > 0) {
+            tomorrowColumnTitle.textContent += " · 请假" + tomorrowCancelledCount + "节";
+        }
+
+        renderDayEntries(todayList, todayEntries, baseDate, () => {
+            renderToday(dayMap, baseDate);
+            renderWeek(dayMap, baseDate);
+        });
+        renderDayEntries(tomorrowList, tomorrowEntries, tomorrowDate, () => {
+            renderToday(dayMap, baseDate);
+            renderWeek(dayMap, baseDate);
+        });
+    }
+
+    function getMondayOfWeek(dateValue) {
+        const date = new Date(dateValue + "T00:00:00");
+        const day = date.getDay();
+        const diff = day === 0 ? -6 : 1 - day;
+        date.setDate(date.getDate() + diff);
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        return y + "-" + m + "-" + d;
+    }
+
+    function renderWeek(dayMap, baseDate) {
+        const weekGrid = document.getElementById("weekGrid");
+        const weeklyTotal = document.getElementById("weeklyTotal");
+        const weekStart = getMondayOfWeek(baseDate);
+
+        let weekMinutes = 0;
+        let weekCancelledCount = 0;
+        weekGrid.innerHTML = WEEK_DAYS.map((day) => {
+            const dayIndex = WEEK_DAYS.indexOf(day);
+            const dayDate = addDays(weekStart, dayIndex);
+            const items = dayMap[day] || [];
+            const dayMinutes = items
+                .filter((item) => !isCancelled(item, dayDate))
+                .reduce((sum, item) => sum + item.durationMinutes, 0);
+            const dayCancelledCount = items.filter((item) => isCancelled(item, dayDate)).length;
+            weekCancelledCount += dayCancelledCount;
+            weekMinutes += dayMinutes;
+            const rows = items.length
+                ? items.map((it) => {
+                    const cancelled = isCancelled(it, dayDate);
+                    return '<div class="mini-item' + (cancelled ? ' cancelled' : '') + '">' +
+                        '<strong>' + formatTime(it) + '</strong><br>' +
+                        it.student + ' · ' + it.course + ' · ' + toHoursText(it.durationMinutes) +
+                        '<br><span class="mini-status">' + (cancelled ? '已请假' : '正常') + '</span>' +
+                        '</div>';
+                }).join("")
+                : '<div class="empty">无排课</div>';
+
+            return '<article class="day-card">' +
+                '<h3>' + day + '</h3>' +
+                '<div class="day-meta">日期：' + dayDate + ' · 应上：' + toHoursText(dayMinutes) + ' · 请假' + dayCancelledCount + '节</div>' +
+                rows +
+                '</article>';
+        }).join("");
+
+        weeklyTotal.textContent = "本周应上总课时：" + toHoursText(weekMinutes) + "（请假" + weekCancelledCount + "节）";
+    }
+
+    function init() {
+        const config = getConfig();
+        const dayMap = buildDayMap(config.entries || []);
+        const datePicker = document.getElementById("datePicker");
+        cancellationState = loadCancellations();
+
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, "0");
+        const dd = String(today.getDate()).padStart(2, "0");
+        datePicker.value = yyyy + "-" + mm + "-" + dd;
+
+        renderToday(dayMap, datePicker.value);
+        renderWeek(dayMap, datePicker.value);
+
+        datePicker.addEventListener("change", () => {
+            renderToday(dayMap, datePicker.value);
+            renderWeek(dayMap, datePicker.value);
+        });
+    }
+
+    init();
+</script>
+</body>
+</html>
+
