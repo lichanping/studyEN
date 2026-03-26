@@ -102,6 +102,26 @@
             font-size: 14px;
         }
 
+        .controls input,
+        .controls select,
+        .controls button {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 7px 10px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .controls button {
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .appointment-title {
+            margin: 0 0 10px;
+            font-size: 16px;
+        }
+
         .pill {
             display: inline-flex;
             align-items: center;
@@ -158,7 +178,7 @@
 
         .time {
             font-weight: 700;
-            min-width: 110px;
+            min-width: 72px;
         }
 
         .student {
@@ -193,14 +213,22 @@
             color: #c2410c;
         }
 
-        .action-btn {
+        .action-group {
             margin-left: auto;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .action-btn {
             border: 1px solid var(--line);
             border-radius: 8px;
             padding: 5px 10px;
             font-size: 12px;
             background: #fff;
             cursor: pointer;
+            white-space: nowrap;
         }
 
         .action-btn.cancel {
@@ -213,6 +241,26 @@
             color: #065f46;
             border-color: #6ee7b7;
             background: #ecfdf5;
+        }
+
+        .action-btn.remind {
+            color: #1d4ed8;
+            border-color: #93c5fd;
+            background: #eff6ff;
+        }
+
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 24px;
+            transform: translateX(-50%);
+            background: rgba(17, 24, 39, 0.9);
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            z-index: 9999;
+            pointer-events: none;
         }
 
         .week-grid {
@@ -248,7 +296,6 @@
             .day-card { min-height: auto; padding: 9px; }
             .mini-item { font-size: 12px; }
             .two-day-grid { grid-template-columns: 1fr; }
-            .action-btn { margin-left: 0; }
         }
 
         .day-card h3 {
@@ -306,6 +353,32 @@
             <a class="back-link" href="index.html">返回</a>
         </div>
     </div>
+
+    <section class="panel">
+        <h2 class="appointment-title">提醒排课老师</h2>
+        <div class="controls">
+            <label for="userName">学员：</label>
+            <select id="userName"></select>
+
+            <label for="classDateTime">上课日期：</label>
+            <input id="classDateTime" type="datetime-local">
+
+            <label for="appointmentClassType">课程类型：</label>
+            <select id="appointmentClassType">
+                <option value="单词课">单词课</option>
+                <option value="阅读课">阅读课</option>
+                <option value="体验课">体验课</option>
+            </select>
+
+            <label for="classDuration">时长：</label>
+            <select id="classDuration">
+                <option value="1">1小时</option>
+                <option value="0.5">0.5小时</option>
+            </select>
+
+            <button id="appointmentSchedulingButton" type="button">提醒排课</button>
+        </div>
+    </section>
 
     <section class="panel">
         <div class="controls">
@@ -495,6 +568,54 @@
         saveCancellations();
     }
 
+    async function copyTextToClipboard(text) {
+        try {
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(text);
+                return true;
+            }
+
+            const textarea = document.createElement("textarea");
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            const copied = document.execCommand("copy");
+            document.body.removeChild(textarea);
+            return copied;
+        } catch (error) {
+            console.warn("复制失败", error);
+            return false;
+        }
+    }
+
+    function showToast(message) {
+        const oldToast = document.getElementById("scheduleToast");
+        if (oldToast) oldToast.remove();
+
+        const toast = document.createElement("div");
+        toast.id = "scheduleToast";
+        toast.className = "toast";
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.remove();
+        }, 1800);
+    }
+
+    function buildAppointmentMessage(entry, dateValue) {
+        const dateObj = new Date(dateValue + "T00:00:00");
+        const month = dateObj.getMonth() + 1;
+        const day = dateObj.getDate();
+        const weekDay = "日一二三四五六".charAt(dateObj.getDay());
+        const formattedDate = month + "月" + day + "日（周" + weekDay + "）";
+        const classTimeText = entry.time ? (" " + entry.time) : (" " + (entry.period || ""));
+        return "【排课申请】\n" +
+            "学员：【" + entry.student + "】\n" +
+            "时间：" + formattedDate + classTimeText + "\n" +
+            "课程与时长：" + entry.course + "（" + toHoursText(entry.durationMinutes) + "），谢谢～";
+    }
+
     function buildDayMap(entries) {
         const dayMap = Object.fromEntries(WEEK_DAYS.map((d) => [d, []]));
         for (const entry of entries) {
@@ -561,7 +682,21 @@
                 onChange();
             });
 
-            row.append(time, student, course, duration, status, button);
+            const remindButton = document.createElement("button");
+            remindButton.type = "button";
+            remindButton.className = "action-btn remind";
+            remindButton.textContent = "排课申请";
+            remindButton.addEventListener("click", async () => {
+                const appointmentMessage = buildAppointmentMessage(item, dateValue);
+                const copied = await copyTextToClipboard(appointmentMessage);
+                showToast(copied ? "排课文案已复制到剪贴板" : "复制失败，请手动复制");
+            });
+
+            const actionGroup = document.createElement("div");
+            actionGroup.className = "action-group";
+            actionGroup.append(button, remindButton);
+
+            row.append(time, student, course, duration, status, actionGroup);
             list.appendChild(row);
         });
     }
@@ -658,11 +793,32 @@
         weeklyTotal.textContent = "本周应上总课时：" + toHoursText(weekMinutes) + "（请假" + weekCancelledCount + "节）";
     }
 
+    function initAppointmentStudents(entries) {
+        const userNameSelect = document.getElementById("userName");
+        const classDateTimeInput = document.getElementById("classDateTime");
+
+        const uniqueNames = [...new Set((entries || []).map((entry) => entry.student).filter(Boolean))]
+            .sort((a, b) => a.localeCompare(b, "zh-CN"));
+
+        userNameSelect.innerHTML = uniqueNames
+            .map((name) => '<option value="' + name + '">' + name + '</option>')
+            .join("");
+
+        if (!classDateTimeInput.value) {
+            const now = new Date();
+            const yyyy = now.getFullYear();
+            const mm = String(now.getMonth() + 1).padStart(2, "0");
+            const dd = String(now.getDate()).padStart(2, "0");
+            classDateTimeInput.value = yyyy + "-" + mm + "-" + dd + "T20:00";
+        }
+    }
+
     function init() {
         const config = getConfig();
         const dayMap = buildDayMap(config.entries || []);
         const datePicker = document.getElementById("datePicker");
         cancellationState = loadCancellations();
+        initAppointmentStudents(config.entries || []);
 
         const today = new Date();
         const yyyy = today.getFullYear();
@@ -680,6 +836,18 @@
     }
 
     init();
+</script>
+<script type="module">
+    import * as commonFunctions from './commonFunctions.js';
+
+    const appointmentSchedulingButton = document.getElementById("appointmentSchedulingButton");
+    const appointmentClassType = document.getElementById("appointmentClassType");
+
+    appointmentSchedulingButton.addEventListener("click", () => {
+        commonFunctions.handleAppointmentSchedulingClick({
+            classType: appointmentClassType.value
+        });
+    });
 </script>
 </body>
 </html>
