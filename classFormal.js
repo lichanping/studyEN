@@ -67,7 +67,7 @@ const teacherData = {
                 course: "【推荐】沪教版单词课程",
                 hours: [21, 0],
                 courseWordCount: 92,
-                duration: 0.5
+                duration: 1
             },
             "施博睿": {
                 schedule: "施博睿-三年级小学男生，周末1小时的单词课",
