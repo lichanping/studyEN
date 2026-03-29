@@ -11,13 +11,13 @@
     <style>
         :root {
             color-scheme: light;
-            --bg: #f6f8fc;
-            --card: #ffffff;
-            --text: #1f2937;
-            --subtle: #6b7280;
-            --line: #e5e7eb;
-            --accent: #2563eb;
-            --chip: #eef2ff;
+            --bg: #e8e4dc;
+            --card: #f5f3ef;
+            --text: #3d3d3d;
+            --subtle: #666;
+            --line: #c5c0b8;
+            --accent: #5f7283;
+            --chip: #ddd8ce;
         }
 
         * { box-sizing: border-box; }
@@ -67,7 +67,7 @@
         }
 
         .back-link:hover {
-            background: #f3f4f6;
+            background: #e2ddd3;
         }
 
         .hint {
@@ -109,7 +109,7 @@
             border-radius: 8px;
             padding: 7px 10px;
             font-size: 14px;
-            background: #fff;
+            background: var(--card);
         }
 
         .controls input[type="time"] {
@@ -132,7 +132,7 @@
             border-radius: 999px;
             padding: 5px 10px;
             background: var(--chip);
-            color: #3730a3;
+            color: #4b5563;
             font-size: 13px;
             font-weight: 600;
         }
@@ -152,7 +152,7 @@
         .day-column {
             border: 1px solid var(--line);
             border-radius: 10px;
-            background: #fff;
+            background: var(--card);
             padding: 10px;
         }
 
@@ -178,7 +178,7 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 12px;
-            background: #fff;
+            background: var(--card);
         }
 
         .class-main {
@@ -190,6 +190,7 @@
             min-width: 0;
             flex-wrap: nowrap;
             white-space: nowrap;
+            overflow-x: auto;
         }
 
         .time {
@@ -203,8 +204,20 @@
             border-radius: 8px;
             padding: 4px 6px;
             font-size: 13px;
-            background: #fff;
+            background: var(--card);
         }
+
+        .inline-course-select,
+        .inline-duration-select {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 4px 6px;
+            font-size: 13px;
+            background: var(--card);
+        }
+
+        .inline-course-select { min-width: 74px; }
+        .inline-duration-select { min-width: 82px; }
 
         .student {
             font-weight: 700;
@@ -212,7 +225,7 @@
         }
 
         .course {
-            color: #1d4ed8;
+            color: #3f5f82;
             font-weight: 600;
         }
 
@@ -221,8 +234,8 @@
         }
 
         .class-item.cancelled {
-            background: #fff7ed;
-            border-color: #fdba74;
+            background: #efe8de;
+            border-color: #d3a777;
         }
 
         .status-tag {
@@ -230,13 +243,13 @@
             padding: 3px 8px;
             font-size: 12px;
             font-weight: 700;
-            background: #ecfdf5;
-            color: #047857;
+            background: #dbe6dc;
+            color: #3f6b4a;
         }
 
         .status-tag.cancelled {
-            background: #ffedd5;
-            color: #c2410c;
+            background: #efe1cf;
+            color: #8f5627;
         }
 
         .action-group {
@@ -247,6 +260,7 @@
             width: 100%;
             justify-content: flex-end;
             flex-shrink: 0;
+            overflow-x: auto;
         }
 
         .action-btn {
@@ -254,7 +268,7 @@
             border-radius: 8px;
             padding: 5px 10px;
             font-size: 12px;
-            background: #fff;
+            background: var(--card);
             cursor: pointer;
             white-space: nowrap;
             min-width: 88px;
@@ -262,15 +276,15 @@
         }
 
         .action-btn.cancel {
-            color: #b45309;
-            border-color: #fdba74;
-            background: #fff7ed;
+            color: #8f5627;
+            border-color: #d3a777;
+            background: #efe4d4;
         }
 
         .action-btn.restore {
-            color: #065f46;
-            border-color: #6ee7b7;
-            background: #ecfdf5;
+            color: #3f6b4a;
+            border-color: #99b79f;
+            background: #dde9df;
         }
 
         .action-btn.remind {
@@ -280,15 +294,15 @@
         }
 
         .action-btn.request {
-            color: #6d28d9;
-            border-color: #c4b5fd;
-            background: #f5f3ff;
+            color: #5f4c88;
+            border-color: #b8adcc;
+            background: #ece8f4;
         }
 
         .action-btn.notice {
-            color: #1e3a8a;
-            border-color: #60a5fa;
-            background: #dbeafe;
+            color: #3f5f82;
+            border-color: #9fb2c6;
+            background: #dce4ec;
             font-weight: 700;
         }
 
@@ -304,6 +318,11 @@
             font-size: 13px;
             z-index: 9999;
             pointer-events: none;
+            max-width: min(92vw, 860px);
+            max-height: 55vh;
+            overflow: auto;
+            white-space: pre-wrap;
+            line-height: 1.45;
         }
 
         .week-grid {
@@ -318,7 +337,7 @@
             min-height: 220px;
             border: 1px solid var(--line);
             border-radius: 10px;
-            background: #fff;
+            background: var(--card);
             padding: 10px;
         }
 
@@ -328,6 +347,7 @@
 
         @media (max-width: 900px) {
             .week-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .two-day-grid { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 680px) {
@@ -348,7 +368,15 @@
             }
             .time { min-width: 58px; }
             .inline-time-input { width: 80px; }
-            .action-group { width: 100%; justify-content: flex-end; }
+            .action-group {
+                width: 100%;
+                justify-content: flex-start;
+                padding-bottom: 2px;
+            }
+            .action-btn {
+                min-width: 82px;
+                padding: 5px 8px;
+            }
         }
 
         .day-card h3 {
@@ -392,7 +420,7 @@
         }
 
         code {
-            background: #f3f4f6;
+            background: #e8e3d9;
             border-radius: 5px;
             padding: 1px 5px;
         }
@@ -407,7 +435,7 @@
             width: 100%;
             border-collapse: collapse;
             font-size: 14px;
-            background: #fff;
+            background: var(--card);
             border: 1px solid var(--line);
             border-radius: 8px;
             overflow: hidden;
@@ -421,16 +449,16 @@
         }
 
         .quota-result-table th {
-            background: #f8fafc;
+            background: #e8e3d9;
             font-weight: 700;
         }
 
         .quota-row-warning {
-            background: #fff7ed;
+            background: #efe8de;
         }
 
         .quota-row-missing {
-            background: #fef2f2;
+            background: #f1e4e1;
         }
 
         .quota-status {
@@ -440,24 +468,24 @@
             padding: 2px 8px;
             font-size: 12px;
             font-weight: 700;
-            background: #ecfdf5;
-            color: #047857;
+            background: #dbe6dc;
+            color: #3f6b4a;
         }
 
         .quota-status.warn {
-            background: #ffedd5;
-            color: #c2410c;
+            background: #efe1cf;
+            color: #8f5627;
         }
 
         .quota-status.missing {
-            background: #fee2e2;
-            color: #b91c1c;
+            background: #ead3cf;
+            color: #8f4545;
         }
 
         .quota-cell-danger {
-            color: #b91c1c;
+            color: #8f4545;
             font-weight: 700;
-            background: #fff1f2;
+            background: #efe2df;
         }
     </style>
 </head>
@@ -581,8 +609,11 @@
     const PERIOD_ORDER = { "上午": 1, "中午": 2, "下午": 3, "晚上": 4 };
     const CANCELLATION_STORAGE_KEY = "schedule-cancellations-v1";
     const TIME_OVERRIDE_STORAGE_KEY = "schedule-time-overrides-v1";
+    const LESSON_OVERRIDE_STORAGE_KEY = "schedule-lesson-overrides-v1";
+    const EDITABLE_COURSE_OPTIONS = ["单词", "阅读", "体验"];
     let cancellationState = {};
     let timeOverrideState = {};
+    let lessonOverrideState = {};
 
     function getConfig() {
         const raw = document.getElementById("schedule-config").textContent;
@@ -669,6 +700,67 @@
         localStorage.setItem(TIME_OVERRIDE_STORAGE_KEY, JSON.stringify(timeOverrideState));
     }
 
+    function loadLessonOverrides() {
+        try {
+            const raw = localStorage.getItem(LESSON_OVERRIDE_STORAGE_KEY);
+            const parsed = raw ? JSON.parse(raw) : {};
+            if (parsed && typeof parsed === "object") return parsed;
+        } catch (error) {
+            console.warn("课程覆盖设置读取失败，已重置", error);
+        }
+        return {};
+    }
+
+    function saveLessonOverrides() {
+        localStorage.setItem(LESSON_OVERRIDE_STORAGE_KEY, JSON.stringify(lessonOverrideState));
+    }
+
+    function getLessonOverrideKey(entry, dateValue) {
+        return dateValue + "::" + getEntryId(entry);
+    }
+
+    function getLessonOverride(entry, dateValue) {
+        const key = getLessonOverrideKey(entry, dateValue);
+        return lessonOverrideState[key] || {};
+    }
+
+    function resolveCourse(entry, dateValue) {
+        const override = getLessonOverride(entry, dateValue);
+        return String(override.course || entry.course || "").trim() || "课程";
+    }
+
+    function resolveDurationMinutes(entry, dateValue) {
+        const override = getLessonOverride(entry, dateValue);
+        const val = Number(override.durationMinutes);
+        if (val === 30 || val === 60) return val;
+        return Number(entry.durationMinutes) || 60;
+    }
+
+    function setLessonOverride(entry, dateValue, patch) {
+        const key = getLessonOverrideKey(entry, dateValue);
+        const baseCourse = String(entry.course || "").trim();
+        const baseDuration = Number(entry.durationMinutes) || 60;
+
+        const current = getLessonOverride(entry, dateValue);
+        const mergedCourse = String(
+            (patch && Object.prototype.hasOwnProperty.call(patch, "course")) ? patch.course : current.course || baseCourse
+        ).trim() || baseCourse;
+        const mergedDurationRaw = Number(
+            (patch && Object.prototype.hasOwnProperty.call(patch, "durationMinutes")) ? patch.durationMinutes : (current.durationMinutes || baseDuration)
+        );
+        const mergedDuration = (mergedDurationRaw === 30 || mergedDurationRaw === 60) ? mergedDurationRaw : baseDuration;
+
+        if (mergedCourse === baseCourse && mergedDuration === baseDuration) {
+            delete lessonOverrideState[key];
+        } else {
+            lessonOverrideState[key] = {
+                course: mergedCourse,
+                durationMinutes: mergedDuration
+            };
+        }
+        saveLessonOverrides();
+    }
+
     function getTimeOverrideKey(entry, dateValue) {
         return dateValue + "::" + getEntryId(entry);
     }
@@ -723,7 +815,7 @@
         }
     }
 
-    function showToast(message) {
+    function showToast(message, durationMs) {
         const oldToast = document.getElementById("scheduleToast");
         if (oldToast) oldToast.remove();
 
@@ -733,9 +825,21 @@
         toast.textContent = message;
         document.body.appendChild(toast);
 
+        const duration = Number(durationMs) > 0 ? Number(durationMs) : 1800;
         setTimeout(() => {
             toast.remove();
-        }, 1800);
+        }, duration);
+    }
+
+    function showCopiedContentToast(copied, text, title) {
+        if (!copied) {
+            showToast("复制失败，请手动复制");
+            return;
+        }
+        const payload = title ? (title + "\n" + text) : text;
+        // 文案较长，延长显示时长便于直接查看并核对。
+        const duration = payload.length > 160 ? 6000 : 3500;
+        showToast(payload, duration);
     }
 
     function buildAppointmentMessage(entry, dateValue) {
@@ -744,6 +848,8 @@
         const day = dateObj.getDate();
         const weekDay = "日一二三四五六".charAt(dateObj.getDay());
         const formattedDate = month + "月" + day + "日（周" + weekDay + "）";
+        const courseText = resolveCourse(entry, dateValue);
+        const durationMinutes = resolveDurationMinutes(entry, dateValue);
         const selectedClock = getOverrideClock(entry, dateValue);
         const classTimeText = selectedClock
             ? (" " + selectedClock)
@@ -751,7 +857,7 @@
         return "【排课申请】\n" +
             "学员：【" + entry.student + "】\n" +
             "时间：" + formattedDate + classTimeText + "\n" +
-            "课程与时长：" + entry.course + "（" + toHoursText(entry.durationMinutes) + "），谢谢～";
+            "课程与时长：" + courseText + "（" + toHoursText(durationMinutes) + "），谢谢～";
     }
 
     function getDefaultClockByPeriod(period) {
@@ -788,12 +894,14 @@
         const month = String(dateObj.getMonth() + 1).padStart(2, "0");
         const day = String(dateObj.getDate()).padStart(2, "0");
         const weekDay = "日一二三四五六".charAt(dateObj.getDay());
+        const courseText = resolveCourse(entry, dateValue);
+        const durationMinutes = resolveDurationMinutes(entry, dateValue);
         const classTimeText = selectedClock || (entry.time ? normalizeClockInput(entry.time) : null) || (entry.period || "待确认");
 
         return "【" + year + "-" + month + "-" + day + "（周" + weekDay + "）" + classTimeText + "】\n" +
             "亲爱的 ✨ " + entry.student + " 家长您好！\n" +
-            "🔤 课程名称：《" + entry.course + "》\n" +
-            "⏰ 预计时长：" + toHoursText(entry.durationMinutes) + "\n" +
+            "🔤 课程名称：《" + courseText + "》\n" +
+            "⏰ 预计时长：" + toHoursText(durationMinutes) + "\n" +
             "🔔 重要提醒：如需取消或调整上课时间，请至少提前4小时告知学员服务中心负责人，否则系统将无法更改，仍会消耗课时。\n" +
             "🗣️ 上课小贴士：请准时进入会议室，准备好摄像头和一杯水🍵。\n" +
             "💬 请您看到消息后回复确认👌。\n\n" +
@@ -833,6 +941,8 @@
         list.innerHTML = "";
         entries.forEach((item) => {
             const cancelled = isCancelled(item, dateValue);
+            const currentCourse = resolveCourse(item, dateValue);
+            const currentDurationMinutes = resolveDurationMinutes(item, dateValue);
 
             const row = document.createElement("div");
             row.className = "class-item" + (cancelled ? " cancelled" : "");
@@ -865,13 +975,31 @@
             student.className = "student";
             student.textContent = item.student;
 
-            const course = document.createElement("span");
-            course.className = "course";
-            course.textContent = item.course;
+            const course = document.createElement("select");
+            course.className = "inline-course-select course";
+            const courseOptions = [...new Set([...EDITABLE_COURSE_OPTIONS, currentCourse])];
+            courseOptions.forEach((name) => {
+                const option = document.createElement("option");
+                option.value = name;
+                option.textContent = name;
+                course.appendChild(option);
+            });
+            course.value = currentCourse;
+            course.addEventListener("change", () => {
+                setLessonOverride(item, dateValue, { course: course.value, durationMinutes: Number(duration.value) });
+                onChange();
+            });
 
-            const duration = document.createElement("span");
-            duration.className = "duration";
-            duration.textContent = "(" + toHoursText(item.durationMinutes) + ")";
+            const duration = document.createElement("select");
+            duration.className = "inline-duration-select duration";
+            duration.innerHTML =
+                '<option value="30">0.5小时</option>' +
+                '<option value="60">1小时</option>';
+            duration.value = String(currentDurationMinutes);
+            duration.addEventListener("change", () => {
+                setLessonOverride(item, dateValue, { course: course.value, durationMinutes: Number(duration.value) });
+                onChange();
+            });
 
             const status = document.createElement("span");
             status.className = "status-tag" + (cancelled ? " cancelled" : "");
@@ -894,7 +1022,7 @@
             remindButton.addEventListener("click", async () => {
                 const appointmentMessage = buildAppointmentMessage(item, dateValue);
                 const copied = await copyTextToClipboard(appointmentMessage);
-                showToast(copied ? "排课文案已复制到剪贴板" : "复制失败，请手动复制");
+                showCopiedContentToast(copied, appointmentMessage, "已复制排课申请：");
             });
 
             const notifyButton = document.createElement("button");
@@ -912,7 +1040,7 @@
 
                 const notificationMessage = buildScheduleNotificationMessage(item, dateValue, pickedClock);
                 const copied = await copyTextToClipboard(notificationMessage);
-                showToast(copied ? "排课通知已复制到剪贴板" : "复制失败，请手动复制");
+                showCopiedContentToast(copied, notificationMessage, "已复制排课通知：");
             });
 
             const actionGroup = document.createElement("div");
@@ -941,12 +1069,12 @@
 
         const todayMinutes = todayEntries
             .filter((item) => !isCancelled(item, baseDate))
-            .reduce((sum, item) => sum + item.durationMinutes, 0);
+            .reduce((sum, item) => sum + resolveDurationMinutes(item, baseDate), 0);
         const todayCancelledCount = todayEntries.filter((item) => isCancelled(item, baseDate)).length;
 
         const tomorrowMinutes = tomorrowEntries
             .filter((item) => !isCancelled(item, tomorrowDate))
-            .reduce((sum, item) => sum + item.durationMinutes, 0);
+            .reduce((sum, item) => sum + resolveDurationMinutes(item, tomorrowDate), 0);
         const tomorrowCancelledCount = tomorrowEntries.filter((item) => isCancelled(item, tomorrowDate)).length;
 
         selectedDayText.textContent = "今日对应：" + todayDay;
@@ -992,16 +1120,18 @@
             const items = dayMap[day] || [];
             const dayMinutes = items
                 .filter((item) => !isCancelled(item, dayDate))
-                .reduce((sum, item) => sum + item.durationMinutes, 0);
+                .reduce((sum, item) => sum + resolveDurationMinutes(item, dayDate), 0);
             const dayCancelledCount = items.filter((item) => isCancelled(item, dayDate)).length;
             weekCancelledCount += dayCancelledCount;
             weekMinutes += dayMinutes;
             const rows = items.length
                 ? items.map((it) => {
                     const cancelled = isCancelled(it, dayDate);
+                    const rowCourse = resolveCourse(it, dayDate);
+                    const rowDuration = resolveDurationMinutes(it, dayDate);
                     return '<div class="mini-item' + (cancelled ? ' cancelled' : '') + '">' +
                         '<strong>' + formatTime(it) + '</strong><br>' +
-                        it.student + ' · ' + it.course + ' · ' + toHoursText(it.durationMinutes) +
+                        it.student + ' · ' + rowCourse + ' · ' + toHoursText(rowDuration) +
                         '<br><span class="mini-status">' + (cancelled ? '已请假' : '正常') + '</span>' +
                         '</div>';
                 }).join("")
@@ -1023,6 +1153,7 @@
         const datePicker = document.getElementById("datePicker");
         cancellationState = loadCancellations();
         timeOverrideState = loadTimeOverrides();
+        lessonOverrideState = loadLessonOverrides();
 
         const today = new Date();
         const yyyy = today.getFullYear();
@@ -1251,7 +1382,11 @@
 
         const alertMsg = `发现异常学生(${anomalies.length})：\n${detailLines.join("\n")}`;
         const copied = await copyToClipboard(alertMsg);
-        window.showToast?.(copied ? "异常文案已复制到剪贴板" : "复制失败，请手动复制");
+        if (typeof window.showCopiedContentToast === "function") {
+            window.showCopiedContentToast(copied, alertMsg, "已复制课时异常文案：");
+        } else {
+            window.showToast?.(copied ? "异常文案已复制到剪贴板" : "复制失败，请手动复制");
+        }
         alert(alertMsg);
     }
 
@@ -1372,10 +1507,14 @@
             return;
         }
 
+        if (typeof window.showCopiedContentToast === "function") {
+            window.showCopiedContentToast(true, message, "已复制抗遗忘通知：");
+        }
+
         // 连续发送时自动递增 5 分钟，符合你的日常节奏。
         const nextClock = addMinutesToClock(startClock, 5);
         if (antiForgettingStartTimeInput) antiForgettingStartTimeInput.value = nextClock;
-        window.showToast?.("抗遗忘通知已复制，下一条时间已+5分钟");
+        window.showToast?.("下一条提醒时间已自动 +5 分钟（" + nextClock + "）");
     });
 </script>
 </body>
