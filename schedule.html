@@ -112,6 +112,10 @@
             background: #fff;
         }
 
+        .controls input[type="time"] {
+            padding: 6px 8px;
+        }
+
         .controls button {
             cursor: pointer;
             font-weight: 600;
@@ -170,10 +174,22 @@
             border-radius: 10px;
             padding: 10px;
             display: flex;
-            flex-wrap: wrap;
+            justify-content: space-between;
             align-items: center;
-            gap: 8px;
+            flex-wrap: wrap;
+            gap: 12px;
             background: #fff;
+        }
+
+        .class-main {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            width: 100%;
+            min-width: 0;
+            flex-wrap: nowrap;
+            white-space: nowrap;
         }
 
         .time {
@@ -192,6 +208,7 @@
 
         .student {
             font-weight: 700;
+            min-width: 0;
         }
 
         .course {
@@ -223,10 +240,12 @@
         }
 
         .action-group {
-            margin-left: auto;
+            margin-left: 0;
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            width: 100%;
+            justify-content: flex-end;
             flex-shrink: 0;
         }
 
@@ -238,6 +257,8 @@
             background: #fff;
             cursor: pointer;
             white-space: nowrap;
+            min-width: 88px;
+            text-align: center;
         }
 
         .action-btn.cancel {
@@ -256,6 +277,19 @@
             color: #1d4ed8;
             border-color: #93c5fd;
             background: #eff6ff;
+        }
+
+        .action-btn.request {
+            color: #6d28d9;
+            border-color: #c4b5fd;
+            background: #f5f3ff;
+        }
+
+        .action-btn.notice {
+            color: #1e3a8a;
+            border-color: #60a5fa;
+            background: #dbeafe;
+            font-weight: 700;
         }
 
         .toast {
@@ -305,6 +339,16 @@
             .day-card { min-height: auto; padding: 9px; }
             .mini-item { font-size: 12px; }
             .two-day-grid { grid-template-columns: 1fr; }
+            .class-item { align-items: flex-start; }
+            .class-main {
+                width: 100%;
+                overflow-x: auto;
+                gap: 8px;
+                padding-bottom: 2px;
+            }
+            .time { min-width: 58px; }
+            .inline-time-input { width: 80px; }
+            .action-group { width: 100%; justify-content: flex-end; }
         }
 
         .day-card h3 {
@@ -430,6 +474,9 @@
         <h2 class="appointment-title">课时余额检查</h2>
         <div class="controls">
             <button id="viewTotalHoursButton" type="button">查看课时数</button>
+            <button id="antiForgettingNotifyButton" type="button">抗遗忘通知</button>
+            <label for="antiForgettingStartTime">提醒时间：</label>
+            <input id="antiForgettingStartTime" type="time" step="60" value="19:30">
             <span class="hint" style="margin: 0;">自动检查本排课表学员的 30/60 分钟课时与陪伴课余额。</span>
         </div>
     </section>
@@ -790,6 +837,9 @@
             const row = document.createElement("div");
             row.className = "class-item" + (cancelled ? " cancelled" : "");
 
+            const mainGroup = document.createElement("div");
+            mainGroup.className = "class-main";
+
             const time = document.createElement("span");
             time.className = "time";
             time.textContent = formatTime(item);
@@ -838,8 +888,9 @@
 
             const remindButton = document.createElement("button");
             remindButton.type = "button";
-            remindButton.className = "action-btn remind";
-            remindButton.textContent = "排课申请";
+            remindButton.className = "action-btn request";
+            remindButton.textContent = "申请排课";
+            remindButton.title = "复制排课申请文案";
             remindButton.addEventListener("click", async () => {
                 const appointmentMessage = buildAppointmentMessage(item, dateValue);
                 const copied = await copyTextToClipboard(appointmentMessage);
@@ -848,8 +899,9 @@
 
             const notifyButton = document.createElement("button");
             notifyButton.type = "button";
-            notifyButton.className = "action-btn remind";
-            notifyButton.textContent = "排课通知";
+            notifyButton.className = "action-btn notice";
+            notifyButton.textContent = "发送通知";
+            notifyButton.title = "复制排课通知文案";
             notifyButton.addEventListener("click", async () => {
                 const pickedClock = normalizeClockInput(timeInput.value || "");
                 if (!pickedClock || !isValidClock(pickedClock)) {
@@ -867,7 +919,8 @@
             actionGroup.className = "action-group";
             actionGroup.append(button, remindButton, notifyButton);
 
-            row.append(time, timeInput, student, course, duration, status, actionGroup);
+            mainGroup.append(time, timeInput, student, course, duration, status);
+            row.append(mainGroup, actionGroup);
             list.appendChild(row);
         });
     }
@@ -1283,6 +1336,46 @@
             console.error("课时检查失败:", error);
             window.showToast?.("课时检查失败，请稍后重试");
         }
+    });
+
+    function addMinutesToClock(clock, deltaMinutes) {
+        const [h, m] = clock.split(":").map((n) => Number(n));
+        const total = ((h * 60 + m + deltaMinutes) % (24 * 60) + (24 * 60)) % (24 * 60);
+        const outH = String(Math.floor(total / 60)).padStart(2, "0");
+        const outM = String(total % 60).padStart(2, "0");
+        return outH + ":" + outM;
+    }
+
+    function buildAntiForgettingNoticeMessage(clock) {
+        return "【抗遗忘温馨提醒-" + clock + "】\n" +
+            "👍 #腾讯会议：762-3777-6304\n" +
+            "⏰ 请准时参加会议，如有特殊情况无法参加，请提前告知！\n" +
+            "🔔 若未按约定时间参加复习，请自主复习并打卡至学习群📱\n" +
+            "🔒 仅在当天有收到提醒通知才需入会。\n" +
+            "📢 请在抗遗忘时及时反馈是否需要取消下次安排的正课，以便妥善安排教学计划，老师为你骄傲🌹";
+    }
+
+    const antiForgettingNotifyButton = document.getElementById("antiForgettingNotifyButton");
+    const antiForgettingStartTimeInput = document.getElementById("antiForgettingStartTime");
+
+    antiForgettingNotifyButton?.addEventListener("click", async () => {
+        const startClock = normalizeClockInput(antiForgettingStartTimeInput?.value || "");
+        if (!startClock || !isValidClock(startClock)) {
+            window.showToast?.("提醒时间格式无效，请使用 HH:mm");
+            return;
+        }
+
+        const message = buildAntiForgettingNoticeMessage(startClock);
+        const copied = await copyTextToClipboard(message);
+        if (!copied) {
+            window.showToast?.("复制失败，请手动复制");
+            return;
+        }
+
+        // 连续发送时自动递增 5 分钟，符合你的日常节奏。
+        const nextClock = addMinutesToClock(startClock, 5);
+        if (antiForgettingStartTimeInput) antiForgettingStartTimeInput.value = nextClock;
+        window.showToast?.("抗遗忘通知已复制，下一条时间已+5分钟");
     });
 </script>
 </body>
