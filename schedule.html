@@ -343,6 +343,69 @@
             border-radius: 5px;
             padding: 1px 5px;
         }
+
+        .quota-result-meta {
+            margin-bottom: 8px;
+            color: var(--subtle);
+            font-size: 13px;
+        }
+
+        .quota-result-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .quota-result-table th,
+        .quota-result-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid var(--line);
+            text-align: left;
+        }
+
+        .quota-result-table th {
+            background: #f8fafc;
+            font-weight: 700;
+        }
+
+        .quota-row-warning {
+            background: #fff7ed;
+        }
+
+        .quota-row-missing {
+            background: #fef2f2;
+        }
+
+        .quota-status {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px;
+            padding: 2px 8px;
+            font-size: 12px;
+            font-weight: 700;
+            background: #ecfdf5;
+            color: #047857;
+        }
+
+        .quota-status.warn {
+            background: #ffedd5;
+            color: #c2410c;
+        }
+
+        .quota-status.missing {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .quota-cell-danger {
+            color: #b91c1c;
+            font-weight: 700;
+            background: #fff1f2;
+        }
     </style>
 </head>
 <body>
@@ -355,28 +418,10 @@
     </div>
 
     <section class="panel">
-        <h2 class="appointment-title">提醒排课老师</h2>
+        <h2 class="appointment-title">课时余额检查</h2>
         <div class="controls">
-            <label for="userName">学员：</label>
-            <select id="userName"></select>
-
-            <label for="classDateTime">上课日期：</label>
-            <input id="classDateTime" type="datetime-local">
-
-            <label for="appointmentClassType">课程类型：</label>
-            <select id="appointmentClassType">
-                <option value="单词课">单词课</option>
-                <option value="阅读课">阅读课</option>
-                <option value="体验课">体验课</option>
-            </select>
-
-            <label for="classDuration">时长：</label>
-            <select id="classDuration">
-                <option value="1">1小时</option>
-                <option value="0.5">0.5小时</option>
-            </select>
-
-            <button id="appointmentSchedulingButton" type="button">提醒排课</button>
+            <button id="viewTotalHoursButton" type="button">查看课时数</button>
+            <span class="hint" style="margin: 0;">自动检查本排课表学员的 30/60 分钟课时与陪伴课余额。</span>
         </div>
     </section>
 
@@ -403,6 +448,12 @@
     <section class="panel">
         <span id="weeklyTotal" class="pill"></span>
         <div id="weekGrid" class="week-grid" style="margin-top: 10px;"></div>
+    </section>
+
+    <section class="panel">
+        <h2 class="appointment-title">课时核对结果</h2>
+        <div id="quotaCheckMeta" class="quota-result-meta">点击“查看课时数”后，会在这里显示每个学生的课时余额。</div>
+        <div id="quotaCheckResults" class="empty">暂无查询结果。</div>
     </section>
 </div>
 
@@ -785,32 +836,11 @@
         weeklyTotal.textContent = "本周应上总课时：" + toHoursText(weekMinutes) + "（请假" + weekCancelledCount + "节）";
     }
 
-    function initAppointmentStudents(entries) {
-        const userNameSelect = document.getElementById("userName");
-        const classDateTimeInput = document.getElementById("classDateTime");
-
-        const uniqueNames = [...new Set((entries || []).map((entry) => entry.student).filter(Boolean))]
-            .sort((a, b) => a.localeCompare(b, "zh-CN"));
-
-        userNameSelect.innerHTML = uniqueNames
-            .map((name) => '<option value="' + name + '">' + name + '</option>')
-            .join("");
-
-        if (!classDateTimeInput.value) {
-            const now = new Date();
-            const yyyy = now.getFullYear();
-            const mm = String(now.getMonth() + 1).padStart(2, "0");
-            const dd = String(now.getDate()).padStart(2, "0");
-            classDateTimeInput.value = yyyy + "-" + mm + "-" + dd + "T20:00";
-        }
-    }
-
     function init() {
         const config = getConfig();
         const dayMap = buildDayMap(config.entries || []);
         const datePicker = document.getElementById("datePicker");
         cancellationState = loadCancellations();
-        initAppointmentStudents(config.entries || []);
 
         const today = new Date();
         const yyyy = today.getFullYear();
@@ -830,15 +860,300 @@
     init();
 </script>
 <script type="module">
-    import * as commonFunctions from './commonFunctions.js';
+    import { loginApp } from './commonFunctions.js';
 
-    const appointmentSchedulingButton = document.getElementById("appointmentSchedulingButton");
-    const appointmentClassType = document.getElementById("appointmentClassType");
+    const STUDENT_NAME_ALIAS = {
+        "硕硕": "俞新硕"
+    };
 
-    appointmentSchedulingButton.addEventListener("click", () => {
-        commonFunctions.handleAppointmentSchedulingClick({
-            classType: appointmentClassType.value
+    const FIELD_LABEL_MAP = {
+        quota30: "30分钟课时",
+        quota60: "60分钟课时",
+        quotaAccompany: "陪练服务时长"
+    };
+
+    function normalizeStudentName(name) {
+        const trimmed = String(name || "").trim();
+        return STUDENT_NAME_ALIAS[trimmed] || trimmed;
+    }
+
+    function isZero(value) {
+        const raw = String(value ?? "").trim();
+        const numeric = parseFloat(raw);
+        return raw === "0" || (Number.isFinite(numeric) && numeric === 0);
+    }
+
+    function formatFieldLabels(fields) {
+        return (fields || []).map((field) => FIELD_LABEL_MAP[field] || field).join("、");
+    }
+
+    function collectQuotaNeeds(entries) {
+        const needsMap = new Map();
+
+        for (const entry of entries || []) {
+            const displayName = String(entry?.student || "").trim();
+            if (!displayName) continue;
+
+            const queryName = normalizeStudentName(displayName);
+            const durationHours = Number(entry?.durationMinutes) / 60;
+
+            if (!needsMap.has(queryName)) {
+                needsMap.set(queryName, {
+                    displayNames: new Set(),
+                    requiredFields: new Set()
+                });
+            }
+
+            const target = needsMap.get(queryName);
+            target.displayNames.add(displayName);
+
+            if (Math.abs(durationHours - 0.5) < 0.001) {
+                target.requiredFields.add("quota30");
+            } else if (Math.abs(durationHours - 1) < 0.001) {
+                target.requiredFields.add("quota60");
+            } else {
+                // 兜底：非 0.5/1 小时课程同时检查 30/60 分钟余额
+                target.requiredFields.add("quota30");
+                target.requiredFields.add("quota60");
+            }
+        }
+
+        return needsMap;
+    }
+
+    async function copyToClipboard(text) {
+        if (typeof window.copyTextToClipboard === "function") {
+            return window.copyTextToClipboard(text);
+        }
+
+        try {
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(text);
+                return true;
+            }
+            return false;
+        } catch (_) {
+            return false;
+        }
+    }
+
+    async function checkQuotaFromSchedule(entries) {
+        let token = localStorage.getItem("x-token-c");
+        if (!token) {
+            await loginApp().catch(() => {});
+            token = localStorage.getItem("x-token-c");
+            if (!token) {
+                window.showToast?.("未找到 token，请先配置登录信息");
+                return;
+            }
+        }
+
+        const quotaNeeds = collectQuotaNeeds(entries);
+        if (quotaNeeds.size === 0) {
+            window.showToast?.("未找到可检查的学员");
+            return;
+        }
+
+        const resp = await fetch("https://api.lxll.com/request/CustomerTeacherListClient", {
+            method: "POST",
+            headers: {
+                "accept": "application/json, text/plain, */*",
+                "content-type": "application/json",
+                "origin": "https://h5.lxll.com",
+                "referer": "https://h5.lxll.com/",
+                "x-token-c": token,
+                "x-ua": "ct=1&version=5.0.6",
+                "x-user-id": localStorage.getItem("x-user-id") || "144620"
+            },
+            body: JSON.stringify({
+                pageNumber: 1,
+                pageSize: 100,
+                whereCriteria: { studentName: "" }
+            })
         });
+
+        if (!resp.ok) {
+            throw new Error("网络错误 " + resp.status);
+        }
+
+        const data = await resp.json();
+        const list = Array.isArray(data?.data?.data) ? data.data.data : [];
+        const apiMap = new Map(
+            list.map((item) => [String(item?.userName || "").trim(), item])
+        );
+        const checkedRows = [];
+        const anomalies = [];
+
+        for (const [queryName, requirement] of quotaNeeds.entries()) {
+            const item = apiMap.get(queryName);
+            const displayName = [...requirement.displayNames].join("/");
+
+            if (!item) {
+                checkedRows.push({
+                    queryName,
+                    displayName,
+                    quota30: "-",
+                    quota60: "-",
+                    quotaAccompany: "-",
+                    statusType: "missing",
+                    statusText: "系统未查到",
+                    zeroFields: ["quota30", "quota60", "quotaAccompany"]
+                });
+
+                anomalies.push({
+                    queryName,
+                    displayNames: [...requirement.displayNames],
+                    quota30: "-",
+                    quota60: "-",
+                    quotaAccompany: "-",
+                    zeroFields: ["quota30", "quota60", "quotaAccompany"],
+                    isMissingStudent: true
+                });
+                continue;
+            }
+
+            const zeroFields = [];
+
+            for (const field of requirement.requiredFields) {
+                if (isZero(item?.[field])) zeroFields.push(field);
+            }
+
+            if (isZero(item?.quotaAccompany)) {
+                zeroFields.push("quotaAccompany");
+            }
+
+            const statusType = zeroFields.length > 0 ? "warn" : "ok";
+            const statusText = zeroFields.length > 0
+                ? ("异常：" + formatFieldLabels(zeroFields))
+                : "正常";
+
+            checkedRows.push({
+                queryName,
+                displayName,
+                quota30: item?.quota30 ?? "-",
+                quota60: item?.quota60 ?? "-",
+                quotaAccompany: item?.quotaAccompany ?? "-",
+                statusType,
+                statusText,
+                zeroFields
+            });
+
+            if (zeroFields.length > 0) {
+                anomalies.push({
+                    queryName,
+                    displayNames: [...requirement.displayNames],
+                    quota30: item?.quota30,
+                    quota60: item?.quota60,
+                    quotaAccompany: item?.quotaAccompany,
+                    zeroFields
+                });
+            }
+        }
+
+        renderQuotaCheckResults(checkedRows);
+
+        if (anomalies.length === 0) {
+            window.showToast?.("课时检查完成，未发现异常");
+            return;
+        }
+
+        const detailLines = anomalies.map((entry) => {
+            const displayName = entry.displayNames.join("/");
+            const systemNameTip = displayName === entry.queryName ? "" : `（系统名：${entry.queryName}）`;
+            const missingFieldsText = formatFieldLabels(entry.zeroFields);
+            if (entry.isMissingStudent) {
+                return `学员${displayName}${systemNameTip}在系统未查到，需核对学员名称；待核对课时：${missingFieldsText}`;
+            }
+            return `请帮忙为${displayName}${systemNameTip}充值：缺失课时[${missingFieldsText}]；当前"30分钟剩余"为 ${entry.quota30 ?? "-"}、"60分钟剩余"为 ${entry.quota60 ?? "-"}，"陪练服务时长剩余"为${entry.quotaAccompany ?? "-"}`;
+        });
+
+        const alertMsg = `发现异常学生(${anomalies.length})：\n${detailLines.join("\n")}`;
+        const copied = await copyToClipboard(alertMsg);
+        window.showToast?.(copied ? "异常文案已复制到剪贴板" : "复制失败，请手动复制");
+        alert(alertMsg);
+    }
+
+    function renderQuotaCheckResults(rows) {
+        const metaEl = document.getElementById("quotaCheckMeta");
+        const container = document.getElementById("quotaCheckResults");
+        if (!metaEl || !container) return;
+
+        if (!rows || rows.length === 0) {
+            metaEl.textContent = "未找到可展示的查询结果。";
+            container.className = "empty";
+            container.textContent = "暂无查询结果。";
+            return;
+        }
+
+        const now = new Date();
+        const timeLabel = now.getFullYear() + "-" +
+            String(now.getMonth() + 1).padStart(2, "0") + "-" +
+            String(now.getDate()).padStart(2, "0") + " " +
+            String(now.getHours()).padStart(2, "0") + ":" +
+            String(now.getMinutes()).padStart(2, "0") + ":" +
+            String(now.getSeconds()).padStart(2, "0");
+        metaEl.textContent = "最近一次查询时间：" + timeLabel + " · 学生数：" + rows.length;
+
+        const table = document.createElement("table");
+        table.className = "quota-result-table";
+        table.innerHTML =
+            "<thead><tr>" +
+            "<th>排课学生</th>" +
+            "<th>系统查询名</th>" +
+            "<th>30分钟剩余</th>" +
+            "<th>60分钟剩余</th>" +
+            "<th>陪练服务时长剩余</th>" +
+            "<th>状态</th>" +
+            "</tr></thead>";
+
+        const tbody = document.createElement("tbody");
+        rows.forEach((row) => {
+            const tr = document.createElement("tr");
+            tr.className = row.statusType === "missing"
+                ? "quota-row-missing"
+                : (row.statusType === "warn" ? "quota-row-warning" : "");
+
+            const statusClass = row.statusType === "missing"
+                ? "quota-status missing"
+                : (row.statusType === "warn" ? "quota-status warn" : "quota-status");
+
+            const appendCell = (value, fieldName) => {
+                const td = document.createElement("td");
+                td.textContent = value;
+                if ((row.zeroFields || []).includes(fieldName)) {
+                    td.className = "quota-cell-danger";
+                }
+                tr.appendChild(td);
+            };
+
+            appendCell(row.displayName);
+            appendCell(row.queryName);
+            appendCell(String(row.quota30), "quota30");
+            appendCell(String(row.quota60), "quota60");
+            appendCell(String(row.quotaAccompany), "quotaAccompany");
+
+            const statusTd = document.createElement("td");
+            statusTd.innerHTML = "<span class=\"" + statusClass + "\">" + row.statusText + "</span>";
+            tr.appendChild(statusTd);
+            tbody.appendChild(tr);
+        });
+
+        table.appendChild(tbody);
+        container.className = "";
+        container.innerHTML = "";
+        container.appendChild(table);
+    }
+
+    const viewTotalHoursButton = document.getElementById("viewTotalHoursButton");
+    viewTotalHoursButton?.addEventListener("click", async () => {
+        try {
+            const configRaw = document.getElementById("schedule-config")?.textContent || "{}";
+            const config = JSON.parse(configRaw);
+            await checkQuotaFromSchedule(config.entries || []);
+        } catch (error) {
+            console.error("课时检查失败:", error);
+            window.showToast?.("课时检查失败，请稍后重试");
+        }
     });
 </script>
 </body>
