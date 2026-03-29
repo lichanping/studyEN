@@ -174,28 +174,27 @@
             border-radius: 10px;
             padding: 10px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            justify-content: flex-start;
+            align-items: flex-start;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 8px;
             background: var(--card);
         }
 
         .class-main {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            flex: 1;
+            gap: 8px;
+            flex: 0 0 100%;
             width: 100%;
             min-width: 0;
-            flex-wrap: nowrap;
-            white-space: nowrap;
+            flex-wrap: wrap;
             overflow-x: auto;
         }
 
         .time {
             font-weight: 700;
-            min-width: 72px;
+            min-width: 40px;
         }
 
         .inline-time-input {
@@ -216,8 +215,8 @@
             background: var(--card);
         }
 
-        .inline-course-select { min-width: 74px; }
-        .inline-duration-select { min-width: 82px; }
+        .inline-course-select { min-width: 64px; }
+        .inline-duration-select { min-width: 72px; }
 
         .student {
             font-weight: 700;
@@ -254,11 +253,13 @@
 
         .action-group {
             margin-left: 0;
-            display: inline-flex;
+            margin-right: auto;
+            display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            flex: 0 0 100%;
             width: 100%;
-            justify-content: flex-end;
+            justify-content: flex-start;
             flex-shrink: 0;
             overflow-x: auto;
         }
@@ -266,12 +267,12 @@
         .action-btn {
             border: 1px solid var(--line);
             border-radius: 8px;
-            padding: 5px 10px;
+            padding: 5px 8px;
             font-size: 12px;
             background: var(--card);
             cursor: pointer;
             white-space: nowrap;
-            min-width: 88px;
+            min-width: 72px;
             text-align: center;
         }
 
@@ -363,10 +364,10 @@
             .class-main {
                 width: 100%;
                 overflow-x: auto;
-                gap: 8px;
+                gap: 6px;
                 padding-bottom: 2px;
             }
-            .time { min-width: 58px; }
+            .time { min-width: 36px; }
             .inline-time-input { width: 80px; }
             .action-group {
                 width: 100%;
@@ -374,8 +375,8 @@
                 padding-bottom: 2px;
             }
             .action-btn {
-                min-width: 82px;
-                padding: 5px 8px;
+                min-width: 68px;
+                padding: 5px 6px;
             }
         }
 
@@ -505,8 +506,8 @@
             <button id="antiForgettingNotifyButton" type="button">抗遗忘通知</button>
             <label for="antiForgettingStartTime">提醒时间：</label>
             <input id="antiForgettingStartTime" type="time" step="60" value="19:30">
-            <span class="hint" style="margin: 0;">自动检查本排课表学员的 30/60 分钟课时与陪伴课余额。</span>
         </div>
+        <div class="hint" style="margin-top: 6px;">自动检查本排课表学员的 30/60 分钟课时与陪伴课余额。</div>
     </section>
 
     <section class="panel">
@@ -1387,7 +1388,6 @@
         } else {
             window.showToast?.(copied ? "异常文案已复制到剪贴板" : "复制失败，请手动复制");
         }
-        alert(alertMsg);
     }
 
     function renderQuotaCheckResults(rows) {
