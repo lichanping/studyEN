@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "精准单词复制插件（适配新UI）",
+  "version": "5.0",
+  "description": "右键单个/批量复制单词（适配 word-item 结构）",
+  "permissions": ["clipboardWrite"],
+  "content_scripts": [
+    {
+      "matches": [
+        "*://h5.lxll.com/*",
+        "*://lx5-app.yingyutifen.cn/*",
+        "*://lx3-app.yingyutifen.cn/*",
+        "http://localhost/*",
+        "http://127.0.0.1/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ]
+}
