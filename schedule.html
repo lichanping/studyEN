@@ -95,6 +95,57 @@
             font-weight: 600;
         }
 
+        .controls-break {
+            flex-basis: 100%;
+            height: 0;
+        }
+
+        .help-tip {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            border-radius: 999px;
+            border: 1px solid #9fb2c6;
+            background: #dce4ec;
+            color: #3f5f82;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: help;
+            user-select: none;
+            vertical-align: middle;
+        }
+
+        .help-tip-content {
+            position: absolute;
+            left: 0;
+            top: calc(100% + 8px);
+            width: min(92vw, 520px);
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--line);
+            background: #fff;
+            color: var(--text);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+            font-size: 12px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-2px);
+            transition: opacity 0.15s ease, transform 0.15s ease;
+        }
+
+        .help-tip:hover .help-tip-content,
+        .help-tip:focus-visible .help-tip-content {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
         .controls input[type="date"] {
             border: 1px solid var(--line);
             border-radius: 8px;
@@ -119,6 +170,18 @@
         .controls button {
             cursor: pointer;
             font-weight: 600;
+        }
+
+        .important-primary-btn {
+            border-color: #a96e1f !important;
+            background: #f8e7c8 !important;
+            color: #7a4c12 !important;
+            box-shadow: 0 0 0 2px rgba(169, 110, 31, 0.18);
+            font-weight: 700;
+        }
+
+        .important-primary-btn:hover {
+            background: #f2ddb8 !important;
         }
 
         .appointment-title {
@@ -502,18 +565,51 @@
     <section class="panel">
         <h2 class="appointment-title">课时余额检查</h2>
         <div class="controls">
+            <label for="salaryPeriodType">统计维度：</label>
+            <select id="salaryPeriodType">
+                <option value="month">按月份</option>
+                <option value="year">按年份</option>
+            </select>
+            <label for="salaryMonthPicker">工资月份：</label>
+            <input id="salaryMonthPicker" type="month">
+            <label for="salaryYearPicker">工资年份：</label>
+            <input id="salaryYearPicker" type="number" min="2000" max="2100" step="1" style="width: 90px;">
+            <button id="generateScheduleSalaryButton" type="button">按排课生成工资统计</button>
+            <button id="verifySalaryStorageButton" type="button">检查工资本地数据</button>
+
+            <span class="controls-break" aria-hidden="true"></span>
             <button id="viewTotalHoursButton" type="button">查看课时数</button>
-            <button id="antiForgettingNotifyButton" type="button">抗遗忘通知</button>
+            <button id="antiForgettingNotifyButton" class="important-primary-btn" type="button">抗遗忘通知</button>
             <label for="antiForgettingStartTime">提醒时间：</label>
             <input id="antiForgettingStartTime" type="time" step="60" value="19:30">
         </div>
         <div class="hint" style="margin-top: 6px;">自动检查本排课表学员的 30/60 分钟课时与陪伴课余额。</div>
+        <div class="hint" style="margin-top: 6px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+            <span id="scheduleSalarySummary">工资统计口径：独立账本（key: schedule-salary-ledger-v1），默认从 2026-04-01 起按当天实际课次入账（自动补录昨天，缺失时；也可手动补录更早日期），仅统计今天以前。</span>
+            <span class="help-tip" tabindex="0" aria-label="工资字段说明">?
+                <span class="help-tip-content">字段说明
+version: 账本结构版本号
+startDate: 账本起算日（当前账本最早入账日期）
+byDate: 按日期分组的课次明细
+updatedAt: 账本最后更新时间
+
+单条课次字段
+date: 上课日期
+studentName: 学员姓名
+salaryType: 工资课型（词汇课/阅读完型语法课/体验课）
+durationHours: 课时（小时）
+rate: 单价（元/小时）
+fee: 该条工资（durationHours × rate）
+entryKey: 课次标识（用于区分排课项）</span>
+            </span>
+        </div>
     </section>
 
     <section class="panel">
         <div class="controls">
             <label for="datePicker">选择日期：</label>
             <input id="datePicker" type="date">
+            <button id="backfillDailySnapshotButton" type="button">补录选中日期课次</button>
             <span id="selectedDayText" class="pill"></span>
             <span id="dailyTotal" class="pill"></span>
         </div>
@@ -1095,6 +1191,9 @@
             renderToday(dayMap, baseDate);
             renderWeek(dayMap, baseDate);
         });
+
+        // 通知模块脚本：排课状态（请假/课程/时长）可能发生变化。
+        window.dispatchEvent(new Event("schedule-updated"));
     }
 
     function getMondayOfWeek(dateValue) {
@@ -1186,6 +1285,21 @@
         quotaAccompany: "陪练服务时长"
     };
 
+    const COURSE_TO_SALARY_TYPE = {
+        "单词": "词汇课",
+        "阅读": "阅读完型语法课",
+        "体验": "体验课"
+    };
+
+    const SALARY_RATE_MAP = {
+        "词汇课": 50,
+        "阅读完型语法课": 55,
+        "体验课": 40
+    };
+
+    const SCHEDULE_SALARY_LEDGER_KEY = "schedule-salary-ledger-v1";
+    const SCHEDULE_SALARY_START_DATE = "2026-04-01";
+
     function normalizeStudentName(name) {
         const trimmed = String(name || "").trim();
         return STUDENT_NAME_ALIAS[trimmed] || trimmed;
@@ -1249,6 +1363,359 @@
         } catch (_) {
             return false;
         }
+    }
+
+    function dateToYmd(dateObj) {
+        return dateObj.getFullYear() + "-" +
+            String(dateObj.getMonth() + 1).padStart(2, "0") + "-" +
+            String(dateObj.getDate()).padStart(2, "0");
+    }
+
+    function getTodayYmd() {
+        return dateToYmd(new Date());
+    }
+
+    function getYesterdayYmd() {
+        const now = new Date();
+        const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+        return dateToYmd(yesterday);
+    }
+
+    function loadSalaryLedger() {
+        try {
+            const raw = localStorage.getItem(SCHEDULE_SALARY_LEDGER_KEY);
+            const parsed = raw ? JSON.parse(raw) : null;
+            if (parsed && typeof parsed === "object" && parsed.byDate && typeof parsed.byDate === "object") {
+                return parsed;
+            }
+        } catch (_) {
+            // ignore parse error and reset
+        }
+        return { version: 1, startDate: SCHEDULE_SALARY_START_DATE, byDate: {}, updatedAt: "" };
+    }
+
+    function getLedgerStartDate(ledger) {
+        const value = String(ledger?.startDate || SCHEDULE_SALARY_START_DATE).trim();
+        return /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : SCHEDULE_SALARY_START_DATE;
+    }
+
+    function saveSalaryLedger(ledger) {
+        localStorage.setItem(SCHEDULE_SALARY_LEDGER_KEY, JSON.stringify(ledger));
+    }
+
+    function hasLedgerSnapshotForDate(dateValue) {
+        const ledger = loadSalaryLedger();
+        return Object.prototype.hasOwnProperty.call(ledger.byDate || {}, dateValue);
+    }
+
+    function getLedgerSnapshotByDate(dateValue) {
+        const ledger = loadSalaryLedger();
+        const rows = ledger.byDate?.[dateValue];
+        return Array.isArray(rows) ? rows : [];
+    }
+
+    function collectActualRowsForDate(entries, dateValue) {
+        const dayMap = window.buildDayMap?.(entries || []);
+        if (!dayMap) return [];
+
+        const weekDay = window.getDayFromDateInput?.(dateValue);
+        const dayEntries = dayMap[weekDay] || [];
+        const rowByStudent = new Map();
+
+        dayEntries.forEach((entry) => {
+            if (window.isCancelled?.(entry, dateValue)) return;
+            const studentName = String(entry?.student || "").trim();
+            if (!studentName) return;
+
+            const rawCourse = String(window.resolveCourse?.(entry, dateValue) || "").trim();
+            const salaryType = COURSE_TO_SALARY_TYPE[rawCourse] || "词汇课";
+            const durationMinutes = Number(window.resolveDurationMinutes?.(entry, dateValue));
+            const durationHours = Number((durationMinutes / 60).toFixed(2));
+            if (!Number.isFinite(durationHours) || durationHours <= 0) return;
+
+            const rate = SALARY_RATE_MAP[salaryType] || 50;
+            const fee = Number((durationHours * rate).toFixed(2));
+            // One student can only have one lesson record per day; later item overwrites earlier.
+            rowByStudent.set(studentName, {
+                entryKey: String(window.getEntryId?.(entry) || ""),
+                date: dateValue,
+                studentName,
+                salaryType,
+                durationHours,
+                rate,
+                fee
+            });
+        });
+
+        const rows = Array.from(rowByStudent.values());
+
+        rows.sort((a, b) => a.studentName.localeCompare(b.studentName, "zh-CN") || a.entryKey.localeCompare(b.entryKey));
+        return rows;
+    }
+
+    function upsertDailySalarySnapshot(entries, dateValue) {
+        const todayYmd = getTodayYmd();
+        if (!dateValue || dateValue > todayYmd) return false;
+
+        const rows = collectActualRowsForDate(entries, dateValue);
+        const ledger = loadSalaryLedger();
+        ledger.byDate[dateValue] = rows;
+        const currentStart = getLedgerStartDate(ledger);
+        ledger.startDate = dateValue < currentStart ? dateValue : currentStart;
+        ledger.updatedAt = new Date().toISOString();
+        saveSalaryLedger(ledger);
+        return true;
+    }
+
+    function buildBackfillDiff(oldRows, newRows) {
+        const oldMap = new Map((oldRows || []).map((row) => [row.studentName, row]));
+        const newMap = new Map((newRows || []).map((row) => [row.studentName, row]));
+        const students = Array.from(new Set([...oldMap.keys(), ...newMap.keys()])).sort((a, b) => a.localeCompare(b, "zh-CN"));
+
+        const diff = {
+            added: [],
+            removed: [],
+            changed: [],
+            unchangedCount: 0
+        };
+
+        students.forEach((student) => {
+            const oldRow = oldMap.get(student);
+            const newRow = newMap.get(student);
+
+            if (!oldRow && newRow) {
+                diff.added.push(newRow);
+                return;
+            }
+            if (oldRow && !newRow) {
+                diff.removed.push(oldRow);
+                return;
+            }
+
+            const changed = oldRow.salaryType !== newRow.salaryType ||
+                Number(oldRow.durationHours) !== Number(newRow.durationHours) ||
+                Number(oldRow.rate) !== Number(newRow.rate) ||
+                Number(oldRow.fee) !== Number(newRow.fee);
+
+            if (changed) {
+                diff.changed.push({ studentName: student, oldRow, newRow });
+            } else {
+                diff.unchangedCount += 1;
+            }
+        });
+
+        return diff;
+    }
+
+    function formatBackfillDiffConfirmText(dateValue, diff) {
+        const lines = [
+            `【${dateValue} 覆盖补录确认】`,
+            `新增 ${diff.added.length} / 删除 ${diff.removed.length} / 变更 ${diff.changed.length} / 不变 ${diff.unchangedCount}`,
+            ""
+        ];
+
+        diff.changed.forEach((item) => {
+            lines.push(`${item.studentName}: ${item.oldRow.salaryType} ${item.oldRow.durationHours}h ${item.oldRow.fee}元 -> ${item.newRow.salaryType} ${item.newRow.durationHours}h ${item.newRow.fee}元`);
+        });
+        diff.added.forEach((item) => {
+            lines.push(`${item.studentName}: 新增 ${item.salaryType} ${item.durationHours}h ${item.fee}元`);
+        });
+        diff.removed.forEach((item) => {
+            lines.push(`${item.studentName}: 删除 ${item.salaryType} ${item.durationHours}h ${item.fee}元`);
+        });
+
+        if (lines.length <= 3) {
+            lines.push("无差异，是否仍覆盖写入？");
+        }
+
+        return lines.join("\n");
+    }
+
+    function autoBackfillYesterdayIfMissing(entries) {
+        const yesterdayYmd = getYesterdayYmd();
+        if (!yesterdayYmd) return false;
+        if (yesterdayYmd < SCHEDULE_SALARY_START_DATE) return false;
+        if (hasLedgerSnapshotForDate(yesterdayYmd)) return false;
+        const written = upsertDailySalarySnapshot(entries, yesterdayYmd);
+        if (written) {
+            window.showToast?.(`已自动补录昨天课次：${yesterdayYmd}`, 3200);
+        }
+        return written;
+    }
+
+    function getCurrentMonthValue() {
+        const now = new Date();
+        return now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
+    }
+
+    function getMonthDateRange(monthValue) {
+        const value = String(monthValue || "").trim();
+        if (!/^\d{4}-\d{2}$/.test(value)) return null;
+        const [year, month] = value.split("-").map(Number);
+        if (!Number.isFinite(year) || !Number.isFinite(month) || month < 1 || month > 12) return null;
+        return {
+            start: new Date(year, month - 1, 1),
+            end: new Date(year, month, 0)
+        };
+    }
+
+    function getCurrentYearValue() {
+        return String(new Date().getFullYear());
+    }
+
+    function getYearDateRange(yearValue) {
+        const value = String(yearValue || "").trim();
+        if (!/^\d{4}$/.test(value)) return null;
+        const year = Number(value);
+        if (!Number.isFinite(year)) return null;
+        return {
+            start: new Date(year, 0, 1),
+            end: new Date(year, 11, 31)
+        };
+    }
+
+    function getPeriodConfig(periodType, monthValue, yearValue) {
+        if (periodType === "year") {
+            const range = getYearDateRange(yearValue);
+            if (!range) throw new Error("年份格式无效，请使用 YYYY");
+            return { periodLabel: String(yearValue).trim(), range, fileTag: String(yearValue).trim() };
+        }
+        const range = getMonthDateRange(monthValue);
+        if (!range) throw new Error("月份格式无效，请使用 YYYY-MM");
+        return { periodLabel: String(monthValue).trim(), range, fileTag: String(monthValue).trim() };
+    }
+
+    function getStatsUntilYesterday(periodType, monthValue, yearValue) {
+        const { range } = getPeriodConfig(periodType, monthValue, yearValue);
+
+        const today = new Date();
+        const yesterday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+        const periodStart = range.start;
+        const cutoff = range.end < yesterday ? range.end : yesterday;
+        const ledger = loadSalaryLedger();
+        const startDateObj = new Date(getLedgerStartDate(ledger) + "T00:00:00");
+        const effectiveStartObj = periodStart > startDateObj ? periodStart : startDateObj;
+
+        if (cutoff < effectiveStartObj) {
+            return { rows: [], warnings: [], dateRangeText: "无可统计日期" };
+        }
+
+        const effectiveStart = dateToYmd(effectiveStartObj);
+        const cutoffYmd = dateToYmd(cutoff);
+        const rows = [];
+        Object.entries(ledger.byDate || {}).forEach(([dateValue, dateRows]) => {
+            if (dateValue < effectiveStart || dateValue > cutoffYmd) return;
+            (Array.isArray(dateRows) ? dateRows : []).forEach((row) => {
+                rows.push({
+                    date: dateValue,
+                    studentName: row.studentName,
+                    salaryType: row.salaryType,
+                    durationHours: Number(row.durationHours) || 0,
+                    rate: Number(row.rate) || (SALARY_RATE_MAP[row.salaryType] || 50),
+                    fee: Number(row.fee) || 0
+                });
+            });
+        });
+
+        rows.sort((a, b) => new Date(a.date) - new Date(b.date) || a.studentName.localeCompare(b.studentName, "zh-CN"));
+        const dateRangeText = `${effectiveStart} 至 ${cutoffYmd}`;
+        return { rows, warnings: [], dateRangeText };
+    }
+
+    function summarizeSalaryRows(rows) {
+        const byType = { "词汇课": { hours: 0, fee: 0 }, "阅读完型语法课": { hours: 0, fee: 0 }, "体验课": { hours: 0, fee: 0 } };
+        const byStudent = {};
+        let total = 0;
+
+        rows.forEach((row) => {
+            if (!byType[row.salaryType]) byType[row.salaryType] = { hours: 0, fee: 0 };
+            byType[row.salaryType].hours += row.durationHours;
+            byType[row.salaryType].fee += row.fee;
+            byStudent[row.studentName] = (byStudent[row.studentName] || 0) + row.fee;
+            total += row.fee;
+        });
+
+        return {
+            byType,
+            byStudent,
+            total: Number(total.toFixed(2))
+        };
+    }
+
+    function buildScheduleSalaryReport(periodLabel, rows, dateRangeText) {
+        const summary = summarizeSalaryRows(rows);
+        let content = `【按排课统计工资】\n统计周期: ${periodLabel}\n统计范围: ${dateRangeText}（仅今天以前）\n\n`;
+        content += "学生姓名 | 日期       | 课程类型 | 课时 | 单价 | 课时费\n";
+        content += "----------------------------------------------------------------\n";
+        rows.forEach((row) => {
+            content += `${row.studentName.padEnd(6)} | ${row.date} | ${row.salaryType.padEnd(12)} | ${String(row.durationHours).padEnd(4)} | ${row.rate} | ${row.fee}元\n`;
+        });
+
+        content += "\n学生总计:\n";
+        Object.entries(summary.byStudent).sort((a, b) => b[1] - a[1]).forEach(([student, total]) => {
+            content += `${student.padEnd(6)}: ${Number(total.toFixed(2))}元\n`;
+        });
+
+        content += "\n========== 总计 ==========\n";
+        Object.entries(summary.byType).forEach(([type, val]) => {
+            if (val.hours <= 0) return;
+            const rate = SALARY_RATE_MAP[type] || 50;
+            content += `${type}总课时: ${Number(val.hours.toFixed(2))}小时\n`;
+            content += `${type}工资（${rate}元/时）: ${Number(val.fee.toFixed(2))}元\n`;
+        });
+        content += `\n工资总计: ${summary.total}元\n`;
+        return { content, summary };
+    }
+
+    function downloadText(fileName, content) {
+        const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = fileName;
+        link.click();
+    }
+
+    function renderScheduleSalaryQuickSummary(periodValue, rows) {
+        const el = document.getElementById("scheduleSalarySummary");
+        if (!el) return;
+        const summary = summarizeSalaryRows(rows);
+        el.textContent = `工资统计口径：独立账本（key: ${SCHEDULE_SALARY_LEDGER_KEY}），默认从 ${SCHEDULE_SALARY_START_DATE} 起按当天实际课次入账（自动补录昨天，缺失时；也可手动补录更早日期），仅统计今天以前。${periodValue} 已统计 ${rows.length} 节，收入 ${summary.total} 元。`;
+    }
+
+    function updateSalaryPickerVisibility() {
+        const periodTypeEl = document.getElementById("salaryPeriodType");
+        const monthPicker = document.getElementById("salaryMonthPicker");
+        const yearPicker = document.getElementById("salaryYearPicker");
+        const monthLabel = document.querySelector('label[for="salaryMonthPicker"]');
+        const yearLabel = document.querySelector('label[for="salaryYearPicker"]');
+        const isYear = periodTypeEl?.value === "year";
+
+        if (monthPicker) monthPicker.style.display = isYear ? "none" : "";
+        if (monthLabel) monthLabel.style.display = isYear ? "none" : "";
+        if (yearPicker) yearPicker.style.display = isYear ? "" : "none";
+        if (yearLabel) yearLabel.style.display = isYear ? "" : "none";
+    }
+
+    function inspectSalaryLedgerStorage() {
+        const ledger = loadSalaryLedger();
+        const dates = Object.keys(ledger.byDate || {}).sort();
+        const totalRecords = dates.reduce((sum, d) => sum + ((ledger.byDate[d] || []).length), 0);
+        const detail = dates.slice(0, 6).map((d) => `${d}: ${(ledger.byDate[d] || []).length}条`);
+
+        let legacyKeyCount = 0;
+        for (let i = 0; i < localStorage.length; i += 1) {
+            const key = localStorage.key(i);
+            if (key && key.endsWith("_classStatistics")) legacyKeyCount += 1;
+        }
+
+        return {
+            keyName: SCHEDULE_SALARY_LEDGER_KEY,
+            startDate: getLedgerStartDate(ledger),
+            dateCount: dates.length,
+            totalRecords,
+            detail,
+            legacyKeyCount
+        };
     }
 
     async function checkQuotaFromSchedule(entries) {
@@ -1461,8 +1928,9 @@
         container.appendChild(table);
     }
 
-    const viewTotalHoursButton = document.getElementById("viewTotalHoursButton");
-    viewTotalHoursButton?.addEventListener("click", async () => {
+    let hasAutoQuotaChecked = false;
+
+    async function runScheduleQuotaCheck() {
         try {
             const configRaw = document.getElementById("schedule-config")?.textContent || "{}";
             const config = JSON.parse(configRaw);
@@ -1471,7 +1939,150 @@
             console.error("课时检查失败:", error);
             window.showToast?.("课时检查失败，请稍后重试");
         }
+    }
+
+    const viewTotalHoursButton = document.getElementById("viewTotalHoursButton");
+    viewTotalHoursButton?.addEventListener("click", async () => {
+        await runScheduleQuotaCheck();
     });
+
+    const salaryMonthPicker = document.getElementById("salaryMonthPicker");
+    const salaryYearPicker = document.getElementById("salaryYearPicker");
+    const salaryPeriodType = document.getElementById("salaryPeriodType");
+    if (salaryMonthPicker && !salaryMonthPicker.value) {
+        salaryMonthPicker.value = getCurrentMonthValue();
+    }
+    if (salaryYearPicker && !salaryYearPicker.value) {
+        salaryYearPicker.value = getCurrentYearValue();
+    }
+    updateSalaryPickerVisibility();
+
+    function refreshScheduleSalarySummary() {
+        try {
+            const periodType = (salaryPeriodType?.value || "month").trim();
+            const monthValue = (salaryMonthPicker?.value || getCurrentMonthValue()).trim();
+            const yearValue = String(salaryYearPicker?.value || getCurrentYearValue()).trim();
+            const periodLabel = periodType === "year" ? yearValue : monthValue;
+
+            const { rows } = getStatsUntilYesterday(periodType, monthValue, yearValue);
+            renderScheduleSalaryQuickSummary(periodLabel, rows);
+        } catch (error) {
+            console.error("工资摘要刷新失败:", error);
+        }
+    }
+
+    const backfillDailySnapshotButton = document.getElementById("backfillDailySnapshotButton");
+    backfillDailySnapshotButton?.addEventListener("click", () => {
+        try {
+            const selectedDate = String(document.getElementById("datePicker")?.value || "").trim();
+            if (!selectedDate) {
+                window.showToast?.("请先选择要补录的日期");
+                return;
+            }
+
+            const todayYmd = getTodayYmd();
+            if (selectedDate > todayYmd) {
+                window.showToast?.("不能补录未来日期");
+                return;
+            }
+
+            const configRaw = document.getElementById("schedule-config")?.textContent || "{}";
+            const config = JSON.parse(configRaw);
+            const existed = hasLedgerSnapshotForDate(selectedDate);
+            if (existed) {
+                const oldRows = getLedgerSnapshotByDate(selectedDate);
+                const newRows = collectActualRowsForDate(config.entries || [], selectedDate);
+                const diff = buildBackfillDiff(oldRows, newRows);
+                const confirmed = window.confirm(formatBackfillDiffConfirmText(selectedDate, diff));
+                if (!confirmed) {
+                    window.showToast?.("已取消覆盖补录");
+                    return;
+                }
+            }
+
+            const ok = upsertDailySalarySnapshot(config.entries || [], selectedDate);
+            if (!ok) {
+                window.showToast?.("补录失败，请检查日期范围");
+                return;
+            }
+
+            const ledger = loadSalaryLedger();
+            const count = (ledger.byDate?.[selectedDate] || []).length;
+            window.showToast?.(`${existed ? "已覆盖补录" : "已补录"} ${selectedDate} 实际课次，共 ${count} 节`, 4200);
+            refreshScheduleSalarySummary();
+        } catch (error) {
+            console.error("补录课次失败:", error);
+            window.showToast?.("补录失败，请稍后重试");
+        }
+    });
+
+    const generateScheduleSalaryButton = document.getElementById("generateScheduleSalaryButton");
+    generateScheduleSalaryButton?.addEventListener("click", async () => {
+        try {
+            const periodType = (salaryPeriodType?.value || "month").trim();
+            const monthValue = (salaryMonthPicker?.value || getCurrentMonthValue()).trim();
+            const yearValue = String(salaryYearPicker?.value || getCurrentYearValue()).trim();
+            const { periodLabel, fileTag } = getPeriodConfig(periodType, monthValue, yearValue);
+
+            const { rows, warnings, dateRangeText } = getStatsUntilYesterday(periodType, monthValue, yearValue);
+
+            if (rows.length === 0) {
+                renderScheduleSalaryQuickSummary(periodLabel, rows);
+                window.showToast?.(`当前周期无可统计课时（${dateRangeText}），未生成文件`, 4500);
+                return;
+            }
+
+            const { content, summary } = buildScheduleSalaryReport(periodLabel, rows, dateRangeText);
+            downloadText(`schedule_${fileTag}_今天前工资统计.txt`, content);
+            await copyToClipboard(content);
+            renderScheduleSalaryQuickSummary(periodLabel, rows);
+
+            if (warnings.length > 0) {
+                const hint = warnings.slice(0, 3).join("\n");
+                const more = warnings.length > 3 ? `\n...另有${warnings.length - 3}条` : "";
+                window.showToast?.(`已生成工资统计：${summary.total}元\n${hint}${more}`, 6000);
+            } else {
+                window.showToast?.(`已生成工资统计：${summary.total}元`, 3500);
+            }
+        } catch (error) {
+            console.error("按排课生成工资统计失败:", error);
+            window.showToast?.("生成失败，请检查月份格式");
+        }
+    });
+
+    salaryPeriodType?.addEventListener("change", () => {
+        updateSalaryPickerVisibility();
+        refreshScheduleSalarySummary();
+    });
+    salaryMonthPicker?.addEventListener("change", refreshScheduleSalarySummary);
+    salaryYearPicker?.addEventListener("change", refreshScheduleSalarySummary);
+    window.addEventListener("schedule-updated", refreshScheduleSalarySummary);
+
+    const verifySalaryStorageButton = document.getElementById("verifySalaryStorageButton");
+    verifySalaryStorageButton?.addEventListener("click", () => {
+        const { keyName, startDate, dateCount, totalRecords, detail, legacyKeyCount } = inspectSalaryLedgerStorage();
+        const preview = detail.slice(0, 4).join("\n");
+        const more = detail.length > 4 ? `\n...另有${detail.length - 4}个学员键` : "";
+        const message = `工资账本检查：${keyName}，起算日${startDate}，已记录${dateCount}天，共${totalRecords}条` +
+            (preview ? `\n${preview}${more}` : "\n当前账本暂无记录") +
+            `\n旧工资键(*_classStatistics)数量：${legacyKeyCount}（本统计不读取）`;
+        window.showToast?.(message, 6500);
+    });
+
+    try {
+        const configRaw = document.getElementById("schedule-config")?.textContent || "{}";
+        const config = JSON.parse(configRaw);
+        autoBackfillYesterdayIfMissing(config.entries || []);
+    } catch (error) {
+        console.error("自动补录昨天失败:", error);
+    }
+
+    if (!hasAutoQuotaChecked) {
+        hasAutoQuotaChecked = true;
+        runScheduleQuotaCheck();
+    }
+
+    refreshScheduleSalarySummary();
 
     function addMinutesToClock(clock, deltaMinutes) {
         const [h, m] = clock.split(":").map((n) => Number(n));
