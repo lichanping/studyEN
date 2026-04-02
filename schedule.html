@@ -265,7 +265,7 @@
             background: var(--card);
         }
 
-        .controls input[type="time"] {
+        .controls input[type="datetime-local"] {
             padding: 6px 8px;
         }
 
@@ -690,7 +690,7 @@
             <button id="setupLxLoginButton" type="button">设置登录信息</button>
             <button id="antiForgettingNotifyButton" class="important-primary-btn" type="button">抗遗忘通知</button>
             <label for="antiForgettingStartTime">提醒时间：</label>
-            <input id="antiForgettingStartTime" type="time" step="60" value="19:30">
+            <input id="antiForgettingStartTime" type="datetime-local" step="60" value="">
         </div>
         <div class="hint" style="margin-top: 6px;">自动检查本排课表学员的 30/60 分钟课时与陪伴课余额。</div>
         <div class="hint" style="margin-top: 6px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
@@ -1079,12 +1079,27 @@ entryKey: 课次标识（用于区分排课项）</span>
     function normalizeClockInput(raw) {
         const value = String(raw || "").trim();
         if (!value) return null;
+        // Support datetime-local values like "2026-04-02T19:30".
+        if (/^\d{4}-\d{2}-\d{2}T\d{1,2}:\d{1,2}$/.test(value)) {
+            const clockPart = value.split("T")[1] || "";
+            return normalizeClockInput(clockPart);
+        }
         if (/^\d{1,2}$/.test(value)) return value.padStart(2, "0") + ":00";
         if (/^\d{1,2}:\d{1,2}$/.test(value)) {
             const [h, m] = value.split(":");
             return h.padStart(2, "0") + ":" + m.padStart(2, "0");
         }
         return null;
+    }
+
+    function extractDatePartFromDateTimeValue(raw, fallbackDate) {
+        const value = String(raw || "").trim();
+        if (/^\d{4}-\d{2}-\d{2}T/.test(value)) return value.split("T")[0];
+        return fallbackDate;
+    }
+
+    function clockToDateTimeLocalValue(datePart, clockPart) {
+        return `${datePart}T${clockPart}`;
     }
 
     function isValidClock(clock) {
@@ -1165,7 +1180,8 @@ entryKey: 课次标识（用于区分排课项）</span>
             timeInput.step = 60;
             timeInput.className = "inline-time-input";
             const fallbackClock = getDefaultClockByPeriod(item.period);
-            timeInput.value = getOverrideClock(item, dateValue) || normalizeClockInput(item.time) || fallbackClock;
+            const clockValue = getOverrideClock(item, dateValue) || normalizeClockInput(item.time) || fallbackClock;
+            timeInput.value = clockValue;
             timeInput.addEventListener("change", () => {
                 const normalized = normalizeClockInput(timeInput.value);
                 if (!normalized || !isValidClock(normalized)) {
@@ -1175,6 +1191,7 @@ entryKey: 课次标识（用于区分排课项）</span>
                     return;
                 }
                 setOverrideClock(item, dateValue, normalized);
+                timeInput.value = normalized;
             });
 
             const student = document.createElement("span");
@@ -2252,7 +2269,13 @@ entryKey: 课次标识（用于区分排课项）</span>
     const antiForgettingNotifyButton = document.getElementById("antiForgettingNotifyButton");
     const antiForgettingStartTimeInput = document.getElementById("antiForgettingStartTime");
 
+    if (antiForgettingStartTimeInput && !antiForgettingStartTimeInput.value) {
+        antiForgettingStartTimeInput.value = clockToDateTimeLocalValue(getTodayYmd(), "19:30");
+    }
+
     antiForgettingNotifyButton?.addEventListener("click", async () => {
+        const fallbackDate = getTodayYmd();
+        const startDate = extractDatePartFromDateTimeValue(antiForgettingStartTimeInput?.value || "", fallbackDate);
         const startClock = normalizeClockInput(antiForgettingStartTimeInput?.value || "");
         if (!startClock || !isValidClock(startClock)) {
             window.showToast?.("提醒时间格式无效，请使用 HH:mm");
@@ -2272,7 +2295,9 @@ entryKey: 课次标识（用于区分排课项）</span>
 
         // 连续发送时自动递增 5 分钟，符合你的日常节奏。
         const nextClock = addMinutesToClock(startClock, 5);
-        if (antiForgettingStartTimeInput) antiForgettingStartTimeInput.value = nextClock;
+        if (antiForgettingStartTimeInput) {
+            antiForgettingStartTimeInput.value = clockToDateTimeLocalValue(startDate, nextClock);
+        }
         window.showToast?.("下一条提醒时间已自动 +5 分钟（" + nextClock + "）");
     });
 </script>
