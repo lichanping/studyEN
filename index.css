@@ -1,4 +1,43 @@
 /* 护眼淡雅主题 */
+:root {
+    color-scheme: light dark;
+    --bg-color: #e8e4dc;
+    --text-color: #3d3d3d;
+    --panel-bg: #f5f3ef;
+    --panel-border: #c5c0b8;
+    --button-bg: #d4cfc5;
+    --button-hover-bg: #cac5bb;
+    --button-border: #b8b3a9;
+    --button-text: #3d3d3d;
+    --label-color: #4a4a4a;
+    --input-focus: #a0a0a0;
+    --view-hours-bg: #c9a86c;
+    --action-bg: #b8ccd8;
+    --muted-text: #666;
+    --card-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    --control-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color: #1d1e21;
+        --text-color: #e7e7e7;
+        --panel-bg: #292b2f;
+        --panel-border: #4a4d53;
+        --button-bg: #3a3d43;
+        --button-hover-bg: #474b53;
+        --button-border: #5a606a;
+        --button-text: #ececec;
+        --label-color: #d5d9df;
+        --input-focus: #78a5d9;
+        --view-hours-bg: #9f7f45;
+        --action-bg: #4f6778;
+        --muted-text: #b9bec7;
+        --card-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+        --control-shadow: 0 2px 5px rgba(0, 0, 0, 0.35);
+    }
+}
+
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
     text-align: left;
@@ -6,8 +45,8 @@ body {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    background-color: #e8e4dc; /* 米色护眼背景 */
-    color: #3d3d3d;
+    background-color: var(--bg-color);
+    color: var(--text-color);
     font-size: 17px;
     line-height: 1.6;
     position: relative;
@@ -20,15 +59,15 @@ body {
     left: 20px;
     width: 100%;
     max-width: 700px;
-    background-color: #f5f3ef;
+    background-color: var(--panel-bg);
     padding: 10px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--card-shadow);
     z-index: 1000;
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
     align-items: center;
-    border: 1px solid #c5c0b8;
+    border: 1px solid var(--panel-border);
     border-radius: 6px;
 }
 
@@ -38,22 +77,22 @@ body {
     padding: 10px 16px;
     font-size: 20px;
     font-weight: bold;
-    color: #4a4a4a;
-    background: #f5f3ef;
-    border: 2px solid #b8b3a9;
+    color: var(--label-color);
+    background: var(--panel-bg);
+    border: 2px solid var(--button-border);
     border-radius: 8px;
     appearance: none;
     outline: none;
     cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--control-shadow);
 }
 
 #classFeedbackButton, #appointmentSchedulingButton, #stop, #noReviewTodayButton, #newFeedbackButton {
-    background-color: #b8ccd8; /* 淡灰蓝 */
+    background-color: var(--action-bg);
 }
 
 #viewTotalHoursButton {
-    background-color: #c9a86c; /* 稍深的暖棕色，更醒目 */
+    background-color: var(--view-hours-bg);
     font-weight: 600;
 }
 
@@ -64,10 +103,10 @@ body {
     left: 0;
     transform: translateY(-50%);
     max-width: 40%;
-    background-color: #f5f3ef;
+    background-color: var(--panel-bg);
     padding: 12px;
-    border: 1px solid #c5c0b8;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--panel-border);
+    box-shadow: var(--card-shadow);
     z-index: 9999;
     border-radius: 6px;
     font-size: 17px;
@@ -91,13 +130,13 @@ body {
 }
 
 button {
-    background-color: #d4cfc5; /* 淡米灰 */
-    color: #3d3d3d;
+    background-color: var(--button-bg);
+    color: var(--button-text);
     margin: 5px;
     font-size: 16px;
     font-weight: 500;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-    border: 1px solid #b8b3a9;
+    box-shadow: var(--control-shadow);
+    border: 1px solid var(--button-border);
     padding: 6px 12px;
     border-radius: 4px;
     transition: all 0.2s ease;
@@ -106,28 +145,32 @@ button {
 
 button:hover {
     transform: translateY(-1px);
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
-    background-color: #cac5bb;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
+    background-color: var(--button-hover-bg);
+}
+
+button:disabled {
+    opacity: 0.6;
 }
 
 label {
     margin-right: 10px;
     font-size: 16px;
-    color: #4a4a4a;
+    color: var(--label-color);
 }
 
 input, select {
     margin: 5px;
     font-size: 16px;
     padding: 6px 10px;
-    background-color: #f5f3ef;
-    color: #3d3d3d;
-    border: 1px solid #c5c0b8;
+    background-color: var(--panel-bg);
+    color: var(--text-color);
+    border: 1px solid var(--panel-border);
     border-radius: 4px;
 }
 
 input:focus, select:focus {
-    border-color: #a0a0a0;
+    border-color: var(--input-focus);
     outline: none;
 }
 
@@ -137,20 +180,20 @@ textarea {
     height: 70px;
     font-size: 17px;
     padding: 8px;
-    background-color: #f5f3ef;
-    color: #3d3d3d;
-    border: 1px solid #c5c0b8;
+    background-color: var(--panel-bg);
+    color: var(--text-color);
+    border: 1px solid var(--panel-border);
     border-radius: 4px;
 }
 
 textarea:focus {
-    border-color: #a0a0a0;
+    border-color: var(--input-focus);
     outline: none;
 }
 
 h1 {
     font-size: 26px;
-    color: #4a4a4a;
+    color: var(--label-color);
     letter-spacing: 1px;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
     margin-bottom: 15px;
@@ -169,15 +212,15 @@ h1 {
     max-width: 700px;
     margin-bottom: 15px;
     padding: 15px;
-    background-color: #f5f3ef;
-    border: 1px solid #c5c0b8;
+    background-color: var(--panel-bg);
+    border: 1px solid var(--panel-border);
     border-radius: 8px;
 }
 
 .section-group legend {
     font-size: 17px;
     font-weight: 600;
-    color: #4a4a4a;
+    color: var(--label-color);
     padding: 0 10px;
 }
 
@@ -200,9 +243,9 @@ input[type="checkbox"] {
 }
 
 input[type="datetime-local"] {
-    background-color: #f5f3ef;
-    color: #3d3d3d;
-    border: 1px solid #c5c0b8;
+    background-color: var(--panel-bg);
+    color: var(--text-color);
+    border: 1px solid var(--panel-border);
 }
 
 /* 课程标签样式 */
@@ -217,12 +260,12 @@ input[type="datetime-local"] {
 
 #courseLabel {
     font-weight: 600;
-    color: #4a4a4a;
+    color: var(--label-color);
 }
 
 #courseWordCountLabel {
     margin-left: 10px;
-    color: #666;
+    color: var(--muted-text);
 }
 
 #todayReviewDates {
