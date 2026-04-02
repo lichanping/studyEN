@@ -607,6 +607,14 @@ function formatDateTimeWeekly(dateTimeString) {
     return `${formattedDateTime}`;
 }
 
+function escapeCsvCell(value) {
+    const text = String(value ?? "");
+    if (/[",\n]/.test(text)) {
+        return `"${text.replace(/"/g, '""')}"`;
+    }
+    return text;
+}
+
 export function generateSalaryReport() {
     const teacherName = document.getElementById("teacherName").value;
     const teacherDisplayName = document.getElementById("teacherName").options[document.getElementById("teacherName").selectedIndex].text;
@@ -638,7 +646,7 @@ export function generateSalaryReport() {
 
     allStudents.forEach(userName => {
         // 初始化每个学生的总工资
-        studentStats[userName] = 0;
+        studentStats[userName] = { hours: 0, fee: 0 };
 
         const statsKey = `${userName}_classStatistics`;
         const classStats = JSON.parse(localStorage.getItem(statsKey)) || {};
@@ -701,17 +709,18 @@ export function generateSalaryReport() {
                 totalHoursTrial += record.duration;
                 break;
         }
-        studentStats[record.userName] += lessonFee;
+        studentStats[record.userName].hours += record.duration;
+        studentStats[record.userName].fee += lessonFee;
     });
 
     // 添加学生总计
     reportContent += "\n学生总计:\n";
 
     // Sort studentStats by total fee in descending order
-    const sortedStudentStats = Object.entries(studentStats).sort((a, b) => b[1] - a[1]);
+    const sortedStudentStats = Object.entries(studentStats).sort((a, b) => b[1].fee - a[1].fee);
 
-    sortedStudentStats.forEach(([student, total]) => {
-        reportContent += `${student.padEnd(6)}: ${total}元\n`;
+    sortedStudentStats.forEach(([student, stat]) => {
+        reportContent += `${student.padEnd(6)}: ${stat.hours.toFixed(2)}小时, ${stat.fee}元\n`;
     });
 
     // 添加总计数据
@@ -737,10 +746,31 @@ export function generateSalaryReport() {
     }
     reportContent += `\n工资总计: ${totalSalaryAll} 元\n`;
 
-    const blob = new Blob([reportContent], {type: 'text/plain;charset=utf-8'});
+    const csvRows = [];
+    csvRows.push(["学生姓名", "日期", "课程类型", "课时", "单价", "课时费(元)"]);
+    allRecords.forEach((record) => {
+        const lessonFee = record.duration * record.hourlyRate;
+        csvRows.push([record.userName, record.date, record.type, record.duration, record.hourlyRate, lessonFee]);
+    });
+
+    csvRows.push([]);
+    csvRows.push(["学生总计", "总课时", "工资(元)"]);
+    sortedStudentStats.forEach(([student, stat]) => {
+        csvRows.push([student, Number(stat.hours.toFixed(2)), Number(stat.fee.toFixed(2))]);
+    });
+
+    csvRows.push([]);
+    csvRows.push(["课程类型", "总课时", "时薪(元)", "工资(元)"]);
+    if (totalHoursVocab > 0) csvRows.push(["词汇课", totalHoursVocab, 50, salaryVocab]);
+    if (totalHoursReading > 0) csvRows.push(["阅读完型语法课", totalHoursReading, 55, salaryReading]);
+    if (totalHoursTrial > 0) csvRows.push(["体验课", totalHoursTrial, 40, salaryTrial]);
+    csvRows.push(["工资总计", "", "", Number(totalSalaryAll.toFixed(2))]);
+
+    const csvContent = "\uFEFF" + csvRows.map((row) => row.map(escapeCsvCell).join(",")).join("\n");
+    const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8'});
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `${teacherDisplayName}_${monthToQuery}_课时工资.txt`;
+    link.download = `${teacherDisplayName}_${monthToQuery}_课时工资.csv`;
     link.click();
 }
 
