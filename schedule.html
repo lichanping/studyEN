@@ -1237,8 +1237,9 @@ entryKey: 课次标识（用于区分排课项）</span>
                 }).join("")
                 : '<div class="empty">无排课</div>';
 
+            const dayHeaderDate = dayDate.slice(5);
             return '<article class="day-card">' +
-                '<h3>' + day + '</h3>' +
+                '<h3>' + day + ' ' + dayHeaderDate + '</h3>' +
                 '<div class="day-meta">日期：' + dayDate + ' · 应上：' + toHoursText(dayMinutes) + ' · 请假' + dayCancelledCount + '节</div>' +
                 rows +
                 '</article>';
@@ -1631,7 +1632,11 @@ entryKey: 课次标识（用于区分排课项）</span>
             if (!byType[row.salaryType]) byType[row.salaryType] = { hours: 0, fee: 0 };
             byType[row.salaryType].hours += row.durationHours;
             byType[row.salaryType].fee += row.fee;
-            byStudent[row.studentName] = (byStudent[row.studentName] || 0) + row.fee;
+            if (!byStudent[row.studentName]) {
+                byStudent[row.studentName] = { hours: 0, fee: 0 };
+            }
+            byStudent[row.studentName].hours += row.durationHours;
+            byStudent[row.studentName].fee += row.fee;
             total += row.fee;
         });
 
@@ -1642,33 +1647,47 @@ entryKey: 课次标识（用于区分排课项）</span>
         };
     }
 
-    function buildScheduleSalaryReport(periodLabel, rows, dateRangeText) {
+    function buildScheduleSalaryReport(periodLabel, rows) {
         const summary = summarizeSalaryRows(rows);
-        let content = `【按排课统计工资】\n统计周期: ${periodLabel}\n统计范围: ${dateRangeText}（仅今天以前）\n\n`;
-        content += "学生姓名 | 日期       | 课程类型 | 课时 | 单价 | 课时费\n";
-        content += "----------------------------------------------------------------\n";
+        const csvRows = [];
+        csvRows.push(["统计项", "值"]);
+        csvRows.push(["统计周期", periodLabel]);
+        csvRows.push([]);
+
+        csvRows.push(["学生姓名", "日期", "课程类型", "课时", "单价", "课时费(元)"]);
         rows.forEach((row) => {
-            content += `${row.studentName.padEnd(6)} | ${row.date} | ${row.salaryType.padEnd(12)} | ${String(row.durationHours).padEnd(4)} | ${row.rate} | ${row.fee}元\n`;
+            csvRows.push([row.studentName, row.date, row.salaryType, row.durationHours, row.rate, row.fee]);
         });
 
-        content += "\n学生总计:\n";
-        Object.entries(summary.byStudent).sort((a, b) => b[1] - a[1]).forEach(([student, total]) => {
-            content += `${student.padEnd(6)}: ${Number(total.toFixed(2))}元\n`;
+        csvRows.push([]);
+        csvRows.push(["学生总计", "总课时", "工资(元)"]);
+        Object.entries(summary.byStudent).sort((a, b) => b[1].fee - a[1].fee).forEach(([student, stat]) => {
+            csvRows.push([student, Number(stat.hours.toFixed(2)), Number(stat.fee.toFixed(2))]);
         });
 
-        content += "\n========== 总计 ==========\n";
+        csvRows.push([]);
+        csvRows.push(["课程类型", "总课时", "时薪(元)", "工资(元)"]);
         Object.entries(summary.byType).forEach(([type, val]) => {
             if (val.hours <= 0) return;
             const rate = SALARY_RATE_MAP[type] || 50;
-            content += `${type}总课时: ${Number(val.hours.toFixed(2))}小时\n`;
-            content += `${type}工资（${rate}元/时）: ${Number(val.fee.toFixed(2))}元\n`;
+            csvRows.push([type, Number(val.hours.toFixed(2)), rate, Number(val.fee.toFixed(2))]);
         });
-        content += `\n工资总计: ${summary.total}元\n`;
+        csvRows.push(["工资总计", "", "", summary.total]);
+
+        const content = "\uFEFF" + csvRows.map((row) => row.map(escapeCsvCell).join(",")).join("\n");
         return { content, summary };
     }
 
-    function downloadText(fileName, content) {
-        const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+    function escapeCsvCell(value) {
+        const text = String(value ?? "");
+        if (/[",\n]/.test(text)) {
+            return `"${text.replace(/"/g, '""')}"`;
+        }
+        return text;
+    }
+
+    function downloadCsv(fileName, content) {
+        const blob = new Blob([content], { type: "text/csv;charset=utf-8" });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
         link.download = fileName;
@@ -2032,8 +2051,8 @@ entryKey: 课次标识（用于区分排课项）</span>
                 return;
             }
 
-            const { content, summary } = buildScheduleSalaryReport(periodLabel, rows, dateRangeText);
-            downloadText(`schedule_${fileTag}_今天前工资统计.txt`, content);
+            const { content, summary } = buildScheduleSalaryReport(periodLabel, rows);
+            downloadCsv(`schedule_${fileTag}_工资.csv`, content);
             await copyToClipboard(content);
             renderScheduleSalaryQuickSummary(periodLabel, rows);
 
