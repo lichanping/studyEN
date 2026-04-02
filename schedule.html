@@ -1835,8 +1835,8 @@ entryKey: 课次标识（用于区分排课项）</span>
 
         if (monthPicker) monthPicker.style.display = isYear ? "none" : "";
         if (monthLabel) monthLabel.style.display = isYear ? "none" : "";
-        if (yearPicker) yearPicker.style.display = isYear ? "" : "none";
-        if (yearLabel) yearLabel.style.display = isYear ? "" : "none";
+        if (yearPicker) yearPicker.style.display = isYear ? "inline-block" : "none";
+        if (yearLabel) yearLabel.style.display = isYear ? "inline" : "none";
     }
 
     function inspectSalaryLedgerStorage() {
