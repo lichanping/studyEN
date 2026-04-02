@@ -101,10 +101,25 @@ export async function loginApp() {
     let phone = localStorage.getItem('lx_phone');
     let password = localStorage.getItem('lx_pw');
 
-
     if (!phone || !password) {
-        alert('缺少登录凭据(lx_phone 或 lx_pw)');
-        return;
+        const inputPhone = prompt('首次使用请填写手机号（用于登录排课/课时接口）:', phone || '');
+        const normalizedPhone = String(inputPhone || '').trim();
+        if (!normalizedPhone) {
+            alert('未填写手机号，已取消登录。');
+            return null;
+        }
+
+        const inputPassword = prompt('请填写登录密码（仅保存在本机 localStorage）:');
+        const normalizedPassword = String(inputPassword || '').trim();
+        if (!normalizedPassword) {
+            alert('未填写密码，已取消登录。');
+            return null;
+        }
+
+        localStorage.setItem('lx_phone', normalizedPhone);
+        localStorage.setItem('lx_pw', normalizedPassword);
+        phone = normalizedPhone;
+        password = normalizedPassword;
     }
 
     try {
@@ -132,13 +147,49 @@ export async function loginApp() {
         if (!token) throw new Error('登录失败: 未获取到 token');
 
         localStorage.setItem('x-token-c', token);
+        const userId = data?.data?.userId;
+        if (userId) {
+            localStorage.setItem('x-user-id', String(userId));
+        }
 
         alert('登录成功');
         return data;
     } catch (e) {
         console.error('登录错误:', e);
+        // 手机端不方便手动改 localStorage；失败后清空凭据，下一次可重新输入。
+        localStorage.removeItem('lx_phone');
+        localStorage.removeItem('lx_pw');
         alert('登录失败，请检查账号与密码');
         throw e;
+    }
+}
+
+// 手机端快捷入口：手动设置登录凭据并立即尝试登录
+export async function configureLxCredentials() {
+    const currentPhone = localStorage.getItem('lx_phone') || '';
+    const inputPhone = prompt('请输入手机号（将保存到本机）:', currentPhone);
+    const normalizedPhone = String(inputPhone || '').trim();
+    if (!normalizedPhone) {
+        alert('未填写手机号，已取消。');
+        return false;
+    }
+
+    const inputPassword = prompt('请输入登录密码（将保存到本机）:');
+    const normalizedPassword = String(inputPassword || '').trim();
+    if (!normalizedPassword) {
+        alert('未填写密码，已取消。');
+        return false;
+    }
+
+    localStorage.setItem('lx_phone', normalizedPhone);
+    localStorage.setItem('lx_pw', normalizedPassword);
+    localStorage.removeItem('x-token-c');
+
+    try {
+        await loginApp();
+        return true;
+    } catch (_) {
+        return false;
     }
 }
 

@@ -579,6 +579,7 @@
 
             <span class="controls-break" aria-hidden="true"></span>
             <button id="viewTotalHoursButton" type="button">查看课时数</button>
+            <button id="setupLxLoginButton" type="button">设置登录信息</button>
             <button id="antiForgettingNotifyButton" class="important-primary-btn" type="button">抗遗忘通知</button>
             <label for="antiForgettingStartTime">提醒时间：</label>
             <input id="antiForgettingStartTime" type="time" step="60" value="19:30">
@@ -1274,7 +1275,7 @@ entryKey: 课次标识（用于区分排课项）</span>
     init();
 </script>
 <script type="module">
-    import { loginApp } from './commonFunctions.js';
+    import { loginApp, configureLxCredentials } from './commonFunctions.js';
 
     const STUDENT_NAME_ALIAS = {
         "硕硕": "俞新硕"
@@ -1963,6 +1964,11 @@ entryKey: 课次标识（用于区分排课项）</span>
     const viewTotalHoursButton = document.getElementById("viewTotalHoursButton");
     viewTotalHoursButton?.addEventListener("click", async () => {
         await runScheduleQuotaCheck();
+    });
+
+    const setupLxLoginButton = document.getElementById("setupLxLoginButton");
+    setupLxLoginButton?.addEventListener("click", async () => {
+        await configureLxCredentials();
     });
 
     const salaryMonthPicker = document.getElementById("salaryMonthPicker");

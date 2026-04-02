@@ -1301,7 +1301,7 @@ export async function viewTotalHoursClick() {
         });
         token = localStorage.getItem('x-token-c');
         if (!token) {
-            alert('未找到 token，登录失败或未配置。');
+            alert('未找到 token。请先点击“设置登录信息”后重试。');
             return;
         }
     }

@@ -187,6 +187,7 @@
         <label for="totalHours">总课时:</label>
         <input type="text" id="totalHours" placeholder="请输入总课时">
         <button id="resetTotalButton">Reset总课时</button>
+        <button id="setupLxLoginButton">设置登录信息</button>
         <button id="useHoursButton">扣减课时</button>
         <input type="checkbox" id="includeHoursInfo">
         <label for="includeHoursInfo">显示课时详情</label>
@@ -216,6 +217,7 @@
     document.getElementById("userName").addEventListener("change", script.updateLabel);
     document.getElementById("groupGreetingButton").addEventListener("click", commonFunctions.handleGroupGreetingClick);
     document.getElementById("viewTotalHoursButton").addEventListener("click", script.viewTotalHoursClick);
+    document.getElementById("setupLxLoginButton").addEventListener("click", commonFunctions.configureLxCredentials);
     document.getElementById("noReviewTodayButton").addEventListener("click", commonFunctions.handleReviewLateReminderClick);
     document.getElementById("scheduleNotificationButton").addEventListener("click", script.handleScheduleNotificationClick);
     document.getElementById("stop").addEventListener("click", script.handleStopNotificationClick);
