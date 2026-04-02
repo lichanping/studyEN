@@ -3,21 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#e8e4dc">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1d1e21">
     <title>排课总览</title>
     <script type="module">
-        import * as commonFunctions from './commonFunctions.js';
+        import * as commonFunctions from './commonFunctions.js?v=20260402-2';
         commonFunctions.checkLoginStatus();
     </script>
     <style>
         :root {
-            color-scheme: light;
+            color-scheme: light dark;
             --bg: #e8e4dc;
             --card: #f5f3ef;
             --text: #3d3d3d;
             --subtle: #666;
             --line: #c5c0b8;
-            --accent: #5f7283;
             --chip: #ddd8ce;
+            --surface: #fff;
+            --back-link-hover: #e2ddd3;
+            --help-tip-border: #9fb2c6;
+            --help-tip-bg: #dce4ec;
+            --help-tip-text: #3f5f82;
+            --popover-bg: #fff;
+            --elev-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+            --primary-btn-border: #a96e1f;
+            --primary-btn-bg: #f8e7c8;
+            --primary-btn-text: #7a4c12;
+            --primary-btn-hover-bg: #f2ddb8;
+            --pill-text: #4b5563;
+            --course-text: #3f5f82;
+            --cancelled-bg: #efe8de;
+            --cancelled-border: #d3a777;
+            --status-ok-bg: #dbe6dc;
+            --status-ok-text: #3f6b4a;
+            --status-cancel-bg: #efe1cf;
+            --status-cancel-text: #8f5627;
+            --action-cancel-text: #8f5627;
+            --action-cancel-border: #d3a777;
+            --action-cancel-bg: #efe4d4;
+            --action-restore-text: #3f6b4a;
+            --action-restore-border: #99b79f;
+            --action-restore-bg: #dde9df;
+            --action-remind-text: #1d4ed8;
+            --action-remind-border: #93c5fd;
+            --action-remind-bg: #eff6ff;
+            --action-request-text: #5f4c88;
+            --action-request-border: #b8adcc;
+            --action-request-bg: #ece8f4;
+            --action-notice-text: #3f5f82;
+            --action-notice-border: #9fb2c6;
+            --action-notice-bg: #dce4ec;
+            --toast-bg: rgba(17, 24, 39, 0.9);
+            --toast-text: #fff;
+            --mini-cancel-text: #9a3412;
+            --mini-cancel-bg: #fff7ed;
+            --mini-cancel-border: #fdba74;
+            --code-bg: #e8e3d9;
+            --table-head-bg: #e8e3d9;
+            --quota-warning-bg: #efe8de;
+            --quota-missing-bg: #f1e4e1;
+            --quota-danger-text: #8f4545;
+            --quota-danger-bg: #efe2df;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #1d1e21;
+                --card: #292b2f;
+                --text: #e7e7e7;
+                --subtle: #b9bec7;
+                --line: #4a4d53;
+                --chip: #3b3f46;
+                --surface: #24262b;
+                --back-link-hover: #2f3238;
+                --help-tip-border: #5e6f84;
+                --help-tip-bg: #334154;
+                --help-tip-text: #c3d8ef;
+                --popover-bg: #24262b;
+                --elev-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+                --primary-btn-border: #c28a41;
+                --primary-btn-bg: #4f3a22;
+                --primary-btn-text: #f8ddb2;
+                --primary-btn-hover-bg: #60472a;
+                --pill-text: #d4dae4;
+                --course-text: #9ec0e8;
+                --cancelled-bg: #3c3329;
+                --cancelled-border: #9f7443;
+                --status-ok-bg: #2f4737;
+                --status-ok-text: #b8e2c2;
+                --status-cancel-bg: #4b3628;
+                --status-cancel-text: #f0bd8d;
+                --action-cancel-text: #f0bd8d;
+                --action-cancel-border: #9f7443;
+                --action-cancel-bg: #433326;
+                --action-restore-text: #b8e2c2;
+                --action-restore-border: #669374;
+                --action-restore-bg: #2f4737;
+                --action-remind-text: #c3dafe;
+                --action-remind-border: #5d84c8;
+                --action-remind-bg: #2a3654;
+                --action-request-text: #d3c5f1;
+                --action-request-border: #78649e;
+                --action-request-bg: #3a324a;
+                --action-notice-text: #c3d8ef;
+                --action-notice-border: #5e6f84;
+                --action-notice-bg: #334154;
+                --toast-bg: rgba(241, 245, 249, 0.92);
+                --toast-text: #1f2937;
+                --mini-cancel-text: #ffd0b1;
+                --mini-cancel-bg: #4a2f24;
+                --mini-cancel-border: #b06f4d;
+                --code-bg: #3a3d43;
+                --table-head-bg: #34373d;
+                --quota-warning-bg: #3c3329;
+                --quota-missing-bg: #442f2c;
+                --quota-danger-text: #f7b7b7;
+                --quota-danger-bg: #553634;
+            }
         }
 
         * { box-sizing: border-box; }
@@ -61,13 +163,13 @@
             padding: 7px 12px;
             color: var(--text);
             text-decoration: none;
-            background: #fff;
+            background: var(--surface);
             font-size: 14px;
             font-weight: 600;
         }
 
         .back-link:hover {
-            background: #e2ddd3;
+            background: var(--back-link-hover);
         }
 
         .hint {
@@ -108,9 +210,9 @@
             width: 18px;
             height: 18px;
             border-radius: 999px;
-            border: 1px solid #9fb2c6;
-            background: #dce4ec;
-            color: #3f5f82;
+            border: 1px solid var(--help-tip-border);
+            background: var(--help-tip-bg);
+            color: var(--help-tip-text);
             font-size: 12px;
             font-weight: 700;
             cursor: help;
@@ -126,9 +228,9 @@
             padding: 10px 12px;
             border-radius: 8px;
             border: 1px solid var(--line);
-            background: #fff;
+            background: var(--popover-bg);
             color: var(--text);
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+            box-shadow: var(--elev-shadow);
             font-size: 12px;
             line-height: 1.5;
             white-space: pre-wrap;
@@ -172,16 +274,22 @@
             font-weight: 600;
         }
 
+        /* Default to month mode so only one picker is visible before JS runs. */
+        #salaryYearPicker,
+        label[for="salaryYearPicker"] {
+            display: none;
+        }
+
         .important-primary-btn {
-            border-color: #a96e1f !important;
-            background: #f8e7c8 !important;
-            color: #7a4c12 !important;
+            border-color: var(--primary-btn-border) !important;
+            background: var(--primary-btn-bg) !important;
+            color: var(--primary-btn-text) !important;
             box-shadow: 0 0 0 2px rgba(169, 110, 31, 0.18);
             font-weight: 700;
         }
 
         .important-primary-btn:hover {
-            background: #f2ddb8 !important;
+            background: var(--primary-btn-hover-bg) !important;
         }
 
         .appointment-title {
@@ -195,7 +303,7 @@
             border-radius: 999px;
             padding: 5px 10px;
             background: var(--chip);
-            color: #4b5563;
+            color: var(--pill-text);
             font-size: 13px;
             font-weight: 600;
         }
@@ -287,7 +395,7 @@
         }
 
         .course {
-            color: #3f5f82;
+            color: var(--course-text);
             font-weight: 600;
         }
 
@@ -296,8 +404,8 @@
         }
 
         .class-item.cancelled {
-            background: #efe8de;
-            border-color: #d3a777;
+            background: var(--cancelled-bg);
+            border-color: var(--cancelled-border);
         }
 
         .status-tag {
@@ -305,13 +413,13 @@
             padding: 3px 8px;
             font-size: 12px;
             font-weight: 700;
-            background: #dbe6dc;
-            color: #3f6b4a;
+            background: var(--status-ok-bg);
+            color: var(--status-ok-text);
         }
 
         .status-tag.cancelled {
-            background: #efe1cf;
-            color: #8f5627;
+            background: var(--status-cancel-bg);
+            color: var(--status-cancel-text);
         }
 
         .action-group {
@@ -340,33 +448,33 @@
         }
 
         .action-btn.cancel {
-            color: #8f5627;
-            border-color: #d3a777;
-            background: #efe4d4;
+            color: var(--action-cancel-text);
+            border-color: var(--action-cancel-border);
+            background: var(--action-cancel-bg);
         }
 
         .action-btn.restore {
-            color: #3f6b4a;
-            border-color: #99b79f;
-            background: #dde9df;
+            color: var(--action-restore-text);
+            border-color: var(--action-restore-border);
+            background: var(--action-restore-bg);
         }
 
         .action-btn.remind {
-            color: #1d4ed8;
-            border-color: #93c5fd;
-            background: #eff6ff;
+            color: var(--action-remind-text);
+            border-color: var(--action-remind-border);
+            background: var(--action-remind-bg);
         }
 
         .action-btn.request {
-            color: #5f4c88;
-            border-color: #b8adcc;
-            background: #ece8f4;
+            color: var(--action-request-text);
+            border-color: var(--action-request-border);
+            background: var(--action-request-bg);
         }
 
         .action-btn.notice {
-            color: #3f5f82;
-            border-color: #9fb2c6;
-            background: #dce4ec;
+            color: var(--action-notice-text);
+            border-color: var(--action-notice-border);
+            background: var(--action-notice-bg);
             font-weight: 700;
         }
 
@@ -375,8 +483,8 @@
             left: 50%;
             bottom: 24px;
             transform: translateX(-50%);
-            background: rgba(17, 24, 39, 0.9);
-            color: #fff;
+            background: var(--toast-bg);
+            color: var(--toast-text);
             padding: 10px 14px;
             border-radius: 8px;
             font-size: 13px;
@@ -463,11 +571,11 @@
         }
 
         .mini-item.cancelled {
-            color: #9a3412;
-            background: #fff7ed;
+            color: var(--mini-cancel-text);
+            background: var(--mini-cancel-bg);
             border-radius: 6px;
             padding: 8px;
-            border: 1px solid #fdba74;
+            border: 1px solid var(--mini-cancel-border);
         }
 
         .mini-status {
@@ -484,7 +592,7 @@
         }
 
         code {
-            background: #e8e3d9;
+            background: var(--code-bg);
             border-radius: 5px;
             padding: 1px 5px;
         }
@@ -513,16 +621,16 @@
         }
 
         .quota-result-table th {
-            background: #e8e3d9;
+            background: var(--table-head-bg);
             font-weight: 700;
         }
 
         .quota-row-warning {
-            background: #efe8de;
+            background: var(--quota-warning-bg);
         }
 
         .quota-row-missing {
-            background: #f1e4e1;
+            background: var(--quota-missing-bg);
         }
 
         .quota-status {
@@ -532,24 +640,24 @@
             padding: 2px 8px;
             font-size: 12px;
             font-weight: 700;
-            background: #dbe6dc;
-            color: #3f6b4a;
+            background: var(--status-ok-bg);
+            color: var(--status-ok-text);
         }
 
         .quota-status.warn {
-            background: #efe1cf;
-            color: #8f5627;
+            background: var(--status-cancel-bg);
+            color: var(--status-cancel-text);
         }
 
         .quota-status.missing {
-            background: #ead3cf;
-            color: #8f4545;
+            background: var(--quota-missing-bg);
+            color: var(--quota-danger-text);
         }
 
         .quota-cell-danger {
-            color: #8f4545;
+            color: var(--quota-danger-text);
             font-weight: 700;
-            background: #efe2df;
+            background: var(--quota-danger-bg);
         }
     </style>
 </head>
@@ -1275,7 +1383,22 @@ entryKey: 课次标识（用于区分排课项）</span>
     init();
 </script>
 <script type="module">
-    import { loginApp, configureLxCredentials } from './commonFunctions.js';
+    import * as commonFunctions from './commonFunctions.js?v=20260402-2';
+
+    async function safeLoginApp() {
+        if (typeof commonFunctions.loginApp === "function") {
+            return commonFunctions.loginApp();
+        }
+        throw new Error("commonFunctions.loginApp 不可用");
+    }
+
+    async function safeConfigureLxCredentials() {
+        if (typeof commonFunctions.configureLxCredentials === "function") {
+            return commonFunctions.configureLxCredentials();
+        }
+        // Backward compatibility: older cached bundle may not export configureLxCredentials.
+        return safeLoginApp();
+    }
 
     const STUDENT_NAME_ALIAS = {
         "硕硕": "俞新硕"
@@ -1741,7 +1864,7 @@ entryKey: 课次标识（用于区分排课项）</span>
     async function checkQuotaFromSchedule(entries) {
         let token = localStorage.getItem("x-token-c");
         if (!token) {
-            await loginApp().catch(() => {});
+            await safeLoginApp().catch(() => {});
             token = localStorage.getItem("x-token-c");
             if (!token) {
                 window.showToast?.("未找到 token，请先配置登录信息");
@@ -1968,7 +2091,7 @@ entryKey: 课次标识（用于区分排课项）</span>
 
     const setupLxLoginButton = document.getElementById("setupLxLoginButton");
     setupLxLoginButton?.addEventListener("click", async () => {
-        await configureLxCredentials();
+        await safeConfigureLxCredentials();
     });
 
     const salaryMonthPicker = document.getElementById("salaryMonthPicker");
