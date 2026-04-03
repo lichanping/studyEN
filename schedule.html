@@ -20,7 +20,10 @@
             --line: #c5c0b8;
             --chip: #ddd8ce;
             --surface: #fff;
-            --back-link-hover: #e2ddd3;
+            --menu-bg: #f3efe8;
+            --menu-border: #c7c0b4;
+            --menu-hover-bg: #e6e0d5;
+            --menu-active-bg: #ddd5c8;
             --help-tip-border: #9fb2c6;
             --help-tip-bg: #dce4ec;
             --help-tip-text: #3f5f82;
@@ -75,7 +78,10 @@
                 --line: #4a4d53;
                 --chip: #3b3f46;
                 --surface: #24262b;
-                --back-link-hover: #2f3238;
+                --menu-bg: #2f3238;
+                --menu-border: #5a606a;
+                --menu-hover-bg: #3a3f47;
+                --menu-active-bg: #464c56;
                 --help-tip-border: #5e6f84;
                 --help-tip-bg: #334154;
                 --help-tip-text: #c3d8ef;
@@ -148,28 +154,38 @@
             text-align: center;
         }
 
-        .top-nav {
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .back-link {
+        #button-container {
             display: inline-flex;
             align-items: center;
-            border: 1px solid var(--line);
-            border-radius: 8px;
-            padding: 7px 12px;
-            color: var(--text);
-            text-decoration: none;
-            background: var(--surface);
-            font-size: 14px;
-            font-weight: 600;
+            gap: 6px;
+            padding: 6px;
+            margin: 0 auto 12px;
+            background-color: var(--menu-bg);
+            border: 1px solid var(--menu-border);
+            border-radius: 10px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
         }
 
-        .back-link:hover {
-            background: var(--back-link-hover);
+        #button-container button {
+            margin: 0;
+            padding: 6px 12px;
+            border-radius: 7px;
+            border: 1px solid transparent;
+            background-color: transparent;
+            box-shadow: none;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        #button-container button:hover {
+            background-color: var(--menu-hover-bg);
+            border-color: var(--menu-border);
+        }
+
+        #button-container button:active {
+            background-color: var(--menu-active-bg);
         }
 
         .hint {
@@ -686,8 +702,11 @@
 <div class="container">
     <div class="page-header">
         <h1>每周排课总览</h1>
-        <div class="top-nav">
-            <a class="back-link" href="index.html">返回</a>
+        <div id="button-container">
+            <button id="navigateToFormalClass" type="button">正式课</button>
+            <button id="navigateToTiyanClass" type="button">体验课</button>
+            <button id="navigateToReadClass" type="button">阅读课</button>
+            <button id="wordSelfCheckButton" type="button">单词自检</button>
         </div>
     </div>
 
@@ -1422,6 +1441,11 @@ entryKey: 课次标识（用于区分排课项）</span>
 </script>
 <script type="module">
     import * as commonFunctions from './commonFunctions.js?v=20260402-2';
+
+    document.getElementById("navigateToFormalClass").addEventListener("click", commonFunctions.navigateToFormalClass);
+    document.getElementById("navigateToTiyanClass").addEventListener("click", commonFunctions.navigateToTiyanClass);
+    document.getElementById("navigateToReadClass").addEventListener("click", commonFunctions.navigateToReadClass);
+    document.getElementById("wordSelfCheckButton").addEventListener("click", commonFunctions.navigateToLearnWords);
 
     async function safeLoginApp() {
         if (typeof commonFunctions.loginApp === "function") {
