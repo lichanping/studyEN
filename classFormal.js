@@ -401,22 +401,7 @@ export async function handleClassFeedbackClick() {
 
     // 复制到剪贴板并弹窗显示
     copyToClipboard(feedbackMessage);
-    // 课堂反馈使用10秒显示时间
-    showLongTextWithDuration(feedbackMessage, 10000);
-}
-
-// 自定义显示时长的弹窗函数
-function showLongTextWithDuration(longText, duration) {
-    const textElement = document.createElement('div');
-    textElement.innerHTML = longText;
-    textElement.classList.add('long-text');
-    document.body.appendChild(textElement);
-    setTimeout(() => {
-        textElement.style.opacity = '0';
-        setTimeout(() => {
-            textElement.remove();
-        }, 300);
-    }, duration);
+    showLongText(feedbackMessage, {duration: 2600, showCloseButton: true});
 }
 
 const DB_NAME = 'FeedbackDB';

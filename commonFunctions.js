@@ -954,17 +954,81 @@ export function showAlert(message) {
     });
 }
 
-export function showLongText(longText) {
+export function showLongText(longText, options = {}) {
+    showFeedbackToast(longText, {
+        duration: 1800,
+        showCloseButton: true,
+        useHtml: true,
+        ...options
+    });
+}
+
+function showFeedbackToast(content, options = {}) {
+    const {
+        duration = 1800,
+        showCloseButton = true,
+        useHtml = true
+    } = options;
+
+    const activeToast = document.getElementById('feedback-toast');
+    if (activeToast) {
+        activeToast.remove();
+    }
+
     const textElement = document.createElement('div');
-    textElement.innerHTML = longText;
+    textElement.id = 'feedback-toast';
+    if (useHtml) {
+        textElement.innerHTML = content;
+    } else {
+        textElement.textContent = content;
+    }
     textElement.classList.add('long-text');
-    document.body.appendChild(textElement);
-    setTimeout(() => {
-        textElement.style.opacity = '0'; // Set opacity to make it invisible
+    textElement.style.position = 'fixed';
+    if (showCloseButton) {
+        textElement.style.paddingRight = '42px';
+    }
+
+    let timeoutId = null;
+    let removed = false;
+    const removeToast = () => {
+        if (removed) return;
+        removed = true;
+        textElement.style.opacity = '0';
         setTimeout(() => {
-            textElement.remove(); // Remove the text after hiding
-        }, 300); // Adjust the timing of removal as needed (300 milliseconds in this case)
-    }, 2000); // 弹框显示2秒
+            textElement.remove();
+        }, 180);
+    };
+
+    if (showCloseButton) {
+        const closeButton = document.createElement('button');
+        closeButton.type = 'button';
+        closeButton.textContent = 'x';
+        closeButton.setAttribute('aria-label', '关闭提示');
+        closeButton.style.position = 'absolute';
+        closeButton.style.top = '8px';
+        closeButton.style.right = '8px';
+        closeButton.style.margin = '0';
+        closeButton.style.padding = '0';
+        closeButton.style.width = '24px';
+        closeButton.style.height = '24px';
+        closeButton.style.border = '1px solid #b8b3a9';
+        closeButton.style.borderRadius = '12px';
+        closeButton.style.background = '#f5f3ef';
+        closeButton.style.color = '#3d3d3d';
+        closeButton.style.fontSize = '14px';
+        closeButton.style.lineHeight = '22px';
+        closeButton.style.cursor = 'pointer';
+        closeButton.style.boxShadow = 'none';
+        closeButton.style.transform = 'none';
+        closeButton.addEventListener('click', () => {
+            if (timeoutId) clearTimeout(timeoutId);
+            removeToast();
+        });
+        textElement.appendChild(closeButton);
+    }
+
+    document.body.appendChild(textElement);
+    timeoutId = setTimeout(removeToast, duration);
 }
 
 export function getRandomMotto() {
@@ -1124,18 +1188,11 @@ function extractEnglishWords(text) {
 
 
 export function displayToast(message) {
-    // Create a toast element
-    const toast = document.createElement('div');
-    toast.classList.add('toast');
-    toast.textContent = message;
-
-    // Append toast to the document body
-    document.body.appendChild(toast);
-
-    // Automatically remove toast after 3 seconds
-    setTimeout(() => {
-        toast.remove();
-    }, 3000);
+    showFeedbackToast(message, {
+        duration: 1500,
+        showCloseButton: false,
+        useHtml: false
+    });
 }
 
 export function selfReviewClick() {
