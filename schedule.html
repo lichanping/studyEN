@@ -269,6 +269,27 @@
             padding: 6px 8px;
         }
 
+        /* Let native date/time pickers follow the active theme by default. */
+        .controls input[type="date"],
+        .controls input[type="month"],
+        .controls input[type="time"],
+        .controls input[type="datetime-local"],
+        .inline-time-input {
+            color-scheme: light;
+            color: var(--text);
+            background: var(--surface);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .controls input[type="date"],
+            .controls input[type="month"],
+            .controls input[type="time"],
+            .controls input[type="datetime-local"],
+            .inline-time-input {
+                color-scheme: dark;
+            }
+        }
+
         .controls button {
             cursor: pointer;
             font-weight: 600;

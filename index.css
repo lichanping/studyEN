@@ -36,6 +36,9 @@
         --card-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
         --control-shadow: 0 2px 5px rgba(0, 0, 0, 0.35);
     }
+    input[type="datetime-local"] {
+        color-scheme: dark;
+    }
 }
 
 body {
@@ -246,6 +249,7 @@ input[type="datetime-local"] {
     background-color: var(--panel-bg);
     color: var(--text-color);
     border: 1px solid var(--panel-border);
+    color-scheme: light;
 }
 
 /* 课程标签样式 */
