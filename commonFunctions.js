@@ -1258,3 +1258,200 @@ export function handleNewVersionFeedbackClick() {
     // Show alert with the generated message
     showLongText(`${message}`);
 }
+
+// =========================
+// 排课校验相关函数
+// =========================
+const SCHEDULE_CONFIG_URL = "./schedule.html";
+const WEEK_DAYS = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
+const CANCELLATION_STORAGE_KEY = "schedule-cancellations-v1";
+const LESSON_OVERRIDE_STORAGE_KEY = "schedule-lesson-overrides-v1";
+let cachedScheduleEntries = null;
+
+function getDateValueFromDateTime(dateTimeValue) {
+    if (!dateTimeValue) return "";
+    return String(dateTimeValue).split("T")[0] || "";
+}
+
+function getDayFromDateValue(dateValue) {
+    if (!dateValue) return "";
+    const date = new Date(dateValue + "T00:00:00");
+    const day = date.getDay();
+    return WEEK_DAYS[(day + 6) % 7];
+}
+
+function parseStorageObject(key) {
+    try {
+        const raw = localStorage.getItem(key);
+        const parsed = raw ? JSON.parse(raw) : {};
+        return parsed && typeof parsed === "object" ? parsed : {};
+    } catch (error) {
+        console.warn("读取排课校验缓存失败:", key, error);
+        return {};
+    }
+}
+
+function getEntryId(entry) {
+    if (entry.id) return String(entry.id);
+    return [
+        entry.student,
+        entry.course,
+        entry.durationMinutes,
+        entry.period || "",
+        entry.time || "",
+        (entry.days || []).join("|")
+    ].join("__");
+}
+
+function resolveEntryByOverride(entry, dateValue, lessonOverrideState) {
+    const key = dateValue + "::" + getEntryId(entry);
+    const override = lessonOverrideState[key] || {};
+    const overrideCourse = String(override.course || "").trim();
+    const overrideDuration = Number(override.durationMinutes);
+
+    return {
+        ...entry,
+        course: overrideCourse || String(entry.course || "").trim(),
+        durationMinutes: (overrideDuration === 30 || overrideDuration === 60)
+            ? overrideDuration
+            : (Number(entry.durationMinutes) || 60)
+    };
+}
+
+function isCancelledEntry(entry, dateValue, cancellationState) {
+    const key = dateValue + "::" + getEntryId(entry);
+    return Boolean(cancellationState[key]);
+}
+
+function wasCancelledEntry(entry, dateValue, cancellationState) {
+    const key = dateValue + "::" + getEntryId(entry);
+    return Boolean(cancellationState[key]);
+}
+
+function toUniqueList(values) {
+    return [...new Set(values.filter(Boolean))];
+}
+
+function formatEntrySummary(entry) {
+    return `${entry.student} / ${entry.course || "课程"} / ${entry.durationMinutes || 60}分钟`;
+}
+
+function normalizeSubmittedCourseType(courseType) {
+    if (courseType === "词汇课") return "单词";
+    if (courseType === "阅读课") return "阅读";
+    if (courseType === "体验课") return "体验";
+    return String(courseType || "").trim();
+}
+
+async function loadScheduleEntries() {
+    if (Array.isArray(cachedScheduleEntries)) return cachedScheduleEntries;
+
+    const response = await fetch(SCHEDULE_CONFIG_URL, { cache: "no-store" });
+    if (!response.ok) {
+        throw new Error(`加载排课页面失败: ${response.status}`);
+    }
+
+    const htmlText = await response.text();
+    const doc = new DOMParser().parseFromString(htmlText, "text/html");
+    const configText = doc.getElementById("schedule-config")?.textContent || "";
+    const config = configText ? JSON.parse(configText) : {};
+    cachedScheduleEntries = Array.isArray(config.entries) ? config.entries : [];
+    return cachedScheduleEntries;
+}
+
+/**
+ * 课堂反馈前的排课校验函数
+ * @param {string} courseType - 课程类型，如 "词汇课"、"阅读课"、"体验课"
+ * @returns {Promise<boolean>} - 返回是否可以继续提交
+ */
+export async function validateBeforeClassFeedbackSubmit(courseType = "词汇课") {
+    const classDateTimeEl = document.getElementById("classDateTime");
+    const classDateTime = classDateTimeEl ? classDateTimeEl.value : "";
+    if (!classDateTime) return true;
+
+    const userNameEl = document.getElementById("userName");
+    const userName = userNameEl ? userNameEl.value : "";
+    const submittedCourse = normalizeSubmittedCourseType(courseType);
+    
+    const classDurationEl = document.getElementById("classDuration");
+    const classDurationValue = classDurationEl ? classDurationEl.value : "1";
+    const submittedDurationMinutes = Math.round(parseFloat(classDurationValue || "1") * 60);
+    
+    const dateValue = getDateValueFromDateTime(classDateTime);
+    const weekDay = getDayFromDateValue(dateValue);
+
+    try {
+        const allEntries = await loadScheduleEntries();
+        const cancellationState = parseStorageObject(CANCELLATION_STORAGE_KEY);
+        const lessonOverrideState = parseStorageObject(LESSON_OVERRIDE_STORAGE_KEY);
+
+        const dayEntriesAll = allEntries
+            .filter((entry) => Array.isArray(entry.days) && entry.days.includes(weekDay))
+            .map((entry) => resolveEntryByOverride(entry, dateValue, lessonOverrideState));
+
+        const studentEntriesAll = dayEntriesAll.filter((entry) => entry.student === userName);
+        const courseEntriesAll = studentEntriesAll.filter((entry) => entry.course === submittedCourse);
+        const matchedEntriesAll = courseEntriesAll.filter((entry) => Number(entry.durationMinutes) === submittedDurationMinutes);
+
+        // 检查是否标记了请假
+        if (matchedEntriesAll.some(entry => wasCancelledEntry(entry, dateValue, cancellationState))) {
+            const cancelledInfo = `当前提交的课程 (${userName} / ${submittedCourse} / ${submittedDurationMinutes}分钟) 在 ${dateValue} 已被标记为请假。`;
+            const warningMessage = [
+                `⚠️ 课程已标记请假`,
+                cancelledInfo,
+                "",
+                "请假课程无需提交反馈。",
+                "如果需要补交该日期的反馈，请先在排课日历中取消请假标记。",
+                "",
+                "点击【确定】返回。"
+            ].join("\n");
+            alert(warningMessage);
+            return false;
+        }
+
+        const dayEntries = dayEntriesAll.filter((entry) => !isCancelledEntry(entry, dateValue, cancellationState));
+
+        const studentEntries = dayEntries.filter((entry) => entry.student === userName);
+        const courseEntries = studentEntries.filter((entry) => entry.course === submittedCourse);
+        const matchedEntries = courseEntries.filter((entry) => Number(entry.durationMinutes) === submittedDurationMinutes);
+
+        if (matchedEntries.length > 0) {
+            return true;
+        }
+
+        const mismatchDetails = [];
+        if (studentEntries.length === 0) {
+            mismatchDetails.push(`- 学员不匹配：当天排课学员为 ${toUniqueList(dayEntries.map((entry) => entry.student)).join("、") || "无"}`);
+        }
+        if (studentEntries.length > 0 && courseEntries.length === 0) {
+            mismatchDetails.push(`- 课程类型不匹配：${userName} 当天排课课程为 ${toUniqueList(studentEntries.map((entry) => entry.course)).join("、") || "无"}`);
+        }
+        if (courseEntries.length > 0 && matchedEntries.length === 0) {
+            mismatchDetails.push(`- 时长不匹配：${userName} ${submittedCourse} 课排课时长为 ${toUniqueList(courseEntries.map((entry) => `${entry.durationMinutes}分钟`)).join("、") || "无"}`);
+        }
+
+        const selectedInfo = `当前提交: ${userName} / ${submittedCourse} / ${submittedDurationMinutes}分钟`;
+        const scheduleInfo = dayEntries.length > 0
+            ? dayEntries.map((entry) => formatEntrySummary(entry)).join("\n")
+            : "当天无有效排课（可能已取消）";
+
+        const warningMessage = [
+            `⚠️ 排课校验发现差异（${dateValue} ${weekDay}）`,
+            selectedInfo,
+            "",
+            "差异详情:",
+            mismatchDetails.length ? mismatchDetails.join("\n") : "- 当前提交与排课未形成完整匹配",
+            "",
+            "当天排课明细:",
+            scheduleInfo,
+            "",
+            "点击【确定】继续提交，点击【取消】返回修改。"
+        ].join("\n");
+
+        return window.confirm(warningMessage);
+    } catch (error) {
+        console.warn("课堂反馈前排课校验失败:", error);
+        return window.confirm("⚠️ 未能完成排课校验（读取 schedule 配置失败）。\n点击【确定】继续提交，点击【取消】返回修改。");
+    }
+}
+

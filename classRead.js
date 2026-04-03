@@ -5,7 +5,8 @@ import {
     getRandomFeedback,
     showLongText,
     storeClassStatistics,
-    storeNewLearnedWords
+    storeNewLearnedWords,
+    validateBeforeClassFeedbackSubmit
 } from './commonFunctions.js'
 
 const setInitialDateTime = () => {
@@ -196,7 +197,13 @@ export function handleLateMeetingReminderClick() {
     showLongText(`${reminderMessage}`);
 }
 
-export function handleReadClassFeedbackClick() {
+export async function handleReadClassFeedbackClick() {
+    // 排课校验（阅读课）
+    const canSubmit = await validateBeforeClassFeedbackSubmit("阅读课");
+    if (!canSubmit) {
+        return;
+    }
+
     const userName = document.getElementById("userName").value;
     const courseLabel = document.getElementById("courseLabel").textContent.trim();
     const reviewWordCount = document.getElementById("reviewWord").value;

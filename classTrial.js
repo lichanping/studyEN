@@ -1,4 +1,4 @@
-import {copyToClipboard, getRandomMotto, showAlert, showLongText, storeClassStatistics} from './commonFunctions.js'
+import {copyToClipboard, getRandomMotto, showAlert, showLongText, storeClassStatistics, validateBeforeClassFeedbackSubmit} from './commonFunctions.js'
 // Attach the function when the page loads
 // window.addEventListener("load", copyToClipboard);
 const setInitialDateTime = () => {
@@ -79,7 +79,13 @@ export function selfReviewClick() {
 }
 
 // JavaScript code for the button click functions
-export function handleClassFeedbackClick() {
+export async function handleClassFeedbackClick() {
+    // 排课校验（体验课）
+    const canSubmit = await validateBeforeClassFeedbackSubmit("体验课");
+    if (!canSubmit) {
+        return;
+    }
+
     const userName = document.getElementById("userName").value;
     const teacherName = document.getElementById("teacherName").value;
     const newWord = parseInt(document.getElementById("newWord").value) || 30;
