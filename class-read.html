@@ -20,6 +20,7 @@
 
 <h1>完型填空课（练、评、复：学新、逐句解读、概括）</h1>
 <div id="button-container">
+    <button id="navigateToSchedulePage">排课总览</button>
     <button id="navigateToFormalClass">正式课</button>
     <button id="navigateToTiyanClass">体验课</button>
     <button id="wordSelfCheckButton">单词自检</button>
@@ -116,6 +117,9 @@
     import * as scriptR from './classRead.js';
     import * as commonFunctions from './commonFunctions.js';
 
+    document.getElementById("navigateToSchedulePage").addEventListener("click", () => {
+        window.location.href = "schedule.html";
+    });
     document.getElementById("navigateToFormalClass").addEventListener("click", commonFunctions.navigateToFormalClass);
     document.getElementById("navigateToTiyanClass").addEventListener("click", commonFunctions.navigateToTiyanClass);
     document.getElementById("wordSelfCheckButton").addEventListener('click', commonFunctions.navigateToLearnWords);

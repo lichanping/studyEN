@@ -13,6 +13,10 @@
     --input-focus: #a0a0a0;
     --view-hours-bg: #c9a86c;
     --action-bg: #b8ccd8;
+    --menu-bg: #f3efe8;
+    --menu-border: #c7c0b4;
+    --menu-hover-bg: #e6e0d5;
+    --menu-active-bg: #ddd5c8;
     --muted-text: #666;
     --card-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
     --control-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
@@ -32,6 +36,10 @@
         --input-focus: #78a5d9;
         --view-hours-bg: #9f7f45;
         --action-bg: #4f6778;
+        --menu-bg: #2f3238;
+        --menu-border: #5a606a;
+        --menu-hover-bg: #3a3f47;
+        --menu-active-bg: #464c56;
         --muted-text: #b9bec7;
         --card-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
         --control-shadow: 0 2px 5px rgba(0, 0, 0, 0.35);
@@ -203,10 +211,37 @@ h1 {
 }
 
 #button-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    margin-bottom: 15px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px;
+    margin-bottom: 14px;
+    background-color: var(--menu-bg);
+    border: 1px solid var(--menu-border);
+    border-radius: 10px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+#button-container button {
+    margin: 0;
+    padding: 6px 12px;
+    border-radius: 7px;
+    border: 1px solid transparent;
+    background-color: transparent;
+    box-shadow: none;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+#button-container button:hover {
+    transform: none;
+    box-shadow: none;
+    background-color: var(--menu-hover-bg);
+    border-color: var(--menu-border);
+}
+
+#button-container button:active {
+    background-color: var(--menu-active-bg);
 }
 
 /* 分组样式 */
