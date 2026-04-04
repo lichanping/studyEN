@@ -35,12 +35,12 @@
             --primary-btn-hover-bg: #f2ddb8;
             --pill-text: #4b5563;
             --course-text: #3f5f82;
-            --cancelled-bg: #efe8de;
-            --cancelled-border: #d3a777;
+            --cancelled-bg: #d0d0d0;
+            --cancelled-border: #999;
             --status-ok-bg: #dbe6dc;
             --status-ok-text: #3f6b4a;
-            --status-cancel-bg: #efe1cf;
-            --status-cancel-text: #8f5627;
+            --status-cancel-bg: #b0b0b0;
+            --status-cancel-text: #3a3a3a;
             --action-cancel-text: #8f5627;
             --action-cancel-border: #d3a777;
             --action-cancel-bg: #efe4d4;
@@ -93,12 +93,12 @@
                 --primary-btn-hover-bg: #60472a;
                 --pill-text: #d4dae4;
                 --course-text: #9ec0e8;
-                --cancelled-bg: #3c3329;
-                --cancelled-border: #9f7443;
+                --cancelled-bg: #3a3a3a;
+                --cancelled-border: #5a5a5a;
                 --status-ok-bg: #2f4737;
                 --status-ok-text: #b8e2c2;
-                --status-cancel-bg: #4b3628;
-                --status-cancel-text: #f0bd8d;
+                --status-cancel-bg: #4a4a4a;
+                --status-cancel-text: #a0a0a0;
                 --action-cancel-text: #f0bd8d;
                 --action-cancel-border: #9f7443;
                 --action-cancel-bg: #433326;
@@ -443,6 +443,7 @@
         .class-item.cancelled {
             background: var(--cancelled-bg);
             border-color: var(--cancelled-border);
+            opacity: 0.6;
         }
 
         .status-tag {
@@ -1193,14 +1194,39 @@ entryKey: 课次标识（用于区分排课项）</span>
         return dayMap;
     }
 
+    function getEffectiveClock(entry, dateValue) {
+        // Priority: localStorage override > entry.time > period default
+        const override = getOverrideClock(entry, dateValue);
+        if (override) return override;
+        const normalized = normalizeClockInput(entry.time);
+        if (normalized) return normalized;
+        return getDefaultClockByPeriod(entry.period);
+    }
+
+    function sortEntriesByTime(entries, dateValue) {
+        return [...entries].sort((a, b) => {
+            // Cancelled entries go to the bottom
+            const cancelledA = isCancelled(a, dateValue) ? 1 : 0;
+            const cancelledB = isCancelled(b, dateValue) ? 1 : 0;
+            if (cancelledA !== cancelledB) return cancelledA - cancelledB;
+            // Then sort by time
+            const clockA = getEffectiveClock(a, dateValue);
+            const clockB = getEffectiveClock(b, dateValue);
+            return clockA.localeCompare(clockB);
+        });
+    }
+
     function renderDayEntries(list, entries, dateValue, onChange) {
         if (entries.length === 0) {
             list.innerHTML = '<div class="empty">这一天没有排课。</div>';
             return;
         }
 
+        // Sort entries by effective time (considering localStorage overrides)
+        const sortedEntries = sortEntriesByTime(entries, dateValue);
+
         list.innerHTML = "";
-        entries.forEach((item) => {
+        sortedEntries.forEach((item) => {
             const cancelled = isCancelled(item, dateValue);
             const currentCourse = resolveCourse(item, dateValue);
             const currentDurationMinutes = resolveDurationMinutes(item, dateValue);
