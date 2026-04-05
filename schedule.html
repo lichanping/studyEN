@@ -35,8 +35,8 @@
             --primary-btn-hover-bg: #f2ddb8;
             --pill-text: #4b5563;
             --course-text: #3f5f82;
-            --cancelled-bg: #d0d0d0;
-            --cancelled-border: #999;
+            --cancelled-bg: #a0a0a0;
+            --cancelled-border: #888;
             --status-ok-bg: #dbe6dc;
             --status-ok-text: #3f6b4a;
             --status-cancel-bg: #b0b0b0;
@@ -93,8 +93,8 @@
                 --primary-btn-hover-bg: #60472a;
                 --pill-text: #d4dae4;
                 --course-text: #9ec0e8;
-                --cancelled-bg: #3a3a3a;
-                --cancelled-border: #5a5a5a;
+                --cancelled-bg: #282828;
+                --cancelled-border: #444;
                 --status-ok-bg: #2f4737;
                 --status-ok-text: #b8e2c2;
                 --status-cancel-bg: #4a4a4a;
@@ -443,7 +443,8 @@
         .class-item.cancelled {
             background: var(--cancelled-bg);
             border-color: var(--cancelled-border);
-            opacity: 0.6;
+            opacity: 0.42;
+            filter: saturate(0.2);
         }
 
         .status-tag {
@@ -697,6 +698,82 @@
             font-weight: 700;
             background: var(--quota-danger-bg);
         }
+
+        .add-extra-btn {
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            background: var(--chip);
+            color: var(--subtle);
+            font-size: 12px;
+            padding: 2px 8px;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .add-extra-btn:hover {
+            background: var(--menu-hover-bg);
+        }
+
+        .add-extra-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+            padding: 8px;
+            margin-bottom: 8px;
+            border: 1px dashed var(--line);
+            border-radius: 8px;
+            background: var(--surface);
+        }
+
+        .add-extra-form select,
+        .add-extra-form button {
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 13px;
+            background: var(--card);
+            color: var(--text);
+        }
+
+        .add-extra-form button {
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .action-btn.delete-extra {
+            color: #b91c1c;
+            border-color: #fca5a5;
+            background: #fef2f2;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .action-btn.delete-extra {
+                color: #fca5a5;
+                border-color: #7f1d1d;
+                background: #451a1a;
+            }
+        }
+
+        .extra-tag {
+            display: inline-block;
+            border-radius: 999px;
+            padding: 2px 6px;
+            font-size: 11px;
+            font-weight: 700;
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fcd34d;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .extra-tag {
+                background: #451a03;
+                color: #fcd34d;
+                border-color: #92400e;
+            }
+        }
     </style>
 </head>
 <body>
@@ -858,9 +935,11 @@ entryKey: 课次标识（用于区分排课项）</span>
     const TIME_OVERRIDE_STORAGE_KEY = "schedule-time-overrides-v1";
     const LESSON_OVERRIDE_STORAGE_KEY = "schedule-lesson-overrides-v1";
     const EDITABLE_COURSE_OPTIONS = ["单词", "阅读", "体验"];
+    const EXTRA_ENTRIES_STORAGE_KEY = "schedule-extra-entries-v1";
     let cancellationState = {};
     let timeOverrideState = {};
     let lessonOverrideState = {};
+    let extraEntriesState = {};
 
     function getConfig() {
         const raw = document.getElementById("schedule-config").textContent;
@@ -960,6 +1039,71 @@ entryKey: 课次标识（用于区分排课项）</span>
 
     function saveLessonOverrides() {
         localStorage.setItem(LESSON_OVERRIDE_STORAGE_KEY, JSON.stringify(lessonOverrideState));
+    }
+
+    function loadExtraEntries() {
+        try {
+            const raw = localStorage.getItem(EXTRA_ENTRIES_STORAGE_KEY);
+            const parsed = raw ? JSON.parse(raw) : {};
+            if (parsed && typeof parsed === "object") return parsed;
+        } catch (error) {
+            console.warn("临时排课读取失败，已重置", error);
+        }
+        return {};
+    }
+
+    function saveExtraEntries() {
+        localStorage.setItem(EXTRA_ENTRIES_STORAGE_KEY, JSON.stringify(extraEntriesState));
+    }
+
+    function getExtraEntriesForDate(dateValue) {
+        return Array.isArray(extraEntriesState[dateValue]) ? extraEntriesState[dateValue] : [];
+    }
+
+    function addExtraEntry(dateValue, studentName, course, durationMinutes, period) {
+        if (!extraEntriesState[dateValue]) {
+            extraEntriesState[dateValue] = [];
+        }
+        const extraId = "extra__" + studentName + "__" + course + "__" + dateValue + "__" + Math.random().toString(36).slice(2, 8);
+        const newEntry = {
+            id: extraId,
+            student: studentName,
+            course: course,
+            durationMinutes: durationMinutes,
+            period: period || "晚上",
+            time: "",
+            days: [],
+            _isExtra: true
+        };
+        extraEntriesState[dateValue].push(newEntry);
+        saveExtraEntries();
+        return newEntry;
+    }
+
+    function removeExtraEntry(dateValue, extraId) {
+        if (!Array.isArray(extraEntriesState[dateValue])) return;
+        extraEntriesState[dateValue] = extraEntriesState[dateValue].filter(function(e) { return e.id !== extraId; });
+        if (extraEntriesState[dateValue].length === 0) {
+            delete extraEntriesState[dateValue];
+        }
+        // Also clean up any time/lesson/cancellation overrides for this extra entry
+        const prefix = dateValue + "::" + extraId;
+        delete timeOverrideState[prefix];
+        saveTimeOverrides();
+        delete lessonOverrideState[prefix];
+        saveLessonOverrides();
+        delete cancellationState[prefix];
+        saveCancellations();
+        saveExtraEntries();
+    }
+
+    function getUniqueStudents() {
+        const config = getConfig();
+        const students = new Set();
+        (config.entries || []).forEach(function(entry) {
+            if (entry.student) students.add(entry.student);
+        });
+        return [...students].sort(function(a, b) { return a.localeCompare(b, "zh-CN"); });
     }
 
     function getLessonOverrideKey(entry, dateValue) {
@@ -1216,6 +1360,59 @@ entryKey: 课次标识（用于区分排课项）</span>
         });
     }
 
+    function toggleAddExtraForm(titleEl, dateValue, onChange) {
+        var parent = titleEl.parentElement;
+        var existingForm = parent.querySelector(".add-extra-form");
+        if (existingForm) { existingForm.remove(); return; }
+
+        var form = document.createElement("div");
+        form.className = "add-extra-form";
+
+        var students = getUniqueStudents();
+        var studentSelect = document.createElement("select");
+        var defaultOpt = document.createElement("option");
+        defaultOpt.value = "";
+        defaultOpt.textContent = "选择学生";
+        studentSelect.appendChild(defaultOpt);
+        students.forEach(function(s) {
+            var opt = document.createElement("option");
+            opt.value = s;
+            opt.textContent = s;
+            studentSelect.appendChild(opt);
+        });
+
+        var courseSelect = document.createElement("select");
+        EDITABLE_COURSE_OPTIONS.forEach(function(c) {
+            var opt = document.createElement("option");
+            opt.value = c;
+            opt.textContent = c;
+            courseSelect.appendChild(opt);
+        });
+
+        var durationSelect = document.createElement("select");
+        durationSelect.innerHTML = '<option value="30">0.5小时</option><option value="60">1小时</option>';
+
+        var addBtn = document.createElement("button");
+        addBtn.type = "button";
+        addBtn.textContent = "确认添加";
+        addBtn.style.fontWeight = "700";
+        addBtn.addEventListener("click", function() {
+            var student = studentSelect.value;
+            if (!student) { showToast("请选择学生"); return; }
+            addExtraEntry(dateValue, student, courseSelect.value, Number(durationSelect.value), "晚上");
+            form.remove();
+            onChange();
+        });
+
+        var cancelBtn = document.createElement("button");
+        cancelBtn.type = "button";
+        cancelBtn.textContent = "取消";
+        cancelBtn.addEventListener("click", function() { form.remove(); });
+
+        form.append(studentSelect, courseSelect, durationSelect, addBtn, cancelBtn);
+        titleEl.insertAdjacentElement("afterend", form);
+    }
+
     function renderDayEntries(list, entries, dateValue, onChange) {
         if (entries.length === 0) {
             list.innerHTML = '<div class="empty">这一天没有排课。</div>';
@@ -1336,7 +1533,25 @@ entryKey: 课次标识（用于区分排课项）</span>
             actionGroup.className = "action-group";
             actionGroup.append(button, remindButton, notifyButton);
 
+            if (item._isExtra) {
+                const deleteBtn = document.createElement("button");
+                deleteBtn.type = "button";
+                deleteBtn.className = "action-btn delete-extra";
+                deleteBtn.textContent = "删除临时";
+                deleteBtn.addEventListener("click", () => {
+                    removeExtraEntry(dateValue, item.id);
+                    onChange();
+                });
+                actionGroup.appendChild(deleteBtn);
+            }
+
             mainGroup.append(time, timeInput, student, course, duration, status);
+            if (item._isExtra) {
+                const extraTag = document.createElement("span");
+                extraTag.className = "extra-tag";
+                extraTag.textContent = "临时";
+                mainGroup.appendChild(extraTag);
+            }
             row.append(mainGroup, actionGroup);
             list.appendChild(row);
         });
@@ -1353,8 +1568,8 @@ entryKey: 课次标识（用于区分排课项）</span>
         const tomorrowDate = addDays(baseDate, 1);
         const tomorrowDay = getDayFromDateInput(tomorrowDate);
 
-        const todayEntries = dayMap[todayDay] || [];
-        const tomorrowEntries = dayMap[tomorrowDay] || [];
+        const todayEntries = [...(dayMap[todayDay] || []), ...getExtraEntriesForDate(baseDate)];
+        const tomorrowEntries = [...(dayMap[tomorrowDay] || []), ...getExtraEntriesForDate(tomorrowDate)];
 
         const todayMinutes = todayEntries
             .filter((item) => !isCancelled(item, baseDate))
@@ -1369,20 +1584,45 @@ entryKey: 课次标识（用于区分排课项）</span>
         selectedDayText.textContent = "今日对应：" + todayDay;
         dailyTotal.textContent = "今日应上：" + toHoursText(todayMinutes) + "（请假" + todayCancelledCount + "节）";
 
-        todayColumnTitle.textContent = "今日（" + getDateLabel(baseDate) + " · " + todayDay + " · 应上" + toHoursText(todayMinutes) + "）";
-        tomorrowColumnTitle.textContent = "明日（" + getDateLabel(tomorrowDate) + " · " + tomorrowDay + " · 应上" + toHoursText(tomorrowMinutes) + "）";
-        if (tomorrowCancelledCount > 0) {
-            tomorrowColumnTitle.textContent += " · 请假" + tomorrowCancelledCount + "节";
-        }
+        const onChangeCallback = () => {
+            renderToday(dayMap, baseDate);
+            renderWeek(dayMap, baseDate);
+        };
 
-        renderDayEntries(todayList, todayEntries, baseDate, () => {
-            renderToday(dayMap, baseDate);
-            renderWeek(dayMap, baseDate);
+        // Today column title with add button
+        todayColumnTitle.innerHTML = "";
+        todayColumnTitle.appendChild(document.createTextNode(
+            "今日（" + getDateLabel(baseDate) + " · " + todayDay + " · 应上" + toHoursText(todayMinutes) + "）"
+        ));
+        const todayAddBtn = document.createElement("button");
+        todayAddBtn.type = "button";
+        todayAddBtn.className = "add-extra-btn";
+        todayAddBtn.textContent = "➕ 临时加课";
+        todayAddBtn.title = "为今日临时添加排课";
+        todayAddBtn.addEventListener("click", () => {
+            toggleAddExtraForm(todayColumnTitle, baseDate, onChangeCallback);
         });
-        renderDayEntries(tomorrowList, tomorrowEntries, tomorrowDate, () => {
-            renderToday(dayMap, baseDate);
-            renderWeek(dayMap, baseDate);
+        todayColumnTitle.appendChild(todayAddBtn);
+
+        // Tomorrow column title with add button
+        tomorrowColumnTitle.innerHTML = "";
+        let tomorrowTitleText = "明日（" + getDateLabel(tomorrowDate) + " · " + tomorrowDay + " · 应上" + toHoursText(tomorrowMinutes) + "）";
+        if (tomorrowCancelledCount > 0) {
+            tomorrowTitleText += " · 请假" + tomorrowCancelledCount + "节";
+        }
+        tomorrowColumnTitle.appendChild(document.createTextNode(tomorrowTitleText));
+        const tomorrowAddBtn = document.createElement("button");
+        tomorrowAddBtn.type = "button";
+        tomorrowAddBtn.className = "add-extra-btn";
+        tomorrowAddBtn.textContent = "➕ 临时加课";
+        tomorrowAddBtn.title = "为明日临时添加排课";
+        tomorrowAddBtn.addEventListener("click", () => {
+            toggleAddExtraForm(tomorrowColumnTitle, tomorrowDate, onChangeCallback);
         });
+        tomorrowColumnTitle.appendChild(tomorrowAddBtn);
+
+        renderDayEntries(todayList, todayEntries, baseDate, onChangeCallback);
+        renderDayEntries(tomorrowList, tomorrowEntries, tomorrowDate, onChangeCallback);
 
         // 通知模块脚本：排课状态（请假/课程/时长）可能发生变化。
         window.dispatchEvent(new Event("schedule-updated"));
@@ -1409,7 +1649,7 @@ entryKey: 课次标识（用于区分排课项）</span>
         weekGrid.innerHTML = WEEK_DAYS.map((day) => {
             const dayIndex = WEEK_DAYS.indexOf(day);
             const dayDate = addDays(weekStart, dayIndex);
-            const items = dayMap[day] || [];
+            const items = [...(dayMap[day] || []), ...getExtraEntriesForDate(dayDate)];
             const dayMinutes = items
                 .filter((item) => !isCancelled(item, dayDate))
                 .reduce((sum, item) => sum + resolveDurationMinutes(item, dayDate), 0);
@@ -1447,6 +1687,7 @@ entryKey: 课次标识（用于区分排课项）</span>
         cancellationState = loadCancellations();
         timeOverrideState = loadTimeOverrides();
         lessonOverrideState = loadLessonOverrides();
+        extraEntriesState = loadExtraEntries();
 
         const today = new Date();
         const yyyy = today.getFullYear();
@@ -1632,7 +1873,7 @@ entryKey: 课次标识（用于区分排课项）</span>
         if (!dayMap) return [];
 
         const weekDay = window.getDayFromDateInput?.(dateValue);
-        const dayEntries = dayMap[weekDay] || [];
+        const dayEntries = [...(dayMap[weekDay] || []), ...(window.getExtraEntriesForDate?.(dateValue) || [])];
         const rowByStudent = new Map();
 
         dayEntries.forEach((entry) => {

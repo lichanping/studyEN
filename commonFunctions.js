@@ -1323,6 +1323,7 @@ const SCHEDULE_CONFIG_URL = "./schedule.html";
 const WEEK_DAYS = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
 const CANCELLATION_STORAGE_KEY = "schedule-cancellations-v1";
 const LESSON_OVERRIDE_STORAGE_KEY = "schedule-lesson-overrides-v1";
+const EXTRA_ENTRIES_STORAGE_KEY = "schedule-extra-entries-v1";
 let cachedScheduleEntries = null;
 
 function getDateValueFromDateTime(dateTimeValue) {
@@ -1400,6 +1401,85 @@ function normalizeSubmittedCourseType(courseType) {
     return String(courseType || "").trim();
 }
 
+function loadExtraEntriesForDate(dateValue) {
+    const state = parseStorageObject(EXTRA_ENTRIES_STORAGE_KEY);
+    return Array.isArray(state[dateValue]) ? state[dateValue] : [];
+}
+
+/**
+ * 当课堂反馈校验发现差异且用户确认提交时，自动往 schedule-extra-entries-v1
+ * 补录一条临时排课，确保 schedule 工资账本与 index 反馈记录保持一致。
+ *
+ * 替换规则（与 index 按 student+date 覆盖的语义对齐）：
+ * - 移除同学员当天所有 _autoFromFeedback 的旧条目（不论课程/时长）
+ * - 手动添加的临时排课（无 _autoFromFeedback）不受影响
+ * - 如果已存在完全一致的条目则跳过（幂等）
+ */
+function autoAddExtraEntryIfNeeded(dateValue, studentName, course, durationMinutes) {
+    try {
+        const state = parseStorageObject(EXTRA_ENTRIES_STORAGE_KEY);
+        const dateEntries = Array.isArray(state[dateValue]) ? state[dateValue] : [];
+
+        // 幂等检查：已存在完全一致（学员+课程+时长）的条目则跳过
+        const exactMatch = dateEntries.some(function (e) {
+            return e.student === studentName
+                && e.course === course
+                && Number(e.durationMinutes) === Number(durationMinutes);
+        });
+        if (exactMatch) return;
+
+        // 移除同学员的所有旧自动补录条目（index 按 student+date 覆盖，不区分课程）
+        // 仅清除 _autoFromFeedback 标记的条目，不影响手动"临时加课"
+        const filtered = dateEntries.filter(function (e) {
+            return !(e._autoFromFeedback && e.student === studentName);
+        });
+
+        // 使用与 schedule.html addExtraEntry 完全一致的数据结构 + 来源标记
+        const extraId = "extra__" + studentName + "__" + course + "__" + dateValue + "__" + Math.random().toString(36).slice(2, 8);
+        filtered.push({
+            id: extraId,
+            student: studentName,
+            course: course,
+            durationMinutes: Number(durationMinutes),
+            period: "晚上",
+            time: "",
+            days: [],
+            _isExtra: true,
+            _autoFromFeedback: true
+        });
+
+        state[dateValue] = filtered;
+        localStorage.setItem(EXTRA_ENTRIES_STORAGE_KEY, JSON.stringify(state));
+        console.log("[autoAddExtraEntry] 已自动补录临时排课:", dateValue, studentName, course, durationMinutes + "分钟");
+    } catch (error) {
+        console.warn("[autoAddExtraEntry] 自动补录临时排课失败:", error);
+    }
+}
+
+/**
+ * 当校验通过（学员当天有正常排课匹配）时，清理该学员残留的 _autoFromFeedback
+ * 条目。场景：用户先提交了异常课程（产生自动补录），后又改回正确课程。
+ */
+function cleanupAutoExtraEntries(dateValue, studentName) {
+    try {
+        const state = parseStorageObject(EXTRA_ENTRIES_STORAGE_KEY);
+        const dateEntries = Array.isArray(state[dateValue]) ? state[dateValue] : [];
+        const filtered = dateEntries.filter(function (e) {
+            return !(e._autoFromFeedback && e.student === studentName);
+        });
+        if (filtered.length === dateEntries.length) return; // 无变更
+        if (filtered.length === 0) {
+            delete state[dateValue];
+        } else {
+            state[dateValue] = filtered;
+        }
+        localStorage.setItem(EXTRA_ENTRIES_STORAGE_KEY, JSON.stringify(state));
+        console.log("[cleanupAutoExtra] 已清理", studentName, "在", dateValue, "的旧自动补录条目");
+    } catch (error) {
+        // 静默失败，不影响反馈提交
+    }
+}
+
 async function loadScheduleEntries() {
     if (Array.isArray(cachedScheduleEntries)) return cachedScheduleEntries;
 
@@ -1442,9 +1522,14 @@ export async function validateBeforeClassFeedbackSubmit(courseType = "词汇课"
         const cancellationState = parseStorageObject(CANCELLATION_STORAGE_KEY);
         const lessonOverrideState = parseStorageObject(LESSON_OVERRIDE_STORAGE_KEY);
 
+        // Merge: regular entries for this weekday + temporary extra entries for this date
+        const extraEntries = loadExtraEntriesForDate(dateValue);
+        const extraResolved = extraEntries.map((entry) => resolveEntryByOverride(entry, dateValue, lessonOverrideState));
+
         const dayEntriesAll = allEntries
             .filter((entry) => Array.isArray(entry.days) && entry.days.includes(weekDay))
-            .map((entry) => resolveEntryByOverride(entry, dateValue, lessonOverrideState));
+            .map((entry) => resolveEntryByOverride(entry, dateValue, lessonOverrideState))
+            .concat(extraResolved);
 
         const studentEntriesAll = dayEntriesAll.filter((entry) => entry.student === userName);
         const courseEntriesAll = studentEntriesAll.filter((entry) => entry.course === submittedCourse);
@@ -1473,6 +1558,8 @@ export async function validateBeforeClassFeedbackSubmit(courseType = "词汇课"
         const matchedEntries = courseEntries.filter((entry) => Number(entry.durationMinutes) === submittedDurationMinutes);
 
         if (matchedEntries.length > 0) {
+            // 校验通过，清理该学员残留的自动补录条目（先异常提交后改回正确课程的场景）
+            cleanupAutoExtraEntries(dateValue, userName);
             return true;
         }
 
@@ -1502,10 +1589,14 @@ export async function validateBeforeClassFeedbackSubmit(courseType = "词汇课"
             "当天排课明细:",
             scheduleInfo,
             "",
-            "点击【确定】继续提交，点击【取消】返回修改。"
+            "点击【确定】继续提交（将自动补录临时排课以保持工资一致），点击【取消】返回修改。"
         ].join("\n");
 
-        return window.confirm(warningMessage);
+        const confirmed = window.confirm(warningMessage);
+        if (confirmed) {
+            autoAddExtraEntryIfNeeded(dateValue, userName, submittedCourse, submittedDurationMinutes);
+        }
+        return confirmed;
     } catch (error) {
         console.warn("课堂反馈前排课校验失败:", error);
         return window.confirm("⚠️ 未能完成排课校验（读取 schedule 配置失败）。\n点击【确定】继续提交，点击【取消】返回修改。");
