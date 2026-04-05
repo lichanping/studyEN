@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#e8e4dc">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1d1e21">
+    <title>抗遗忘复习</title>
+    <link rel="stylesheet" href="index.css?v=20260405-1">
+    <script type="module">
+        import * as commonFunctions from './commonFunctions.js?v=20260405-1';
+        commonFunctions.checkLoginStatus();
+    </script>
+    <style>
+        /* 页面布局覆盖 */
+        body {
+            padding-top: 20px;
+            align-items: center;
+        }
+        .container {
+            max-width: 700px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 14px;
+        }
+        /* 导航条：复用 index.css #button-container 风格 */
+        .nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px;
+            margin-bottom: 14px;
+            background-color: var(--menu-bg);
+            border: 1px solid var(--menu-border);
+            border-radius: 10px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+        }
+        .nav button {
+            margin: 0;
+            padding: 6px 12px;
+            border-radius: 7px;
+            border: 1px solid transparent;
+            background-color: transparent;
+            box-shadow: none;
+            font-size: 15px;
+            font-weight: 600;
+        }
+        .nav button:hover {
+            transform: none;
+            box-shadow: none;
+            background-color: var(--menu-hover-bg);
+            border-color: var(--menu-border);
+        }
+        /* 面板：复用 section-group 风格 */
+        .panel {
+            width: 100%;
+            max-width: 700px;
+            margin-bottom: 12px;
+            padding: 14px;
+            background-color: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .row:last-child { margin-bottom: 0; }
+        .mini-input { width: 48px; text-align: center; }
+        .hint { color: var(--muted-text); font-size: 13px; margin-top: 6px; }
+        .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        /* 两列网格布局 */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px 12px;
+            padding: 14px;
+        }
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 0;
+        }
+        .field label {
+            font-size: 14px;
+            color: var(--label-color);
+        }
+        .field textarea {
+            width: 100%;
+            max-width: 100%;
+            min-height: 72px;
+            resize: vertical;
+            border: 1px solid var(--panel-border);
+            border-radius: 6px;
+            padding: 8px;
+            background-color: var(--panel-bg);
+            color: var(--text-color);
+            font-family: inherit;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .field textarea:focus {
+            border-color: var(--input-focus);
+            outline: none;
+        }
+        @media (max-width: 560px) {
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+        }
+        /* 高亮主操作按钮 */
+        .primary-btn {
+            background: linear-gradient(135deg, #f0c674 0%, #e2a94d 100%);
+            color: #4a3310;
+            border: 1.5px solid #c9973a;
+            font-weight: 700;
+            font-size: 16px;
+            padding: 8px 16px;
+            box-shadow: 0 2px 6px rgba(201, 151, 58, 0.35);
+        }
+        .primary-btn:hover {
+            background: linear-gradient(135deg, #f5d48a 0%, #daa134 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(201, 151, 58, 0.45);
+        }
+        @media (prefers-color-scheme: dark) {
+            .primary-btn {
+                background: linear-gradient(135deg, #9f7f45 0%, #7a5c28 100%);
+                color: #f8e8c8;
+                border-color: #b8923c;
+            }
+            .primary-btn:hover {
+                background: linear-gradient(135deg, #b89450 0%, #8c6a30 100%);
+            }
+        }
+        /* Toast 样式（与 schedule.html 一致） */
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 24px;
+            transform: translateX(-50%);
+            background: rgba(17, 24, 39, 0.9);
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            z-index: 9999;
+            pointer-events: none;
+            max-width: min(92vw, 700px);
+            max-height: 55vh;
+            overflow: auto;
+            white-space: pre-wrap;
+            line-height: 1.45;
+        }
+        @media (prefers-color-scheme: dark) {
+            .toast {
+                background: rgba(241, 245, 249, 0.92);
+                color: #1f2937;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>抗遗忘复习</h1>
+
+    <div class="nav">
+        <button id="navigateToFormalClass" type="button">返回正式课</button>
+        <button id="navigateToSchedulePage" type="button">排课总览</button>
+        <button id="navigateToReadClass" type="button">阅读课</button>
+        <button id="wordSelfCheckButton" type="button">单词自检</button>
+    </div>
+
+    <div class="panel">
+        <div class="row">
+            <label for="userName">学员：</label>
+            <select id="userName"></select>
+            <label for="reviewTime">复习时间：</label>
+            <input type="datetime-local" id="reviewTime">
+        </div>
+        <div class="hint">支持右键粘贴；该页面仅用于快速复制抗遗忘内容，不涉及工资统计。</div>
+    </div>
+
+    <div class="panel">
+        <div class="row">
+            <label>复习词数：</label>
+            <input type="text" class="antiForgettingReviewWord mini-input" aria-label="复习词数1" value="">
+            <input type="text" class="antiForgettingReviewWord mini-input" aria-label="复习词数2" value="">
+            <input type="text" class="antiForgettingReviewWord mini-input" aria-label="复习词数3" value="">
+            <input type="text" class="antiForgettingReviewWord mini-input" aria-label="复习词数4" value="">
+            <label for="antiForgettingForgetWord">遗忘：</label>
+            <input type="text" id="antiForgettingForgetWord" class="mini-input" value="0">
+        </div>
+
+        <div class="actions">
+            <button id="antiForgettingFeedbackButton" type="button" class="primary-btn">抗遗忘课堂反馈</button>
+            <button id="newFeedbackButton" type="button">新版反馈</button>
+        </div>
+    </div>
+
+    <div class="panel two-col">
+        <div class="field">
+            <label for="forgetWords">遗忘词（英文+中文）</label>
+            <textarea id="forgetWords"></textarea>
+        </div>
+        <div class="field">
+            <label for="pronounceWords">发音不标准的词</label>
+            <textarea id="pronounceWords"></textarea>
+        </div>
+        <div class="field">
+            <label for="keyLanguagePoints">重点语言点</label>
+            <textarea id="keyLanguagePoints"></textarea>
+        </div>
+        <div class="field">
+            <label for="practiceArea">语言点实战区</label>
+            <textarea id="practiceArea"></textarea>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import * as commonFunctions from './commonFunctions.js?v=20260405-1';
+
+    async function loadStudentOptions() {
+        const userNameSelect = document.getElementById('userName');
+        const students = new Set();
+
+        try {
+            const resp = await fetch('./schedule.html', { cache: 'no-store' });
+            if (resp.ok) {
+                const html = await resp.text();
+                const doc = new DOMParser().parseFromString(html, 'text/html');
+                const configText = doc.getElementById('schedule-config')?.textContent || '{}';
+                const config = JSON.parse(configText);
+                (config.entries || []).forEach((entry) => {
+                    if (entry && entry.student) students.add(String(entry.student).trim());
+                });
+            }
+        } catch (_) {
+            // fallback below
+        }
+
+        for (let i = 0; i < localStorage.length; i += 1) {
+            const key = localStorage.key(i) || '';
+            if (key.endsWith('_classStatistics')) {
+                const name = key.replace(/_classStatistics$/, '').trim();
+                if (name) students.add(name);
+            }
+        }
+
+        const sorted = Array.from(students).sort((a, b) => a.localeCompare(b, 'zh-CN'));
+        userNameSelect.innerHTML = '';
+        sorted.forEach((name) => {
+            const opt = document.createElement('option');
+            opt.value = name;
+            opt.textContent = name;
+            userNameSelect.appendChild(opt);
+        });
+
+        if (sorted.length === 0) {
+            const opt = document.createElement('option');
+            opt.value = '同学';
+            opt.textContent = '同学';
+            userNameSelect.appendChild(opt);
+        }
+    }
+
+    function setDefaultReviewTime() {
+        const input = document.getElementById('reviewTime');
+        if (input.value) return;
+        const now = new Date();
+        now.setHours(19, 30, 0, 0);
+        const y = now.getFullYear();
+        const m = String(now.getMonth() + 1).padStart(2, '0');
+        const d = String(now.getDate()).padStart(2, '0');
+        const hh = String(now.getHours()).padStart(2, '0');
+        const mm = String(now.getMinutes()).padStart(2, '0');
+        input.value = `${y}-${m}-${d}T${hh}:${mm}`;
+    }
+
+    document.getElementById('navigateToFormalClass').addEventListener('click', commonFunctions.navigateToFormalClass);
+    document.getElementById('navigateToSchedulePage').addEventListener('click', () => {
+        window.location.href = 'schedule.html';
+    });
+    document.getElementById('navigateToReadClass').addEventListener('click', commonFunctions.navigateToReadClass);
+    document.getElementById('wordSelfCheckButton').addEventListener('click', commonFunctions.navigateToLearnWords);
+
+    document.getElementById('antiForgettingFeedbackButton').addEventListener('click', commonFunctions.handleAntiForgettingFeedbackClick);
+    document.getElementById('newFeedbackButton').addEventListener('click', commonFunctions.handleNewVersionFeedbackClick);
+
+    commonFunctions.addRightClickPasteEvent(document.getElementById('forgetWords'));
+    commonFunctions.addRightClickPasteEvent(document.getElementById('pronounceWords'));
+    commonFunctions.addRightClickPasteEvent(document.getElementById('keyLanguagePoints'));
+    commonFunctions.addRightClickPasteEvent(document.getElementById('practiceArea'));
+
+    setDefaultReviewTime();
+    loadStudentOptions();
+</script>
+</body>
+</html>
+

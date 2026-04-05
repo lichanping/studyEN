@@ -297,9 +297,6 @@ export async function handleClassFeedbackClick() {
         return;
     }
 
-    // 获取课程信息
-    const course = document.getElementById('courseLabel').textContent;
-    const courseWordCountLabel = document.getElementById('courseWordCountLabel').textContent;
 
     // 获取用户输入数据
     const userName = document.getElementById("userName").value;
@@ -330,7 +327,6 @@ export async function handleClassFeedbackClick() {
     const forgetWord = parseInt(document.getElementById("forgetWord").value) || 0;
     const correctRate = ((newWord - forgetWord) / newWord * 100).toFixed(0);
 
-    const learnedWord = parseInt(document.getElementById("learnedWord").value.trim()) || 0;
     const inputText = document.getElementById('preTestWord').value.replace(/\s/g, ''); // 移除所有空格
     let preTestWord = inputText ? inputText.split('+').reduce((sum, num) => {
         const parsedNum = parseInt(num, 10);
@@ -355,11 +351,6 @@ export async function handleClassFeedbackClick() {
     }
     feedbackMessage += `新学${newWord}词，遗忘${forgetWord}词，正确率${correctRate}%<br><br>`;
 
-    // Include learned word and remaining words feedback only if learnedWord > 0
-    if (learnedWord > 0) {
-        let remaining = courseWordCountLabel - learnedWord;
-        feedbackMessage += `${index++}.今天学习的是《${course}》，共${courseWordCountLabel}词，已学习${learnedWord}词，剩余${remaining}词未推送完九宫格。<br><br>`;
-    }
 
     // Include the motivational message
     feedbackMessage += `${index++}.🎉陪伴 ${userName} 学习非常开心~ ${userName} ${getRandomFeedback()} 认真且努力的${userName}一定能抵达梦想的彼岸。🚀🚀🚀<br><br>`;
