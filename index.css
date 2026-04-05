@@ -123,7 +123,7 @@ body {
     font-size: 17px;
 }
 
-#reviewforgetWord, #learnedWord,
+#reviewforgetWord,
 #newWord, #forgetWord, #antiForgettingForgetWord, #daysRangeInput, #totalHours {
     width: 40px;
 }
