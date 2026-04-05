@@ -610,11 +610,13 @@
         }
 
         .mini-item.cancelled {
-            color: var(--mini-cancel-text);
-            background: var(--mini-cancel-bg);
+            color: var(--status-cancel-text);
+            background: var(--cancelled-bg);
             border-radius: 6px;
             padding: 8px;
-            border: 1px solid var(--mini-cancel-border);
+            border: 1px solid var(--cancelled-border);
+            opacity: 0.42;
+            filter: saturate(0.2);
         }
 
         .mini-status {
