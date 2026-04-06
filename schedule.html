@@ -701,6 +701,25 @@
             background: var(--quota-danger-bg);
         }
 
+        .quota-result-group {
+            margin-bottom: 14px;
+        }
+
+        .quota-result-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .quota-group-title {
+            margin: 0 0 8px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .quota-group-title.warn {
+            color: var(--quota-danger-text);
+        }
+
         .add-extra-btn {
             border: 1px solid var(--line);
             border-radius: 6px;
@@ -832,6 +851,10 @@ fee: 该条工资（durationHours × rate）
 entryKey: 课次标识（用于区分排课项）</span>
             </span>
         </div>
+        <div id="topAbnormalQuotaBlock" class="quota-result-group" style="margin-top: 10px; display: none;">
+            <h3 id="topAbnormalQuotaTitle" class="quota-group-title warn">异常学生（0）</h3>
+            <div id="topAbnormalQuotaResults"></div>
+        </div>
     </section>
 
     <section class="panel">
@@ -862,6 +885,9 @@ entryKey: 课次标识（用于区分排课项）</span>
 
     <section class="panel">
         <h2 class="appointment-title">课时核对结果</h2>
+        <div class="controls" style="margin-bottom: 8px;">
+            <button id="mockQuotaCheckButton" type="button">Mock课时核对数据</button>
+        </div>
         <div id="quotaCheckMeta" class="quota-result-meta">点击“查看课时数”后，会在这里显示每个学生的课时余额。</div>
         <div id="quotaCheckResults" class="empty">暂无查询结果。</div>
     </section>
@@ -2331,27 +2357,7 @@ entryKey: 课次标识（用于区分排课项）</span>
         }
     }
 
-    function renderQuotaCheckResults(rows) {
-        const metaEl = document.getElementById("quotaCheckMeta");
-        const container = document.getElementById("quotaCheckResults");
-        if (!metaEl || !container) return;
-
-        if (!rows || rows.length === 0) {
-            metaEl.textContent = "未找到可展示的查询结果。";
-            container.className = "empty";
-            container.textContent = "暂无查询结果。";
-            return;
-        }
-
-        const now = new Date();
-        const timeLabel = now.getFullYear() + "-" +
-            String(now.getMonth() + 1).padStart(2, "0") + "-" +
-            String(now.getDate()).padStart(2, "0") + " " +
-            String(now.getHours()).padStart(2, "0") + ":" +
-            String(now.getMinutes()).padStart(2, "0") + ":" +
-            String(now.getSeconds()).padStart(2, "0");
-        metaEl.textContent = "最近一次查询时间：" + timeLabel + " · 学生数：" + rows.length;
-
+    function buildQuotaResultTable(rows) {
         const table = document.createElement("table");
         table.className = "quota-result-table";
         table.innerHTML =
@@ -2397,9 +2403,69 @@ entryKey: 课次标识（用于区分排课项）</span>
         });
 
         table.appendChild(tbody);
+        return table;
+    }
+
+    function appendQuotaGroup(container, title, rows, isWarn) {
+        if (!rows || rows.length === 0) return;
+        const group = document.createElement("div");
+        group.className = "quota-result-group";
+
+        const groupTitle = document.createElement("h3");
+        groupTitle.className = "quota-group-title" + (isWarn ? " warn" : "");
+        groupTitle.textContent = title;
+
+        group.appendChild(groupTitle);
+        group.appendChild(buildQuotaResultTable(rows));
+        container.appendChild(group);
+    }
+
+    function renderQuotaCheckResults(rows) {
+        const metaEl = document.getElementById("quotaCheckMeta");
+        const container = document.getElementById("quotaCheckResults");
+        const topAbnormalBlock = document.getElementById("topAbnormalQuotaBlock");
+        const topAbnormalTitle = document.getElementById("topAbnormalQuotaTitle");
+        const topAbnormalResults = document.getElementById("topAbnormalQuotaResults");
+        if (!metaEl || !container || !topAbnormalBlock || !topAbnormalTitle || !topAbnormalResults) return;
+
+        if (!rows || rows.length === 0) {
+            metaEl.textContent = "未找到可展示的查询结果。";
+            container.className = "empty";
+            container.textContent = "暂无查询结果。";
+            topAbnormalBlock.style.display = "none";
+            topAbnormalResults.innerHTML = "";
+            return;
+        }
+
+        const now = new Date();
+        const timeLabel = now.getFullYear() + "-" +
+            String(now.getMonth() + 1).padStart(2, "0") + "-" +
+            String(now.getDate()).padStart(2, "0") + " " +
+            String(now.getHours()).padStart(2, "0") + ":" +
+            String(now.getMinutes()).padStart(2, "0") + ":" +
+            String(now.getSeconds()).padStart(2, "0");
+        metaEl.textContent = "最近一次查询时间：" + timeLabel + " · 学生数：" + rows.length;
+
+        const abnormalRows = rows.filter((row) => row.statusType === "warn" || row.statusType === "missing");
+        const normalRows = rows.filter((row) => row.statusType !== "warn" && row.statusType !== "missing");
+
+        topAbnormalResults.innerHTML = "";
+        if (abnormalRows.length > 0) {
+            topAbnormalTitle.textContent = `异常学生（${abnormalRows.length}）`;
+            topAbnormalResults.appendChild(buildQuotaResultTable(abnormalRows));
+            topAbnormalBlock.style.display = "block";
+        } else {
+            topAbnormalBlock.style.display = "none";
+        }
+
         container.className = "";
         container.innerHTML = "";
-        container.appendChild(table);
+        if (normalRows.length > 0) {
+            appendQuotaGroup(container, `正常学生（${normalRows.length}）`, normalRows, false);
+        } else {
+            container.className = "empty";
+            container.textContent = "暂无正常学生，异常学生已置顶显示。";
+        }
     }
 
     let hasAutoQuotaChecked = false;
@@ -2418,6 +2484,44 @@ entryKey: 课次标识（用于区分排课项）</span>
     const viewTotalHoursButton = document.getElementById("viewTotalHoursButton");
     viewTotalHoursButton?.addEventListener("click", async () => {
         await runScheduleQuotaCheck();
+    });
+
+    const mockQuotaCheckButton = document.getElementById("mockQuotaCheckButton");
+    mockQuotaCheckButton?.addEventListener("click", () => {
+        const mockRows = [
+            {
+                queryName: "俞新硕",
+                displayName: "硕硕",
+                quota30: "0",
+                quota60: "2",
+                quotaAccompany: "1",
+                statusType: "warn",
+                statusText: "异常：30分钟课时",
+                zeroFields: ["quota30"]
+            },
+            {
+                queryName: "胡贝妮",
+                displayName: "胡贝妮",
+                quota30: "-",
+                quota60: "-",
+                quotaAccompany: "-",
+                statusType: "missing",
+                statusText: "系统未查到",
+                zeroFields: ["quota30", "quota60", "quotaAccompany"]
+            },
+            {
+                queryName: "陈怡睿",
+                displayName: "陈怡睿",
+                quota30: "12",
+                quota60: "8",
+                quotaAccompany: "5",
+                statusType: "ok",
+                statusText: "正常",
+                zeroFields: []
+            }
+        ];
+        renderQuotaCheckResults(mockRows);
+        window.showToast?.("已加载Mock课时核对数据", 2200);
     });
 
     const setupLxLoginButton = document.getElementById("setupLxLoginButton");
