@@ -14,7 +14,9 @@
     <style>
         /* 页面布局覆盖 */
         body {
-            padding-top: 20px;
+            /* 覆盖 index.css 的顶部留白，去掉页面顶部空白 */
+            padding-top: 0;
+            margin-top: 0;
             align-items: center;
         }
         .container {
@@ -23,6 +25,7 @@
         }
         h1 {
             text-align: center;
+            margin-top: 10px;
             margin-bottom: 14px;
         }
         /* 导航条：复用 index.css #button-container 风格 */
