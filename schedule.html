@@ -986,6 +986,7 @@ entryKey: 课次标识（用于区分排课项）</span>
     const LESSON_OVERRIDE_STORAGE_KEY = "schedule-lesson-overrides-v1";
     const EDITABLE_COURSE_OPTIONS = ["单词", "阅读", "体验"];
     const EXTRA_ENTRIES_STORAGE_KEY = "schedule-extra-entries-v1";
+    const CUSTOM_STUDENTS_STORAGE_KEY = "custom-students-v1";
     let cancellationState = {};
     let timeOverrideState = {};
     let lessonOverrideState = {};
@@ -1154,6 +1155,24 @@ entryKey: 课次标识（用于区分排课项）</span>
             if (entry.student) students.add(entry.student);
         });
         return [...students].sort(function(a, b) { return a.localeCompare(b, "zh-CN"); });
+    }
+
+    function loadCustomStudents() {
+        try {
+            const raw = localStorage.getItem(CUSTOM_STUDENTS_STORAGE_KEY);
+            const arr = raw ? JSON.parse(raw) : [];
+            return Array.isArray(arr) ? arr : [];
+        } catch (_) { return []; }
+    }
+
+    function saveCustomStudent(name) {
+        const trimmed = String(name || "").trim();
+        if (!trimmed) return;
+        const list = loadCustomStudents();
+        if (!list.includes(trimmed)) {
+            list.push(trimmed);
+            localStorage.setItem(CUSTOM_STUDENTS_STORAGE_KEY, JSON.stringify(list));
+        }
     }
 
     function getLessonOverrideKey(entry, dateValue) {
@@ -1430,6 +1449,32 @@ entryKey: 课次标识（用于区分排课项）</span>
             opt.textContent = s;
             studentSelect.appendChild(opt);
         });
+        // 自定义姓名选项
+        var customOpt = document.createElement("option");
+        customOpt.value = "__custom__";
+        customOpt.textContent = "✏️ 自定义姓名...";
+        studentSelect.appendChild(customOpt);
+
+        // 自定义姓名输入框（默认隐藏）
+        var customNameInput = document.createElement("input");
+        customNameInput.type = "text";
+        customNameInput.placeholder = "输入学生姓名";
+        customNameInput.style.display = "none";
+        customNameInput.style.marginTop = "4px";
+        customNameInput.style.padding = "4px 8px";
+        customNameInput.style.borderRadius = "6px";
+        customNameInput.style.border = "1px solid var(--line)";
+        customNameInput.style.background = "var(--surface)";
+        customNameInput.style.color = "var(--text)";
+        customNameInput.style.fontSize = "13px";
+        customNameInput.style.width = "100%";
+
+        studentSelect.addEventListener("change", function() {
+            customNameInput.style.display = studentSelect.value === "__custom__" ? "block" : "none";
+            if (studentSelect.value === "__custom__") {
+                customNameInput.focus();
+            }
+        });
 
         var courseSelect = document.createElement("select");
         EDITABLE_COURSE_OPTIONS.forEach(function(c) {
@@ -1447,7 +1492,14 @@ entryKey: 课次标识（用于区分排课项）</span>
         addBtn.textContent = "确认添加";
         addBtn.style.fontWeight = "700";
         addBtn.addEventListener("click", function() {
-            var student = studentSelect.value;
+            var student;
+            if (studentSelect.value === "__custom__") {
+                student = customNameInput.value.trim();
+                if (!student) { showToast("请输入学生姓名"); return; }
+                saveCustomStudent(student);
+            } else {
+                student = studentSelect.value;
+            }
             if (!student) { showToast("请选择学生"); return; }
             addExtraEntry(dateValue, student, courseSelect.value, Number(durationSelect.value), "晚上");
             form.remove();
@@ -1459,7 +1511,7 @@ entryKey: 课次标识（用于区分排课项）</span>
         cancelBtn.textContent = "取消";
         cancelBtn.addEventListener("click", function() { form.remove(); });
 
-        form.append(studentSelect, courseSelect, durationSelect, addBtn, cancelBtn);
+        form.append(studentSelect, customNameInput, courseSelect, durationSelect, addBtn, cancelBtn);
         titleEl.insertAdjacentElement("afterend", form);
     }
 
