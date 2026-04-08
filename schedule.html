@@ -887,7 +887,7 @@ entryKey: 课次标识（用于区分排课项）</span>
             <span id="selectedDayText" class="pill"></span>
             <span id="dailyTotal" class="pill"></span>
         </div>
-        <div class="hint" style="margin-top: 8px;">今日/明日每节课可标记请假，状态会同步体现在当周视图。</div>
+        <div class="hint" style="margin-top: 8px;">今天/明天每节课可标记请假，状态会同步体现在当周视图。</div>
         <div class="two-day-grid">
             <article class="day-column">
                 <h3 id="todayColumnTitle" class="day-column-title"></h3>
@@ -1659,8 +1659,8 @@ entryKey: 课次标识（用于区分排课项）</span>
             .reduce((sum, item) => sum + resolveDurationMinutes(item, tomorrowDate), 0);
         const tomorrowCancelledCount = tomorrowEntries.filter((item) => isCancelled(item, tomorrowDate)).length;
 
-        selectedDayText.textContent = "今日对应：" + todayDay;
-        dailyTotal.textContent = "今日应上：" + toHoursText(todayMinutes) + "（请假" + todayCancelledCount + "节）";
+        selectedDayText.textContent = "今天对应：" + todayDay;
+        dailyTotal.textContent = "今天应上：" + toHoursText(todayMinutes) + "（请假" + todayCancelledCount + "节）";
 
         const onChangeCallback = () => {
             renderToday(dayMap, baseDate);
@@ -1670,13 +1670,13 @@ entryKey: 课次标识（用于区分排课项）</span>
         // Today column title with add button
         todayColumnTitle.innerHTML = "";
         todayColumnTitle.appendChild(document.createTextNode(
-            "今日（" + getDateLabel(baseDate) + " · " + todayDay + " · 应上" + toHoursText(todayMinutes) + "）"
+            "今天（" + getDateLabel(baseDate) + " · " + todayDay + " · 应上" + toHoursText(todayMinutes) + "）"
         ));
         const todayAddBtn = document.createElement("button");
         todayAddBtn.type = "button";
         todayAddBtn.className = "add-extra-btn";
         todayAddBtn.textContent = "➕ 临时加课";
-        todayAddBtn.title = "为今日临时添加排课";
+        todayAddBtn.title = "为今天临时添加排课";
         todayAddBtn.addEventListener("click", () => {
             toggleAddExtraForm(todayColumnTitle, baseDate, onChangeCallback);
         });
@@ -1684,7 +1684,7 @@ entryKey: 课次标识（用于区分排课项）</span>
 
         // Tomorrow column title with add button
         tomorrowColumnTitle.innerHTML = "";
-        let tomorrowTitleText = "明日（" + getDateLabel(tomorrowDate) + " · " + tomorrowDay + " · 应上" + toHoursText(tomorrowMinutes) + "）";
+        let tomorrowTitleText = "明天（" + getDateLabel(tomorrowDate) + " · " + tomorrowDay + " · 应上" + toHoursText(tomorrowMinutes) + "）";
         if (tomorrowCancelledCount > 0) {
             tomorrowTitleText += " · 请假" + tomorrowCancelledCount + "节";
         }
@@ -1693,7 +1693,7 @@ entryKey: 课次标识（用于区分排课项）</span>
         tomorrowAddBtn.type = "button";
         tomorrowAddBtn.className = "add-extra-btn";
         tomorrowAddBtn.textContent = "➕ 临时加课";
-        tomorrowAddBtn.title = "为明日临时添加排课";
+        tomorrowAddBtn.title = "为明天临时添加排课";
         tomorrowAddBtn.addEventListener("click", () => {
             toggleAddExtraForm(tomorrowColumnTitle, tomorrowDate, onChangeCallback);
         });
