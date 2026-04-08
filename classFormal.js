@@ -131,6 +131,16 @@ const teacherData = {
 
 
 
+const CUSTOM_STUDENTS_STORAGE_KEY = "custom-students-v1";
+
+function loadCustomStudents() {
+    try {
+        const raw = localStorage.getItem(CUSTOM_STUDENTS_STORAGE_KEY);
+        const arr = raw ? JSON.parse(raw) : [];
+        return Array.isArray(arr) ? arr : [];
+    } catch (_) { return []; }
+}
+
 export function updateUserNameOptions() {
     const userNameSelect = document.getElementById("userName");
     const selectedTeacher = document.getElementById("teacherName").value;
@@ -143,6 +153,19 @@ export function updateUserNameOptions() {
         option.textContent = userName;
         userNameSelect.appendChild(option);
     });
+
+    // 追加自定义学生（不在 teacherData 中的）
+    const customStudents = loadCustomStudents();
+    const existingNames = new Set(userNames);
+    customStudents.forEach(name => {
+        if (!existingNames.has(name)) {
+            const option = document.createElement("option");
+            option.value = name;
+            option.textContent = name + " [临]";
+            userNameSelect.appendChild(option);
+        }
+    });
+
     // Update the label for the first user in the list (if any)
     if (userNames.length > 0) {
         document.getElementById("userName").value = userNames[0];
@@ -183,6 +206,7 @@ export function updateLabel() {
         durationSelect.value = duration
     } else {
         courseLabel.textContent = '';
+        courseWordCountLabel.textContent = '';
     }
 
     const year = currentDate.getFullYear();
@@ -645,7 +669,12 @@ export function generateSalaryReport() {
     if (!monthToQuery) return;
 
     const currentTeacher = teacherData[teacherName];
-    const allStudents = Object.keys(currentTeacher.users);
+    const teacherStudents = Object.keys(currentTeacher.users);
+
+    // 合并自定义学生（去重）
+    const customStudents = loadCustomStudents();
+    const teacherStudentSet = new Set(teacherStudents);
+    const allStudents = [...teacherStudents, ...customStudents.filter(n => !teacherStudentSet.has(n))];
 
     let totalHoursVocab = 0;     // 词汇课总课时
     let totalHoursReading = 0;   // 阅读课总课时
