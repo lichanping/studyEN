@@ -380,55 +380,65 @@
         .class-item {
             border: 1px solid var(--line);
             border-radius: 10px;
-            padding: 10px;
+            padding: 8px 10px;
             display: flex;
             justify-content: flex-start;
             align-items: flex-start;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 6px;
             background: var(--card);
         }
 
         .class-main {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 5px;
             flex: 0 0 100%;
             width: 100%;
             min-width: 0;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             overflow-x: auto;
+            font-size: 13px;
         }
 
         .time {
             font-weight: 700;
-            min-width: 40px;
+            min-width: 28px;
+            font-size: 12px;
+            color: var(--subtle);
+            flex-shrink: 0;
         }
 
         .inline-time-input {
-            width: 88px;
+            width: 80px;
             border: 1px solid var(--line);
-            border-radius: 8px;
-            padding: 4px 6px;
+            border-radius: 6px;
+            padding: 3px 4px;
             font-size: 13px;
             background: var(--card);
+            color: var(--text);
+            flex-shrink: 0;
         }
 
         .inline-course-select,
         .inline-duration-select {
             border: 1px solid var(--line);
-            border-radius: 8px;
-            padding: 4px 6px;
-            font-size: 13px;
+            border-radius: 6px;
+            padding: 3px 4px;
+            font-size: 12px;
             background: var(--card);
+            color: var(--text);
+            flex-shrink: 0;
         }
 
-        .inline-course-select { min-width: 64px; }
-        .inline-duration-select { min-width: 72px; }
+        .inline-course-select { min-width: 52px; }
+        .inline-duration-select { min-width: 64px; }
 
         .student {
             font-weight: 700;
             min-width: 0;
+            flex-shrink: 0;
+            white-space: nowrap;
         }
 
         .course {
@@ -440,20 +450,23 @@
             color: var(--subtle);
         }
 
+
+        .status-tag {
+            border-radius: 999px;
+            padding: 2px 6px;
+            font-size: 11px;
+            font-weight: 700;
+            background: var(--status-ok-bg);
+            color: var(--status-ok-text);
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
         .class-item.cancelled {
             background: var(--cancelled-bg);
             border-color: var(--cancelled-border);
             opacity: 0.42;
             filter: saturate(0.2);
-        }
-
-        .status-tag {
-            border-radius: 999px;
-            padding: 3px 8px;
-            font-size: 12px;
-            font-weight: 700;
-            background: var(--status-ok-bg);
-            color: var(--status-ok-text);
         }
 
         .status-tag.cancelled {
@@ -775,6 +788,14 @@
                 border-color: #7f1d1d;
                 background: #451a1a;
             }
+        }
+
+        .end-time {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text);
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .extra-tag {
@@ -1442,6 +1463,15 @@ entryKey: 课次标识（用于区分排课项）</span>
         titleEl.insertAdjacentElement("afterend", form);
     }
 
+    function computeEndClock(startClock, durationMinutes) {
+        if (!startClock || !isValidClock(startClock)) return "";
+        const [h, m] = startClock.split(":").map(Number);
+        const total = h * 60 + m + Number(durationMinutes);
+        const endH = String(Math.floor((total % 1440) / 60)).padStart(2, "0");
+        const endM = String(total % 60).padStart(2, "0");
+        return endH + ":" + endM;
+    }
+
     function renderDayEntries(list, entries, dateValue, onChange) {
         if (entries.length === 0) {
             list.innerHTML = '<div class="empty">这一天没有排课。</div>';
@@ -1480,10 +1510,12 @@ entryKey: 课次标识（用于区分排课项）</span>
                     showToast("时间格式无效，请使用 HH:mm");
                     timeInput.value = fallbackClock;
                     setOverrideClock(item, dateValue, fallbackClock);
+                    updateEndTime();
                     return;
                 }
                 setOverrideClock(item, dateValue, normalized);
                 timeInput.value = normalized;
+                updateEndTime();
             });
 
             const student = document.createElement("span");
@@ -1513,8 +1545,25 @@ entryKey: 课次标识（用于区分排课项）</span>
             duration.value = String(currentDurationMinutes);
             duration.addEventListener("change", () => {
                 setLessonOverride(item, dateValue, { course: course.value, durationMinutes: Number(duration.value) });
+                updateEndTime();
                 onChange();
             });
+
+            // End-time label: auto-computed from start time + duration
+            const endTimeSpan = document.createElement("span");
+            endTimeSpan.className = "end-time";
+            function updateEndTime() {
+                const startClock = normalizeClockInput(timeInput.value || "");
+                const durMin = Number(duration.value) || currentDurationMinutes;
+                if (!cancelled && startClock && isValidClock(startClock)) {
+                    endTimeSpan.textContent = "→ " + computeEndClock(startClock, durMin);
+                    endTimeSpan.style.display = "";
+                } else {
+                    endTimeSpan.textContent = "";
+                    endTimeSpan.style.display = "none";
+                }
+            }
+            updateEndTime();
 
             const status = document.createElement("span");
             status.className = "status-tag" + (cancelled ? " cancelled" : "");
@@ -1574,7 +1623,7 @@ entryKey: 课次标识（用于区分排课项）</span>
                 actionGroup.appendChild(deleteBtn);
             }
 
-            mainGroup.append(time, timeInput, student, course, duration, status);
+            mainGroup.append(time, timeInput, student, course, duration, endTimeSpan, status);
             if (item._isExtra) {
                 const extraTag = document.createElement("span");
                 extraTag.className = "extra-tag";
