@@ -132,7 +132,7 @@ body {
     width: 30px;
 }
 
-#preTestWord, #reviewWord, #newWord {
+#preTestWord, #reviewWord, #newWord, #reviewforgetWord, #forgetWord {
     width: 100px;
 }
 

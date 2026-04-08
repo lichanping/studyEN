@@ -12,6 +12,8 @@ import {
     validateBeforeClassFeedbackSubmit
 } from './commonFunctions.js'
 
+let hasAutoSyncedNewWordFromReviewWord = false;
+
 const setInitialDateTime = () => {
     const currentDate = new Date();
     currentDate.setHours(19, 40, 0, 0); // Set the time to 21:00 (9 PM)
@@ -27,10 +29,38 @@ const setInitialDateTime = () => {
     document.getElementById("reviewTime").value = formattedCurrentDate;
 };
 
+const initReviewWordFirstBlurAutoSync = () => {
+    const reviewForgetWordInput = document.getElementById('reviewforgetWord');
+    const newWordInput = document.getElementById('newWord');
+    if (!reviewForgetWordInput || !newWordInput) {
+        return;
+    }
+
+    reviewForgetWordInput.addEventListener('blur', () => {
+        if (hasAutoSyncedNewWordFromReviewWord) {
+            return;
+        }
+
+        const reviewForgetWordText = reviewForgetWordInput.value.replace(/\s/g, '');
+        if (!reviewForgetWordText || reviewForgetWordText.includes('+')) {
+            return;
+        }
+
+        const reviewForgetWordNumber = parseInt(reviewForgetWordText, 10);
+        if (Number.isNaN(reviewForgetWordNumber) || reviewForgetWordNumber <= 0) {
+            return;
+        }
+
+        newWordInput.value = reviewForgetWordText;
+        hasAutoSyncedNewWordFromReviewWord = true;
+    });
+};
+
 // Attach the function to the "load" event of the window
 window.addEventListener("load", setInitialDateTime);
 window.addEventListener('load', updateUserNameOptions);
 window.addEventListener("load", updateLabel);
+window.addEventListener('load', initReviewWordFirstBlurAutoSync);
 // Define user data
 const teacherData = {
     "liTeacher": {
