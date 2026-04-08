@@ -111,6 +111,11 @@
             font-size: 14px;
             box-sizing: border-box;
         }
+        /* 首行两个输入区默认更高，便于首次加载直接录入 */
+        #forgetWords,
+        #pronounceWords {
+            min-height: 250px;
+        }
         .field textarea:focus {
             border-color: var(--input-focus);
             outline: none;

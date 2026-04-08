@@ -805,6 +805,7 @@
             <button id="navigateToFormalClass" type="button">正式课</button>
             <button id="navigateToTiyanClass" type="button">体验课</button>
             <button id="navigateToReadClass" type="button">阅读课</button>
+            <button id="navigateToAntiForgettingPage" type="button">抗遗忘</button>
             <button id="wordSelfCheckButton" type="button">单词自检</button>
         </div>
     </div>
@@ -1740,6 +1741,9 @@ entryKey: 课次标识（用于区分排课项）</span>
     document.getElementById("navigateToFormalClass").addEventListener("click", commonFunctions.navigateToFormalClass);
     document.getElementById("navigateToTiyanClass").addEventListener("click", commonFunctions.navigateToTiyanClass);
     document.getElementById("navigateToReadClass").addEventListener("click", commonFunctions.navigateToReadClass);
+    document.getElementById("navigateToAntiForgettingPage").addEventListener("click", () => {
+        window.location.href = "anti-forgetting.html";
+    });
     document.getElementById("wordSelfCheckButton").addEventListener("click", commonFunctions.navigateToLearnWords);
 
     async function safeLoginApp() {
