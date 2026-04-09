@@ -565,6 +565,20 @@
             padding: 10px;
         }
 
+        .day-card.today-highlight {
+            background: #fff8db;
+            border: 2px solid #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .day-card.today-highlight {
+                background: #3b3520;
+                border-color: #b45309;
+                box-shadow: 0 0 0 3px rgba(180, 83, 9, 0.25);
+            }
+        }
+
         @media (max-width: 1200px) {
             .week-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
         }
@@ -1773,12 +1787,15 @@ entryKey: 课次标识（用于区分排课项）</span>
         const weekGrid = document.getElementById("weekGrid");
         const weeklyTotal = document.getElementById("weeklyTotal");
         const weekStart = getMondayOfWeek(baseDate);
+        const _n = new Date();
+        const todayYmd = _n.getFullYear() + "-" + String(_n.getMonth() + 1).padStart(2, "0") + "-" + String(_n.getDate()).padStart(2, "0");
 
         let weekMinutes = 0;
         let weekCancelledCount = 0;
         weekGrid.innerHTML = WEEK_DAYS.map((day) => {
             const dayIndex = WEEK_DAYS.indexOf(day);
             const dayDate = addDays(weekStart, dayIndex);
+            const isToday = (dayDate === todayYmd);
             const items = [...(dayMap[day] || []), ...getExtraEntriesForDate(dayDate)];
             const dayMinutes = items
                 .filter((item) => !isCancelled(item, dayDate))
@@ -1800,7 +1817,7 @@ entryKey: 课次标识（用于区分排课项）</span>
                 : '<div class="empty">无排课</div>';
 
             const dayHeaderDate = dayDate.slice(5);
-            return '<article class="day-card">' +
+            return '<article class="day-card' + (isToday ? ' today-highlight' : '') + '">' +
                 '<h3>' + day + ' ' + dayHeaderDate + '</h3>' +
                 '<div class="day-meta">日期：' + dayDate + ' · 应上：' + toHoursText(dayMinutes) + ' · 请假' + dayCancelledCount + '节</div>' +
                 rows +
