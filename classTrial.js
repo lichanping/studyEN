@@ -19,6 +19,85 @@ const setInitialDateTime = () => {
 // Attach the function to the "load" event of the window
 window.addEventListener("load", setInitialDateTime);
 
+const SCHEDULE_CONFIG_OVERRIDE_KEY = "schedule-config-override-v1";
+const CUSTOM_STUDENTS_STORAGE_KEY = "custom-students-v1";
+
+function loadScheduleOverrideStudents() {
+    try {
+        const raw = localStorage.getItem(SCHEDULE_CONFIG_OVERRIDE_KEY);
+        const parsed = raw ? JSON.parse(raw) : null;
+        const entries = Array.isArray(parsed?.entries) ? parsed.entries : [];
+        const names = new Set();
+        entries.forEach((entry) => {
+            const name = String(entry?.student || "").trim();
+            if (name) names.add(name);
+        });
+        return [...names];
+    } catch (_) {
+        return [];
+    }
+}
+
+function loadCustomStudents() {
+    try {
+        const raw = localStorage.getItem(CUSTOM_STUDENTS_STORAGE_KEY);
+        const arr = raw ? JSON.parse(raw) : [];
+        return Array.isArray(arr) ? arr : [];
+    } catch (_) {
+        return [];
+    }
+}
+
+function updateTrialUserOptions() {
+    const userNameSelect = document.getElementById("userName");
+    if (!userNameSelect) return;
+
+    const previousValue = userNameSelect.value;
+    const originalOptions = Array.from(userNameSelect.options).map((opt) => ({
+        value: String(opt.value || "").trim(),
+        text: String(opt.textContent || "").trim()
+    })).filter((item) => item.value);
+
+    // MVP: 新增/最近维护的学生优先展示在最顶部（custom-students-v1 在管理页会 move-to-front）
+    const priorityStudents = [];
+    const seenPriority = new Set();
+    [...loadCustomStudents(), ...loadScheduleOverrideStudents()].forEach((name) => {
+        const trimmed = String(name || "").trim();
+        if (!trimmed || seenPriority.has(trimmed)) return;
+        seenPriority.add(trimmed);
+        priorityStudents.push(trimmed);
+    });
+
+    const originalTextByValue = new Map(originalOptions.map((item) => [item.value, item.text || item.value]));
+    userNameSelect.innerHTML = "";
+
+    const appended = new Set();
+    priorityStudents.forEach((name) => {
+        if (appended.has(name)) return;
+        const option = document.createElement("option");
+        option.value = name;
+        option.textContent = originalTextByValue.get(name) || name;
+        userNameSelect.appendChild(option);
+        appended.add(name);
+    });
+
+    originalOptions.forEach((item) => {
+        if (!item.value || appended.has(item.value)) return;
+        const option = document.createElement("option");
+        option.value = item.value;
+        option.textContent = item.text || item.value;
+        userNameSelect.appendChild(option);
+        appended.add(item.value);
+    });
+
+    if (previousValue && appended.has(previousValue)) {
+        userNameSelect.value = previousValue;
+    }
+}
+
+// Attach the function to the "load" event of the window
+window.addEventListener("load", updateTrialUserOptions);
+
 // JavaScript code for the button click functions
 export function handleScheduleNotificationClick() {
     const userName = document.getElementById("userName").value;

@@ -241,9 +241,51 @@
 <script type="module">
     import * as commonFunctions from './commonFunctions.js?v=20260405-1';
 
+    const SCHEDULE_CONFIG_OVERRIDE_KEY = 'schedule-config-override-v1';
+    const CUSTOM_STUDENTS_STORAGE_KEY = 'custom-students-v1';
+    const EXTRA_ENTRIES_STORAGE_KEY = 'schedule-extra-entries-v1';
+
     async function loadStudentOptions() {
         const userNameSelect = document.getElementById('userName');
         const students = new Set();
+
+        try {
+            const overrideRaw = localStorage.getItem(SCHEDULE_CONFIG_OVERRIDE_KEY);
+            const overrideConfig = overrideRaw ? JSON.parse(overrideRaw) : null;
+            if (overrideConfig && Array.isArray(overrideConfig.entries)) {
+                (overrideConfig.entries || []).forEach((entry) => {
+                    const name = String(entry?.student || '').trim();
+                    if (name) students.add(name);
+                });
+            }
+        } catch (_) {
+            // fallback below
+        }
+
+        try {
+            const customRaw = localStorage.getItem(CUSTOM_STUDENTS_STORAGE_KEY);
+            const customStudents = customRaw ? JSON.parse(customRaw) : [];
+            (Array.isArray(customStudents) ? customStudents : []).forEach((name) => {
+                const trimmed = String(name || '').trim();
+                if (trimmed) students.add(trimmed);
+            });
+        } catch (_) {
+            // fallback below
+        }
+
+        // 支持“临时加课”写入的学生名
+        try {
+            const extraRaw = localStorage.getItem(EXTRA_ENTRIES_STORAGE_KEY);
+            const extraState = extraRaw ? JSON.parse(extraRaw) : {};
+            Object.values(extraState || {}).forEach((rows) => {
+                (Array.isArray(rows) ? rows : []).forEach((entry) => {
+                    const name = String(entry?.student || '').trim();
+                    if (name) students.add(name);
+                });
+            });
+        } catch (_) {
+            // fallback below
+        }
 
         try {
             const resp = await fetch('./schedule.html', { cache: 'no-store' });

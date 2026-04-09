@@ -82,22 +82,67 @@ const teacherData = {
     // Add more teachers as needed
 };
 
+const CUSTOM_STUDENTS_STORAGE_KEY = "custom-students-v1";
+const SCHEDULE_CONFIG_OVERRIDE_KEY = "schedule-config-override-v1";
+
+function loadCustomStudents() {
+    try {
+        const raw = localStorage.getItem(CUSTOM_STUDENTS_STORAGE_KEY);
+        const arr = raw ? JSON.parse(raw) : [];
+        return Array.isArray(arr) ? arr : [];
+    } catch (_) {
+        return [];
+    }
+}
+
+function loadScheduleOverrideStudents() {
+    try {
+        const raw = localStorage.getItem(SCHEDULE_CONFIG_OVERRIDE_KEY);
+        const parsed = raw ? JSON.parse(raw) : null;
+        const entries = Array.isArray(parsed?.entries) ? parsed.entries : [];
+        const names = new Set();
+        entries.forEach((entry) => {
+            const name = String(entry?.student || "").trim();
+            if (name) names.add(name);
+        });
+        return [...names];
+    } catch (_) {
+        return [];
+    }
+}
 
 export function updateUserNameOptions2() {
     const userNameSelect = document.getElementById("userName");
     const selectedTeacher = document.getElementById("teacherName").value;
+    const previousValue = userNameSelect.value;
     userNameSelect.innerHTML = "";
-    const userNames = Object.keys(teacherData[selectedTeacher].users);
+    const teacherUserNames = Object.keys(teacherData[selectedTeacher].users);
 
-    userNames.forEach(userName => {
+    const mergedNames = [];
+    const seen = new Set();
+    [teacherUserNames, loadScheduleOverrideStudents(), loadCustomStudents()].forEach((list) => {
+        list.forEach((name) => {
+            const trimmed = String(name || "").trim();
+            if (!trimmed || seen.has(trimmed)) return;
+            seen.add(trimmed);
+            mergedNames.push(trimmed);
+        });
+    });
+
+    mergedNames.forEach(userName => {
         const option = document.createElement("option");
         option.value = userName;
         option.textContent = userName;
         userNameSelect.appendChild(option);
     });
+    if (previousValue && mergedNames.includes(previousValue)) {
+        userNameSelect.value = previousValue;
+        updateLabel2();
+        return;
+    }
     // Update the label for the first user in the list (if any)
-    if (userNames.length > 0) {
-        document.getElementById("userName").value = userNames[0];
+    if (mergedNames.length > 0) {
+        document.getElementById("userName").value = mergedNames[0];
         updateLabel2();  // Update the label with the first user's details
     } else {
         updateLabel2();  // No users, just update labels
@@ -317,6 +362,4 @@ function formatDateTimeWeekly(dateTimeString) {
     const formattedDateTime = new Date(dateTimeString).toLocaleString('zh-CN', options);
     return `${formattedDateTime}`;
 }
-
-
 

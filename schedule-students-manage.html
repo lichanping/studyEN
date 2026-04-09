@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#e8e4dc">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1d1e21">
+    <title>排课学生管理</title>
+    <link rel="stylesheet" href="schedule-students-manage.css">
+    <script type="module">
+        import * as commonFunctions from './commonFunctions.js?v=20260403-1';
+        commonFunctions.checkLoginStatus();
+    </script>
+</head>
+<body>
+<h1>排课学生管理（MVP）</h1>
+
+<div id="button-container">
+    <button id="goSchedule">返回排课总览</button>
+    <button id="goFormal">正式课</button>
+    <button id="goTrial">体验课</button>
+    <button id="goRead">阅读课</button>
+</div>
+
+<section class="panel">
+    <div class="toolbar">
+        <label for="keywordInput">关键词:</label>
+        <input id="keywordInput" type="text" placeholder="按学生名筛选条目">
+        <button id="resetToBuiltinButton" title="清除本地覆盖，恢复 schedule.html 内置配置">恢复内置配置</button>
+        <button id="exportOverrideButton" title="导出本地覆盖 JSON">导出本地覆盖</button>
+    </div>
+    <div id="metaText" class="hint"></div>
+    <div id="studentSummary" class="hint"></div>
+</section>
+
+<section class="panel">
+    <h2 id="formTitle">新增排课条目</h2>
+    <form id="entryForm">
+        <input type="hidden" id="entryId">
+
+        <div class="form-row">
+            <label for="studentInput">学生</label>
+            <input id="studentInput" type="text" required>
+
+            <label for="courseSelect">课程</label>
+            <select id="courseSelect">
+                <option value="单词">单词</option>
+                <option value="阅读">阅读</option>
+                <option value="体验">体验</option>
+            </select>
+
+            <label for="durationSelect">时长(分钟)</label>
+            <select id="durationSelect">
+                <option value="30">30</option>
+                <option value="60">60</option>
+            </select>
+
+            <label for="periodSelect">时段</label>
+            <select id="periodSelect">
+                <option value="上午">上午</option>
+                <option value="中午">中午</option>
+                <option value="下午">下午</option>
+                <option value="晚上">晚上</option>
+            </select>
+
+            <label for="timeInput">具体时间</label>
+            <input id="timeInput" type="text" placeholder="19:30，可留空">
+        </div>
+
+        <div class="form-row">
+            <span>星期:</span>
+            <label><input type="checkbox" class="dayCheck" value="周一">周一</label>
+            <label><input type="checkbox" class="dayCheck" value="周二">周二</label>
+            <label><input type="checkbox" class="dayCheck" value="周三">周三</label>
+            <label><input type="checkbox" class="dayCheck" value="周四">周四</label>
+            <label><input type="checkbox" class="dayCheck" value="周五">周五</label>
+            <label><input type="checkbox" class="dayCheck" value="周六">周六</label>
+            <label><input type="checkbox" class="dayCheck" value="周日">周日</label>
+        </div>
+
+        <div class="form-row">
+            <button type="submit">保存条目</button>
+            <button type="button" id="clearFormButton">清空</button>
+        </div>
+    </form>
+</section>
+
+<section class="panel">
+    <table>
+        <thead>
+        <tr>
+            <th>学生</th>
+            <th>课程</th>
+            <th>时长</th>
+            <th>星期</th>
+            <th>时段/时间</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody id="entriesTableBody"></tbody>
+    </table>
+</section>
+
+<script type="module" src="schedule-students-manage.js"></script>
+</body>
+</html>
+
