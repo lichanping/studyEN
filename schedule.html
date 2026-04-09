@@ -840,6 +840,7 @@
             <button id="navigateToFormalClass" type="button">正式课</button>
             <button id="navigateToTiyanClass" type="button">体验课</button>
             <button id="navigateToReadClass" type="button">阅读课</button>
+            <button id="navigateToScheduleManagePage" type="button">排课学生管理</button>
             <button id="navigateToAntiForgettingPage" type="button">抗遗忘</button>
             <button id="wordSelfCheckButton" type="button">单词自检</button>
         </div>
@@ -867,7 +868,7 @@
             <label for="antiForgettingStartTime">提醒时间：</label>
             <input id="antiForgettingStartTime" type="datetime-local" step="60" value="">
         </div>
-        <div class="hint" style="margin-top: 6px;">自动检查本排课表学员的 30/60 分钟课时与陪伴课余额。</div>
+        <div class="hint" style="margin-top: 6px;">自动检查本排课表学员的 30/60 分钟课时与陪伴课余额。排课学生管理页会覆盖排课配置；工资统计按独立账本，只有补录才写入。</div>
         <div class="hint" style="margin-top: 6px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
             <span id="scheduleSalarySummary">工资统计口径：独立账本（key: schedule-salary-ledger-v1），默认从 2026-04-01 起按当天实际课次入账（自动补录昨天，缺失时；也可手动补录更早日期），仅统计今天以前。</span>
             <span class="help-tip" tabindex="0" aria-label="工资字段说明">?
@@ -1000,6 +1001,7 @@ entryKey: 课次标识（用于区分排课项）</span>
     const LESSON_OVERRIDE_STORAGE_KEY = "schedule-lesson-overrides-v1";
     const EDITABLE_COURSE_OPTIONS = ["单词", "阅读", "体验"];
     const EXTRA_ENTRIES_STORAGE_KEY = "schedule-extra-entries-v1";
+    const SCHEDULE_CONFIG_OVERRIDE_KEY = "schedule-config-override-v1";
     const CUSTOM_STUDENTS_STORAGE_KEY = "custom-students-v1";
     let cancellationState = {};
     let timeOverrideState = {};
@@ -1008,7 +1010,41 @@ entryKey: 课次标识（用于区分排课项）</span>
 
     function getConfig() {
         const raw = document.getElementById("schedule-config").textContent;
-        return JSON.parse(raw);
+        const baseConfig = JSON.parse(raw);
+
+        const ensureLegacyEntryKeys = function(entries) {
+            if (!Array.isArray(entries)) return [];
+            return entries.map(function(entry) {
+                if (entry && entry._legacyKey) return entry;
+                const composite = [
+                    entry.student,
+                    entry.course,
+                    entry.durationMinutes,
+                    entry.period || "",
+                    entry.time || "",
+                    (entry.days || []).join("|")
+                ].join("__");
+                return {
+                    ...entry,
+                    _legacyKey: composite
+                };
+            });
+        };
+
+        try {
+            const overrideRaw = localStorage.getItem(SCHEDULE_CONFIG_OVERRIDE_KEY);
+            const overrideConfig = overrideRaw ? JSON.parse(overrideRaw) : null;
+            if (overrideConfig && Array.isArray(overrideConfig.entries)) {
+                return {
+                    ...baseConfig,
+                    ...overrideConfig,
+                    entries: ensureLegacyEntryKeys(overrideConfig.entries)
+                };
+            }
+        } catch (error) {
+            console.warn("读取排课覆盖配置失败，使用内置配置:", error);
+        }
+        return baseConfig;
     }
 
     function toHoursText(minutes) {
@@ -1046,6 +1082,7 @@ entryKey: 课次标识（用于区分排课项）</span>
     }
 
     function getEntryId(entry) {
+        if (entry._legacyKey) return String(entry._legacyKey);
         if (entry.id) return String(entry.id);
         return [
             entry.student,
@@ -1395,6 +1432,17 @@ entryKey: 课次标识（用于区分排课项）</span>
             "🗣️ 上课小贴士：请准时进入会议室，准备好摄像头和一杯水🍵。\n" +
             "💬 请您看到消息后回复确认👌。\n\n" +
             "📞 #腾讯会议：762-3777-6304";
+    }
+
+    function getMondayOfWeek(dateValue) {
+        const date = new Date(dateValue + "T00:00:00");
+        const day = date.getDay();
+        const diff = day === 0 ? -6 : 1 - day;
+        date.setDate(date.getDate() + diff);
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        return y + "-" + m + "-" + d;
     }
 
     function buildDayMap(entries) {
@@ -1772,17 +1820,6 @@ entryKey: 课次标识（用于区分排课项）</span>
         window.dispatchEvent(new Event("schedule-updated"));
     }
 
-    function getMondayOfWeek(dateValue) {
-        const date = new Date(dateValue + "T00:00:00");
-        const day = date.getDay();
-        const diff = day === 0 ? -6 : 1 - day;
-        date.setDate(date.getDate() + diff);
-        const y = date.getFullYear();
-        const m = String(date.getMonth() + 1).padStart(2, "0");
-        const d = String(date.getDate()).padStart(2, "0");
-        return y + "-" + m + "-" + d;
-    }
-
     function renderWeek(dayMap, baseDate) {
         const weekGrid = document.getElementById("weekGrid");
         const weeklyTotal = document.getElementById("weeklyTotal");
@@ -1859,6 +1896,9 @@ entryKey: 课次标识（用于区分排课项）</span>
     document.getElementById("navigateToFormalClass").addEventListener("click", commonFunctions.navigateToFormalClass);
     document.getElementById("navigateToTiyanClass").addEventListener("click", commonFunctions.navigateToTiyanClass);
     document.getElementById("navigateToReadClass").addEventListener("click", commonFunctions.navigateToReadClass);
+    document.getElementById("navigateToScheduleManagePage").addEventListener("click", () => {
+        window.location.href = "schedule-students-manage.html";
+    });
     document.getElementById("navigateToAntiForgettingPage").addEventListener("click", () => {
         window.location.href = "anti-forgetting.html";
     });
@@ -2594,8 +2634,7 @@ entryKey: 课次标识（用于区分排课项）</span>
 
     async function runScheduleQuotaCheck() {
         try {
-            const configRaw = document.getElementById("schedule-config")?.textContent || "{}";
-            const config = JSON.parse(configRaw);
+            const config = getConfig();
             await checkQuotaFromSchedule(config.entries || []);
         } catch (error) {
             console.error("课时检查失败:", error);
@@ -2691,8 +2730,7 @@ entryKey: 课次标识（用于区分排课项）</span>
                 return;
             }
 
-            const configRaw = document.getElementById("schedule-config")?.textContent || "{}";
-            const config = JSON.parse(configRaw);
+            const config = getConfig();
             const existed = hasLedgerSnapshotForDate(selectedDate);
             if (existed) {
                 const oldRows = getLedgerSnapshotByDate(selectedDate);
@@ -2775,8 +2813,7 @@ entryKey: 课次标识（用于区分排课项）</span>
     });
 
     try {
-        const configRaw = document.getElementById("schedule-config")?.textContent || "{}";
-        const config = JSON.parse(configRaw);
+        const config = getConfig();
         autoBackfillYesterdayIfMissing(config.entries || []);
     } catch (error) {
         console.error("自动补录昨天失败:", error);

@@ -132,6 +132,7 @@ const teacherData = {
 
 
 const CUSTOM_STUDENTS_STORAGE_KEY = "custom-students-v1";
+const SCHEDULE_CONFIG_OVERRIDE_KEY = "schedule-config-override-v1";
 
 function loadCustomStudents() {
     try {
@@ -141,11 +142,50 @@ function loadCustomStudents() {
     } catch (_) { return []; }
 }
 
+function loadScheduleOverrideEntries() {
+    try {
+        const raw = localStorage.getItem(SCHEDULE_CONFIG_OVERRIDE_KEY);
+        const parsed = raw ? JSON.parse(raw) : null;
+        return Array.isArray(parsed?.entries) ? parsed.entries : [];
+    } catch (_) {
+        return [];
+    }
+}
+
+function loadScheduleOverrideStudents() {
+    const names = new Set();
+    loadScheduleOverrideEntries().forEach((entry) => {
+        const name = String(entry?.student || "").trim();
+        if (name) names.add(name);
+    });
+    return [...names];
+}
+
+function getMergedStudentNames(selectedTeacher) {
+    const teacherUsers = Object.keys(teacherData[selectedTeacher]?.users || {});
+    const scheduleStudents = loadScheduleOverrideStudents();
+    const customStudents = loadCustomStudents();
+    const merged = [];
+    const seen = new Set();
+
+    [teacherUsers, scheduleStudents, customStudents].forEach((list) => {
+        list.forEach((name) => {
+            const trimmed = String(name || "").trim();
+            if (!trimmed || seen.has(trimmed)) return;
+            seen.add(trimmed);
+            merged.push(trimmed);
+        });
+    });
+
+    return merged;
+}
+
 export function updateUserNameOptions() {
     const userNameSelect = document.getElementById("userName");
     const selectedTeacher = document.getElementById("teacherName").value;
+    const previousValue = userNameSelect.value;
     userNameSelect.innerHTML = "";
-    const userNames = Object.keys(teacherData[selectedTeacher].users);
+    const userNames = getMergedStudentNames(selectedTeacher);
 
     userNames.forEach(userName => {
         const option = document.createElement("option");
@@ -154,17 +194,11 @@ export function updateUserNameOptions() {
         userNameSelect.appendChild(option);
     });
 
-    // 追加自定义学生（不在 teacherData 中的）
-    const customStudents = loadCustomStudents();
-    const existingNames = new Set(userNames);
-    customStudents.forEach(name => {
-        if (!existingNames.has(name)) {
-            const option = document.createElement("option");
-            option.value = name;
-            option.textContent = name + " [临]";
-            userNameSelect.appendChild(option);
-        }
-    });
+    if (previousValue && userNames.includes(previousValue)) {
+        userNameSelect.value = previousValue;
+        updateLabel();
+        return;
+    }
 
     // Update the label for the first user in the list (if any)
     if (userNames.length > 0) {
@@ -668,13 +702,7 @@ export function generateSalaryReport() {
     console.log(monthToQuery);
     if (!monthToQuery) return;
 
-    const currentTeacher = teacherData[teacherName];
-    const teacherStudents = Object.keys(currentTeacher.users);
-
-    // 合并自定义学生（去重）
-    const customStudents = loadCustomStudents();
-    const teacherStudentSet = new Set(teacherStudents);
-    const allStudents = [...teacherStudents, ...customStudents.filter(n => !teacherStudentSet.has(n))];
+    const allStudents = getMergedStudentNames(teacherName);
 
     let totalHoursVocab = 0;     // 词汇课总课时
     let totalHoursReading = 0;   // 阅读课总课时
@@ -1357,6 +1385,19 @@ export async function viewTotalHoursClick() {
     Object.entries(currentTeacherUsers).forEach(([userName, userData]) => {
         studentDurationMap[userName] = userData.duration;
     });
+    // 追加排课学生管理中的配置（同名若时长冲突，标记为 null，后续同时检查 quota30/quota60）
+    loadScheduleOverrideEntries().forEach((entry) => {
+        const name = String(entry?.student || "").trim();
+        if (!name) return;
+        const duration = Number(entry?.durationMinutes) === 30 ? 0.5 : 1;
+        if (Object.prototype.hasOwnProperty.call(studentDurationMap, name) && studentDurationMap[name] !== duration) {
+            studentDurationMap[name] = null;
+            return;
+        }
+        if (!Object.prototype.hasOwnProperty.call(studentDurationMap, name)) {
+            studentDurationMap[name] = duration;
+        }
+    });
 
     fetch('https://api.lxll.com/request/CustomerTeacherListClient', {
         method: 'POST',
@@ -1387,7 +1428,7 @@ export async function viewTotalHoursClick() {
             const anomaliesDetails = [];
 
             // 获取白名单：当前教师下的所有学生
-            const whiteList = new Set(Object.keys(currentTeacherUsers));
+            const whiteList = new Set(getMergedStudentNames(selectedTeacher));
             console.log('当前教师学生白名单:', [...whiteList]);
 
             const isZero = (v) => {
@@ -1424,14 +1465,18 @@ export async function viewTotalHoursClick() {
                         hasQuotaIssue = true;
                     }
                 } else {
-                    // 未配置 duration 或其他情况，检查两者都为0才报警（保持兼容）
-                    if (isZero(q30) && isZero(q60)) {
-                        zeroFields.push('quota30', 'quota60');
+                    // 未配置或存在多种时长时，同时检查 quota30/quota60
+                    if (isZero(q30)) {
+                        zeroFields.push('quota30');
+                        hasQuotaIssue = true;
+                    }
+                    if (isZero(q60)) {
+                        zeroFields.push('quota60');
                         hasQuotaIssue = true;
                     }
                 }
 
-                // 陪伴课为0也需要报警
+                // 陪伴课始终检查
                 if (isZero(qAcc)) {
                     zeroFields.push('quotaAccompany');
                     hasQuotaIssue = true;

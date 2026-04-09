@@ -1324,6 +1324,7 @@ const WEEK_DAYS = ["周一", "周二", "周三", "周四", "周五", "周六", "
 const CANCELLATION_STORAGE_KEY = "schedule-cancellations-v1";
 const LESSON_OVERRIDE_STORAGE_KEY = "schedule-lesson-overrides-v1";
 const EXTRA_ENTRIES_STORAGE_KEY = "schedule-extra-entries-v1";
+const SCHEDULE_CONFIG_OVERRIDE_KEY = "schedule-config-override-v1";
 let cachedScheduleEntries = null;
 
 function getDateValueFromDateTime(dateTimeValue) {
@@ -1350,6 +1351,7 @@ function parseStorageObject(key) {
 }
 
 function getEntryId(entry) {
+    if (entry._legacyKey) return String(entry._legacyKey);
     if (entry.id) return String(entry.id);
     return [
         entry.student,
@@ -1482,6 +1484,36 @@ function cleanupAutoExtraEntries(dateValue, studentName) {
 
 async function loadScheduleEntries() {
     if (Array.isArray(cachedScheduleEntries)) return cachedScheduleEntries;
+
+    const ensureLegacyEntryKeys = function(entries) {
+        if (!Array.isArray(entries)) return [];
+        return entries.map(function(entry) {
+            if (entry && entry._legacyKey) return entry;
+            const composite = [
+                entry.student,
+                entry.course,
+                entry.durationMinutes,
+                entry.period || "",
+                entry.time || "",
+                (entry.days || []).join("|")
+            ].join("__");
+            return {
+                ...entry,
+                _legacyKey: composite
+            };
+        });
+    };
+
+    try {
+        const overrideRaw = localStorage.getItem(SCHEDULE_CONFIG_OVERRIDE_KEY);
+        const overrideConfig = overrideRaw ? JSON.parse(overrideRaw) : null;
+        if (overrideConfig && Array.isArray(overrideConfig.entries)) {
+            cachedScheduleEntries = ensureLegacyEntryKeys(overrideConfig.entries);
+            return cachedScheduleEntries;
+        }
+    } catch (error) {
+        console.warn("读取本地排课覆盖配置失败，将回退到 schedule.html 内置配置:", error);
+    }
 
     const response = await fetch(SCHEDULE_CONFIG_URL, { cache: "no-store" });
     if (!response.ok) {
