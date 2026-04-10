@@ -830,6 +830,63 @@
                 border-color: #92400e;
             }
         }
+
+        .sync-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            margin-bottom: 12px;
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+        }
+
+        .sync-bar label {
+            font-weight: 600;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .sync-bar input[type="password"],
+        .sync-bar input[type="text"] {
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            padding: 5px 8px;
+            font-size: 13px;
+            background: var(--surface);
+            color: var(--text);
+            width: 140px;
+        }
+
+        .sync-bar button {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 13px;
+            font-weight: 600;
+            background: var(--card);
+            color: var(--text);
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .sync-bar button:hover {
+            background: var(--menu-hover-bg);
+        }
+
+        .sync-bar .sync-hint {
+            flex-basis: 100%;
+            font-size: 12px;
+            color: var(--subtle);
+            margin: 0;
+        }
+
+        .sync-bar .sync-status {
+            font-size: 12px;
+            color: var(--subtle);
+        }
     </style>
 </head>
 <body>
@@ -903,6 +960,16 @@ entryKey: 课次标识（用于区分排课项）</span>
             <span id="dailyTotal" class="pill"></span>
         </div>
         <div class="hint" style="margin-top: 8px;">今天/明天每节课可标记请假，状态会同步体现在当周视图。</div>
+        <div class="sync-bar" id="syncBar">
+            <label for="syncKeyInput">🔑 同步密钥：</label>
+            <input id="syncKeyInput" type="password" placeholder="输入同步密钥" autocomplete="off">
+            <button id="toggleSyncKeyVisibility" type="button" title="显示/隐藏密钥">👁</button>
+            <button id="saveSyncKeyButton" type="button">保存</button>
+            <button id="uploadScheduleButton" type="button">⬆️ 上传今日+明日</button>
+            <button id="downloadScheduleButton" type="button">⬇️ 下载今日+明日</button>
+            <span id="syncStatusText" class="sync-status"></span>
+            <p class="sync-hint">跨设备同步：在电脑 A 上传排课快照，在电脑 B 下载即可覆盖。同一密钥共享数据，上传覆盖云端，下载覆盖本地。</p>
+        </div>
         <div class="two-day-grid">
             <article class="day-column">
                 <h3 id="todayColumnTitle" class="day-column-title"></h3>
@@ -1889,6 +1956,288 @@ entryKey: 课次标识（用于区分排课项）</span>
     }
 
     init();
+
+    // ─── Schedule Sync (Cross-Device) ──────────────────────────
+    const SYNC_KEY_STORAGE = "schedule-sync-key";
+    const SYNC_API_PATH = "/.netlify/functions/schedule-sync";
+
+    // 本地测试模式：localhost 时使用 localStorage 模拟云端
+    const IS_LOCAL_DEV = location.hostname === "localhost" || location.hostname === "127.0.0.1";
+    const LOCAL_MOCK_PREFIX = "__sync_mock__";
+
+    function getSyncKey() {
+        return (localStorage.getItem(SYNC_KEY_STORAGE) || "").trim();
+    }
+
+    function saveSyncKey(key) {
+        localStorage.setItem(SYNC_KEY_STORAGE, key.trim());
+    }
+
+    function collectDailyPayload(dateValue) {
+        const extra = Array.isArray(extraEntriesState[dateValue]) ? extraEntriesState[dateValue] : [];
+        const prefix = dateValue + "::";
+
+        const cancellations = {};
+        Object.keys(cancellationState).forEach(function(k) {
+            if (k.startsWith(prefix)) cancellations[k] = cancellationState[k];
+        });
+
+        const timeOverrides = {};
+        Object.keys(timeOverrideState).forEach(function(k) {
+            if (k.startsWith(prefix)) timeOverrides[k] = timeOverrideState[k];
+        });
+
+        const lessonOverrides = {};
+        Object.keys(lessonOverrideState).forEach(function(k) {
+            if (k.startsWith(prefix)) lessonOverrides[k] = lessonOverrideState[k];
+        });
+
+        const customStudents = loadCustomStudents();
+
+        // 也同步基础排课配置（排课学生管理中添加的学生）
+        var scheduleConfigOverride = null;
+        try {
+            var raw = localStorage.getItem(SCHEDULE_CONFIG_OVERRIDE_KEY);
+            if (raw) scheduleConfigOverride = JSON.parse(raw);
+        } catch (_) {}
+
+        return {
+            extraEntries: extra,
+            cancellations: cancellations,
+            timeOverrides: timeOverrides,
+            lessonOverrides: lessonOverrides,
+            customStudents: customStudents,
+            scheduleConfigOverride: scheduleConfigOverride
+        };
+    }
+
+    function applyDailyPayload(dateValue, payload) {
+        // 1. Replace extra entries for this date
+        if (Array.isArray(payload.extraEntries)) {
+            extraEntriesState[dateValue] = payload.extraEntries;
+        } else {
+            delete extraEntriesState[dateValue];
+        }
+        saveExtraEntries();
+
+        // 2. Replace cancellations for this date
+        var prefix = dateValue + "::";
+        Object.keys(cancellationState).forEach(function(k) {
+            if (k.startsWith(prefix)) delete cancellationState[k];
+        });
+        if (payload.cancellations && typeof payload.cancellations === "object") {
+            Object.keys(payload.cancellations).forEach(function(k) {
+                if (k.startsWith(prefix)) cancellationState[k] = payload.cancellations[k];
+            });
+        }
+        saveCancellations();
+
+        // 3. Replace time overrides for this date
+        Object.keys(timeOverrideState).forEach(function(k) {
+            if (k.startsWith(prefix)) delete timeOverrideState[k];
+        });
+        if (payload.timeOverrides && typeof payload.timeOverrides === "object") {
+            Object.keys(payload.timeOverrides).forEach(function(k) {
+                if (k.startsWith(prefix)) timeOverrideState[k] = payload.timeOverrides[k];
+            });
+        }
+        saveTimeOverrides();
+
+        // 4. Replace lesson overrides for this date
+        Object.keys(lessonOverrideState).forEach(function(k) {
+            if (k.startsWith(prefix)) delete lessonOverrideState[k];
+        });
+        if (payload.lessonOverrides && typeof payload.lessonOverrides === "object") {
+            Object.keys(payload.lessonOverrides).forEach(function(k) {
+                if (k.startsWith(prefix)) lessonOverrideState[k] = payload.lessonOverrides[k];
+            });
+        }
+        saveLessonOverrides();
+
+        // 5. Merge custom students (union)
+        if (Array.isArray(payload.customStudents)) {
+            var existingStudents = loadCustomStudents();
+            var merged = [...new Set([...existingStudents, ...payload.customStudents])];
+            localStorage.setItem(CUSTOM_STUDENTS_STORAGE_KEY, JSON.stringify(merged));
+        }
+
+        // 6. Apply schedule config override (排课学生管理中的配置)
+        if (payload.scheduleConfigOverride && typeof payload.scheduleConfigOverride === "object") {
+            localStorage.setItem(SCHEDULE_CONFIG_OVERRIDE_KEY, JSON.stringify(payload.scheduleConfigOverride));
+        }
+    }
+
+    async function uploadDateToCloud(syncKey, dateValue) {
+        var payload = collectDailyPayload(dateValue);
+
+        // 本地测试模式：用 localStorage 模拟云端存储
+        if (IS_LOCAL_DEV) {
+            var mockKey = LOCAL_MOCK_PREFIX + syncKey + "__" + dateValue;
+            var record = { ...payload, uploadedAt: new Date().toISOString() };
+            localStorage.setItem(mockKey, JSON.stringify(record));
+            console.log("[Mock Upload]", mockKey, record);
+            return { success: true, date: dateValue, uploadedAt: record.uploadedAt };
+        }
+
+        var resp = await fetch(SYNC_API_PATH, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ syncKey: syncKey, date: dateValue, payload: payload })
+        });
+        if (!resp.ok) {
+            var errData = {};
+            try { errData = await resp.json(); } catch(_) {}
+            throw new Error(errData.error || ("上传失败 HTTP " + resp.status));
+        }
+        return resp.json();
+    }
+
+    async function downloadDateFromCloud(syncKey, dateValue) {
+        // 本地测试模式：从 localStorage 读取
+        if (IS_LOCAL_DEV) {
+            var mockKey = LOCAL_MOCK_PREFIX + syncKey + "__" + dateValue;
+            var raw = localStorage.getItem(mockKey);
+            if (!raw) {
+                console.log("[Mock Download] No data for", mockKey);
+                return null;
+            }
+            var data = JSON.parse(raw);
+            console.log("[Mock Download]", mockKey, data);
+            return data;
+        }
+
+        var resp = await fetch(SYNC_API_PATH + "?syncKey=" + encodeURIComponent(syncKey) + "&date=" + encodeURIComponent(dateValue));
+        if (resp.status === 404) {
+            return null; // no data
+        }
+        if (!resp.ok) {
+            var errData = {};
+            try { errData = await resp.json(); } catch(_) {}
+            throw new Error(errData.error || ("下载失败 HTTP " + resp.status));
+        }
+        var data = await resp.json();
+        return data.payload || null;
+    }
+
+    // Wire up sync UI
+    (function initSyncUI() {
+        var syncKeyInput = document.getElementById("syncKeyInput");
+        var saveSyncKeyButton = document.getElementById("saveSyncKeyButton");
+        var toggleVisBtn = document.getElementById("toggleSyncKeyVisibility");
+        var uploadBtn = document.getElementById("uploadScheduleButton");
+        var downloadBtn = document.getElementById("downloadScheduleButton");
+        var syncStatus = document.getElementById("syncStatusText");
+
+        // Load saved key
+        var existingKey = getSyncKey();
+        if (existingKey) {
+            syncKeyInput.value = existingKey;
+        }
+
+        // 本地测试模式提示
+        if (IS_LOCAL_DEV) {
+            syncStatus.textContent = "🧪 本地测试模式（数据存在本机 localStorage）";
+            syncStatus.style.color = "#f59e0b";
+        }
+
+        toggleVisBtn.addEventListener("click", function() {
+            syncKeyInput.type = syncKeyInput.type === "password" ? "text" : "password";
+        });
+
+        saveSyncKeyButton.addEventListener("click", function() {
+            var key = syncKeyInput.value.trim();
+            if (!key) { showToast("请输入同步密钥"); return; }
+            if (!/^[\w\-]+$/.test(key) || key.length > 64) {
+                showToast("密钥只允许字母、数字、下划线、短横线，最多64字符");
+                return;
+            }
+            saveSyncKey(key);
+            showToast("同步密钥已保存");
+        });
+
+        function ensureSyncKey() {
+            var key = syncKeyInput.value.trim();
+            if (!key) {
+                key = (prompt("请输入同步密钥（字母/数字/下划线，多台设备使用相同密钥）：") || "").trim();
+                if (!key) return null;
+            }
+            if (!/^[\w\-]+$/.test(key) || key.length > 64) {
+                showToast("密钥格式无效（字母/数字/下划线/短横线，最多64字符）");
+                return null;
+            }
+            syncKeyInput.value = key;
+            saveSyncKey(key);
+            return key;
+        }
+
+        uploadBtn.addEventListener("click", async function() {
+            var key = ensureSyncKey();
+            if (!key) return;
+
+            var datePicker = document.getElementById("datePicker");
+            var baseDate = datePicker.value;
+            var tomorrowDate = addDays(baseDate, 1);
+
+            syncStatus.textContent = "上传中…";
+            try {
+                await uploadDateToCloud(key, baseDate);
+                await uploadDateToCloud(key, tomorrowDate);
+                var now = new Date();
+                var timeStr = String(now.getHours()).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0");
+                syncStatus.textContent = "✅ 已上传 " + baseDate + "、" + tomorrowDate + "（" + timeStr + "）";
+                showToast("已上传排课快照：" + baseDate + "、" + tomorrowDate, 3500);
+            } catch (err) {
+                syncStatus.textContent = "❌ 上传失败：" + err.message;
+                showToast("上传失败：" + err.message, 4000);
+            }
+        });
+
+        downloadBtn.addEventListener("click", async function() {
+            var key = ensureSyncKey();
+            if (!key) return;
+
+            var datePicker = document.getElementById("datePicker");
+            var baseDate = datePicker.value;
+            var tomorrowDate = addDays(baseDate, 1);
+
+            syncStatus.textContent = "下载中…";
+            try {
+                var results = [];
+                var todayPayload = await downloadDateFromCloud(key, baseDate);
+                if (todayPayload) {
+                    applyDailyPayload(baseDate, todayPayload);
+                    results.push(baseDate);
+                }
+                var tomorrowPayload = await downloadDateFromCloud(key, tomorrowDate);
+                if (tomorrowPayload) {
+                    applyDailyPayload(tomorrowDate, tomorrowPayload);
+                    results.push(tomorrowDate);
+                }
+
+                if (results.length === 0) {
+                    syncStatus.textContent = "⚠️ 云端无数据（" + baseDate + "、" + tomorrowDate + "）";
+                    showToast("云端无此日期的排课数据", 3000);
+                    return;
+                }
+
+                // Re-render
+                var config = getConfig();
+                var dayMap = buildDayMap(config.entries || []);
+                renderToday(dayMap, baseDate);
+                renderWeek(dayMap, baseDate);
+
+                var now = new Date();
+                var timeStr = String(now.getHours()).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0");
+                var uploadedAt = todayPayload ? (todayPayload.uploadedAt || "") : (tomorrowPayload ? (tomorrowPayload.uploadedAt || "") : "");
+                var uploadHint = uploadedAt ? ("，快照时间 " + uploadedAt.replace("T", " ").slice(0, 19)) : "";
+                syncStatus.textContent = "✅ 已下载 " + results.join("、") + "（" + timeStr + uploadHint + "）";
+                showToast("已下载并覆盖排课数据：" + results.join("、"), 3500);
+            } catch (err) {
+                syncStatus.textContent = "❌ 下载失败：" + err.message;
+                showToast("下载失败：" + err.message, 4000);
+            }
+        });
+    })();
 </script>
 <script type="module">
     import * as commonFunctions from './commonFunctions.js?v=20260402-2';

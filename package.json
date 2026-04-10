@@ -1,0 +1,12 @@
+{
+  "name": "studyen",
+  "private": true,
+  "scripts": {
+    "rollback:sync": "bash ./scripts/rollback_sync.sh --target HEAD~1 --yes",
+    "rollback:sync:dry": "bash ./scripts/rollback_sync.sh --target HEAD~1 --dry-run"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  }
+}
+

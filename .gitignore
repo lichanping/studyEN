@@ -39,6 +39,7 @@ Thumbs.db
 
 test-output
 .idea
+node_modules
 *.csv
 #*.xlsx
 *.dir
