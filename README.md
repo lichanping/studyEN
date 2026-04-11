@@ -62,6 +62,34 @@ curl -I "https://<your-domain>/classFormal.js?v=20260402-2"
 2. 保留 `no-store` 配置不变。
 3. 恢复后再定位具体页面脚本问题。
 
+### 一键回滚（Sync 功能）
+
+已提供脚本：`scripts/rollback_sync.sh`
+
+- 回滚范围仅包含本次同步功能相关文件：
+  - `schedule.html`
+  - `netlify.toml`
+  - `netlify/functions/schedule-sync.mjs`
+  - `package.json`
+  - `package-lock.json`
+  - `.gitignore`
+  - `docs/PRD-schedule-sync.md`
+- 默认回滚到 `HEAD~1`（通常是同步功能上线前一个提交）
+- 安全保护：工作区不干净会直接退出（避免误伤未提交改动）
+
+常用命令：
+
+```bash
+# 先看会改什么，不落盘
+npm run rollback:sync:dry
+
+# 一键生成回滚提交（不自动 push）
+npm run rollback:sync
+
+# 需要时可直接推送
+bash ./scripts/rollback_sync.sh --target HEAD~1 --yes --push
+```
+
 ## 维护约定
 
 - 每次修改 JS 后，统一递增 `?v=`。
