@@ -153,6 +153,23 @@
                 background: linear-gradient(135deg, #b89450 0%, #8c6a30 100%);
             }
         }
+        /* 学员选择器醒目样式 */
+        #userName {
+            font-size: 17px;
+            font-weight: 700;
+            padding: 5px 10px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            color: #065f46;
+            border: 1.5px solid #6ee7b7;
+        }
+        @media (prefers-color-scheme: dark) {
+            #userName {
+                background: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+                color: #a7f3d0;
+                border-color: #34d399;
+            }
+        }
         /* Toast 样式（与 schedule.html 一致） */
         .toast {
             position: fixed;
@@ -191,6 +208,7 @@
         <button id="wordSelfCheckButton" type="button">单词自检</button>
     </div>
 
+
     <div class="panel">
         <div class="row">
             <label for="userName">学员：</label>
@@ -198,7 +216,7 @@
             <label for="reviewTime">复习时间：</label>
             <input type="datetime-local" id="reviewTime">
         </div>
-        <div class="hint">支持右键粘贴；该页面仅用于快速复制抗遗忘内容，不涉及工资统计。</div>
+        <div class="hint">支持右键粘贴；该页面仅用于快速复制抗遗忘内容，不涉及工资统计。切换学员会自动清空表单。</div>
     </div>
 
     <div class="panel">
@@ -339,6 +357,18 @@
         const mm = String(now.getMinutes()).padStart(2, '0');
         input.value = `${y}-${m}-${d}T${hh}:${mm}`;
     }
+
+    // ── 切换学员：自动清空表单 ──
+    function clearFormFields() {
+        document.querySelectorAll('.antiForgettingReviewWord').forEach(el => { el.value = ''; });
+        document.getElementById('antiForgettingForgetWord').value = '0';
+        document.getElementById('forgetWords').value = '';
+        document.getElementById('pronounceWords').value = '';
+        document.getElementById('keyLanguagePoints').value = '';
+        document.getElementById('practiceArea').value = '';
+    }
+
+    document.getElementById('userName').addEventListener('change', clearFormFields);
 
     document.getElementById('navigateToFormalClass').addEventListener('click', commonFunctions.navigateToFormalClass);
     document.getElementById('navigateToSchedulePage').addEventListener('click', () => {
