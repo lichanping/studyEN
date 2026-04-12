@@ -415,6 +415,10 @@ export function handleAntiForgettingFeedbackClick() {
     // Get values from input boxes
     const antiForgettingReviewWord = Array.from(document.querySelectorAll('.antiForgettingReviewWord'))
         .reduce((sum, input) => sum + (input.value ? parseInt(input.value, 10) : 0), 0);
+    if (!antiForgettingReviewWord) {
+        alert('请先填写复习词数');
+        return;
+    }
     let forgetWords = document.getElementById('forgetWords').value.trim();
 
     // Store forgetWords in IndexedDB with the key studentName_遗忘词
@@ -475,11 +479,11 @@ export function handleAntiForgettingFeedbackClick() {
     // Combine both sections
     let combinedContent = keyLanguagePointsSection + practiceSection;
     // Generate the message
-    let message = `【${userName} 今日抗遗忘复习反馈】<br>
+    let message = `【今日抗遗忘复习反馈】<br>
 1️⃣复习${antiForgettingReviewWord} 词，遗忘${antiForgettingForgetWord} 词，发音不标准${numberOfWrongWords} 词，正确率${correctRate}% 💯<br>
 2️⃣遗忘词:${forgetWords}<br>
 3️⃣发音不标准的词:${pronounceWords}<br>
-4️⃣${userName} ${randomFeedback}`;
+4️⃣${randomFeedback}`;
 
     // Add key language points if not empty
     if (combinedContent.length > 0) {
@@ -491,7 +495,7 @@ export function handleAntiForgettingFeedbackClick() {
 
     // Append random motto
     if (forgetWords !== " 无!" || pronounceWords !== " 无!") {
-        message += `<br><br><br>🎯重要提醒🎯<br><br>${userName}🥰，课后一定要记得练习那些你遗忘或者发音不标准的单词哦💪`;
+        message += `<br><br><br>🎯重要提醒🎯<br><br>🥰课后一定要记得练习那些你遗忘或者发音不标准的单词哦💪`;
     } else {
         message += `<br><br><br>📚知识小船📚<br><br>${getRandomMotto()}`;
     }
@@ -1292,8 +1296,6 @@ export function addRightClickPasteEvent(element) {
 }
 
 export function handleNewVersionFeedbackClick() {
-    const userNameInput = document.getElementById("userName");
-    const userName = userNameInput ? userNameInput.value : "同学";
 
     const reviewInputs = Array.from(document.querySelectorAll('.antiForgettingReviewWord'));
     const hasFilled = reviewInputs.some(input => input && input.value && input.value.trim() !== '');
@@ -1308,7 +1310,7 @@ export function handleNewVersionFeedbackClick() {
 
     // Build message
     const motto = getRandomMotto();
-    const message = `1. 复习 ${antiForgettingReviewWord} 词\n2. ${userName}同学表现很好，整节课注意力都很在线，我们的课堂也进步神速！要继续保持哦！\n📚知识小船📚\n${motto}`;
+    const message = `1. 复习 ${antiForgettingReviewWord} 词\n2. 同学表现很好，整节课注意力都很在线，我们的课堂也进步神速！要继续保持哦！\n📚知识小船📚\n${motto}`;
 
     // Copy the message to clipboard
     copyToClipboard(message);
