@@ -2193,11 +2193,14 @@ entryKey: 课次标识（用于区分排课项）</span>
                 var parts = k.split("::"); return parts.length > 1 ? parts[1].split("__")[0] : k;
             });
         }
-        // 提取调整时间的学生
+        // 提取调整时间的学生（含调整后的时间值）
         function timeOvrNames(p) {
             if (!p || !p.timeOverrides) return [];
             return Object.keys(p.timeOverrides).map(function(k) {
-                var parts = k.split("::"); return parts.length > 1 ? parts[1].split("__")[0] : k;
+                var parts = k.split("::");
+                var name = parts.length > 1 ? parts[1].split("__")[0] : k;
+                var time = p.timeOverrides[k] || "?";
+                return name + " → " + time;
             });
         }
         // 提取自定义学生名
