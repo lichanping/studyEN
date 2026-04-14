@@ -2179,38 +2179,80 @@ entryKey: 课次标识（用于区分排课项）</span>
         }
 
         // ── Conflict diff helpers ────────────────────────────────
-        function countPayloadItems(p) {
-            if (!p) return { extra: 0, cancel: 0, timeOvr: 0, lessonOvr: 0, custom: 0, configOvr: false };
-            return {
-                extra:     Array.isArray(p.extraEntries) ? p.extraEntries.length : 0,
-                cancel:    p.cancellations  ? Object.keys(p.cancellations).length  : 0,
-                timeOvr:   p.timeOverrides  ? Object.keys(p.timeOverrides).length  : 0,
-                lessonOvr: p.lessonOverrides ? Object.keys(p.lessonOverrides).length : 0,
-                custom:    Array.isArray(p.customStudents) ? p.customStudents.length : 0,
-                configOvr: !!(p.scheduleConfigOverride)
-            };
+
+        // 提取临时加课学生名列表
+        function extraNames(p) {
+            if (!p || !Array.isArray(p.extraEntries)) return [];
+            return p.extraEntries.map(function(e) { return e.student + "(" + e.course + ")"; });
+        }
+        // 提取请假学生（从 key 中截取）
+        function cancelNames(p) {
+            if (!p || !p.cancellations) return [];
+            return Object.keys(p.cancellations).map(function(k) {
+                // key format: date::legacyKey  or date::extraId
+                var parts = k.split("::"); return parts.length > 1 ? parts[1].split("__")[0] : k;
+            });
+        }
+        // 提取调整时间的学生
+        function timeOvrNames(p) {
+            if (!p || !p.timeOverrides) return [];
+            return Object.keys(p.timeOverrides).map(function(k) {
+                var parts = k.split("::"); return parts.length > 1 ? parts[1].split("__")[0] : k;
+            });
+        }
+        // 提取自定义学生名
+        function customNames(p) {
+            return (p && Array.isArray(p.customStudents)) ? p.customStudents : [];
+        }
+        // 排课配置学生名
+        function configStudents(p) {
+            if (!p || !p.scheduleConfigOverride || !Array.isArray(p.scheduleConfigOverride.entries)) return [];
+            return p.scheduleConfigOverride.entries.map(function(e) { return e.student; });
         }
 
-        function fmtPayloadSummary(label, c) {
-            var parts = [];
-            if (c.extra)     parts.push("临时加课 " + c.extra + " 条");
-            if (c.cancel)    parts.push("请假标记 " + c.cancel + " 条");
-            if (c.timeOvr)   parts.push("时间调整 " + c.timeOvr + " 条");
-            if (c.lessonOvr) parts.push("课程调整 " + c.lessonOvr + " 条");
-            if (c.custom)    parts.push("自定义学生 " + c.custom + " 个");
-            if (c.configOvr) parts.push("排课配置覆盖");
-            return label + (parts.length ? parts.join("，") : "（空）");
+        // 对比两个列表，输出 ➕/➖/✅ 行
+        function diffList(label, localArr, cloudArr) {
+            var allItems = [...new Set([...cloudArr, ...localArr])];
+            if (allItems.length === 0) return "";
+            var lines = [label + "："];
+            allItems.forEach(function(item) {
+                var inCloud = cloudArr.indexOf(item) >= 0;
+                var inLocal = localArr.indexOf(item) >= 0;
+                if (inCloud && inLocal)      lines.push("  ✅ " + item);
+                else if (inLocal && !inCloud) lines.push("  ➕ 本地有 / 云端无: " + item);
+                else                          lines.push("  ➖ 云端有 / 本地无: " + item);
+            });
+            return lines.join("\n");
         }
 
         function buildConflictMsg(dateStr, localPayload, cloudPayload) {
-            var localC = countPayloadItems(localPayload);
-            var cloudC = countPayloadItems(cloudPayload);
             var uploadedAt = cloudPayload.uploadedAt
                 ? cloudPayload.uploadedAt.replace("T", " ").slice(0, 19)
                 : "未知";
-            return "📅 " + dateStr + " 云端已有数据（上传于 " + uploadedAt + "）\n\n" +
-                fmtPayloadSummary("☁️ 云端: ", cloudC) + "\n" +
-                fmtPayloadSummary("💻 本地: ", localC);
+            var header = "📅 " + dateStr + "（云端快照 " + uploadedAt + "）";
+
+            var sections = [];
+
+            // 按日期的数据对比
+            var d1 = diffList("临时加课", extraNames(localPayload), extraNames(cloudPayload));
+            if (d1) sections.push(d1);
+
+            var d2 = diffList("请假标记", cancelNames(localPayload), cancelNames(cloudPayload));
+            if (d2) sections.push(d2);
+
+            var d3 = diffList("时间调整", timeOvrNames(localPayload), timeOvrNames(cloudPayload));
+            if (d3) sections.push(d3);
+
+            // 全局数据对比（自定义学生、排课配置）
+            var d4 = diffList("自定义学生(临时)", customNames(localPayload), customNames(cloudPayload));
+            if (d4) sections.push(d4);
+
+            var d5 = diffList("排课管理学生", configStudents(localPayload), configStudents(cloudPayload));
+            if (d5) sections.push(d5);
+
+            if (sections.length === 0) sections.push("  ✅ 数据完全一致");
+
+            return header + "\n" + sections.join("\n");
         }
 
         uploadBtn.addEventListener("click", async function() {
@@ -2280,21 +2322,19 @@ entryKey: 课次标识（用于区分排课项）</span>
                 var localTomorrow = collectDailyPayload(tomorrowDate);
                 var conflictParts = [];
 
-                if (todayPayload) {
-                    var localC = countPayloadItems(localToday);
-                    var hasLocalData = localC.extra || localC.cancel || localC.timeOvr || localC.lessonOvr;
-                    if (hasLocalData) {
-                        conflictParts.push(buildConflictMsg(baseDate, localToday, todayPayload)
-                            .replace("云端已有数据", "本地已有数据，下载将覆盖本地"));
-                    }
+                function hasLocalChanges(p) {
+                    if (!p) return false;
+                    return (Array.isArray(p.extraEntries) && p.extraEntries.length > 0)
+                        || (p.cancellations && Object.keys(p.cancellations).length > 0)
+                        || (p.timeOverrides && Object.keys(p.timeOverrides).length > 0)
+                        || (p.lessonOverrides && Object.keys(p.lessonOverrides).length > 0);
                 }
-                if (tomorrowPayload) {
-                    var localC2 = countPayloadItems(localTomorrow);
-                    var hasLocalData2 = localC2.extra || localC2.cancel || localC2.timeOvr || localC2.lessonOvr;
-                    if (hasLocalData2) {
-                        conflictParts.push(buildConflictMsg(tomorrowDate, localTomorrow, tomorrowPayload)
-                            .replace("云端已有数据", "本地已有数据，下载将覆盖本地"));
-                    }
+
+                if (todayPayload && hasLocalChanges(localToday)) {
+                    conflictParts.push(buildConflictMsg(baseDate, localToday, todayPayload));
+                }
+                if (tomorrowPayload && hasLocalChanges(localTomorrow)) {
+                    conflictParts.push(buildConflictMsg(tomorrowDate, localTomorrow, tomorrowPayload));
                 }
 
                 if (conflictParts.length > 0) {
