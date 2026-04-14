@@ -968,7 +968,7 @@ entryKey: 课次标识（用于区分排课项）</span>
             <button id="uploadScheduleButton" type="button">⬆️ 上传今日+明日</button>
             <button id="downloadScheduleButton" type="button">⬇️ 下载今日+明日</button>
             <span id="syncStatusText" class="sync-status"></span>
-            <p class="sync-hint">跨设备同步：在电脑 A 上传排课快照，在电脑 B 下载即可覆盖。同一密钥共享数据，上传覆盖云端，下载覆盖本地。</p>
+            <p class="sync-hint">跨设备同步：在电脑 A 上传排课快照，在电脑 B 下载即可覆盖。同一密钥共享数据。上传/下载前会自动检测冲突并显示差异摘要，需确认后才会覆盖。</p>
         </div>
         <div class="two-day-grid">
             <article class="day-column">
@@ -2178,6 +2178,41 @@ entryKey: 课次标识（用于区分排课项）</span>
             return key;
         }
 
+        // ── Conflict diff helpers ────────────────────────────────
+        function countPayloadItems(p) {
+            if (!p) return { extra: 0, cancel: 0, timeOvr: 0, lessonOvr: 0, custom: 0, configOvr: false };
+            return {
+                extra:     Array.isArray(p.extraEntries) ? p.extraEntries.length : 0,
+                cancel:    p.cancellations  ? Object.keys(p.cancellations).length  : 0,
+                timeOvr:   p.timeOverrides  ? Object.keys(p.timeOverrides).length  : 0,
+                lessonOvr: p.lessonOverrides ? Object.keys(p.lessonOverrides).length : 0,
+                custom:    Array.isArray(p.customStudents) ? p.customStudents.length : 0,
+                configOvr: !!(p.scheduleConfigOverride)
+            };
+        }
+
+        function fmtPayloadSummary(label, c) {
+            var parts = [];
+            if (c.extra)     parts.push("临时加课 " + c.extra + " 条");
+            if (c.cancel)    parts.push("请假标记 " + c.cancel + " 条");
+            if (c.timeOvr)   parts.push("时间调整 " + c.timeOvr + " 条");
+            if (c.lessonOvr) parts.push("课程调整 " + c.lessonOvr + " 条");
+            if (c.custom)    parts.push("自定义学生 " + c.custom + " 个");
+            if (c.configOvr) parts.push("排课配置覆盖");
+            return label + (parts.length ? parts.join("，") : "（空）");
+        }
+
+        function buildConflictMsg(dateStr, localPayload, cloudPayload) {
+            var localC = countPayloadItems(localPayload);
+            var cloudC = countPayloadItems(cloudPayload);
+            var uploadedAt = cloudPayload.uploadedAt
+                ? cloudPayload.uploadedAt.replace("T", " ").slice(0, 19)
+                : "未知";
+            return "📅 " + dateStr + " 云端已有数据（上传于 " + uploadedAt + "）\n\n" +
+                fmtPayloadSummary("☁️ 云端: ", cloudC) + "\n" +
+                fmtPayloadSummary("💻 本地: ", localC);
+        }
+
         uploadBtn.addEventListener("click", async function() {
             var key = ensureSyncKey();
             if (!key) return;
@@ -2186,8 +2221,29 @@ entryKey: 课次标识（用于区分排课项）</span>
             var baseDate = datePicker.value;
             var tomorrowDate = addDays(baseDate, 1);
 
-            syncStatus.textContent = "上传中…";
+            syncStatus.textContent = "检查云端…";
             try {
+                // ── Preflight: 获取云端现有数据做冲突比对 ──
+                var cloudToday = await downloadDateFromCloud(key, baseDate);
+                var cloudTomorrow = await downloadDateFromCloud(key, tomorrowDate);
+                var localToday = collectDailyPayload(baseDate);
+                var localTomorrow = collectDailyPayload(tomorrowDate);
+
+                var conflictParts = [];
+                if (cloudToday)    conflictParts.push(buildConflictMsg(baseDate, localToday, cloudToday));
+                if (cloudTomorrow) conflictParts.push(buildConflictMsg(tomorrowDate, localTomorrow, cloudTomorrow));
+
+                if (conflictParts.length > 0) {
+                    var msg = "⚠️ 以下日期云端已存在排课数据，上传将覆盖：\n\n" +
+                        conflictParts.join("\n─────────────────\n") +
+                        "\n\n确定要用本地数据覆盖云端吗？";
+                    if (!confirm(msg)) {
+                        syncStatus.textContent = "⏸ 上传已取消";
+                        return;
+                    }
+                }
+
+                syncStatus.textContent = "上传中…";
                 await uploadDateToCloud(key, baseDate);
                 await uploadDateToCloud(key, tomorrowDate);
                 var now = new Date();
@@ -2208,25 +2264,60 @@ entryKey: 课次标识（用于区分排课项）</span>
             var baseDate = datePicker.value;
             var tomorrowDate = addDays(baseDate, 1);
 
-            syncStatus.textContent = "下载中…";
+            syncStatus.textContent = "检查云端…";
             try {
-                var results = [];
                 var todayPayload = await downloadDateFromCloud(key, baseDate);
+                var tomorrowPayload = await downloadDateFromCloud(key, tomorrowDate);
+
+                if (!todayPayload && !tomorrowPayload) {
+                    syncStatus.textContent = "⚠️ 云端无数据（" + baseDate + "、" + tomorrowDate + "）";
+                    showToast("云端无此日期的排课数据", 3000);
+                    return;
+                }
+
+                // ── Preflight: 本地 vs 云端冲突比对 ──
+                var localToday = collectDailyPayload(baseDate);
+                var localTomorrow = collectDailyPayload(tomorrowDate);
+                var conflictParts = [];
+
+                if (todayPayload) {
+                    var localC = countPayloadItems(localToday);
+                    var hasLocalData = localC.extra || localC.cancel || localC.timeOvr || localC.lessonOvr;
+                    if (hasLocalData) {
+                        conflictParts.push(buildConflictMsg(baseDate, localToday, todayPayload)
+                            .replace("云端已有数据", "本地已有数据，下载将覆盖本地"));
+                    }
+                }
+                if (tomorrowPayload) {
+                    var localC2 = countPayloadItems(localTomorrow);
+                    var hasLocalData2 = localC2.extra || localC2.cancel || localC2.timeOvr || localC2.lessonOvr;
+                    if (hasLocalData2) {
+                        conflictParts.push(buildConflictMsg(tomorrowDate, localTomorrow, tomorrowPayload)
+                            .replace("云端已有数据", "本地已有数据，下载将覆盖本地"));
+                    }
+                }
+
+                if (conflictParts.length > 0) {
+                    var msg = "⚠️ 以下日期本地已有排课修改，下载将覆盖本地：\n\n" +
+                        conflictParts.join("\n─────────────────\n") +
+                        "\n\n确定要用云端数据覆盖本地吗？";
+                    if (!confirm(msg)) {
+                        syncStatus.textContent = "⏸ 下载已取消";
+                        return;
+                    }
+                }
+
+                syncStatus.textContent = "下载中…";
+                var results = [];
                 if (todayPayload) {
                     applyDailyPayload(baseDate, todayPayload);
                     results.push(baseDate);
                 }
-                var tomorrowPayload = await downloadDateFromCloud(key, tomorrowDate);
                 if (tomorrowPayload) {
                     applyDailyPayload(tomorrowDate, tomorrowPayload);
                     results.push(tomorrowDate);
                 }
 
-                if (results.length === 0) {
-                    syncStatus.textContent = "⚠️ 云端无数据（" + baseDate + "、" + tomorrowDate + "）";
-                    showToast("云端无此日期的排课数据", 3000);
-                    return;
-                }
 
                 // Re-render
                 var config = getConfig();
