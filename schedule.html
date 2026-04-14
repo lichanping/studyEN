@@ -2236,7 +2236,7 @@ entryKey: 课次标识（用于区分排课项）</span>
 
             var sections = [];
 
-            // 按日期的数据对比
+            // 仅按日期的数据对比（临时加课、请假、时间调整）
             var d1 = diffList("临时加课", extraNames(localPayload), extraNames(cloudPayload));
             if (d1) sections.push(d1);
 
@@ -2246,16 +2246,23 @@ entryKey: 课次标识（用于区分排课项）</span>
             var d3 = diffList("时间调整", timeOvrNames(localPayload), timeOvrNames(cloudPayload));
             if (d3) sections.push(d3);
 
-            // 全局数据对比（自定义学生、排课配置）
-            var d4 = diffList("自定义学生(临时)", customNames(localPayload), customNames(cloudPayload));
-            if (d4) sections.push(d4);
-
-            var d5 = diffList("排课管理学生", configStudents(localPayload), configStudents(cloudPayload));
-            if (d5) sections.push(d5);
-
-            if (sections.length === 0) sections.push("  ✅ 数据完全一致");
+            if (sections.length === 0) sections.push("  ✅ 当日排课数据一致");
 
             return header + "\n" + sections.join("\n");
+        }
+
+        // 全局数据对比（自定义学生、排课管理学生）—— 只显示一次
+        function buildGlobalDiffMsg(localPayload, cloudPayload) {
+            var sections = [];
+
+            var d1 = diffList("自定义学生(临时)", customNames(localPayload), customNames(cloudPayload));
+            if (d1) sections.push(d1);
+
+            var d2 = diffList("排课管理学生", configStudents(localPayload), configStudents(cloudPayload));
+            if (d2) sections.push(d2);
+
+            if (sections.length === 0) return "";
+            return "🔧 全局配置\n" + sections.join("\n");
         }
 
         uploadBtn.addEventListener("click", async function() {
@@ -2277,6 +2284,14 @@ entryKey: 课次标识（用于区分排课项）</span>
                 var conflictParts = [];
                 if (cloudToday)    conflictParts.push(buildConflictMsg(baseDate, localToday, cloudToday));
                 if (cloudTomorrow) conflictParts.push(buildConflictMsg(tomorrowDate, localTomorrow, cloudTomorrow));
+
+                // 全局配置只比对一次（取任意一对 payload）
+                var refLocal = localToday;
+                var refCloud = cloudToday || cloudTomorrow;
+                if (refCloud) {
+                    var globalDiff = buildGlobalDiffMsg(refLocal, refCloud);
+                    if (globalDiff) conflictParts.push(globalDiff);
+                }
 
                 if (conflictParts.length > 0) {
                     var msg = "⚠️ 以下日期云端已存在排课数据，上传将覆盖：\n\n" +
@@ -2338,6 +2353,13 @@ entryKey: 课次标识（用于区分排课项）</span>
                 }
                 if (tomorrowPayload && hasLocalChanges(localTomorrow)) {
                     conflictParts.push(buildConflictMsg(tomorrowDate, localTomorrow, tomorrowPayload));
+                }
+
+                // 全局配置只比对一次
+                var refCloud = todayPayload || tomorrowPayload;
+                if (refCloud) {
+                    var globalDiff = buildGlobalDiffMsg(localToday, refCloud);
+                    if (globalDiff) conflictParts.push(globalDiff);
                 }
 
                 if (conflictParts.length > 0) {
