@@ -2251,15 +2251,40 @@ entryKey: 课次标识（用于区分排课项）</span>
                 var parts = k.split("::"); return parts.length > 1 ? parts[1].split("__")[0] : k;
             });
         }
-        // 提取调整时间的学生（含调整后的时间值）
-        function timeOvrNames(p) {
-            if (!p || !p.timeOverrides) return [];
-            return Object.keys(p.timeOverrides).map(function(k) {
+        // 提取调整时间：返回 { 学生名: 时间值 } 的 map
+        function timeOvrMap(p) {
+            var map = {};
+            if (!p || !p.timeOverrides) return map;
+            Object.keys(p.timeOverrides).forEach(function(k) {
                 var parts = k.split("::");
                 var name = parts.length > 1 ? parts[1].split("__")[0] : k;
-                var time = p.timeOverrides[k] || "?";
-                return name + " → " + time;
+                map[name] = p.timeOverrides[k] || "?";
             });
+            return map;
+        }
+        // 按学生名对比时间调整值
+        function diffTimeOvr(localPayload, cloudPayload) {
+            var localM = timeOvrMap(localPayload);
+            var cloudM = timeOvrMap(cloudPayload);
+            var allNames = [...new Set([...Object.keys(cloudM), ...Object.keys(localM)])];
+            if (allNames.length === 0) return "";
+            var lines = ["时间调整："];
+            allNames.forEach(function(name) {
+                var inLocal = name in localM;
+                var inCloud = name in cloudM;
+                if (inLocal && inCloud) {
+                    if (localM[name] === cloudM[name]) {
+                        lines.push("  ✅ " + name + " " + localM[name]);
+                    } else {
+                        lines.push("  🔄 " + name + "：云端 " + cloudM[name] + " → 本地 " + localM[name]);
+                    }
+                } else if (inLocal) {
+                    lines.push("  ➕ 本地有 / 云端无: " + name + " " + localM[name]);
+                } else {
+                    lines.push("  ➖ 云端有 / 本地无: " + name + " " + cloudM[name]);
+                }
+            });
+            return lines.join("\n");
         }
         // 提取自定义学生名
         function customNames(p) {
@@ -2301,7 +2326,7 @@ entryKey: 课次标识（用于区分排课项）</span>
             var d2 = diffList("请假标记", cancelNames(localPayload), cancelNames(cloudPayload));
             if (d2) sections.push(d2);
 
-            var d3 = diffList("时间调整", timeOvrNames(localPayload), timeOvrNames(cloudPayload));
+            var d3 = diffTimeOvr(localPayload, cloudPayload);
             if (d3) sections.push(d3);
 
             if (sections.length === 0) sections.push("  ✅ 当日排课数据一致");
