@@ -887,6 +887,64 @@
             font-size: 12px;
             color: var(--subtle);
         }
+
+        /* ── Sync conflict modal ── */
+        .sync-modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .sync-modal {
+            background: var(--card);
+            color: var(--text);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            width: min(520px, 92vw);
+            max-height: 80vh;
+            display: flex; flex-direction: column;
+            box-shadow: var(--elev-shadow);
+        }
+        .sync-modal-header {
+            padding: 14px 18px 10px;
+            font-weight: 700;
+            font-size: 15px;
+            border-bottom: 1px solid var(--line);
+            flex-shrink: 0;
+        }
+        .sync-modal-body {
+            padding: 14px 18px;
+            overflow-y: auto;
+            flex: 1 1 auto;
+            white-space: pre-wrap;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+        .sync-modal-footer {
+            padding: 10px 18px 14px;
+            display: flex; justify-content: flex-end; gap: 10px;
+            border-top: 1px solid var(--line);
+            flex-shrink: 0;
+        }
+        .sync-modal-footer button {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 7px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            background: var(--card);
+            color: var(--text);
+        }
+        .sync-modal-footer button:hover { background: var(--menu-hover-bg); }
+        .sync-modal-footer .sync-modal-ok {
+            background: var(--primary-btn-bg);
+            color: var(--primary-btn-text);
+            border-color: var(--primary-btn-border);
+        }
+        .sync-modal-footer .sync-modal-ok:hover {
+            background: var(--primary-btn-hover-bg);
+        }
     </style>
 </head>
 <body>
@@ -968,7 +1026,7 @@ entryKey: 课次标识（用于区分排课项）</span>
             <button id="uploadScheduleButton" type="button">⬆️ 上传今日+明日</button>
             <button id="downloadScheduleButton" type="button">⬇️ 下载今日+明日</button>
             <span id="syncStatusText" class="sync-status"></span>
-            <p class="sync-hint">跨设备同步：在电脑 A 上传排课快照，在电脑 B 下载即可覆盖。同一密钥共享数据，上传覆盖云端，下载覆盖本地。</p>
+            <p class="sync-hint">跨设备同步：在电脑 A 上传排课快照，在电脑 B 下载即可覆盖。同一密钥共享数据。上传/下载前会自动检测冲突并显示差异摘要，需确认后才会覆盖。</p>
         </div>
         <div class="two-day-grid">
             <article class="day-column">
@@ -2178,16 +2236,216 @@ entryKey: 课次标识（用于区分排课项）</span>
             return key;
         }
 
+        // ── Conflict diff helpers ────────────────────────────────
+
+        // 提取临时加课学生名列表
+        function extraNames(p) {
+            if (!p || !Array.isArray(p.extraEntries)) return [];
+            return p.extraEntries.map(function(e) { return e.student + "(" + e.course + ")"; });
+        }
+        // 提取请假学生（从 key 中截取）
+        function cancelNames(p) {
+            if (!p || !p.cancellations) return [];
+            return Object.keys(p.cancellations).map(function(k) {
+                // key format: date::legacyKey  or date::extraId
+                var parts = k.split("::"); return parts.length > 1 ? parts[1].split("__")[0] : k;
+            });
+        }
+        // 提取调整时间：返回 { 学生名: 时间值 } 的 map
+        function timeOvrMap(p) {
+            var map = {};
+            if (!p || !p.timeOverrides) return map;
+            Object.keys(p.timeOverrides).forEach(function(k) {
+                var parts = k.split("::");
+                var name = parts.length > 1 ? parts[1].split("__")[0] : k;
+                map[name] = p.timeOverrides[k] || "?";
+            });
+            return map;
+        }
+        // 按学生名对比时间调整值
+        function diffTimeOvr(localPayload, cloudPayload) {
+            var localM = timeOvrMap(localPayload);
+            var cloudM = timeOvrMap(cloudPayload);
+            var allNames = [...new Set([...Object.keys(cloudM), ...Object.keys(localM)])];
+            if (allNames.length === 0) return "";
+            var lines = ["时间调整："];
+            allNames.forEach(function(name) {
+                var inLocal = name in localM;
+                var inCloud = name in cloudM;
+                if (inLocal && inCloud) {
+                    if (localM[name] === cloudM[name]) {
+                        lines.push("  ✅ " + name + " " + localM[name]);
+                    } else {
+                        lines.push("  🔄 " + name + "：云端 " + cloudM[name] + " → 本地 " + localM[name]);
+                    }
+                } else if (inLocal) {
+                    lines.push("  ➕ 本地有 / 云端无: " + name + " " + localM[name]);
+                } else {
+                    lines.push("  ➖ 云端有 / 本地无: " + name + " " + cloudM[name]);
+                }
+            });
+            return lines.join("\n");
+        }
+        // 提取自定义学生名
+        function customNames(p) {
+            return (p && Array.isArray(p.customStudents)) ? p.customStudents : [];
+        }
+        // 排课配置学生名
+        function configStudents(p) {
+            if (!p || !p.scheduleConfigOverride || !Array.isArray(p.scheduleConfigOverride.entries)) return [];
+            return p.scheduleConfigOverride.entries.map(function(e) { return e.student; });
+        }
+
+        // 对比两个列表，输出 ➕/➖/✅ 行
+        function diffList(label, localArr, cloudArr) {
+            var allItems = [...new Set([...cloudArr, ...localArr])];
+            if (allItems.length === 0) return "";
+            var lines = [label + "："];
+            allItems.forEach(function(item) {
+                var inCloud = cloudArr.indexOf(item) >= 0;
+                var inLocal = localArr.indexOf(item) >= 0;
+                if (inCloud && inLocal)      lines.push("  ✅ " + item);
+                else if (inLocal && !inCloud) lines.push("  ➕ 本地有 / 云端无: " + item);
+                else                          lines.push("  ➖ 云端有 / 本地无: " + item);
+            });
+            return lines.join("\n");
+        }
+
+        function hasActionableDiff(text) {
+            if (!text) return false;
+            return /(^|\n)\s*[➕➖🔄]/.test(text);
+        }
+
+        function buildConflictMsg(dateStr, localPayload, cloudPayload) {
+            var uploadedAt = cloudPayload.uploadedAt
+                ? cloudPayload.uploadedAt.replace("T", " ").slice(0, 19)
+                : "未知";
+            var header = "📅 " + dateStr + "（云端快照 " + uploadedAt + "）";
+
+            var sections = [];
+
+            // 仅按日期的数据对比（临时加课、请假、时间调整）
+            var d1 = diffList("临时加课", extraNames(localPayload), extraNames(cloudPayload));
+            if (d1) sections.push(d1);
+
+            var d2 = diffList("请假标记", cancelNames(localPayload), cancelNames(cloudPayload));
+            if (d2) sections.push(d2);
+
+            var d3 = diffTimeOvr(localPayload, cloudPayload);
+            if (d3) sections.push(d3);
+
+            if (sections.length === 0) sections.push("  ✅ 当日排课数据一致");
+
+            var text = header + "\n" + sections.join("\n");
+            return {
+                text: text,
+                hasDiff: sections.some(hasActionableDiff)
+            };
+        }
+
+        // 全局数据对比（自定义学生、排课管理学生）—— 只显示一次
+        function buildGlobalDiffMsg(localPayload, cloudPayload) {
+            var sections = [];
+
+            var d1 = diffList("自定义学生(临时)", customNames(localPayload), customNames(cloudPayload));
+            if (d1) sections.push(d1);
+
+            var d2 = diffList("排课管理学生", configStudents(localPayload), configStudents(cloudPayload));
+            if (d2) sections.push(d2);
+
+            if (sections.length === 0) {
+                return {
+                    text: "",
+                    hasDiff: false
+                };
+            }
+            var text = "🔧 全局配置\n" + sections.join("\n");
+            return {
+                text: text,
+                hasDiff: sections.some(hasActionableDiff)
+            };
+        }
+
+        // ── 自定义确认弹窗（可滚动） ──
+        function showSyncConfirm(title, body) {
+            return new Promise(function(resolve) {
+                var overlay = document.createElement("div");
+                overlay.className = "sync-modal-overlay";
+                overlay.innerHTML =
+                    '<div class="sync-modal">' +
+                    '  <div class="sync-modal-header"></div>' +
+                    '  <div class="sync-modal-body"></div>' +
+                    '  <div class="sync-modal-footer">' +
+                    '    <button class="sync-modal-cancel" type="button">取消</button>' +
+                    '    <button class="sync-modal-ok" type="button">确定覆盖</button>' +
+                    '  </div>' +
+                    '</div>';
+                overlay.querySelector(".sync-modal-header").textContent = title;
+                overlay.querySelector(".sync-modal-body").textContent = body;
+                function close(result) {
+                    overlay.remove();
+                    resolve(result);
+                }
+                overlay.querySelector(".sync-modal-cancel").addEventListener("click", function() { close(false); });
+                overlay.querySelector(".sync-modal-ok").addEventListener("click", function() { close(true); });
+                overlay.addEventListener("click", function(e) { if (e.target === overlay) close(false); });
+                document.body.appendChild(overlay);
+                overlay.querySelector(".sync-modal-ok").focus();
+            });
+        }
+
+        var syncActionInFlight = false;
+
+        function setSyncButtonsBusy(isBusy) {
+            uploadBtn.disabled = isBusy;
+            downloadBtn.disabled = isBusy;
+        }
+
         uploadBtn.addEventListener("click", async function() {
+            if (syncActionInFlight) {
+                showToast("同步进行中，请稍候");
+                return;
+            }
             var key = ensureSyncKey();
             if (!key) return;
+
+            syncActionInFlight = true;
+            setSyncButtonsBusy(true);
 
             var datePicker = document.getElementById("datePicker");
             var baseDate = datePicker.value;
             var tomorrowDate = addDays(baseDate, 1);
 
-            syncStatus.textContent = "上传中…";
+            syncStatus.textContent = "检查云端…";
             try {
+                // ── Preflight: 获取云端现有数据做冲突比对 ──
+                var cloudToday = await downloadDateFromCloud(key, baseDate);
+                var cloudTomorrow = await downloadDateFromCloud(key, tomorrowDate);
+                var localToday = collectDailyPayload(baseDate);
+                var localTomorrow = collectDailyPayload(tomorrowDate);
+
+                var conflictParts = [];
+                if (cloudToday)    conflictParts.push(buildConflictMsg(baseDate, localToday, cloudToday).text);
+                if (cloudTomorrow) conflictParts.push(buildConflictMsg(tomorrowDate, localTomorrow, cloudTomorrow).text);
+
+                // 全局配置只比对一次（取任意一对 payload）
+                var refLocal = localToday;
+                var refCloud = cloudToday || cloudTomorrow;
+                if (refCloud) {
+                    var globalDiff = buildGlobalDiffMsg(refLocal, refCloud);
+                    if (globalDiff.text) conflictParts.push(globalDiff.text);
+                }
+
+                if (conflictParts.length > 0) {
+                    var body = conflictParts.join("\n─────────────────\n");
+                    var ok = await showSyncConfirm("⚠️ 云端已有数据，上传将覆盖", body);
+                    if (!ok) {
+                        syncStatus.textContent = "⏸ 上传已取消";
+                        return;
+                    }
+                }
+
+                syncStatus.textContent = "上传中…";
                 await uploadDateToCloud(key, baseDate);
                 await uploadDateToCloud(key, tomorrowDate);
                 var now = new Date();
@@ -2197,36 +2455,87 @@ entryKey: 课次标识（用于区分排课项）</span>
             } catch (err) {
                 syncStatus.textContent = "❌ 上传失败：" + err.message;
                 showToast("上传失败：" + err.message, 4000);
+            } finally {
+                syncActionInFlight = false;
+                setSyncButtonsBusy(false);
             }
         });
 
         downloadBtn.addEventListener("click", async function() {
+            if (syncActionInFlight) {
+                showToast("同步进行中，请稍候");
+                return;
+            }
             var key = ensureSyncKey();
             if (!key) return;
+
+            syncActionInFlight = true;
+            setSyncButtonsBusy(true);
 
             var datePicker = document.getElementById("datePicker");
             var baseDate = datePicker.value;
             var tomorrowDate = addDays(baseDate, 1);
 
-            syncStatus.textContent = "下载中…";
+            syncStatus.textContent = "检查云端…";
             try {
-                var results = [];
                 var todayPayload = await downloadDateFromCloud(key, baseDate);
+                var tomorrowPayload = await downloadDateFromCloud(key, tomorrowDate);
+
+                if (!todayPayload && !tomorrowPayload) {
+                    syncStatus.textContent = "⚠️ 云端无数据（" + baseDate + "、" + tomorrowDate + "）";
+                    showToast("云端无此日期的排课数据", 3000);
+                    return;
+                }
+
+                // ── Preflight: 本地 vs 云端冲突比对 ──
+                var localToday = collectDailyPayload(baseDate);
+                var localTomorrow = collectDailyPayload(tomorrowDate);
+                var conflictParts = [];
+
+                function hasLocalChanges(p) {
+                    if (!p) return false;
+                    return (Array.isArray(p.extraEntries) && p.extraEntries.length > 0)
+                        || (p.cancellations && Object.keys(p.cancellations).length > 0)
+                        || (p.timeOverrides && Object.keys(p.timeOverrides).length > 0)
+                        || (p.lessonOverrides && Object.keys(p.lessonOverrides).length > 0);
+                }
+
+                if (todayPayload && hasLocalChanges(localToday)) {
+                    var todayConflict = buildConflictMsg(baseDate, localToday, todayPayload);
+                    if (todayConflict.hasDiff) conflictParts.push(todayConflict.text);
+                }
+                if (tomorrowPayload && hasLocalChanges(localTomorrow)) {
+                    var tomorrowConflict = buildConflictMsg(tomorrowDate, localTomorrow, tomorrowPayload);
+                    if (tomorrowConflict.hasDiff) conflictParts.push(tomorrowConflict.text);
+                }
+
+                // 全局配置只比对一次
+                var refCloud = todayPayload || tomorrowPayload;
+                if (refCloud) {
+                    var globalDiff = buildGlobalDiffMsg(localToday, refCloud);
+                    if (globalDiff.hasDiff) conflictParts.push(globalDiff.text);
+                }
+
+                if (conflictParts.length > 0) {
+                    var body = conflictParts.join("\n─────────────────\n");
+                    var ok = await showSyncConfirm("⚠️ 本地已有修改，下载将覆盖本地", body);
+                    if (!ok) {
+                        syncStatus.textContent = "⏸ 下载已取消";
+                        return;
+                    }
+                }
+
+                syncStatus.textContent = "下载中…";
+                var results = [];
                 if (todayPayload) {
                     applyDailyPayload(baseDate, todayPayload);
                     results.push(baseDate);
                 }
-                var tomorrowPayload = await downloadDateFromCloud(key, tomorrowDate);
                 if (tomorrowPayload) {
                     applyDailyPayload(tomorrowDate, tomorrowPayload);
                     results.push(tomorrowDate);
                 }
 
-                if (results.length === 0) {
-                    syncStatus.textContent = "⚠️ 云端无数据（" + baseDate + "、" + tomorrowDate + "）";
-                    showToast("云端无此日期的排课数据", 3000);
-                    return;
-                }
 
                 // Re-render
                 var config = getConfig();
@@ -2243,6 +2552,9 @@ entryKey: 课次标识（用于区分排课项）</span>
             } catch (err) {
                 syncStatus.textContent = "❌ 下载失败：" + err.message;
                 showToast("下载失败：" + err.message, 4000);
+            } finally {
+                syncActionInFlight = false;
+                setSyncButtonsBusy(false);
             }
         });
     })();
