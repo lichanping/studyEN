@@ -2311,6 +2311,11 @@ entryKey: 课次标识（用于区分排课项）</span>
             return lines.join("\n");
         }
 
+        function hasActionableDiff(text) {
+            if (!text) return false;
+            return /(^|\n)\s*[➕➖🔄]/.test(text);
+        }
+
         function buildConflictMsg(dateStr, localPayload, cloudPayload) {
             var uploadedAt = cloudPayload.uploadedAt
                 ? cloudPayload.uploadedAt.replace("T", " ").slice(0, 19)
@@ -2331,7 +2336,11 @@ entryKey: 课次标识（用于区分排课项）</span>
 
             if (sections.length === 0) sections.push("  ✅ 当日排课数据一致");
 
-            return header + "\n" + sections.join("\n");
+            var text = header + "\n" + sections.join("\n");
+            return {
+                text: text,
+                hasDiff: sections.some(hasActionableDiff)
+            };
         }
 
         // 全局数据对比（自定义学生、排课管理学生）—— 只显示一次
@@ -2344,8 +2353,17 @@ entryKey: 课次标识（用于区分排课项）</span>
             var d2 = diffList("排课管理学生", configStudents(localPayload), configStudents(cloudPayload));
             if (d2) sections.push(d2);
 
-            if (sections.length === 0) return "";
-            return "🔧 全局配置\n" + sections.join("\n");
+            if (sections.length === 0) {
+                return {
+                    text: "",
+                    hasDiff: false
+                };
+            }
+            var text = "🔧 全局配置\n" + sections.join("\n");
+            return {
+                text: text,
+                hasDiff: sections.some(hasActionableDiff)
+            };
         }
 
         // ── 自定义确认弹窗（可滚动） ──
@@ -2376,9 +2394,23 @@ entryKey: 课次标识（用于区分排课项）</span>
             });
         }
 
+        var syncActionInFlight = false;
+
+        function setSyncButtonsBusy(isBusy) {
+            uploadBtn.disabled = isBusy;
+            downloadBtn.disabled = isBusy;
+        }
+
         uploadBtn.addEventListener("click", async function() {
+            if (syncActionInFlight) {
+                showToast("同步进行中，请稍候");
+                return;
+            }
             var key = ensureSyncKey();
             if (!key) return;
+
+            syncActionInFlight = true;
+            setSyncButtonsBusy(true);
 
             var datePicker = document.getElementById("datePicker");
             var baseDate = datePicker.value;
@@ -2393,15 +2425,15 @@ entryKey: 课次标识（用于区分排课项）</span>
                 var localTomorrow = collectDailyPayload(tomorrowDate);
 
                 var conflictParts = [];
-                if (cloudToday)    conflictParts.push(buildConflictMsg(baseDate, localToday, cloudToday));
-                if (cloudTomorrow) conflictParts.push(buildConflictMsg(tomorrowDate, localTomorrow, cloudTomorrow));
+                if (cloudToday)    conflictParts.push(buildConflictMsg(baseDate, localToday, cloudToday).text);
+                if (cloudTomorrow) conflictParts.push(buildConflictMsg(tomorrowDate, localTomorrow, cloudTomorrow).text);
 
                 // 全局配置只比对一次（取任意一对 payload）
                 var refLocal = localToday;
                 var refCloud = cloudToday || cloudTomorrow;
                 if (refCloud) {
                     var globalDiff = buildGlobalDiffMsg(refLocal, refCloud);
-                    if (globalDiff) conflictParts.push(globalDiff);
+                    if (globalDiff.text) conflictParts.push(globalDiff.text);
                 }
 
                 if (conflictParts.length > 0) {
@@ -2423,12 +2455,22 @@ entryKey: 课次标识（用于区分排课项）</span>
             } catch (err) {
                 syncStatus.textContent = "❌ 上传失败：" + err.message;
                 showToast("上传失败：" + err.message, 4000);
+            } finally {
+                syncActionInFlight = false;
+                setSyncButtonsBusy(false);
             }
         });
 
         downloadBtn.addEventListener("click", async function() {
+            if (syncActionInFlight) {
+                showToast("同步进行中，请稍候");
+                return;
+            }
             var key = ensureSyncKey();
             if (!key) return;
+
+            syncActionInFlight = true;
+            setSyncButtonsBusy(true);
 
             var datePicker = document.getElementById("datePicker");
             var baseDate = datePicker.value;
@@ -2459,17 +2501,19 @@ entryKey: 课次标识（用于区分排课项）</span>
                 }
 
                 if (todayPayload && hasLocalChanges(localToday)) {
-                    conflictParts.push(buildConflictMsg(baseDate, localToday, todayPayload));
+                    var todayConflict = buildConflictMsg(baseDate, localToday, todayPayload);
+                    if (todayConflict.hasDiff) conflictParts.push(todayConflict.text);
                 }
                 if (tomorrowPayload && hasLocalChanges(localTomorrow)) {
-                    conflictParts.push(buildConflictMsg(tomorrowDate, localTomorrow, tomorrowPayload));
+                    var tomorrowConflict = buildConflictMsg(tomorrowDate, localTomorrow, tomorrowPayload);
+                    if (tomorrowConflict.hasDiff) conflictParts.push(tomorrowConflict.text);
                 }
 
                 // 全局配置只比对一次
                 var refCloud = todayPayload || tomorrowPayload;
                 if (refCloud) {
                     var globalDiff = buildGlobalDiffMsg(localToday, refCloud);
-                    if (globalDiff) conflictParts.push(globalDiff);
+                    if (globalDiff.hasDiff) conflictParts.push(globalDiff.text);
                 }
 
                 if (conflictParts.length > 0) {
@@ -2508,6 +2552,9 @@ entryKey: 课次标识（用于区分排课项）</span>
             } catch (err) {
                 syncStatus.textContent = "❌ 下载失败：" + err.message;
                 showToast("下载失败：" + err.message, 4000);
+            } finally {
+                syncActionInFlight = false;
+                setSyncButtonsBusy(false);
             }
         });
     })();
