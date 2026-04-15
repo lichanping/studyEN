@@ -410,15 +410,84 @@ export function handleManagementGroupTemplateClick() {
     showLongText(outputMessage);
 }
 
-export function handleAntiForgettingFeedbackClick() {
+/**
+ * 自定义确认弹窗：复习词数为空时，让用户选择"返回填写"或"允许为空"。
+ * 返回 Promise<boolean>，true = 允许为空继续生成反馈，false = 返回填写。
+ */
+function showAllowEmptyConfirm(message) {
+    return new Promise(function (resolve) {
+        const overlay = document.createElement('div');
+        Object.assign(overlay.style, {
+            position: 'fixed', inset: '0', zIndex: '10000',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: 'rgba(0,0,0,0.4)'
+        });
+
+        const dialog = document.createElement('div');
+        Object.assign(dialog.style, {
+            background: 'var(--panel-bg, #fff)', borderRadius: '12px',
+            padding: '24px 22px', maxWidth: '360px', width: '88%',
+            boxShadow: '0 8px 30px rgba(0,0,0,0.18)', textAlign: 'center'
+        });
+
+        const msg = document.createElement('p');
+        msg.textContent = message;
+        Object.assign(msg.style, {
+            margin: '0 0 22px', fontSize: '15px',
+            color: 'var(--text-color, #333)', lineHeight: '1.6'
+        });
+
+        const btnRow = document.createElement('div');
+        Object.assign(btnRow.style, { display: 'flex', gap: '12px', justifyContent: 'center' });
+
+        const cancelBtn = document.createElement('button');
+        cancelBtn.type = 'button';
+        cancelBtn.textContent = '返回填写';
+        Object.assign(cancelBtn.style, {
+            padding: '8px 18px', borderRadius: '8px',
+            border: '1px solid var(--panel-border, #ccc)',
+            background: 'var(--panel-bg, #f5f5f5)',
+            color: 'var(--text-color, #333)', fontSize: '14px', cursor: 'pointer'
+        });
+
+        const allowBtn = document.createElement('button');
+        allowBtn.type = 'button';
+        allowBtn.textContent = '允许为空';
+        Object.assign(allowBtn.style, {
+            padding: '8px 18px', borderRadius: '8px',
+            border: '1.5px solid #e2a94d',
+            background: 'linear-gradient(135deg, #f0c674, #e2a94d)',
+            color: '#4a3310', fontSize: '14px', fontWeight: '600', cursor: 'pointer'
+        });
+
+        function close(result) { overlay.remove(); resolve(result); }
+        cancelBtn.addEventListener('click', function () { close(false); });
+        allowBtn.addEventListener('click', function () { close(true); });
+        overlay.addEventListener('click', function (e) { if (e.target === overlay) close(false); });
+
+        btnRow.appendChild(cancelBtn);
+        btnRow.appendChild(allowBtn);
+        dialog.appendChild(msg);
+        dialog.appendChild(btnRow);
+        overlay.appendChild(dialog);
+        document.body.appendChild(overlay);
+        allowBtn.focus();
+    });
+}
+
+export async function handleAntiForgettingFeedbackClick() {
     const userName = document.getElementById("userName").value;
     // Get values from input boxes
     const antiForgettingReviewWord = Array.from(document.querySelectorAll('.antiForgettingReviewWord'))
         .reduce((sum, input) => sum + (input.value ? parseInt(input.value, 10) : 0), 0);
+
+    let skipStats = false;
     if (!antiForgettingReviewWord) {
-        alert('请先填写复习词数');
-        return;
+        const allowEmpty = await showAllowEmptyConfirm('复习词数为空，是否跳过复习统计数据直接生成反馈？');
+        if (!allowEmpty) return;
+        skipStats = true;
     }
+
     let forgetWords = document.getElementById('forgetWords').value.trim();
 
     // Store forgetWords in IndexedDB with the key studentName_遗忘词
@@ -432,8 +501,13 @@ export function handleAntiForgettingFeedbackClick() {
     // Count the number of English words
     const numberOfEnglishWords = countEnglishWords(forgetWords);
     const numberOfWrongWords = countEnglishWords(pronounceWords);
-    const correctWordsCount = parseInt(antiForgettingReviewWord) - numberOfEnglishWords;
-    const correctRate = (correctWordsCount / antiForgettingReviewWord * 100).toFixed(0);
+
+    let correctWordsCount, correctRate;
+    if (!skipStats) {
+        correctWordsCount = parseInt(antiForgettingReviewWord) - numberOfEnglishWords;
+        correctRate = (correctWordsCount / antiForgettingReviewWord * 100).toFixed(0);
+    }
+
     // Get the input element to display the result
     const inputAntiForgettingForgetWord = document.getElementById("antiForgettingForgetWord");
 
@@ -460,34 +534,28 @@ export function handleAntiForgettingFeedbackClick() {
             .join('<br>') + '<br>';
     }
 
-    let keyLanguagePointsSection = "";
-    let practiceSection = "";
+    // ── Build message with auto-numbering ──
+    const NUM = ['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣'];
+    let n = 0;
+
+    let message = '【今日抗遗忘复习反馈】<br>\n';
+    if (!skipStats) {
+        message += `${NUM[n++]}复习${antiForgettingReviewWord} 词，遗忘${antiForgettingForgetWord} 词，发音不标准${numberOfWrongWords} 词，正确率${correctRate}% 💯<br>\n`;
+    }
+    message += `${NUM[n++]}遗忘词:${forgetWords}<br>\n`;
+    message += `${NUM[n++]}发音不标准的词:${pronounceWords}<br>\n`;
+    message += `${NUM[n++]}${randomFeedback}`;
 
     if (keyLanguagePoints.length !== 0) {
-        keyLanguagePointsSection = '<br><br>5️⃣重点语言点：<br>' + keyLanguagePoints.split('\n').filter(point => point.trim() !== '').map((point, index) => {
-            return (index + 1) + '. ' + point.trim(); // Trim spaces within each item
+        message += '<br><br>' + NUM[n++] + '重点语言点：<br>' + keyLanguagePoints.split('\n').filter(point => point.trim() !== '').map((point, index) => {
+            return (index + 1) + '. ' + point.trim();
         }).join('<br>') + '<br>';
     }
 
     if (practiceArea.length !== 0) {
-        let practiceNumber = keyLanguagePoints.length !== 0 ? '6️⃣' : '5️⃣';
-        practiceSection = '<br><br>' + practiceNumber + '语言闯关：<br>' + practiceArea.split('\n').filter(point => point.trim() !== '').map((point, index) => {
-            return (index + 1) + '. ' + point.trim(); // Trim spaces within each item
+        message += '<br><br>' + NUM[n++] + '语言闯关：<br>' + practiceArea.split('\n').filter(point => point.trim() !== '').map((point, index) => {
+            return (index + 1) + '. ' + point.trim();
         }).join('<br>') + '<br>';
-    }
-
-    // Combine both sections
-    let combinedContent = keyLanguagePointsSection + practiceSection;
-    // Generate the message
-    let message = `【今日抗遗忘复习反馈】<br>
-1️⃣复习${antiForgettingReviewWord} 词，遗忘${antiForgettingForgetWord} 词，发音不标准${numberOfWrongWords} 词，正确率${correctRate}% 💯<br>
-2️⃣遗忘词:${forgetWords}<br>
-3️⃣发音不标准的词:${pronounceWords}<br>
-4️⃣${randomFeedback}`;
-
-    // Add key language points if not empty
-    if (combinedContent.length > 0) {
-        message += combinedContent;
     }
 
     // Add line breaks
@@ -505,8 +573,10 @@ export function handleAntiForgettingFeedbackClick() {
     // Show alert with the generated message
     showLongText(`${message}`);
 
-    // Store current date and correct rate in IndexedDB
-    storeFeedbackInFile(userName, correctRate, antiForgettingReviewWord, correctWordsCount);
+    // Store current date and correct rate in IndexedDB (skip when stats are empty)
+    if (!skipStats) {
+        storeFeedbackInFile(userName, correctRate, antiForgettingReviewWord, correctWordsCount);
+    }
 }
 
 // 初始化 IndexedDB
@@ -1295,14 +1365,18 @@ export function addRightClickPasteEvent(element) {
     });
 }
 
-export function handleNewVersionFeedbackClick() {
+export async function handleNewVersionFeedbackClick() {
 
     const reviewInputs = Array.from(document.querySelectorAll('.antiForgettingReviewWord'));
     const hasFilled = reviewInputs.some(input => input && input.value && input.value.trim() !== '');
+
+    let skipStats = false;
     if (!hasFilled) {
-        alert('请先填写复习词数');
-        return;
+        const allowEmpty = await showAllowEmptyConfirm('复习词数为空，是否跳过复习统计数据直接生成反馈？');
+        if (!allowEmpty) return;
+        skipStats = true;
     }
+
     const antiForgettingReviewWord = reviewInputs.reduce((sum, input) => {
         const v = parseInt((input.value || '').trim(), 10);
         return sum + (Number.isFinite(v) ? v : 0);
@@ -1310,7 +1384,12 @@ export function handleNewVersionFeedbackClick() {
 
     // Build message
     const motto = getRandomMotto();
-    const message = `1. 复习 ${antiForgettingReviewWord} 词\n2. 同学表现很好，整节课注意力都很在线，我们的课堂也进步神速！要继续保持哦！\n📚知识小船📚\n${motto}`;
+    let message;
+    if (skipStats) {
+        message = `1. 同学表现很好，整节课注意力都很在线，我们的课堂也进步神速！要继续保持哦！\n📚知识小船📚\n${motto}`;
+    } else {
+        message = `1. 复习 ${antiForgettingReviewWord} 词\n2. 同学表现很好，整节课注意力都很在线，我们的课堂也进步神速！要继续保持哦！\n📚知识小船📚\n${motto}`;
+    }
 
     // Copy the message to clipboard
     copyToClipboard(message);
