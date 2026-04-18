@@ -1260,6 +1260,172 @@ function extractEnglishWords(text) {
     return englishWords;
 }
 
+/**
+ * 解析遗忘词文本框内容，提取英文+中文对。
+ * 支持格式：
+ *   - "apple 苹果"          (同一行，英文+中文)
+ *   - "apple\n苹果"         (英文一行，中文下一行)
+ *   - "apple苹果"           (英文紧跟中文，无空格)
+ */
+export function parseForgetWordsForAudio(text) {
+    const lines = text.trim().split('\n').map(line => line.trim()).filter(Boolean);
+    const wordPairs = [];
+
+    const CHINESE_ONLY = /^[\u4e00-\u9fa5\s，。！？；、""''（）【】《》·…—]+$/;
+    const FULL_EN = /^[\w\s.,;:()'"\-…\?!]+$/;
+    const MIXED = /^([\w\s.,;:()'"\-…\?!]+)([\u4e00-\u9fa5\uFF08\uFF09；].*)$/;
+
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+
+        if (CHINESE_ONLY.test(line)) {
+            continue;
+        }
+
+        if (FULL_EN.test(line)) {
+            const english = line.trim();
+            let chinese = '';
+            // 下一行必须是纯中文才当作释义，混合行不吞
+            if (i + 1 < lines.length && CHINESE_ONLY.test(lines[i + 1])) {
+                chinese = lines[i + 1].trim();
+                i++;
+            }
+            wordPairs.push({ english, chinese });
+            continue;
+        }
+
+        const mixedMatch = line.match(MIXED);
+        if (mixedMatch) {
+            wordPairs.push({
+                english: mixedMatch[1].trim(),
+                chinese: mixedMatch[2].trim()
+            });
+        }
+    }
+
+    return wordPairs;
+}
+
+// 生成 0.3s 静音 MP3 blob 用于词间间隔 (13 frames × 144 bytes)
+function createSilenceBlob() {
+    const header = [0xFF, 0xF3, 0x64, 0xC4];
+    const frame = new Uint8Array(144);
+    frame.set(header);
+    const frames = 13; // 13 × 24ms ≈ 0.3s
+    const buf = new Uint8Array(144 * frames);
+    for (let i = 0; i < frames; i++) buf.set(frame, i * 144);
+    return new Blob([buf], { type: 'audio/mpeg' });
+}
+
+// 单词 TTS 请求（带重试）
+async function fetchWordAudio(word) {
+    for (let attempt = 0; attempt < 3; attempt++) {
+        try {
+            const resp = await fetch('/.netlify/functions/generate-forget-words-audio', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(word)
+            });
+            if (!resp.ok) throw new Error('server error');
+            return await resp.blob();
+        } catch (err) {
+            if (attempt === 2) throw err;
+            await new Promise(r => setTimeout(r, 500));
+        }
+    }
+}
+
+// 通用：从 textarea 解析词汇并生成 MP3 下载
+async function generateWordsMP3({ textareaId, btnId, statusId, fileLabel, emptyMsg }) {
+    const text = document.getElementById(textareaId).value.trim();
+    if (!text) {
+        displayToast(emptyMsg);
+        return;
+    }
+
+    const wordPairs = parseForgetWordsForAudio(text);
+    if (wordPairs.length === 0) {
+        displayToast('未识别到英文单词');
+        return;
+    }
+
+    if (wordPairs.length > 30) {
+        displayToast('单词数量过多（最多30个），请减少后重试');
+        return;
+    }
+
+    const btn = document.getElementById(btnId);
+    const statusEl = document.getElementById(statusId);
+    const originalText = btn.textContent;
+    btn.disabled = true;
+    if (statusEl) statusEl.textContent = '';
+
+    const startTime = Date.now();
+    try {
+        const silenceBlob = createSilenceBlob();
+        btn.textContent = `生成中…(${wordPairs.length}词)`;
+
+        // 限制并发数为 5
+        const CONCURRENCY = 5;
+        const results = new Array(wordPairs.length);
+        let done = 0;
+        async function runBatch(startIdx) {
+            for (let i = startIdx; i < wordPairs.length; i += CONCURRENCY) {
+                results[i] = await fetchWordAudio(wordPairs[i]);
+                done++;
+                btn.textContent = `生成中…(${done}/${wordPairs.length})`;
+            }
+        }
+        await Promise.all(Array.from({length: CONCURRENCY}, (_, k) => runBatch(k)));
+
+        // 拼接所有音频（词间加静音）
+        const audioBlobs = [];
+        results.forEach((blob, i) => {
+            audioBlobs.push(blob);
+            if (i < results.length - 1) audioBlobs.push(silenceBlob);
+        });
+
+        const combined = new Blob(audioBlobs, { type: 'audio/mpeg' });
+        const userName = document.getElementById('userName').value || '学生';
+        const today = new Date().toISOString().split('T')[0];
+        const fileName = `${userName}_${fileLabel}_${today}.mp3`;
+
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(combined);
+        link.download = fileName;
+        link.click();
+        URL.revokeObjectURL(link.href);
+
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+        if (statusEl) statusEl.textContent = `✅ ${wordPairs.length}词，耗时${elapsed}s`;
+    } catch (err) {
+        console.error(`生成${fileLabel}MP3失败:`, err);
+        if (statusEl) statusEl.textContent = '❌ 网络错误，请重试';
+    } finally {
+        btn.textContent = originalText;
+        btn.disabled = false;
+    }
+}
+
+export function generateForgetWordsMP3() {
+    return generateWordsMP3({
+        textareaId: 'forgetWords',
+        btnId: 'generateForgetWordsMP3Button',
+        statusId: 'generateForgetWordsMP3Status',
+        fileLabel: '遗忘词',
+        emptyMsg: '遗忘词为空，无法生成MP3'
+    });
+}
+
+export function generatePronounceWordsMP3() {
+    return generateWordsMP3({
+        textareaId: 'pronounceWords',
+        btnId: 'generatePronounceWordsMP3Button',
+        statusId: 'generatePronounceWordsMP3Status',
+        fileLabel: '发音纠正',
+        emptyMsg: '发音不标准的词为空，无法生成MP3'
+    });
+}
 
 export function displayToast(message) {
     showFeedbackToast(message, {
