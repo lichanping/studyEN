@@ -1336,7 +1336,7 @@ async function fetchWordAudio(word) {
 }
 
 // 通用：从 textarea 解析词汇并生成 MP3 下载
-async function generateWordsMP3({ textareaId, btnId, fileLabel, emptyMsg }) {
+async function generateWordsMP3({ textareaId, btnId, statusId, fileLabel, emptyMsg }) {
     const text = document.getElementById(textareaId).value.trim();
     if (!text) {
         displayToast(emptyMsg);
@@ -1355,8 +1355,10 @@ async function generateWordsMP3({ textareaId, btnId, fileLabel, emptyMsg }) {
     }
 
     const btn = document.getElementById(btnId);
+    const statusEl = document.getElementById(statusId);
     const originalText = btn.textContent;
     btn.disabled = true;
+    if (statusEl) statusEl.textContent = '';
 
     const startTime = Date.now();
     try {
@@ -1395,10 +1397,10 @@ async function generateWordsMP3({ textareaId, btnId, fileLabel, emptyMsg }) {
         URL.revokeObjectURL(link.href);
 
         const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-        showLongText(`✅ 已下载 ${fileName}<br>📊 ${wordPairs.length}词，耗时 ${elapsed}s`);
+        if (statusEl) statusEl.textContent = `✅ ${wordPairs.length}词，耗时${elapsed}s`;
     } catch (err) {
         console.error(`生成${fileLabel}MP3失败:`, err);
-        displayToast('网络错误，请稍后重试');
+        if (statusEl) statusEl.textContent = '❌ 网络错误，请重试';
     } finally {
         btn.textContent = originalText;
         btn.disabled = false;
@@ -1409,6 +1411,7 @@ export function generateForgetWordsMP3() {
     return generateWordsMP3({
         textareaId: 'forgetWords',
         btnId: 'generateForgetWordsMP3Button',
+        statusId: 'generateForgetWordsMP3Status',
         fileLabel: '遗忘词',
         emptyMsg: '遗忘词为空，无法生成MP3'
     });
@@ -1418,6 +1421,7 @@ export function generatePronounceWordsMP3() {
     return generateWordsMP3({
         textareaId: 'pronounceWords',
         btnId: 'generatePronounceWordsMP3Button',
+        statusId: 'generatePronounceWordsMP3Status',
         fileLabel: '发音纠正',
         emptyMsg: '发音不标准的词为空，无法生成MP3'
     });
