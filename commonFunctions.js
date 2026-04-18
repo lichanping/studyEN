@@ -1330,7 +1330,7 @@ async function fetchWordAudio(word) {
             return await resp.blob();
         } catch (err) {
             if (attempt === 2) throw err;
-            await new Promise(r => setTimeout(r, 1000));
+            await new Promise(r => setTimeout(r, 500));
         }
     }
 }
@@ -1362,17 +1362,18 @@ async function generateWordsMP3({ textareaId, btnId, fileLabel, emptyMsg }) {
         const silenceBlob = createSilenceBlob();
         btn.textContent = `生成中…(${wordPairs.length}词)`;
 
-        // 限制并发数为 3
+        // 限制并发数为 5
+        const CONCURRENCY = 5;
         const results = new Array(wordPairs.length);
         let done = 0;
         async function runBatch(startIdx) {
-            for (let i = startIdx; i < wordPairs.length; i += 3) {
+            for (let i = startIdx; i < wordPairs.length; i += CONCURRENCY) {
                 results[i] = await fetchWordAudio(wordPairs[i]);
                 done++;
                 btn.textContent = `生成中…(${done}/${wordPairs.length})`;
             }
         }
-        await Promise.all([runBatch(0), runBatch(1), runBatch(2)]);
+        await Promise.all(Array.from({length: CONCURRENCY}, (_, k) => runBatch(k)));
 
         // 拼接所有音频（词间加静音）
         const audioBlobs = [];
