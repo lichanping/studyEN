@@ -238,11 +238,15 @@
 
     <div class="panel two-col">
         <div class="field">
-            <label for="forgetWords">遗忘词（英文+中文）</label>
+            <label for="forgetWords">遗忘词（英文+中文）
+                <button id="generateForgetWordsMP3Button" type="button" style="margin-left:8px;font-size:12px;padding:2px 8px;border-radius:5px;cursor:pointer;">生成遗忘词MP3</button>
+            </label>
             <textarea id="forgetWords"></textarea>
         </div>
         <div class="field">
-            <label for="pronounceWords">发音不标准的词</label>
+            <label for="pronounceWords">发音不标准的词
+                <button id="generatePronounceWordsMP3Button" type="button" style="margin-left:8px;font-size:12px;padding:2px 8px;border-radius:5px;cursor:pointer;">生成发音纠正MP3</button>
+            </label>
             <textarea id="pronounceWords"></textarea>
         </div>
         <div class="field">
@@ -379,6 +383,8 @@
 
     document.getElementById('antiForgettingFeedbackButton').addEventListener('click', commonFunctions.handleAntiForgettingFeedbackClick);
     document.getElementById('newFeedbackButton').addEventListener('click', commonFunctions.handleNewVersionFeedbackClick);
+    document.getElementById('generateForgetWordsMP3Button').addEventListener('click', commonFunctions.generateForgetWordsMP3);
+    document.getElementById('generatePronounceWordsMP3Button').addEventListener('click', commonFunctions.generatePronounceWordsMP3);
 
     commonFunctions.addRightClickPasteEvent(document.getElementById('forgetWords'));
     commonFunctions.addRightClickPasteEvent(document.getElementById('pronounceWords'));
