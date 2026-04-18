@@ -1,0 +1,57 @@
+【1】Do you know AI﹣Button？Who made it？AI﹣Button is an online AI learning tool for middle school students.It can provide students with many useful materials and suggestions.Qiu Yumo made it.
+【2】Qiu Yumo is only a 13﹣year﹣old middle school student.She started learning programming at the age of 6 and wrote a game at the age of 7，attracting many paid﹣users.At the end of 2022，she tried to use the generative big model for the first time and experienced the positive chances brought by the new generation of AI.In early 2023，she started to program with AI to make tools.
+【3】"My classmates and I want to have a learning friend to help us remember the key information.When we don't know anything，we can also ask for help at any time，" Qiu said about her idea.
+【4】Students only need to put what they are studying into AI﹣Button.It will quickly find key points，ask questions，and answer students' questions as well."It is like a teacher and it meets each student's needs，" Qiu said.
+【5】Many students loved Qiu's idea of AI﹣Button.They wanted to join her to make it better."Now I have a small team of students from different schools.We are improving AI﹣Button and trying to let more people know it，" she said.
+【6】Qiu is a kind girl.When she was 4 years old，the kindergarten organized a charity sale on International Children's Day.As a child，she gave away her income to the orphanage.For the first time，she realized the true meaning of "No one can do everything，but everyone can do something".
+【7】On her 13th birthday，Qiu cut off her long hair that she had kept for 3 years and donated it to children with cancer.She never stopped taking part in various public welfare activities.
+你知道 AI - Button 吗？谁制作了它？AI - Button 是一款面向中学生的在线人工智能学习工具。它能为学生提供许多有用的资料和建议。它是由裘宇墨制作的。裘宇墨只是一名 13 岁的中学生。她 6 岁开始学习编程，7 岁编写了一款游戏，吸引了许多付费用户。2022 年底，她首次尝试使用生成式大模型，体验了新一代人工智能带来的积极机遇。2023 年初，她开始与人工智能一起编程制作工具。裘宇墨说：“我和同学们想要一个学习伙伴，来帮我们记住关键信息。当我们一无所知时，也能随时向它求助。”裘如此说道他的理念。学生只需将正在学习的内容输入 AI - Button。它会快速找出要点、提出问题，还能回答学生的疑问。裘宇墨说：“它就像一位老师，能满足每个学生的需求。”许多学生都很喜欢裘宇墨关于 AI - Button 的创意。他们想加入她，一起把它做得更好。她说：“现在我有一个由不同学校学生组成的小团队。我们正在改进 AI - Button，并努力让更多人了解它。”裘宇墨是个善良的女孩。她 4 岁时，幼儿园在国际儿童节组织了一场义卖活动。小时候，她把义卖所得捐给了孤儿院。她第一次明白了 “没有人能无所不能，但每个人都能有所作为” 这句话的真正含义。在 13 岁生日时，裘宇墨剪掉了留了 3 年的长发，捐给了患癌症的儿童。她从未停止参与各种公益活动。
+
+第一段段落大意：
+AI-Button是由13岁中学生邱玉墨开发的在线AI学习工具，旨在为初中生提供学习资料和建议。
+
+重点语言点：
+AI learning tool （ AI学习工具）
+provide useful materials and suggestions （ 提供有用的资料和建议）
+made it （创造它）
+
+第二段段落大意：邱玉墨自6岁学习编程，7岁开发游戏并吸引付费用户。她于2022年底首次尝试生成式大模型，2023年初开始利用AI开发工具。
+
+重点语言点：attracting many paid﹣users （ 吸引大量付费用户）
+use the generative big model （使用生成式大模型）
+experience positive chances （体验积极机遇）
+program with AI to make tools （ 用AI编程开发工具）
+
+第三段段落大意：邱玉墨表示，她和同学希望有一个‘学习伙伴’帮助记忆重点知识，并随时解答疑问。
+
+重点语言点：want to have a learning friend （希望拥有一个学习伙伴）
+help us remember key information （帮助记忆关键信息）
+ask for help at any time （随时寻求帮助）
+
+第四段段落大意：学生只需将学习内容输入AI-Button，它即可快速提炼重点、提问并答疑，就像一位满足学生个性化需求的老师。
+
+重点语言点：put what they are studying into（ 输入正在学习的内容）
+find key points （ 提炼重点）
+ask questions and answer questions （提问并回答问题）
+
+第五段段落大意：许多学生喜欢邱玉墨的AI-Button创意并加入团队优化产品。她表示已组建跨校团队，致力于改进工具并扩大影响力。
+
+重点语言点：love Qiu's idea （喜欢某人的想法）
+join her to make it better （ 加入她以使其更好）
+improve AI﹣Button （ 改进AI-Button）
+let more people know it （让更多人了解它）
+
+第六段段落大意：邱玉墨从小热心公益。4岁时，她在儿童节义卖中将自己的收入捐给孤儿院，首次领悟‘没有人能独自完成一切，但每个人都能贡献力量’的真谛。
+
+重点语言点：organized a charity sale （ 组织慈善义卖）
+gave away her income （ 捐出她的收入）
+realized the true meaning of... （ 领悟……的真正含义）
+
+第七段段落大意：13岁生日时，邱玉墨剪下留了3年的长发捐献给癌症患儿，并持续参与各类公益活动。
+
+重点语言点：cut off her long hair （剪下长发）
+donated it to children with cancer （ 捐赠给癌症患儿）
+never stopped taking part in （ 持续参与）
+
+文章主旨：
+本文主要介绍了一名13岁女生邱羽墨开发了一款名为AI-Button（人工智能按钮）的在线AI学习工具的故事。
