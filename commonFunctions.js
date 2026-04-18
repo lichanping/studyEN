@@ -1358,6 +1358,7 @@ async function generateWordsMP3({ textareaId, btnId, fileLabel, emptyMsg }) {
     const originalText = btn.textContent;
     btn.disabled = true;
 
+    const startTime = Date.now();
     try {
         const silenceBlob = createSilenceBlob();
         btn.textContent = `生成中…(${wordPairs.length}词)`;
@@ -1393,7 +1394,8 @@ async function generateWordsMP3({ textareaId, btnId, fileLabel, emptyMsg }) {
         link.click();
         URL.revokeObjectURL(link.href);
 
-        displayToast(`已下载 ${fileName}`);
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+        displayToast(`已下载 ${fileName}（${wordPairs.length}词，耗时${elapsed}s）`);
     } catch (err) {
         console.error(`生成${fileLabel}MP3失败:`, err);
         displayToast('网络错误，请稍后重试');
