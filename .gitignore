@@ -47,3 +47,5 @@ node_modules
 *.dat
 *.docx
 MissingSounds.txt
+# Local Netlify folder
+.netlify
