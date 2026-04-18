@@ -1395,7 +1395,7 @@ async function generateWordsMP3({ textareaId, btnId, fileLabel, emptyMsg }) {
         URL.revokeObjectURL(link.href);
 
         const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-        displayToast(`已下载 ${fileName}（${wordPairs.length}词，耗时${elapsed}s）`);
+        showLongText(`✅ 已下载 ${fileName}<br>📊 ${wordPairs.length}词，耗时 ${elapsed}s`);
     } catch (err) {
         console.error(`生成${fileLabel}MP3失败:`, err);
         displayToast('网络错误，请稍后重试');
