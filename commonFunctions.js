@@ -1387,7 +1387,8 @@ async function generateWordsMP3({ textareaId, btnId, statusId, fileLabel, emptyM
 
         const combined = new Blob(audioBlobs, { type: 'audio/mpeg' });
         const userName = document.getElementById('userName').value || '学生';
-        const today = new Date().toISOString().split('T')[0];
+        const now = new Date();
+        const today = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
         const fileName = `${userName}_${fileLabel}_${today}.mp3`;
 
         const link = document.createElement('a');
