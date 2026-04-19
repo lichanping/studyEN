@@ -37,81 +37,82 @@
     <label id="courseWordCountLabel"></label></div>
 <div class="scheduleLabels"></div>
 
-<div class="form-group">
-    <label for="teacherName">教师名称:</label>
-    <select id="teacherName">
-        <option value="liTeacher">英语提升李教练</option>
-        <option value="shiTeacher">英语提升施教练</option>
-    </select>
-    <button id="groupGreetingButton">入群招呼语</button>
-</div>
+<section class="group-card group-priority">
+    <h2>上课中</h2>
+    <div class="group-row">
+        <label for="teacherName">教师名称:</label>
+        <select id="teacherName">
+            <option value="liTeacher">英语提升李教练</option>
+            <option value="shiTeacher">英语提升施教练</option>
+        </select>
+        <button id="groupGreetingButton">入群招呼语</button>
+    </div>
+    <div class="group-row">
+        <label for="classDateTime">新课时间:</label>
+        <input type="datetime-local" id="classDateTime" value="">
+        <label for="classDuration">课时时长:</label>
+        <select id="classDuration">
+            <option value="1">1小时</option>
+            <option value="0.5">0.5小时</option>
+        </select>
+    </div>
+    <div class="group-row">
+        <button id="lateMeetingReminderButton">迟到10分钟后</button>
+        <button id="classFeedbackButton">课堂反馈</button>
+        <button id="selfReview">课后复习方式</button>
+    </div>
+    <div class="group-row">
+        <label for="reviewWord">复习单词:</label>
+        <input type="text" id="reviewWord" placeholder="Enter review words" value="0">
+        <label for="newWord">生词:(<15个）</label>
+        <input type="text" id="newWord" value="">
+        <label for="mistakeWords">错误词数:</label>
+        <input type="text" id="mistakeWords" name="mistakeWords" value="0">
+        <label for="test">习题:</label>
+        <input type="text" id="test" value="10">
+        <label for="mistake">错误:</label>
+        <input type="text" id="mistake" value="0">
+    </div>
+    <div class="group-row">
+        <label for="reviewTime">复习时间:</label>
+        <input type="datetime-local" id="reviewTime" value="2024-02-28T18:00">
+    </div>
+    <div>
+        <label for="newLearnedWords">新学单词 (英文+中文):<span style="color: red;">支持右键粘贴</span></label>
+        <textarea id="newLearnedWords"></textarea>
+    </div>
+</section>
 
-<div>
-    <label for="classDateTime">新课时间:</label> <input type="datetime-local" id="classDateTime" value="">
-    <!-- 新增课时时长选择 -->
-    <label for="classDuration">课时时长:</label>
-    <select id="classDuration">
-        <option value="1">1小时</option>
-        <option value="0.5">0.5小时</option>
-    </select>
-</div>
-<div>
-    <button id="scheduleNotificationButton">排课通知</button>
-    <button id="lateMeetingReminderButton">迟到10分钟后</button>
-    <button id="classFeedbackButton">课堂反馈</button>
-    <button id="selfReview">课后复习方式</button>
-</div>
-<div>
-    <label for="reviewWord">复习单词:</label>
-    <input type="text" id="reviewWord" placeholder="Enter review words" value="0">
-    <label for="newWord">生词:(<15个）</label>
-    <input type="text" id="newWord" value="">
-    <label for="mistakeWords">错误词数:</label>
-    <input type="text" id="mistakeWords" name="mistakeWords" value="0">
-    <label for="test">习题:</label>
-    <input type="text" id="test" value="10">
-    <label for="mistake">错误:</label>
-    <input type="text" id="mistake" value="0">
-</div>
+<section class="group-card">
+    <h2>课后</h2>
+    <div class="group-row">
+        <label for="readingArticleText">阅读文章（英文）:</label>
+    </div>
+    <textarea id="readingArticleText" placeholder="粘贴整篇阅读文章，支持右键粘贴"></textarea>
+    <div class="group-row">
+        <label for="articleSpeed">语速:</label>
+        <select id="articleSpeed">
+            <option value="+0%">慢</option>
+            <option value="+10%" selected>正常</option>
+            <option value="+30%">快</option>
+        </select>
+        <button id="generateReadingArticleMP3Button">生成阅读文章MP3</button>
+        <span id="generateReadingArticleMP3Status" class="mp3-status"></span>
+    </div>
+</section>
 
-<div>
-    <label for="reviewTime">复习时间:</label>
-    <input type="datetime-local" id="reviewTime" value="2024-02-28T18:00">
-</div>
-<div>
-    <button id="managementGroupTemplateButton">抗遗忘通知</button>
-    <button id="openingSpeechButton">开场话术</button>
-    <button id="appointmentSchedulingButton">预约排课</button>
-</div>
-<div>
-    <label for="studentLevel">学生级别:</label>
-    <select id="studentLevel" name="studentLevel">
-        <option value="primary">小学生</option>
-        <option value="middleHigh" selected>初高中</option>
-    </select>
-    <button id="understandSituationButton">了解概况</button>
-</div>
-
-<div>
-    <label for="antiForgettingReviewWord">抗遗忘复习单词:</label>
-    <input type="text" class="antiForgettingReviewWord" value="">
-    <input type="text" class="antiForgettingReviewWord" value="">
-    <input type="text" class="antiForgettingReviewWord" value="">
-    <input type="text" class="antiForgettingReviewWord" value="">
-    <label for="antiForgettingForgetWord">抗遗忘遗忘单词:</label>
-    <input type="text" id="antiForgettingForgetWord" value="0">
-</div>
-<label for="newLearnedWords">新学单词 (英文+中文):<span style="color: red;">支持右键粘贴</span></label>
-<textarea id="newLearnedWords"></textarea>
-<label for="forgetWords" style="font-weight: bold; color: red;">遗忘词 (英文+中文):</label>
-<textarea id="forgetWords"></textarea>
-<label for="pronounceWords" style="font-weight: bold; color: red;">发音不标准的词:</label>
-<textarea id="pronounceWords"></textarea>
-<label for="keyLanguagePoints">重点语言点:</label>
-<textarea id="keyLanguagePoints" name="keyLanguagePoints"></textarea>
-<label for="practiceArea">语言点实战区:</label>
-<textarea id="practiceArea" name="practiceArea"></textarea>
-<button id="antiForgettingFeedbackButton" style="font-weight: bold; color: red;">抗遗忘课堂反馈</button>
+<section class="group-card group-secondary">
+    <h2>其他待确认</h2>
+    <div class="group-row">
+        <label for="studentLevel">学生级别:</label>
+        <select id="studentLevel" name="studentLevel">
+            <option value="primary">小学生</option>
+            <option value="middleHigh" selected>初高中</option>
+        </select>
+        <button id="openingSpeechButton">开场话术</button>
+        <button id="understandSituationButton">了解概况</button>
+    </div>
+</section>
 
 <script type="module">
     import * as scriptR from './classRead.js';
@@ -126,25 +127,18 @@
     document.getElementById("userName").addEventListener("change", scriptR.updateLabel2);
     document.getElementById("groupGreetingButton").addEventListener("click", commonFunctions.handleGroupGreetingClick);
     document.getElementById("noReviewTodayButton").addEventListener("click", commonFunctions.handleReviewLateReminderClick);
-    document.getElementById("scheduleNotificationButton").addEventListener("click", scriptR.handleScheduleNotificationClick);
     document.getElementById("lateMeetingReminderButton").addEventListener("click", scriptR.handleLateMeetingReminderClick);
     document.getElementById("classFeedbackButton").addEventListener("click", scriptR.handleReadClassFeedbackClick);
     document.getElementById("selfReview").addEventListener("click", commonFunctions.selfReviewClick);
     document.getElementById("openingSpeechButton").addEventListener("click", commonFunctions.handleOpeningSpeechClick);
     document.getElementById("understandSituationButton").addEventListener("click", scriptR.handleUnderstandSituationClick);
-    document.getElementById("managementGroupTemplateButton").addEventListener("click", commonFunctions.handleManagementGroupTemplateClick);
-    document.getElementById("antiForgettingFeedbackButton").addEventListener("click", commonFunctions.handleAntiForgettingFeedbackClick);
+    document.getElementById("generateReadingArticleMP3Button").addEventListener("click", commonFunctions.generateReadingArticleMP3);
     document.getElementById("teacherName").addEventListener("change", scriptR.updateUserNameOptions2);
-    document.getElementById("appointmentSchedulingButton").addEventListener("click", () => {
-        commonFunctions.handleAppointmentSchedulingClick({classType: '阅读课'});
-    });
-    const forgetWordsTextarea = document.getElementById('forgetWords');
-    const pronounceWordsTextarea = document.getElementById('pronounceWords');
+    const readingArticleTextarea = document.getElementById('readingArticleText');
     const newLearnedWordsTextarea = document.getElementById('newLearnedWords');
 
     // 调用封装的函数为 textarea 添加右键粘贴功能
-    commonFunctions.addRightClickPasteEvent(forgetWordsTextarea);
-    commonFunctions.addRightClickPasteEvent(pronounceWordsTextarea);
+    commonFunctions.addRightClickPasteEvent(readingArticleTextarea);
     commonFunctions.addRightClickPasteEvent(newLearnedWordsTextarea);
 
 </script>
