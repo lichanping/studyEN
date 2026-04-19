@@ -1428,6 +1428,114 @@ export function generatePronounceWordsMP3() {
     });
 }
 
+function normalizeReadingArticleText(text) {
+    return text
+        .replace(/\r\n/g, '\n')
+        .replace(/\n{3,}/g, '\n\n')
+        .replace(/[ \t]{2,}/g, ' ')
+        .trim();
+}
+
+const CJK_RE = /[\u4e00-\u9fff]/;
+const SEGMENT_RE = /([\u4e00-\u9fff\u3000-\u303f\uff00-\uffef，。！？；、""''（）【】《》·…—]+|[^\u4e00-\u9fff\u3000-\u303f\uff00-\uffef]+)/g;
+
+function splitArticleSegments(text) {
+    const lines = text.split('\n').filter(l => l.trim());
+    const segments = [];
+    for (const line of lines) {
+        let match;
+        SEGMENT_RE.lastIndex = 0;
+        while ((match = SEGMENT_RE.exec(line)) !== null) {
+            const part = match[1].trim();
+            if (!part) continue;
+            const lang = CJK_RE.test(part) ? 'zh' : 'en';
+            const last = segments[segments.length - 1];
+            if (last && last.lang === lang) {
+                last.text += '\n' + part;
+            } else {
+                segments.push({ lang, text: part });
+            }
+        }
+    }
+    return segments;
+}
+
+async function fetchReadingArticleAudio(article, rate) {
+    for (let attempt = 0; attempt < 3; attempt++) {
+        try {
+            const resp = await fetch('/.netlify/functions/generate-reading-article-audio', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ article, rate })
+            });
+            if (!resp.ok) throw new Error('server error');
+            return await resp.blob();
+        } catch (err) {
+            if (attempt === 2) throw err;
+            await new Promise(r => setTimeout(r, 600));
+        }
+    }
+}
+
+export async function generateReadingArticleMP3() {
+    const input = document.getElementById('readingArticleText');
+    const btn = document.getElementById('generateReadingArticleMP3Button');
+    const statusEl = document.getElementById('generateReadingArticleMP3Status');
+    const article = normalizeReadingArticleText(input.value || '');
+
+    if (!article) {
+        displayToast('阅读文章为空，无法生成MP3');
+        return;
+    }
+    if (article.length > 4000) {
+        displayToast('文章过长（最多4000字符），请分段生成');
+        return;
+    }
+
+    const segments = splitArticleSegments(article);
+    if (segments.length === 0) {
+        displayToast('未识别到有效文本');
+        return;
+    }
+
+    const originalText = btn.textContent;
+    btn.disabled = true;
+
+    const rate = document.getElementById('articleSpeed')?.value || '+10%';
+    const startTime = Date.now();
+    try {
+        const audioBlobs = [];
+        for (let i = 0; i < segments.length; i++) {
+            const pct = Math.round(((i) / segments.length) * 100);
+            if (statusEl) statusEl.textContent = `生成中...${pct}%（${i + 1}/${segments.length}段）`;
+            const blob = await fetchReadingArticleAudio(segments[i].text, rate);
+            audioBlobs.push(blob);
+        }
+        if (statusEl) statusEl.textContent = '生成中...100%';
+
+        const combined = new Blob(audioBlobs, { type: 'audio/mpeg' });
+        const userName = document.getElementById('userName').value || '学生';
+        const now = new Date();
+        const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+        const fileName = `${userName}_阅读文章_${today}.mp3`;
+
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(combined);
+        link.download = fileName;
+        link.click();
+        URL.revokeObjectURL(link.href);
+
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+        if (statusEl) statusEl.textContent = `✅ 已生成（${segments.length}段），耗时${elapsed}s`;
+    } catch (err) {
+        console.error('生成阅读文章MP3失败:', err);
+        if (statusEl) statusEl.textContent = '❌ 生成失败，请稍后重试';
+    } finally {
+        btn.textContent = originalText;
+        btn.disabled = false;
+    }
+}
+
 export function displayToast(message) {
     showFeedbackToast(message, {
         duration: 1500,
