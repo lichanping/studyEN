@@ -139,7 +139,7 @@ class TextToSpeechConverter:
 
 
 if __name__ == "__main__":
-    input_folder = "!【5.0】【中级】初中阅读50篇"  # Relative to user_data/
+    input_folder = "!【5.0】【中级】-中阶-阅读50篇"  # Relative to user_data/
     output_folder_path = os.path.join(get_sub_folder_path(), input_folder, "audio")
 
     # Create the output folder if it doesn't exist
