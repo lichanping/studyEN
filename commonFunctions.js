@@ -478,8 +478,13 @@ function showAllowEmptyConfirm(message) {
 export async function handleAntiForgettingFeedbackClick() {
     const userName = document.getElementById("userName").value;
     // Get values from input boxes
-    const antiForgettingReviewWord = Array.from(document.querySelectorAll('.antiForgettingReviewWord'))
+    const manualReviewWordCount = Array.from(document.querySelectorAll('.antiForgettingReviewWord'))
         .reduce((sum, input) => sum + (input.value ? parseInt(input.value, 10) : 0), 0);
+
+    let keyLanguagePoints = (document.getElementById('keyLanguagePoints')?.value || '').trim();
+    let practiceArea = (document.getElementById('practiceArea')?.value || '').trim();
+    const autoReviewWordCount = countNonEmptyLines(keyLanguagePoints) + countNonEmptyLines(practiceArea);
+    const antiForgettingReviewWord = manualReviewWordCount + autoReviewWordCount;
 
     let skipStats = false;
     if (!antiForgettingReviewWord) {
@@ -494,8 +499,6 @@ export async function handleAntiForgettingFeedbackClick() {
     storeForgetWords(userName, forgetWords);
 
     let pronounceWords = document.getElementById('pronounceWords').value.trim();
-    let keyLanguagePoints = document.getElementById('keyLanguagePoints').value.trim();
-    let practiceArea = document.getElementById('practiceArea').value.trim();
     const randomFeedback = getRandomFeedback();
 
     // Count the number of English words
@@ -1223,6 +1226,14 @@ export function countEnglishWords(text) {
     return wordsArray.length;
 }
 
+function countNonEmptyLines(text) {
+    return String(text || '')
+        .split('\n')
+        .map(line => line.trim())
+        .filter(Boolean)
+        .length;
+}
+
 function extractEnglishWords(text) {
     const lines = text.trim().split('\n').map(line => line.trim()).filter(Boolean);
     const englishWords = [];
@@ -1643,7 +1654,10 @@ export function addRightClickPasteEvent(element) {
 export async function handleNewVersionFeedbackClick() {
 
     const reviewInputs = Array.from(document.querySelectorAll('.antiForgettingReviewWord'));
-    const hasFilled = reviewInputs.some(input => input && input.value && input.value.trim() !== '');
+    const keyLanguagePoints = (document.getElementById('keyLanguagePoints')?.value || '').trim();
+    const practiceArea = (document.getElementById('practiceArea')?.value || '').trim();
+    const autoReviewWordCount = countNonEmptyLines(keyLanguagePoints) + countNonEmptyLines(practiceArea);
+    const hasFilled = reviewInputs.some(input => input && input.value && input.value.trim() !== '') || autoReviewWordCount > 0;
 
     let skipStats = false;
     if (!hasFilled) {
@@ -1655,7 +1669,7 @@ export async function handleNewVersionFeedbackClick() {
     const antiForgettingReviewWord = reviewInputs.reduce((sum, input) => {
         const v = parseInt((input.value || '').trim(), 10);
         return sum + (Number.isFinite(v) ? v : 0);
-    }, 0);
+    }, 0) + autoReviewWordCount;
 
     // Build message
     const motto = getRandomMotto();
