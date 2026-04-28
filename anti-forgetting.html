@@ -8,7 +8,7 @@
     <title>抗遗忘复习</title>
     <link rel="stylesheet" href="index.css?v=20260405-1">
     <script type="module">
-        import * as commonFunctions from './commonFunctions.js?v=20260405-1';
+        import * as commonFunctions from './commonFunctions.js?v=20260428-1';
         commonFunctions.checkLoginStatus();
     </script>
     <style>
@@ -195,6 +195,38 @@
                 color: #1f2937;
             }
         }
+        .tts-prefix-tools {
+            margin-top: 6px;
+            font-size: 12px;
+        }
+        .tts-prefix-tools button {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .tts-prefix-panel {
+            margin-top: 6px;
+            padding: 8px;
+            border: 1px dashed var(--panel-border);
+            border-radius: 6px;
+            display: none;
+        }
+        .tts-prefix-panel input,
+        .tts-prefix-panel textarea {
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 4px;
+            border: 1px solid var(--panel-border);
+            border-radius: 5px;
+            padding: 6px;
+            font-size: 12px;
+            background-color: var(--panel-bg);
+            color: var(--text-color);
+        }
+        .tts-prefix-panel textarea {
+            min-height: 80px;
+        }
     </style>
 </head>
 <body>
@@ -243,6 +275,18 @@
             </label>
             <textarea id="forgetWords"></textarea>
             <div id="generateForgetWordsMP3Status" style="font-size:12px;margin-top:4px;color:#aaa;"></div>
+            <div class="tts-prefix-tools">
+                <button id="ttsPrefixManageToggle" type="button">前缀词维护</button>
+                <span style="color: var(--muted-text);">仅对命中单词加前缀，例如 activity</span>
+            </div>
+            <div id="ttsPrefixManagePanel" class="tts-prefix-panel">
+                <label for="ttsPrefixInput" style="font-size:12px;">前缀文本（默认 - ）</label>
+                <input id="ttsPrefixInput" type="text" placeholder="- ">
+                <label for="ttsPrefixWords" style="font-size:12px; margin-top:8px; display:block;">需要加前缀的英文词（每行1个，大小写不敏感）</label>
+                <textarea id="ttsPrefixWords" placeholder="activity"></textarea>
+                <button id="ttsPrefixSaveButton" type="button" style="margin-top:8px;">保存前缀词配置</button>
+                <div id="ttsPrefixManageStatus" style="font-size:12px;margin-top:6px;color:#aaa;"></div>
+            </div>
         </div>
         <div class="field">
             <label for="pronounceWords">发音不标准的词
@@ -263,7 +307,7 @@
 </div>
 
 <script type="module">
-    import * as commonFunctions from './commonFunctions.js?v=20260405-1';
+    import * as commonFunctions from './commonFunctions.js?v=20260428-1';
 
     const SCHEDULE_CONFIG_OVERRIDE_KEY = 'schedule-config-override-v1';
     const CUSTOM_STUDENTS_STORAGE_KEY = 'custom-students-v1';
@@ -392,6 +436,7 @@
     commonFunctions.addRightClickPasteEvent(document.getElementById('pronounceWords'));
     commonFunctions.addRightClickPasteEvent(document.getElementById('keyLanguagePoints'));
     commonFunctions.addRightClickPasteEvent(document.getElementById('practiceArea'));
+    commonFunctions.initTtsPrefixMaintenanceUI();
 
     setDefaultReviewTime();
     loadStudentOptions();

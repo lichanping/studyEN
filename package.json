@@ -2,6 +2,9 @@
   "name": "studyen",
   "private": true,
   "scripts": {
+    "dev:local": "npx --yes netlify-cli@latest dev --port 8888",
+    "dev:localhost": "bash ./scripts/dev_localhost.sh",
+    "dev:localhost:check": "bash ./scripts/dev_localhost.sh --check",
     "rollback:sync": "bash ./scripts/rollback_sync.sh --target HEAD~1 --yes",
     "rollback:sync:dry": "bash ./scripts/rollback_sync.sh --target HEAD~1 --dry-run"
   },
