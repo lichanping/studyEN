@@ -1354,7 +1354,7 @@ async function generateWordsMP3({ textareaId, btnId, statusId, fileLabel, emptyM
         return;
     }
 
-    const wordPairs = parseForgetWordsForAudio(text);
+    const wordPairs = applyTtsPrefixToWordPairs(parseForgetWordsForAudio(text));
     if (wordPairs.length === 0) {
         displayToast('未识别到英文单词');
         return;
@@ -1389,8 +1389,8 @@ async function generateWordsMP3({ textareaId, btnId, statusId, fileLabel, emptyM
         }
         await Promise.all(Array.from({length: CONCURRENCY}, (_, k) => runBatch(k)));
 
-        // 拼接所有音频（词间加静音）
-        const audioBlobs = [];
+        // 拼接所有音频（开头加静音防首词被吃，词间加静音）
+        const audioBlobs = [silenceBlob];
         results.forEach((blob, i) => {
             audioBlobs.push(blob);
             if (i < results.length - 1) audioBlobs.push(silenceBlob);
@@ -2005,3 +2005,110 @@ export async function validateBeforeClassFeedbackSubmit(courseType = "词汇课"
     }
 }
 
+const TTS_PREFIX_CONFIG_KEY = 'tts-prefix-config-v1';
+const DEFAULT_TTS_PREFIX_CONFIG = {
+    prefix: '- ',
+    words: []
+};
+
+function normalizeTtsWord(value) {
+    return String(value || '').trim().toLowerCase().replace(/\s+/g, ' ');
+}
+
+function parseTtsPrefixWordsText(text) {
+    const tokens = String(text || '').split(/[\n,，]/);
+    const unique = new Set();
+    tokens.forEach((token) => {
+        const normalized = normalizeTtsWord(token);
+        if (normalized) unique.add(normalized);
+    });
+    return Array.from(unique);
+}
+
+function loadTtsPrefixConfig() {
+    try {
+        const raw = localStorage.getItem(TTS_PREFIX_CONFIG_KEY);
+        if (!raw) return { ...DEFAULT_TTS_PREFIX_CONFIG };
+        const parsed = JSON.parse(raw);
+        const prefix = String(parsed?.prefix ?? DEFAULT_TTS_PREFIX_CONFIG.prefix);
+        const words = Array.isArray(parsed?.words)
+            ? parsed.words.map(normalizeTtsWord).filter(Boolean)
+            : [];
+        return { prefix, words: Array.from(new Set(words)) };
+    } catch (_) {
+        return { ...DEFAULT_TTS_PREFIX_CONFIG };
+    }
+}
+
+function saveTtsPrefixConfig(prefix, wordsText) {
+    const nextConfig = {
+        prefix: String(prefix ?? DEFAULT_TTS_PREFIX_CONFIG.prefix),
+        words: parseTtsPrefixWordsText(wordsText)
+    };
+    localStorage.setItem(TTS_PREFIX_CONFIG_KEY, JSON.stringify(nextConfig));
+    return nextConfig;
+}
+
+function applyTtsPrefixToWordPairs(wordPairs) {
+    const config = loadTtsPrefixConfig();
+    if (!config.prefix || !Array.isArray(config.words) || config.words.length === 0) {
+        return wordPairs;
+    }
+
+    const targetWords = new Set(config.words.map(normalizeTtsWord).filter(Boolean));
+    if (targetWords.size === 0) return wordPairs;
+
+    return wordPairs.map((pair) => {
+        const english = String(pair?.english || '').trim();
+        if (!english) return pair;
+        const normalizedWord = normalizeTtsWord(english);
+        if (!targetWords.has(normalizedWord)) return pair;
+        if (english.startsWith(config.prefix)) return pair;
+        return { ...pair, english: `${config.prefix}${english}` };
+    });
+}
+
+export function initTtsPrefixMaintenanceUI() {
+    const toggleBtn = document.getElementById('ttsPrefixManageToggle');
+    const panel = document.getElementById('ttsPrefixManagePanel');
+    const prefixInput = document.getElementById('ttsPrefixInput');
+    const wordsInput = document.getElementById('ttsPrefixWords');
+    const saveBtn = document.getElementById('ttsPrefixSaveButton');
+    const statusEl = document.getElementById('ttsPrefixManageStatus');
+
+    if (!toggleBtn || !panel || !prefixInput || !wordsInput || !saveBtn || !statusEl) {
+        return;
+    }
+
+    const renderFromConfig = () => {
+        const config = loadTtsPrefixConfig();
+        prefixInput.value = config.prefix;
+        wordsInput.value = config.words.join('\n');
+    };
+
+    let isOpen = false;
+    const setOpen = (open) => {
+        isOpen = open;
+        panel.style.display = open ? 'block' : 'none';
+        toggleBtn.textContent = open ? '关闭前缀维护' : '前缀词维护';
+        if (open) renderFromConfig();
+    };
+
+    toggleBtn.addEventListener('click', () => {
+        setOpen(!isOpen);
+    });
+
+    saveBtn.addEventListener('click', () => {
+        try {
+            const config = saveTtsPrefixConfig(prefixInput.value, wordsInput.value);
+            statusEl.textContent = `已保存：${config.words.length} 个单词`;
+            statusEl.style.color = '#0f766e';
+        } catch (err) {
+            console.error('保存前缀词配置失败:', err);
+            statusEl.textContent = '保存失败，请重试';
+            statusEl.style.color = '#dc2626';
+        }
+    });
+
+    setOpen(false);
+}
