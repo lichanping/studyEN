@@ -530,6 +530,68 @@
             font-weight: 700;
         }
 
+        .schedule-state-label {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px;
+            padding: 3px 8px;
+            font-size: 11px;
+            font-weight: 700;
+            border: 1px solid var(--line);
+            white-space: nowrap;
+        }
+
+        .schedule-state-label.state-scheduled {
+            color: #2f6f49;
+            background: #dcecdf;
+            border-color: #a7c9b2;
+        }
+
+        .schedule-state-label.state-unscheduled {
+            color: #8b2e2e;
+            background: #fde8e8;
+            border-color: #f5a3a3;
+            box-shadow: 0 0 0 1px rgba(139, 46, 46, 0.15);
+        }
+
+        .schedule-state-label.state-unavailable {
+            color: #5f6773;
+            background: #eceff3;
+            border-color: #c4ccd7;
+        }
+
+        .schedule-state-label.state-loading {
+            color: #35557c;
+            background: #e3edf9;
+            border-color: #a9c0de;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .schedule-state-label.state-scheduled {
+                color: #b9e6c6;
+                background: #294437;
+                border-color: #3f6d52;
+            }
+
+            .schedule-state-label.state-unscheduled {
+                color: #ffb6b6;
+                background: #4d2424;
+                border-color: #8f4040;
+            }
+
+            .schedule-state-label.state-unavailable {
+                color: #c5cdd8;
+                background: #353b44;
+                border-color: #535e6e;
+            }
+
+            .schedule-state-label.state-loading {
+                color: #c5daf4;
+                background: #2e4058;
+                border-color: #4f6788;
+            }
+        }
+
         .toast {
             position: fixed;
             left: 50%;
@@ -1125,6 +1187,7 @@ entryKey: 课次标识（用于区分排课项）</span>
   ]
 }
 </script>
+<script src="./schedule-course-match.js?v=20260501"></script>
 
 <script>
     const WEEK_DAYS = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
@@ -1136,10 +1199,18 @@ entryKey: 课次标识（用于区分排课项）</span>
     const EXTRA_ENTRIES_STORAGE_KEY = "schedule-extra-entries-v1";
     const SCHEDULE_CONFIG_OVERRIDE_KEY = "schedule-config-override-v1";
     const CUSTOM_STUDENTS_STORAGE_KEY = "custom-students-v1";
+    const BOARD_DEFAULT_X_UA = "ct=2&v=5.0.96";
     let cancellationState = {};
     let timeOverrideState = {};
     let lessonOverrideState = {};
     let extraEntriesState = {};
+    let boardScheduleMatchState = {
+        status: "idle",
+        index: null,
+        rowsCount: 0,
+        updatedAt: "",
+        errorMessage: ""
+    };
 
     function getConfig() {
         const raw = document.getElementById("schedule-config").textContent;
@@ -1293,6 +1364,156 @@ entryKey: 课次标识（用于区分排课项）</span>
 
     function getExtraEntriesForDate(dateValue) {
         return Array.isArray(extraEntriesState[dateValue]) ? extraEntriesState[dateValue] : [];
+    }
+
+    function setBoardScheduleMatchState(patch) {
+        boardScheduleMatchState = {
+            ...boardScheduleMatchState,
+            ...(patch || {})
+        };
+    }
+
+    function getBoardToken() {
+        return String(localStorage.getItem("x-token-c") || "").trim();
+    }
+
+    function buildLocalCourseMatchTarget(entry, dateValue) {
+        return {
+            student: String(entry?.student || "").trim(),
+            date: String(dateValue || "").trim(),
+            durationMinutes: Number(resolveDurationMinutes(entry, dateValue)) || 0
+        };
+    }
+
+    function getCourseScheduleState(entry, dateValue) {
+        const state = boardScheduleMatchState;
+
+        if (state.status === "ready" && state.index && window.ScheduleCourseMatch && typeof window.ScheduleCourseMatch.hasScheduledCourse === "function") {
+            const matched = window.ScheduleCourseMatch.hasScheduledCourse(
+                state.index,
+                buildLocalCourseMatchTarget(entry, dateValue)
+            );
+            return matched
+                ? { text: "已排课", className: "state-scheduled" }
+                : { text: "未排课", className: "state-unscheduled" };
+        }
+
+        if (state.status === "error" || state.status === "unavailable") {
+            return { text: "未获取", className: "state-unavailable" };
+        }
+
+        return { text: "查询中", className: "state-loading" };
+    }
+
+    function rerenderScheduleViewsForBoardState() {
+        const datePicker = document.getElementById("datePicker");
+        const baseDate = String(datePicker?.value || "").trim();
+        if (!baseDate) return;
+
+        const config = getConfig();
+        const dayMap = buildDayMap(config.entries || []);
+        renderToday(dayMap, baseDate);
+        renderWeek(dayMap, baseDate);
+    }
+
+    async function refreshBoardScheduleMatches() {
+        if (!window.ScheduleCourseMatch || typeof window.ScheduleCourseMatch.createBoardMatchIndex !== "function") {
+            setBoardScheduleMatchState({
+                status: "error",
+                index: null,
+                rowsCount: 0,
+                updatedAt: "",
+                errorMessage: "排课匹配模块未加载"
+            });
+            rerenderScheduleViewsForBoardState();
+            window.dispatchEvent(new Event("schedule-updated"));
+            return;
+        }
+
+        const token = getBoardToken();
+        const userId = String(localStorage.getItem("x-user-id") || "").trim();
+
+        if (!token) {
+            setBoardScheduleMatchState({
+                status: "unavailable",
+                index: null,
+                rowsCount: 0,
+                updatedAt: "",
+                errorMessage: "缺少登录 token"
+            });
+            rerenderScheduleViewsForBoardState();
+            window.dispatchEvent(new Event("schedule-updated"));
+            return;
+        }
+
+        setBoardScheduleMatchState({
+            status: "loading",
+            index: null,
+            rowsCount: 0,
+            updatedAt: "",
+            errorMessage: ""
+        });
+        rerenderScheduleViewsForBoardState();
+        window.dispatchEvent(new Event("schedule-updated"));
+
+        try {
+            const plan = (typeof window.ScheduleCourseMatch.resolveBoardQueryPlan === "function")
+                ? window.ScheduleCourseMatch.resolveBoardQueryPlan(window.location.hostname)
+                : { url: "https://apiv2.lxll.com/customer/training/board", useProxy: false };
+
+            const response = plan.useProxy
+                ? await fetch(plan.url, {
+                    method: "POST",
+                    headers: {
+                        "accept": "application/json, text/plain, */*",
+                        "content-type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        token,
+                        userId,
+                        xUa: BOARD_DEFAULT_X_UA
+                    })
+                })
+                : await fetch(plan.url, {
+                    method: "GET",
+                    headers: {
+                        "accept": "application/json, text/plain, */*",
+                        "authorization": "Bearer " + token,
+                        "x-token-c": token,
+                        "x-user-id": userId,
+                        "x-ua": BOARD_DEFAULT_X_UA
+                    }
+                });
+
+            if (!response.ok) {
+                throw new Error("首页排课接口失败: " + response.status);
+            }
+
+            const data = await response.json();
+            const list = Array.isArray(data?.data) ? data.data : [];
+            const index = window.ScheduleCourseMatch.createBoardMatchIndex(list);
+
+            setBoardScheduleMatchState({
+                status: "ready",
+                index,
+                rowsCount: Array.isArray(index.rows) ? index.rows.length : 0,
+                updatedAt: new Date().toISOString(),
+                errorMessage: ""
+            });
+        } catch (error) {
+            console.error("加载首页排课失败:", error);
+            setBoardScheduleMatchState({
+                status: "error",
+                index: null,
+                rowsCount: 0,
+                updatedAt: "",
+                errorMessage: error.message || "未知错误"
+            });
+            window.showToast?.("首页排课查询失败，状态标记将显示未获取", 4200);
+        }
+
+        rerenderScheduleViewsForBoardState();
+        window.dispatchEvent(new Event("schedule-updated"));
     }
 
     function addExtraEntry(dateValue, studentName, course, durationMinutes, period) {
@@ -1854,9 +2075,14 @@ entryKey: 课次标识（用于区分排课项）</span>
                 showCopiedContentToast(copied, notificationMessage, "已复制排课通知：");
             });
 
+            const courseScheduleState = getCourseScheduleState(item, dateValue);
+            const scheduleStateLabel = document.createElement("span");
+            scheduleStateLabel.className = "schedule-state-label " + courseScheduleState.className;
+            scheduleStateLabel.textContent = courseScheduleState.text;
+
             const actionGroup = document.createElement("div");
             actionGroup.className = "action-group";
-            actionGroup.append(button, remindButton, notifyButton);
+            actionGroup.append(button, remindButton, notifyButton, scheduleStateLabel);
 
             if (item._isExtra) {
                 const deleteBtn = document.createElement("button");
@@ -2014,6 +2240,8 @@ entryKey: 课次标识（用于区分排课项）</span>
 
         renderToday(dayMap, datePicker.value);
         renderWeek(dayMap, datePicker.value);
+
+        refreshBoardScheduleMatches();
 
         datePicker.addEventListener("change", () => {
             renderToday(dayMap, datePicker.value);
@@ -3447,6 +3675,7 @@ entryKey: 课次标识（用于区分排课项）</span>
     const viewTotalHoursButton = document.getElementById("viewTotalHoursButton");
     viewTotalHoursButton?.addEventListener("click", async () => {
         await runScheduleQuotaCheck();
+        await refreshBoardScheduleMatches();
     });
 
     const mockQuotaCheckButton = document.getElementById("mockQuotaCheckButton");
@@ -3490,6 +3719,7 @@ entryKey: 课次标识（用于区分排课项）</span>
     const setupLxLoginButton = document.getElementById("setupLxLoginButton");
     setupLxLoginButton?.addEventListener("click", async () => {
         await safeConfigureLxCredentials();
+        await window.refreshBoardScheduleMatches?.();
     });
 
     const salaryMonthPicker = document.getElementById("salaryMonthPicker");
