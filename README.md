@@ -96,3 +96,75 @@ bash ./scripts/rollback_sync.sh --target HEAD~1 --yes --push
 - 不随意改动工资导出函数入口：
   - `index.html` -> `script.generateSalaryReport`
   - `schedule.html` -> `generateScheduleSalaryButton` 点击导出链路
+
+---
+
+## Python 工具：工资单月份统计（V5 HTML 解析）
+
+### 唯一的 Python 调用入口
+
+```python
+from tool_generate_xls import TestGenerateTool
+
+# 实例化工具
+tester = TestGenerateTool()
+
+# 调用主方法，传入 V5.html 文件路径和目标月份（可选）
+df = tester.calc_month_fee_from_training_list(
+    file_path='temp/v5.html',
+    target_month='2026-04'  # 可选：'YYYY-MM' 格式，不传则默认统计上月
+)
+
+# DataFrame 包含列：学生名 | 课程名 | 开始时间 | 课时 | 课程类别 | 实际价格（工资）
+# 自动按 开始时间 升序排列，仅包含"已完成"状态的课程
+```
+
+### 参数说明
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `file_path` | str | ✅ | V5 HTML 文件的完整路径（含文件名） |
+| `target_month` | str | ❌ | 目标月份，格式 `'YYYY-MM'`（如 `'2026-04'`）；不传则统计上一自然月 |
+
+### 返回值
+
+- **DataFrame**：已按 `开始时间` 升序排序
+- **包含列**：`学生名`、`课程名`、`开始时间`、`课时`、`课程类别`、`实际价格`
+- **数据过滤**：仅 `"已完成"` 状态的课程
+- **时间范围**：该月 1 日 00:00 ~ 下月 1 日 00:00（闭开区间）
+
+### 使用示例
+
+```python
+# 示例 1：统计指定月份（2026 年 4 月）
+df_april = tester.calc_month_fee_from_training_list('temp/v5.html', target_month='2026-04')
+print(f"4月工资合计: {df_april['实际价格'].sum()} 元")
+print(f"课程数: {len(df_april)}")
+
+# 示例 2：默认统计上月（今天是 2026-05-01，则统计 2026-04）
+df_last_month = tester.calc_month_fee_from_training_list('temp/v5.html')
+print(f"上月工资合计: {df_last_month['实际价格'].sum()} 元")
+
+# 示例 3：导出为 Excel
+df.to_excel('工资单_2026年4月.xlsx', index=False)
+```
+
+### 回归测试
+
+#### 课时核对逻辑（必须）
+
+每次修改 `schedule.html` 的排课/课时核对逻辑时运行：
+
+```bash
+npm run test:quota  # Node.js 课时核对测试（7 个场景）
+```
+
+#### 工资单解析（可选）
+
+独立的 Python 工具测试，用于验证 V5.html 解析逻辑：
+
+```bash
+python -m pytest tool_generate_xls.py::TestGenerateTool::test_v5_calc_personal_fee_from_training_list -v
+```
+
+或直接调用（见上文示例）

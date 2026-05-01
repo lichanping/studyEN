@@ -56,7 +56,7 @@ class TxtToXLSX:
                         # If it does, move the part of speech to the translation
                         pos = english_word.split()[-1]  # Get the last part of the word as part of speech
                         english_word = english_word[
-                                       :-len(pos)].strip()  # Remove the part of speech from the English word
+                            :-len(pos)].strip()  # Remove the part of speech from the English word
                         translation = f"({pos}) {translation.strip()}"
 
                     # Replace "sb" with "somebody" and "sth" with "something" only in the English words part
@@ -182,6 +182,22 @@ class TextToSpeechConverter:
 
 
 class TestGenerateTool:
+    def test_v5_calc_personal_fee_from_training_list(self):
+        """测试 V5 HTML 工资单解析，使用真实 temp/v5.html 数据源"""
+        temp_folder = get_sub_folder_path('temp')
+        file_path = os.path.join(temp_folder, 'v5.html')
+        target_month = '2026-03'
+
+        # 调用主函数
+        df = self.calc_month_fee_from_training_list(file_path, target_month=target_month)
+
+        # 验证结果
+        assert df is not None and not df.empty, "DataFrame 应该非空"
+        assert (df['状态'] == '已完成').all(), "仅包含已完成的课程"
+        assert df['开始时间'].str.startswith(target_month + '-').all(), f"所有时间应该在 {target_month} 范围内"
+        assert df['开始时间'].is_monotonic_increasing, "按开始时间升序排列"
+        assert df['实际价格'].sum() > 0, "工资总额应该大于 0"
+
     def test_more_words(self):
         # 定义文件路径
         temp_dir = "temp"
@@ -349,20 +365,27 @@ class TestGenerateTool:
             pivot_by_student.to_excel(writer, sheet_name='按学生汇总', index=False)
         print(f"Data and summary successfully written to {output_file}")
 
-    def test_v5_calc_personal_fee_from_training_list(self):
-        temp_folder = get_sub_folder_path('temp')
-        file_path = os.path.join(temp_folder, 'v5.html')
-        self.calc_month_fee_from_training_list(file_path)
-
-    def calc_month_fee_from_training_list(self, file_path):
+    def calc_month_fee_from_training_list(self, file_path, target_month=None):
         # 1️⃣ 读取 HTML
         with open(file_path, "r", encoding="utf-8") as file:
             html_content = file.read()
 
         # 2️⃣ 解析 HTML
         soup = BeautifulSoup(html_content, 'html.parser')
-        cards = soup.find_all('uni-view', class_='training-card')
+        cards = soup.select('.course-card')
         data = []
+        if target_month:
+            month_start = datetime.strptime(target_month + '-01', '%Y-%m-%d')
+        else:
+            now = datetime.now()
+            if now.month == 1:
+                month_start = datetime(now.year - 1, 12, 1)
+            else:
+                month_start = datetime(now.year, now.month - 1, 1)
+        if month_start.month == 12:
+            month_end = datetime(month_start.year + 1, 1, 1)
+        else:
+            month_end = datetime(month_start.year, month_start.month + 1, 1)
 
         # 3️⃣ 定义课程关键词分类规则
         reading_keywords = ['阅读理解', '文化阅读', '时文阅读', '阅读真题', '语法', '完型填空', '阅读']
@@ -385,9 +408,30 @@ class TestGenerateTool:
                 return base_price if duration == 60 else base_price / 2
             return 0
 
+        def clean_person_name(raw_name):
+            text = str(raw_name or '').strip()
+            text = re.sub(r'\s+[A-Za-z]{2}\d+$', '', text)
+            return text.strip()
+
+        def parse_start_dt(start_text):
+            text = str(start_text or '').strip()
+            if not text:
+                return None
+            try:
+                return datetime.strptime(text[:16], '%Y-%m-%d %H:%M')
+            except ValueError:
+                return None
+
         # 4️⃣ 循环提取每张卡片的信息
         for card in cards:
-            course = card.find('uni-text', class_='book-title')
+            status_node = card.select_one('.status-text')
+            status_text = status_node.get_text(strip=True) if status_node else ''
+
+            # 只统计已完成课程
+            if status_text != '已完成':
+                continue
+
+            course = card.select_one('.card-title, .book-title')
             course_name = course.get_text(strip=True) if course else ''
 
             # 默认值
@@ -395,19 +439,23 @@ class TestGenerateTool:
             start_time = ''
             class_time = ''
 
-            info_rows = card.find_all('uni-view', class_='info-row')
+            info_rows = card.select('.info-list .item, .info-row')
             for row in info_rows:
-                label = row.find('uni-text', class_='label')
-                value = row.find('uni-text', class_='value')
+                label = row.select_one('.label')
+                value = row.select_one('.value')
                 label_text = label.get_text(strip=True) if label else ''
                 value_text = value.get_text(strip=True) if value else ''
 
                 if '用户' in label_text:
-                    student_val = value_text
+                    student_val = clean_person_name(value_text)
                 elif '开始时间' in label_text:
                     start_time = value_text
                 elif '训练时间' in label_text:
                     class_time = value_text
+
+            start_dt = parse_start_dt(start_time)
+            if not start_dt or not (month_start <= start_dt < month_end):
+                continue
 
             # 跳过没有学生名的记录
             if not student_val:
@@ -417,9 +465,10 @@ class TestGenerateTool:
             actual_price = get_actual_price(class_time, category)
 
             data.append({
+                '状态': status_text,
                 '学生': student_val,
                 '课程': course_name,
-                '开始时间': start_time,
+                '开始时间': start_dt.strftime('%Y-%m-%d %H:%M'),
                 '课时': class_time,
                 '类别': category,
                 '实际价格': actual_price
@@ -429,7 +478,10 @@ class TestGenerateTool:
         df = pd.DataFrame(data)
         if df.empty:
             print("⚠️ 没有从 HTML 中提取到任何课程数据，请检查 HTML 结构或选择的文件。")
-            return
+            return df
+
+        # 按开始时间升序输出，便于核对与结算
+        df = df.sort_values(by='开始时间', ascending=True).reset_index(drop=True)
 
         # 6️⃣ 计算课时
         df['时长'] = df['课时'].apply(lambda x: 1 if '60分钟' in x else 0.5 if '30分钟' in x else 1)
@@ -438,6 +490,14 @@ class TestGenerateTool:
         pivot = pd.pivot_table(df, values='时长', index='类别', aggfunc='sum').reset_index()
         pivot_by_student = pd.pivot_table(df, values=['实际价格', '时长'], index='学生', aggfunc='sum').reset_index()
         pivot_by_student = pivot_by_student.sort_values(by='实际价格', ascending=False)
+
+        # 添加合计行到"按学生汇总"
+        total_row = pd.DataFrame({
+            '学生': ['合计'],
+            '实际价格': [pivot_by_student['实际价格'].sum()],
+            '时长': [pivot_by_student['时长'].sum()]
+        })
+        pivot_by_student = pd.concat([pivot_by_student, total_row], ignore_index=True)
 
         # 8️⃣ 导出 Excel
         temp_folder = get_sub_folder_path('temp')
@@ -449,7 +509,10 @@ class TestGenerateTool:
             pivot.to_excel(writer, sheet_name='汇总', index=False)
             pivot_by_student.to_excel(writer, sheet_name='按学生汇总', index=False)
 
+        month_label = month_start.strftime('%Y-%m')
         print(f"✅ Data and summary successfully written to {output_file}")
+        print(f"✅ {month_label} 已完成课程总工资: {df['实际价格'].sum()} 元")
+        return df
 
     def create_and_save_pivot_table(self, input_file_path):
         # 读取 Excel 文件中的数据
