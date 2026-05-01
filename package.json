@@ -6,6 +6,7 @@
     "dev:localhost": "bash ./scripts/dev_localhost.sh",
     "dev:localhost:check": "bash ./scripts/dev_localhost.sh --check",
     "test:quota": "node test-quota-check.js",
+    "test:schedule-match": "node test-schedule-course-match.js",
     "rollback:sync": "bash ./scripts/rollback_sync.sh --target HEAD~1 --yes",
     "rollback:sync:dry": "bash ./scripts/rollback_sync.sh --target HEAD~1 --dry-run"
   },
