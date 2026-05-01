@@ -70,6 +70,12 @@ function testResolveBoardQueryPlan() {
         useProxy: true
     });
 
+    const preview = resolveBoardQueryPlan("deploy-preview-7--engaid.netlify.app");
+    assert.deepStrictEqual(preview, {
+        url: "/.netlify/functions/schedule-board",
+        useProxy: true
+    });
+
     const prod = resolveBoardQueryPlan("h5.lxll.com");
     assert.deepStrictEqual(prod, {
         url: "https://apiv2.lxll.com/customer/training/board",

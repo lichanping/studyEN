@@ -70,16 +70,16 @@
 
     function resolveBoardQueryPlan(hostname) {
         var host = String(hostname || "").trim().toLowerCase();
-        var isLocal = host === "localhost" || host === "127.0.0.1" || host === "::1";
-        if (isLocal) {
+        var shouldDirectFetch = host === "h5.lxll.com";
+        if (shouldDirectFetch) {
             return {
-                url: "/.netlify/functions/schedule-board",
-                useProxy: true
+                url: "https://apiv2.lxll.com/customer/training/board",
+                useProxy: false
             };
         }
         return {
-            url: "https://apiv2.lxll.com/customer/training/board",
-            useProxy: false
+            url: "/.netlify/functions/schedule-board",
+            useProxy: true
         };
     }
 
