@@ -63,6 +63,23 @@ function testHasScheduledCourse() {
     );
 }
 
+function testHasScheduledCourseWithAliasName() {
+    const boardList = [
+        {
+            scheduleTime: Date.parse("2026-05-04T10:00:00+08:00"),
+            type: "MINUTE_60",
+            student: { name: "俞新硕" }
+        }
+    ];
+
+    const index = createBoardMatchIndex(boardList);
+
+    assert.strictEqual(
+        hasScheduledCourse(index, { student: "硕硕", date: "2026-05-04", durationMinutes: 60 }),
+        true
+    );
+}
+
 function testResolveBoardQueryPlan() {
     const local = resolveBoardQueryPlan("localhost");
     assert.deepStrictEqual(local, {
@@ -87,6 +104,7 @@ function run() {
     testNormalizeBoardRecord();
     testBuildCourseMatchKey();
     testHasScheduledCourse();
+    testHasScheduledCourseWithAliasName();
     testResolveBoardQueryPlan();
     console.log("test-schedule-course-match passed");
 }

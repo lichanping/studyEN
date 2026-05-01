@@ -3,12 +3,9 @@
  * TDD：测试核心逻辑，不依赖浏览器 DOM 或网络
  */
 
+const { normalizeStudentName } = require("./student-name-alias.js");
+
 // ============ Mock 函数 ============
-function normalizeStudentName(name) {
-    const STUDENT_NAME_ALIAS = { "硕硕": "俞新硕" };
-    const trimmed = String(name || "").trim();
-    return STUDENT_NAME_ALIAS[trimmed] || trimmed;
-}
 
 function toQuotaNumber(value) {
     const raw = String(value ?? "").trim();
