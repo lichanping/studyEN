@@ -68,6 +68,21 @@
         };
     }
 
+    function resolveBoardQueryPlan(hostname) {
+        var host = String(hostname || "").trim().toLowerCase();
+        var isLocal = host === "localhost" || host === "127.0.0.1" || host === "::1";
+        if (isLocal) {
+            return {
+                url: "/.netlify/functions/schedule-board",
+                useProxy: true
+            };
+        }
+        return {
+            url: "https://apiv2.lxll.com/customer/training/board",
+            useProxy: false
+        };
+    }
+
     function hasScheduledCourse(index, targetCourse) {
         if (!index || !index.keys) return false;
         var key = buildCourseMatchKey(targetCourse);
@@ -79,7 +94,8 @@
         normalizeBoardRecord: normalizeBoardRecord,
         buildCourseMatchKey: buildCourseMatchKey,
         createBoardMatchIndex: createBoardMatchIndex,
-        hasScheduledCourse: hasScheduledCourse
+        hasScheduledCourse: hasScheduledCourse,
+        resolveBoardQueryPlan: resolveBoardQueryPlan
     };
 
     globalScope.ScheduleCourseMatch = api;

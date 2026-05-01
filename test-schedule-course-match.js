@@ -3,7 +3,8 @@ const {
     normalizeBoardRecord,
     buildCourseMatchKey,
     createBoardMatchIndex,
-    hasScheduledCourse
+    hasScheduledCourse,
+    resolveBoardQueryPlan
 } = require("./schedule-course-match.js");
 
 function testNormalizeBoardRecord() {
@@ -62,10 +63,25 @@ function testHasScheduledCourse() {
     );
 }
 
+function testResolveBoardQueryPlan() {
+    const local = resolveBoardQueryPlan("localhost");
+    assert.deepStrictEqual(local, {
+        url: "/.netlify/functions/schedule-board",
+        useProxy: true
+    });
+
+    const prod = resolveBoardQueryPlan("h5.lxll.com");
+    assert.deepStrictEqual(prod, {
+        url: "https://apiv2.lxll.com/customer/training/board",
+        useProxy: false
+    });
+}
+
 function run() {
     testNormalizeBoardRecord();
     testBuildCourseMatchKey();
     testHasScheduledCourse();
+    testResolveBoardQueryPlan();
     console.log("test-schedule-course-match passed");
 }
 

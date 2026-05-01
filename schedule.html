@@ -1199,7 +1199,6 @@ entryKey: 课次标识（用于区分排课项）</span>
     const EXTRA_ENTRIES_STORAGE_KEY = "schedule-extra-entries-v1";
     const SCHEDULE_CONFIG_OVERRIDE_KEY = "schedule-config-override-v1";
     const CUSTOM_STUDENTS_STORAGE_KEY = "custom-students-v1";
-    const BOARD_TRAINING_API = "https://apiv2.lxll.com/customer/training/board";
     const BOARD_DEFAULT_X_UA = "ct=2&v=5.0.96";
     let cancellationState = {};
     let timeOverrideState = {};
@@ -1406,6 +1405,17 @@ entryKey: 课次标识（用于区分排课项）</span>
         return { text: "查询中", className: "state-loading" };
     }
 
+    function rerenderScheduleViewsForBoardState() {
+        const datePicker = document.getElementById("datePicker");
+        const baseDate = String(datePicker?.value || "").trim();
+        if (!baseDate) return;
+
+        const config = getConfig();
+        const dayMap = buildDayMap(config.entries || []);
+        renderToday(dayMap, baseDate);
+        renderWeek(dayMap, baseDate);
+    }
+
     async function refreshBoardScheduleMatches() {
         if (!window.ScheduleCourseMatch || typeof window.ScheduleCourseMatch.createBoardMatchIndex !== "function") {
             setBoardScheduleMatchState({
@@ -1415,6 +1425,7 @@ entryKey: 课次标识（用于区分排课项）</span>
                 updatedAt: "",
                 errorMessage: "排课匹配模块未加载"
             });
+            rerenderScheduleViewsForBoardState();
             window.dispatchEvent(new Event("schedule-updated"));
             return;
         }
@@ -1430,6 +1441,7 @@ entryKey: 课次标识（用于区分排课项）</span>
                 updatedAt: "",
                 errorMessage: "缺少登录 token"
             });
+            rerenderScheduleViewsForBoardState();
             window.dispatchEvent(new Event("schedule-updated"));
             return;
         }
@@ -1441,21 +1453,37 @@ entryKey: 课次标识（用于区分排课项）</span>
             updatedAt: "",
             errorMessage: ""
         });
+        rerenderScheduleViewsForBoardState();
         window.dispatchEvent(new Event("schedule-updated"));
 
         try {
-            const response = await fetch(BOARD_TRAINING_API, {
-                method: "GET",
-                headers: {
-                    "accept": "application/json, text/plain, */*",
-                    "authorization": "Bearer " + token,
-                    "origin": "https://h5.lxll.com",
-                    "referer": "https://h5.lxll.com/",
-                    "x-token-c": token,
-                    "x-user-id": userId,
-                    "x-ua": BOARD_DEFAULT_X_UA
-                }
-            });
+            const plan = (typeof window.ScheduleCourseMatch.resolveBoardQueryPlan === "function")
+                ? window.ScheduleCourseMatch.resolveBoardQueryPlan(window.location.hostname)
+                : { url: "https://apiv2.lxll.com/customer/training/board", useProxy: false };
+
+            const response = plan.useProxy
+                ? await fetch(plan.url, {
+                    method: "POST",
+                    headers: {
+                        "accept": "application/json, text/plain, */*",
+                        "content-type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        token,
+                        userId,
+                        xUa: BOARD_DEFAULT_X_UA
+                    })
+                })
+                : await fetch(plan.url, {
+                    method: "GET",
+                    headers: {
+                        "accept": "application/json, text/plain, */*",
+                        "authorization": "Bearer " + token,
+                        "x-token-c": token,
+                        "x-user-id": userId,
+                        "x-ua": BOARD_DEFAULT_X_UA
+                    }
+                });
 
             if (!response.ok) {
                 throw new Error("首页排课接口失败: " + response.status);
@@ -1484,6 +1512,7 @@ entryKey: 课次标识（用于区分排课项）</span>
             window.showToast?.("首页排课查询失败，状态标记将显示未获取", 4200);
         }
 
+        rerenderScheduleViewsForBoardState();
         window.dispatchEvent(new Event("schedule-updated"));
     }
 
