@@ -2624,6 +2624,77 @@ entryKey: 课次标识（用于区分排课项）</span>
         return raw === "0" || (Number.isFinite(numeric) && numeric === 0);
     }
 
+    function toQuotaNumber(value) {
+        const raw = String(value ?? "").trim();
+        if (!raw) return null;
+        const normalized = raw.replace(/[^\d.+-]/g, "");
+        if (!normalized) return null;
+        const numeric = Number(normalized);
+        return Number.isFinite(numeric) ? numeric : null;
+    }
+
+    function formatQuotaNeed(value) {
+        const numeric = Number(value) || 0;
+        if (Math.abs(numeric - Math.round(numeric)) < 0.00001) return String(Math.round(numeric));
+        return String(Number(numeric.toFixed(2)));
+    }
+
+    function getQuotaScopeByDate(baseDate) {
+        const picked = String(baseDate || "").trim() || dateToYmd(new Date());
+        const weekStart = window.getMondayOfWeek?.(picked) || picked;
+        const config = window.getConfig?.() || { entries: [] };
+        const recurringEntries = Array.isArray(config.entries) ? config.entries : [];
+
+        const mergedEntries = [];
+        let recurringCount = 0;
+        let extraCount = 0;
+
+        for (let offset = 0; offset < 7; offset += 1) {
+            const dateValue = window.addDays?.(weekStart, offset) || weekStart;
+            const dayName = window.getDayFromDateInput?.(dateValue);
+
+            recurringEntries.forEach((entry) => {
+                const days = Array.isArray(entry?.days) ? entry.days : [];
+                if (!dayName || !days.includes(dayName)) return;
+
+                const durationMinutes = Number(window.resolveDurationMinutes?.(entry, dateValue) ?? entry?.durationMinutes);
+                if (!Number.isFinite(durationMinutes) || durationMinutes <= 0) return;
+
+                recurringCount += 1;
+                mergedEntries.push({
+                    student: String(entry?.student || "").trim(),
+                    course: String(window.resolveCourse?.(entry, dateValue) || entry?.course || "").trim(),
+                    durationMinutes,
+                    dateValue
+                });
+            });
+
+            const extras = window.getExtraEntriesForDate?.(dateValue) || [];
+            extras.forEach((entry) => {
+                const durationMinutes = Number(window.resolveDurationMinutes?.(entry, dateValue) ?? entry?.durationMinutes);
+                if (!Number.isFinite(durationMinutes) || durationMinutes <= 0) return;
+
+                extraCount += 1;
+                mergedEntries.push({
+                    student: String(entry?.student || "").trim(),
+                    course: String(window.resolveCourse?.(entry, dateValue) || entry?.course || "").trim(),
+                    durationMinutes,
+                    dateValue
+                });
+            });
+        }
+
+        const weekEnd = window.addDays?.(weekStart, 6) || weekStart;
+        return {
+            weekStart,
+            weekEnd,
+            recurringCount,
+            extraCount,
+            totalCount: mergedEntries.length,
+            entries: mergedEntries
+        };
+    }
+
     function formatFieldLabels(fields) {
         return (fields || []).map((field) => FIELD_LABEL_MAP[field] || field).join("、");
     }
@@ -2636,30 +2707,48 @@ entryKey: 课次标识（用于区分排课项）</span>
             if (!displayName) continue;
 
             const queryName = normalizeStudentName(displayName);
-            const durationHours = Number(entry?.durationMinutes) / 60;
+            const durationMinutes = Number(entry?.durationMinutes);
+            if (!Number.isFinite(durationMinutes) || durationMinutes <= 0) continue;
+            const durationHours = durationMinutes / 60;
 
             if (!needsMap.has(queryName)) {
                 needsMap.set(queryName, {
                     displayNames: new Set(),
-                    requiredFields: new Set()
+                    requiredQuota30: 0,
+                    requiredQuota60: 0,
+                    maxDurationMinutes: 0
                 });
             }
 
             const target = needsMap.get(queryName);
             target.displayNames.add(displayName);
+            // 陪练时长：取本周该学生所有排课中最长的课程时长
+            target.maxDurationMinutes = Math.max(target.maxDurationMinutes, durationMinutes);
 
-            if (Math.abs(durationHours - 0.5) < 0.001) {
-                target.requiredFields.add("quota30");
-            } else if (Math.abs(durationHours - 1) < 0.001) {
-                target.requiredFields.add("quota60");
+            if (Math.abs(durationMinutes - 30) < 0.001) {
+                target.requiredQuota30 += 1;
+            } else if (Math.abs(durationMinutes - 60) < 0.001) {
+                target.requiredQuota60 += 1;
             } else {
-                // 兜底：非 0.5/1 小时课程同时检查 30/60 分钟余额
-                target.requiredFields.add("quota30");
-                target.requiredFields.add("quota60");
+                // 兜底：非常规时长按比例折算到 30 分钟课时。
+                target.requiredQuota30 += (durationMinutes / 30);
             }
         }
 
+        // 计算每个学生的陪练时长需求（取最长课程时长）
+        for (const requirement of needsMap.values()) {
+            requirement.requiredAccompanyHours = (requirement.maxDurationMinutes || 0) / 60;
+        }
+
         return needsMap;
+    }
+
+    function getRequiredFields(requirement) {
+        const fields = [];
+        if ((Number(requirement?.requiredQuota30) || 0) > 0) fields.push("quota30");
+        if ((Number(requirement?.requiredQuota60) || 0) > 0) fields.push("quota60");
+        if ((Number(requirement?.requiredAccompanyHours) || 0) > 0) fields.push("quotaAccompany");
+        return fields;
     }
 
     async function copyToClipboard(text) {
@@ -3049,7 +3138,7 @@ entryKey: 课次标识（用于区分排课项）</span>
         };
     }
 
-    async function checkQuotaFromSchedule(entries) {
+    async function checkQuotaFromSchedule(scope) {
         let token = localStorage.getItem("x-token-c");
         if (!token) {
             await safeLoginApp().catch(() => {});
@@ -3060,7 +3149,8 @@ entryKey: 课次标识（用于区分排课项）</span>
             }
         }
 
-        const quotaNeeds = collectQuotaNeeds(entries);
+        const finalEntries = Array.isArray(scope?.entries) ? scope.entries : [];
+        const quotaNeeds = collectQuotaNeeds(finalEntries);
         if (quotaNeeds.size === 0) {
             window.showToast?.("未找到可检查的学员");
             return;
@@ -3095,10 +3185,18 @@ entryKey: 课次标识（用于区分排课项）</span>
         );
         const checkedRows = [];
         const anomalies = [];
+        const scopeLabel = scope
+            ? `${scope.weekStart}~${scope.weekEnd}，基础排课${scope.recurringCount}条 + 临时加课${scope.extraCount}条 = ${scope.totalCount}条`
+            : "";
 
         for (const [queryName, requirement] of quotaNeeds.entries()) {
             const item = apiMap.get(queryName);
             const displayName = [...requirement.displayNames].join("/");
+            const requiredFields = getRequiredFields(requirement);
+
+            const requiredQuota30 = Number(requirement.requiredQuota30 || 0);
+            const requiredQuota60 = Number(requirement.requiredQuota60 || 0);
+            const requiredAccompanyHours = Number(requirement.requiredAccompanyHours || 0);
 
             if (!item) {
                 checkedRows.push({
@@ -3109,7 +3207,11 @@ entryKey: 课次标识（用于区分排课项）</span>
                     quotaAccompany: "-",
                     statusType: "missing",
                     statusText: "系统未查到",
-                    zeroFields: ["quota30", "quota60", "quotaAccompany"]
+                    zeroFields: requiredFields,
+                    requiredQuota30,
+                    requiredQuota60,
+                    requiredAccompanyHours,
+                    sourceScopeLabel: scopeLabel
                 });
 
                 anomalies.push({
@@ -3118,25 +3220,46 @@ entryKey: 课次标识（用于区分排课项）</span>
                     quota30: "-",
                     quota60: "-",
                     quotaAccompany: "-",
-                    zeroFields: ["quota30", "quota60", "quotaAccompany"],
+                    zeroFields: requiredFields,
+                    requiredQuota30,
+                    requiredQuota60,
+                    requiredAccompanyHours,
                     isMissingStudent: true
                 });
                 continue;
             }
 
             const zeroFields = [];
+            const issueTexts = [];
 
-            for (const field of requirement.requiredFields) {
-                if (isZero(item?.[field])) zeroFields.push(field);
+            const quota30Value = toQuotaNumber(item?.quota30);
+            const quota60Value = toQuotaNumber(item?.quota60);
+            const quotaAccompanyValue = toQuotaNumber(item?.quotaAccompany);
+
+            if (requiredQuota30 > 0) {
+                if (quota30Value === null || quota30Value + 0.00001 < requiredQuota30) {
+                    zeroFields.push("quota30");
+                    issueTexts.push(`30分钟课时不足（剩余${item?.quota30 ?? "-"}，需求${formatQuotaNeed(requiredQuota30)}）`);
+                }
             }
 
-            if (isZero(item?.quotaAccompany)) {
-                zeroFields.push("quotaAccompany");
+            if (requiredQuota60 > 0) {
+                if (quota60Value === null || quota60Value + 0.00001 < requiredQuota60) {
+                    zeroFields.push("quota60");
+                    issueTexts.push(`60分钟课时不足（剩余${item?.quota60 ?? "-"}，需求${formatQuotaNeed(requiredQuota60)}）`);
+                }
+            }
+
+            if (requiredAccompanyHours > 0) {
+                if (quotaAccompanyValue === null || quotaAccompanyValue + 0.00001 < requiredAccompanyHours) {
+                    zeroFields.push("quotaAccompany");
+                    issueTexts.push(`陪练服务时长不足（剩余${item?.quotaAccompany ?? "-"}，需求${formatQuotaNeed(requiredAccompanyHours)}小时）`);
+                }
             }
 
             const statusType = zeroFields.length > 0 ? "warn" : "ok";
             const statusText = zeroFields.length > 0
-                ? ("异常：" + formatFieldLabels(zeroFields))
+                ? ("异常：" + issueTexts.join("；"))
                 : "正常";
 
             checkedRows.push({
@@ -3147,7 +3270,11 @@ entryKey: 课次标识（用于区分排课项）</span>
                 quotaAccompany: item?.quotaAccompany ?? "-",
                 statusType,
                 statusText,
-                zeroFields
+                zeroFields,
+                requiredQuota30,
+                requiredQuota60,
+                requiredAccompanyHours,
+                sourceScopeLabel: scopeLabel
             });
 
             if (zeroFields.length > 0) {
@@ -3157,7 +3284,11 @@ entryKey: 课次标识（用于区分排课项）</span>
                     quota30: item?.quota30,
                     quota60: item?.quota60,
                     quotaAccompany: item?.quotaAccompany,
-                    zeroFields
+                    zeroFields,
+                    requiredQuota30,
+                    requiredQuota60,
+                    requiredAccompanyHours,
+                    issueText: issueTexts.join("；")
                 });
             }
         }
@@ -3176,7 +3307,7 @@ entryKey: 课次标识（用于区分排课项）</span>
             if (entry.isMissingStudent) {
                 return `学员${displayName}${systemNameTip}在系统未查到，需核对学员名称；待核对课时：${missingFieldsText}`;
             }
-            return `请帮忙为${displayName}${systemNameTip}充值：缺失课时[${missingFieldsText}]；当前"30分钟剩余"为 ${entry.quota30 ?? "-"}、"60分钟剩余"为 ${entry.quota60 ?? "-"}，"陪练服务时长剩余"为${entry.quotaAccompany ?? "-"}`;
+            return `请帮忙为${displayName}${systemNameTip}充值：${entry.issueText || ("缺失课时[" + missingFieldsText + "]")}；当前"30分钟剩余"为 ${entry.quota30 ?? "-"}、"60分钟剩余"为 ${entry.quota60 ?? "-"}，"陪练服务时长剩余"为${entry.quotaAccompany ?? "-"}`;
         });
 
         const alertMsg = `发现异常学生(${anomalies.length})：\n${detailLines.join("\n")}`;
@@ -3303,8 +3434,10 @@ entryKey: 课次标识（用于区分排课项）</span>
 
     async function runScheduleQuotaCheck() {
         try {
-            const config = getConfig();
-            await checkQuotaFromSchedule(config.entries || []);
+            const datePicker = document.getElementById("datePicker");
+            const baseDate = String(datePicker?.value || "").trim() || dateToYmd(new Date());
+            const scope = getQuotaScopeByDate(baseDate);
+            await checkQuotaFromSchedule(scope);
         } catch (error) {
             console.error("课时检查失败:", error);
             window.showToast?.("课时检查失败，请稍后重试");
