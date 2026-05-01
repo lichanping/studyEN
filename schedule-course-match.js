@@ -1,7 +1,17 @@
 (function (globalScope) {
     "use strict";
 
+    var studentNameAliasApi = null;
+    if (typeof module !== "undefined" && module.exports && typeof require === "function") {
+        studentNameAliasApi = require("./student-name-alias.js");
+    } else if (globalScope.StudentNameAlias) {
+        studentNameAliasApi = globalScope.StudentNameAlias;
+    }
+
     function normalizeStudentName(value) {
+        if (studentNameAliasApi && typeof studentNameAliasApi.normalizeStudentName === "function") {
+            return studentNameAliasApi.normalizeStudentName(value);
+        }
         return String(value || "").trim();
     }
 

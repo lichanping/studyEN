@@ -1187,6 +1187,7 @@ entryKey: 课次标识（用于区分排课项）</span>
   ]
 }
 </script>
+<script src="./student-name-alias.js?v=20260501"></script>
 <script src="./schedule-course-match.js?v=20260501"></script>
 
 <script>
@@ -2816,10 +2817,6 @@ entryKey: 课次标识（用于区分排课项）</span>
         return safeLoginApp();
     }
 
-    const STUDENT_NAME_ALIAS = {
-        "硕硕": "俞新硕"
-    };
-
     const FIELD_LABEL_MAP = {
         quota30: "30分钟课时",
         quota60: "60分钟课时",
@@ -2842,8 +2839,10 @@ entryKey: 课次标识（用于区分排课项）</span>
     const SCHEDULE_SALARY_START_DATE = "2026-04-01";
 
     function normalizeStudentName(name) {
-        const trimmed = String(name || "").trim();
-        return STUDENT_NAME_ALIAS[trimmed] || trimmed;
+        if (window.StudentNameAlias && typeof window.StudentNameAlias.normalizeStudentName === "function") {
+            return window.StudentNameAlias.normalizeStudentName(name);
+        }
+        return String(name || "").trim();
     }
 
     function isZero(value) {
