@@ -4,8 +4,10 @@ const {
     buildCourseMatchKey,
     createBoardMatchIndex,
     hasScheduledCourse,
-    resolveBoardQueryPlan
-} = require("./schedule-course-match.js");
+    getCourseMatchState,
+    resolveBoardQueryPlan,
+    resolveCompletedQueryPlan
+} = require("../schedule-course-match.js");
 
 function testNormalizeBoardRecord() {
     const row = {
@@ -18,7 +20,8 @@ function testNormalizeBoardRecord() {
     assert.deepStrictEqual(actual, {
         student: "陈怡睿",
         date: "2026-05-02",
-        durationMinutes: 30
+        durationMinutes: 30,
+        matchState: "scheduled"
     });
 }
 
@@ -80,6 +83,46 @@ function testHasScheduledCourseWithAliasName() {
     );
 }
 
+function testGetCourseMatchStateShouldPreferCompleted() {
+    const boardList = [
+        {
+            scheduleTime: Date.parse("2026-05-02T10:00:00+08:00"),
+            type: "MINUTE_30",
+            student: { name: "陈怡睿" },
+            status: "scheduled"
+        },
+        {
+            scheduleTime: Date.parse("2026-05-02T10:30:00+08:00"),
+            type: "MINUTE_30",
+            student: { name: "陈怡睿" },
+            statusText: "已完成"
+        }
+    ];
+
+    const index = createBoardMatchIndex(boardList);
+    assert.strictEqual(
+        getCourseMatchState(index, { student: "陈怡睿", date: "2026-05-02", durationMinutes: 30 }),
+        "completed"
+    );
+}
+
+function testGetCourseMatchStateShouldReturnNoneWhenNoMatch() {
+    const boardList = [
+        {
+            scheduleTime: Date.parse("2026-05-02T10:00:00+08:00"),
+            type: "MINUTE_30",
+            student: { name: "陈怡睿" },
+            statusText: "已完成"
+        }
+    ];
+
+    const index = createBoardMatchIndex(boardList);
+    assert.strictEqual(
+        getCourseMatchState(index, { student: "胡贝妮", date: "2026-05-02", durationMinutes: 30 }),
+        "none"
+    );
+}
+
 function testResolveBoardQueryPlan() {
     const local = resolveBoardQueryPlan("localhost");
     assert.deepStrictEqual(local, {
@@ -100,12 +143,35 @@ function testResolveBoardQueryPlan() {
     });
 }
 
+function testResolveCompletedQueryPlan() {
+    const local = resolveCompletedQueryPlan("localhost");
+    assert.deepStrictEqual(local, {
+        url: "/.netlify/functions/schedule-board?mode=completed",
+        useProxy: true
+    });
+
+    const preview = resolveCompletedQueryPlan("deploy-preview-7--engaid.netlify.app");
+    assert.deepStrictEqual(preview, {
+        url: "/.netlify/functions/schedule-board?mode=completed",
+        useProxy: true
+    });
+
+    const prod = resolveCompletedQueryPlan("h5.lxll.com");
+    assert.deepStrictEqual(prod, {
+        url: "https://apiv2.lxll.com/customer/training/orders?pageNumber=1&pageSize=50&status=COMPLETED",
+        useProxy: false
+    });
+}
+
 function run() {
     testNormalizeBoardRecord();
     testBuildCourseMatchKey();
     testHasScheduledCourse();
     testHasScheduledCourseWithAliasName();
+    testGetCourseMatchStateShouldPreferCompleted();
+    testGetCourseMatchStateShouldReturnNoneWhenNoMatch();
     testResolveBoardQueryPlan();
+    testResolveCompletedQueryPlan();
     console.log("test-schedule-course-match passed");
 }
 
