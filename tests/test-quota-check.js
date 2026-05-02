@@ -3,7 +3,7 @@
  * TDD：测试核心逻辑，不依赖浏览器 DOM 或网络
  */
 
-const { normalizeStudentName } = require("./student-name-alias.js");
+const { normalizeStudentName } = require("../student-name-alias.js");
 
 // ============ Mock 函数 ============
 

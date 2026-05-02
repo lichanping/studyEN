@@ -1,5 +1,5 @@
 const assert = require("assert");
-const { normalizeStudentName, STUDENT_NAME_ALIAS } = require("./student-name-alias.js");
+const { normalizeStudentName, STUDENT_NAME_ALIAS } = require("../student-name-alias.js");
 
 function testAliasMap() {
     assert.strictEqual(STUDENT_NAME_ALIAS["硕硕"], "俞新硕");

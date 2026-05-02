@@ -547,6 +547,12 @@
             border-color: #a7c9b2;
         }
 
+        .schedule-state-label.state-completed {
+            color: #1f4f8f;
+            background: #e3ecfb;
+            border-color: #a8c0ea;
+        }
+
         .schedule-state-label.state-unscheduled {
             color: #8b2e2e;
             background: #fde8e8;
@@ -571,6 +577,12 @@
                 color: #b9e6c6;
                 background: #294437;
                 border-color: #3f6d52;
+            }
+
+            .schedule-state-label.state-completed {
+                color: #cfe1fb;
+                background: #24364f;
+                border-color: #466692;
             }
 
             .schedule-state-label.state-unscheduled {
@@ -1188,7 +1200,7 @@ entryKey: 课次标识（用于区分排课项）</span>
 }
 </script>
 <script src="./student-name-alias.js?v=20260501"></script>
-<script src="./schedule-course-match.js?v=20260501"></script>
+<script src="./schedule-course-match.js?v=20260502"></script>
 
 <script>
     const WEEK_DAYS = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
@@ -1390,13 +1402,18 @@ entryKey: 课次标识（用于区分排课项）</span>
         const state = boardScheduleMatchState;
 
         if (state.status === "ready" && state.index && window.ScheduleCourseMatch && typeof window.ScheduleCourseMatch.hasScheduledCourse === "function") {
-            const matched = window.ScheduleCourseMatch.hasScheduledCourse(
-                state.index,
-                buildLocalCourseMatchTarget(entry, dateValue)
-            );
-            return matched
-                ? { text: "已排课", className: "state-scheduled" }
-                : { text: "未排课", className: "state-unscheduled" };
+            const target = buildLocalCourseMatchTarget(entry, dateValue);
+            const matchState = (typeof window.ScheduleCourseMatch.getCourseMatchState === "function")
+                ? window.ScheduleCourseMatch.getCourseMatchState(state.index, target)
+                : (window.ScheduleCourseMatch.hasScheduledCourse(state.index, target) ? "scheduled" : "none");
+
+            if (matchState === "completed") {
+                return { text: "已完成", className: "state-completed" };
+            }
+            if (matchState === "scheduled") {
+                return { text: "已排课", className: "state-scheduled" };
+            }
+            return { text: "未排课", className: "state-unscheduled" };
         }
 
         if (state.status === "error" || state.status === "unavailable") {
