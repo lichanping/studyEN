@@ -38,6 +38,11 @@ export default async (req) => {
         return jsonResponse({ error: "Invalid JSON body" }, 400);
     }
 
+    const reqUrl = new URL(req.url);
+    const modeFromQuery = sanitizeText(reqUrl.searchParams.get("mode"), 64).toLowerCase();
+    const modeFromBody = sanitizeText(body?.mode, 64).toLowerCase();
+    const mode = modeFromQuery || modeFromBody || "board";
+
     const token = sanitizeText(body?.token, 4096);
     const userId = sanitizeText(body?.userId, 64);
     const xUa = sanitizeText(body?.xUa, 128) || "ct=2&v=5.0.96";
@@ -56,8 +61,12 @@ export default async (req) => {
         headers["x-user-id"] = userId;
     }
 
+    const upstreamUrl = mode === "completed"
+        ? "https://apiv2.lxll.com/customer/training/orders?pageNumber=1&pageSize=50&status=COMPLETED"
+        : "https://apiv2.lxll.com/customer/training/board";
+
     try {
-        const resp = await fetch("https://apiv2.lxll.com/customer/training/board", {
+        const resp = await fetch(upstreamUrl, {
             method: "GET",
             headers
         });
