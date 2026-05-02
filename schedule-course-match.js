@@ -131,6 +131,21 @@
         };
     }
 
+    function resolveCompletedQueryPlan(hostname) {
+        var host = String(hostname || "").trim().toLowerCase();
+        var shouldDirectFetch = host === "h5.lxll.com";
+        if (shouldDirectFetch) {
+            return {
+                url: "https://apiv2.lxll.com/customer/training/orders?pageNumber=1&pageSize=50&status=COMPLETED",
+                useProxy: false
+            };
+        }
+        return {
+            url: "/.netlify/functions/schedule-board?mode=completed",
+            useProxy: true
+        };
+    }
+
     function getCourseMatchState(index, targetCourse) {
         if (!index || !index.keys) return "none";
         var key = buildCourseMatchKey(targetCourse);
@@ -152,7 +167,8 @@
         createBoardMatchIndex: createBoardMatchIndex,
         getCourseMatchState: getCourseMatchState,
         hasScheduledCourse: hasScheduledCourse,
-        resolveBoardQueryPlan: resolveBoardQueryPlan
+        resolveBoardQueryPlan: resolveBoardQueryPlan,
+        resolveCompletedQueryPlan: resolveCompletedQueryPlan
     };
 
     globalScope.ScheduleCourseMatch = api;

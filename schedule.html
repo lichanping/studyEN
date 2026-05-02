@@ -1200,7 +1200,7 @@ entryKey: 课次标识（用于区分排课项）</span>
 }
 </script>
 <script src="./student-name-alias.js?v=20260501"></script>
-<script src="./schedule-course-match.js?v=20260502"></script>
+<script src="./schedule-course-match.js?v=20260503"></script>
 
 <script>
     const WEEK_DAYS = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
@@ -1479,6 +1479,10 @@ entryKey: 课次标识（用于区分排课项）</span>
                 ? window.ScheduleCourseMatch.resolveBoardQueryPlan(window.location.hostname)
                 : { url: "https://apiv2.lxll.com/customer/training/board", useProxy: false };
 
+            const completedPlan = (typeof window.ScheduleCourseMatch.resolveCompletedQueryPlan === "function")
+                ? window.ScheduleCourseMatch.resolveCompletedQueryPlan(window.location.hostname)
+                : { url: "https://apiv2.lxll.com/customer/training/orders?pageNumber=1&pageSize=50&status=COMPLETED", useProxy: false };
+
             const response = plan.useProxy
                 ? await fetch(plan.url, {
                     method: "POST",
@@ -1503,13 +1507,44 @@ entryKey: 课次标识（用于区分排课项）</span>
                     }
                 });
 
+            const completedResponse = completedPlan.useProxy
+                ? await fetch(completedPlan.url, {
+                    method: "POST",
+                    headers: {
+                        "accept": "application/json, text/plain, */*",
+                        "content-type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        token,
+                        userId,
+                        xUa: BOARD_DEFAULT_X_UA,
+                        mode: "completed"
+                    })
+                })
+                : await fetch(completedPlan.url, {
+                    method: "GET",
+                    headers: {
+                        "accept": "application/json, text/plain, */*",
+                        "authorization": "Bearer " + token,
+                        "x-token-c": token,
+                        "x-user-id": userId,
+                        "x-ua": BOARD_DEFAULT_X_UA
+                    }
+                });
+
             if (!response.ok) {
                 throw new Error("首页排课接口失败: " + response.status);
             }
 
+            if (!completedResponse.ok) {
+                throw new Error("训练记录已完成接口失败: " + completedResponse.status);
+            }
+
             const data = await response.json();
             const list = Array.isArray(data?.data) ? data.data : [];
-            const index = window.ScheduleCourseMatch.createBoardMatchIndex(list);
+            const completedData = await completedResponse.json();
+            const completedList = Array.isArray(completedData?.data?.data) ? completedData.data.data : [];
+            const index = window.ScheduleCourseMatch.createBoardMatchIndex(list.concat(completedList));
 
             setBoardScheduleMatchState({
                 status: "ready",

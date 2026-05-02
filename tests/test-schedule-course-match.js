@@ -5,7 +5,8 @@ const {
     createBoardMatchIndex,
     hasScheduledCourse,
     getCourseMatchState,
-    resolveBoardQueryPlan
+    resolveBoardQueryPlan,
+    resolveCompletedQueryPlan
 } = require("../schedule-course-match.js");
 
 function testNormalizeBoardRecord() {
@@ -142,6 +143,26 @@ function testResolveBoardQueryPlan() {
     });
 }
 
+function testResolveCompletedQueryPlan() {
+    const local = resolveCompletedQueryPlan("localhost");
+    assert.deepStrictEqual(local, {
+        url: "/.netlify/functions/schedule-board?mode=completed",
+        useProxy: true
+    });
+
+    const preview = resolveCompletedQueryPlan("deploy-preview-7--engaid.netlify.app");
+    assert.deepStrictEqual(preview, {
+        url: "/.netlify/functions/schedule-board?mode=completed",
+        useProxy: true
+    });
+
+    const prod = resolveCompletedQueryPlan("h5.lxll.com");
+    assert.deepStrictEqual(prod, {
+        url: "https://apiv2.lxll.com/customer/training/orders?pageNumber=1&pageSize=50&status=COMPLETED",
+        useProxy: false
+    });
+}
+
 function run() {
     testNormalizeBoardRecord();
     testBuildCourseMatchKey();
@@ -150,6 +171,7 @@ function run() {
     testGetCourseMatchStateShouldPreferCompleted();
     testGetCourseMatchStateShouldReturnNoneWhenNoMatch();
     testResolveBoardQueryPlan();
+    testResolveCompletedQueryPlan();
     console.log("test-schedule-course-match passed");
 }
 
