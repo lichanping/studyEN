@@ -6,6 +6,7 @@
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#e8e4dc">
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1d1e21">
     <title>排课总览</title>
+    <script src="./meeting-config.js"></script>
     <script type="module">
         import * as commonFunctions from './commonFunctions.js?v=20260402-2';
         commonFunctions.checkLoginStatus();
@@ -1838,7 +1839,7 @@ entryKey: 课次标识（用于区分排课项）</span>
             "🔔 重要提醒：如需取消或调整上课时间，请至少提前4小时告知学员服务中心负责人，否则系统将无法更改，仍会消耗课时。\n" +
             "🗣️ 上课小贴士：请准时进入会议室，准备好摄像头和一杯水🍵。\n" +
             "💬 请您看到消息后回复确认👌。\n\n" +
-            "📞 #腾讯会议：762-3777-6304";
+            "📞 " + window.APP_MEETING_CONFIG.tencentMeetingTag;
     }
 
     function getMondayOfWeek(dateValue) {
@@ -3919,7 +3920,7 @@ entryKey: 课次标识（用于区分排课项）</span>
 
     function buildAntiForgettingNoticeMessage(clock) {
         return "【抗遗忘温馨提醒-" + clock + "】\n" +
-            "👍 #腾讯会议：762-3777-6304\n" +
+            "👍 " + window.APP_MEETING_CONFIG.tencentMeetingTag + "\n" +
             "⏰ 请准时参加会议，如有特殊情况无法参加，请提前告知！\n" +
             "🔔 若未按约定时间参加复习，请自主复习并打卡至学习群📱\n" +
             "🔒 仅在当天有收到提醒通知才需入会。\n" +
