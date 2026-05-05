@@ -41,6 +41,10 @@
         return numeric;
     }
 
+    function effectiveRollValue(rawValue) {
+        return rawValue === 0 ? 10 : rawValue;
+    }
+
     function toTimeMs(value) {
         var ts = new Date(value).getTime();
         return Number.isFinite(ts) ? ts : null;
@@ -52,6 +56,7 @@
         room.seats[seatId] = null;
         delete room.seatResults[seatId];
         delete room.rollTotals[userId];
+        if (room.bustStatus) delete room.bustStatus[userId];
     }
 
     function createInitialPlayRoomState() {
@@ -60,6 +65,7 @@
             seats: new Array(SEAT_COUNT).fill(null),
             seatResults: {},
             rollTotals: {},
+            bustStatus: {},
             messages: [],
             updatedAt: ""
         };
@@ -162,18 +168,32 @@
                 room.updatedAt = now;
                 return room;
             }
-            room.seatResults[rollSeatId] = rollValue;
-            room.rollTotals[userId] = (Number(room.rollTotals[userId]) || 0) + rollValue;
+            var effectiveValue = effectiveRollValue(rollValue);
+            room.seatResults[rollSeatId] = effectiveValue;
+            room.rollTotals[userId] = (Number(room.rollTotals[userId]) || 0) + effectiveValue;
             room.seats[rollSeatId].lastSeenAt = now;
+            var rollName = room.seats[rollSeatId].profile.name;
+            var rollTotal = room.rollTotals[userId];
             appendMessage(
                 room,
                 buildMessage(
                     "系统",
-                    room.seats[rollSeatId].profile.name + " 麦序机摇到 " + rollValue + "，累计 " + room.rollTotals[userId],
+                    rollName + " 麦序机摇到 " + effectiveValue + "，累计 " + rollTotal,
                     now,
                     true
                 )
             );
+            if (rollTotal > 21) {
+                if (!room.bustStatus) room.bustStatus = {};
+                room.bustStatus[userId] = "bust";
+                appendMessage(room, buildMessage("系统", rollName + " 爆牌了！累计 " + rollTotal + "，超过21点 💥", now, true));
+            } else if (rollTotal === 21) {
+                if (!room.bustStatus) room.bustStatus = {};
+                room.bustStatus[userId] = "win";
+                appendMessage(room, buildMessage("系统", rollName + " 恭喜！正好21点，最高分！🎉", now, true));
+            } else {
+                if (room.bustStatus) delete room.bustStatus[userId];
+            }
             room.updatedAt = now;
             return room;
         }
@@ -183,6 +203,7 @@
             if (clearSeatId !== null) {
                 room.rollTotals[userId] = 0;
                 delete room.seatResults[clearSeatId];
+                if (room.bustStatus) delete room.bustStatus[userId];
                 appendMessage(room, buildMessage("系统", room.seats[clearSeatId].profile.name + " 已清零", now, true));
             }
             room.updatedAt = now;
@@ -234,6 +255,7 @@
             seats: room.seats,
             seatResults: room.seatResults,
             rollTotals: room.rollTotals,
+            bustStatus: room.bustStatus || {},
             messages: visibleMessages,
             updatedAt: room.updatedAt
         };

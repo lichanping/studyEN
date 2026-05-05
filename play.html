@@ -271,6 +271,54 @@
             .toolbar-clear-btn { min-width: 46px; padding: 0 8px; font-size: 12px; }
         }
 
+        /* 爆牌/胜利 座位状态 */
+        .seat.bust {
+            border-color: rgba(239, 68, 68, 0.6) !important;
+            box-shadow: 0 0 18px rgba(239, 68, 68, 0.35);
+            animation: bustShake 0.5s ease;
+        }
+        .seat.bust .seat-meta { color: #f87171 !important; }
+        .seat.win {
+            border-color: rgba(251, 191, 36, 0.8) !important;
+            box-shadow: 0 0 22px rgba(251, 191, 36, 0.5);
+        }
+        .seat.win .seat-meta { color: #fde68a !important; font-weight: 700; }
+        @keyframes bustShake {
+            0%   { transform: translateX(0); }
+            20%  { transform: translateX(-6px) rotate(-2deg); }
+            40%  { transform: translateX(6px) rotate(2deg); }
+            60%  { transform: translateX(-4px) rotate(-1deg); }
+            80%  { transform: translateX(4px) rotate(1deg); }
+            100% { transform: translateX(0) rotate(0); }
+        }
+
+        /* Hint 浮层 */
+        .hint-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.65); backdrop-filter: blur(6px);
+            display: flex; align-items: flex-end; justify-content: center; z-index: 300;
+            opacity: 0; pointer-events: none; transition: opacity 0.25s;
+        }
+        .hint-modal.active { opacity: 1; pointer-events: auto; }
+        .hint-card {
+            background: var(--bg-card); border-radius: 24px 24px 0 0;
+            padding: 28px 24px 40px; width: 100%; max-width: 480px;
+            border-top: 1px solid rgba(255,255,255,0.12);
+            box-shadow: 0 -8px 32px rgba(0,0,0,0.5);
+        }
+        .hint-title {
+            font-size: 18px; font-weight: 700; color: var(--accent-yellow);
+            margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+        }
+        .hint-body { font-size: 14px; color: var(--text-light); line-height: 1.8; }
+        .hint-body li { margin-bottom: 6px; }
+        .hint-close {
+            margin-top: 20px; width: 100%; padding: 12px; border-radius: 16px;
+            background: rgba(255,255,255,0.1); border: none; color: #fff;
+            font-size: 15px; font-weight: 600; cursor: pointer;
+        }
+        .hint-close:active { background: rgba(255,255,255,0.18); }
+
         /* 资料设置弹窗 */
         .profile-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7);
@@ -375,7 +423,23 @@
 
         <div class="toolbar-actions">
             <button class="toolbar-clear-btn" id="toolbarClearButton" type="button" onclick="clearRollTotal()">清零</button>
+            <button class="icon-btn" aria-label="游戏规则" type="button" onclick="openHintModal()">❓</button>
             <button class="icon-btn" aria-label="编辑资料" type="button" onclick="openProfileModal()">👤</button>
+        </div>
+    </div>
+
+    <!-- Hint 规则浮层 -->
+    <div class="hint-modal" id="hintModal" onclick="closeHintModal(event)">
+        <div class="hint-card" onclick="event.stopPropagation()">
+            <div class="hint-title">🎲 麦序机·21点规则</div>
+            <ul class="hint-body">
+                <li>🎯 摇号范围 0–8，摇到 <strong>0 按 10 算</strong></li>
+                <li>✅ 累计正好 <strong>21点</strong>，最高分！</li>
+                <li>💥 累计 <strong>超过 21点</strong>，爆牌，本轮失败</li>
+                <li>🤔 低于 21点，可继续摇或选择收手</li>
+                <li>🔄 点击 <strong>清零</strong> 可重新开始本轮</li>
+            </ul>
+            <button class="hint-close" onclick="closeHintModal()">知道了</button>
         </div>
     </div>
 
@@ -552,6 +616,16 @@
             }
         }
 
+        // Hint 浮层
+        function openHintModal() {
+            document.getElementById('hintModal').classList.add('active');
+        }
+        function closeHintModal(event) {
+            // called without event from "知道了" button, or with backdrop click
+            if (event && event.currentTarget !== event.target) return;
+            document.getElementById('hintModal').classList.remove('active');
+        }
+
         // 打开/切换资料弹窗
         function openProfileModal() {
             const modal = document.getElementById('profileModal');
@@ -624,6 +698,8 @@
             const isOccupied = !!occupant;
             const isCurrentUser = isOccupied && occupant.userId === state.user.userId;
             const total = isOccupied ? (Number(state.roomSnapshot.rollTotals[occupant.userId]) || 0) : null;
+            const bustStatus = state.roomSnapshot.bustStatus || {};
+            const bustState = isOccupied ? (bustStatus[occupant.userId] || '') : '';
 
             let avatarContent = `<svg viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>`;
             if (isOccupied) {
@@ -649,10 +725,10 @@
                     : `<div class="seat-tag">${s.tag || '点击入座'}</div>`;
 
             return `
-            <div class="seat ${isOccupied ? 'occupied' : ''} ${s.type === 'boss' ? 'boss' : ''}" data-id="${s.id}" onclick="handleSeatClick(${s.id})">
+            <div class="seat ${isOccupied ? 'occupied' : ''} ${s.type === 'boss' ? 'boss' : ''} ${isOccupied ? (bustState === 'bust' ? 'bust' : bustState === 'win' ? 'win' : '') : ''}" data-id="${s.id}" onclick="handleSeatClick(${s.id})">
                 <div class="avatar-wrap">${avatarContent}</div>
                 <div class="seat-name">${isOccupied ? ((occupant.profile && occupant.profile.name) || '') : ''}</div>
-                <div class="seat-meta">${isOccupied ? `累计 ${total}` : '&nbsp;'}</div>
+                <div class="seat-meta">${isOccupied ? `累计 ${total}${bustState === 'bust' ? ' 💥' : bustState === 'win' ? ' 🎉' : ''}` : '&nbsp;'}</div>
                 <div class="seat-status">${statusHTML}</div>
             </div>`;
         }
@@ -750,7 +826,7 @@
             let currentNum = 0;
             rollTimer = setInterval(() => {
                 currentNum = Math.floor(Math.random() * 9);
-                overlay.querySelector('.roll-num').textContent = currentNum;
+                overlay.querySelector('.roll-num').textContent = currentNum === 0 ? 10 : currentNum;
             }, 60);
 
             setTimeout(async () => {
@@ -759,6 +835,7 @@
                 overlay.remove();
 
                 const finalNum = Math.floor(Math.random() * 9);
+                screen.textContent = finalNum === 0 ? '10' : String(finalNum);
                 try {
                     await postRoomAction({ type: 'roll', userId: state.user.userId, value: finalNum });
                 } catch (_) {
