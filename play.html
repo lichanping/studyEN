@@ -28,30 +28,12 @@
             overflow: hidden; /* Disable scroll on body */
         }
 
-        /* 房间头部 */
-        .room-header {
-            text-align: center;
-            padding: 30px 16px 20px;
-            background: linear-gradient(180deg, rgba(26, 16, 60, 0.8) 0%, transparent 100%);
-            z-index: 10;
-            flex-shrink: 0;
-        }
-        .room-name {
-            font-size: 26px;
-            font-weight: 800;
-            background: linear-gradient(90deg, #fbbf24, #f59e0b);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
-        }
-
         /* 座位网格 */
         .seats-container {
             flex-shrink: 0;
             max-width: 520px;
             margin: 0 auto;
-            padding: 10px 16px 6px;
+            padding: 14px 16px 6px;
             width: 100%;
         }
         .seat-row { display: flex; justify-content: center; gap: 14px; margin-bottom: 18px; }
@@ -262,7 +244,6 @@
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
         @media (max-width: 420px) {
-            .room-header { padding: 24px 12px 18px; }
             .seats-container { padding: 8px 12px 10px; }
             .seat-row { gap: 10px; margin-bottom: 14px; }
             .toolbar { padding: 12px 12px 20px; }
@@ -392,11 +373,6 @@
         </div>
     </div>
 
-    <!-- 房间头部 -->
-    <div class="room-header">
-        <div class="room-name">👑 童话镇</div>
-    </div>
-
     <!-- 座位网格 -->
     <div class="seats-container" id="seatsContainer">
         <!-- JS 动态渲染 -->
@@ -452,7 +428,11 @@
             user: { userId: '', name: '', gender: 'male', avatar: '' },
             joinedAt: new Date().toISOString(),
             isShaking: false,
-            roomSnapshot: window.PlayRoomState.createInitialPlayRoomState()
+            roomSnapshot: window.PlayRoomState.createInitialPlayRoomState(),
+            localMutationVersion: 0,
+            pendingActionCount: 0,
+            fetchRequestSeq: 0,
+            actionRequestSeq: 0
         };
 
         const ROOM_ID = 'fairy-town';
@@ -519,7 +499,17 @@
             return null;
         }
 
+        function applyOptimisticAction(action) {
+            state.localMutationVersion += 1;
+            state.roomSnapshot = window.PlayRoomState.applyPlayRoomAction(state.roomSnapshot, action, new Date().toISOString());
+            renderSeats();
+            renderChat();
+        }
+
         async function fetchRoomSnapshot() {
+            if (state.pendingActionCount > 0) return;
+            const requestSeq = ++state.fetchRequestSeq;
+            const requestMutationVersion = state.localMutationVersion;
             const response = await fetch(`/.netlify/functions/play-room?roomId=${encodeURIComponent(ROOM_ID)}&joinedAt=${encodeURIComponent(state.joinedAt)}`);
             if (!response.ok) {
                 throw new Error(`load failed: ${response.status}`);
@@ -528,34 +518,45 @@
             if (!data || !data.success || !data.snapshot) {
                 throw new Error('invalid room snapshot');
             }
+            if (state.pendingActionCount > 0) return;
+            if (requestSeq !== state.fetchRequestSeq) return;
+            if (requestMutationVersion !== state.localMutationVersion) return;
             state.roomSnapshot = data.snapshot;
             renderSeats();
             renderChat();
         }
 
         async function postRoomAction(action, options = {}) {
-            const response = await fetch('/.netlify/functions/play-room', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    roomId: ROOM_ID,
-                    joinedAt: state.joinedAt,
-                    action
-                })
-            });
-            if (!response.ok) {
-                throw new Error(`action failed: ${response.status}`);
+            const actionSeq = ++state.actionRequestSeq;
+            state.pendingActionCount += 1;
+            try {
+                const response = await fetch('/.netlify/functions/play-room', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        roomId: ROOM_ID,
+                        joinedAt: state.joinedAt,
+                        action
+                    })
+                });
+                if (!response.ok) {
+                    throw new Error(`action failed: ${response.status}`);
+                }
+                const data = await response.json();
+                if (!data || !data.success || !data.snapshot) {
+                    throw new Error('invalid action snapshot');
+                }
+                if (actionSeq === state.actionRequestSeq) {
+                    state.roomSnapshot = data.snapshot;
+                    if (!options.skipRender) {
+                        renderSeats();
+                        renderChat();
+                    }
+                }
+                return data.snapshot;
+            } finally {
+                state.pendingActionCount = Math.max(0, state.pendingActionCount - 1);
             }
-            const data = await response.json();
-            if (!data || !data.success || !data.snapshot) {
-                throw new Error('invalid action snapshot');
-            }
-            state.roomSnapshot = data.snapshot;
-            if (!options.skipRender) {
-                renderSeats();
-                renderChat();
-            }
-            return data.snapshot;
         }
 
         async function sendHeartbeatIfNeeded() {
@@ -795,9 +796,7 @@
 
         async function clearRollTotal() {
             const action = { type: 'clear-roll-total', userId: state.user.userId };
-            state.roomSnapshot = window.PlayRoomState.applyPlayRoomAction(state.roomSnapshot, action, new Date().toISOString());
-            renderSeats();
-            renderChat();
+            applyOptimisticAction(action);
             try {
                 await postRoomAction(action);
                 showToast('累计已清零');
@@ -841,10 +840,7 @@
                 const finalNum = Math.floor(Math.random() * 9);
                 screen.textContent = finalNum === 0 ? '10' : String(finalNum);
                 const rollAction = { type: 'roll', userId: state.user.userId, value: finalNum };
-                // Optimistic update — render immediately, server reconciles in background
-                state.roomSnapshot = window.PlayRoomState.applyPlayRoomAction(state.roomSnapshot, rollAction, new Date().toISOString());
-                renderSeats();
-                renderChat();
+                applyOptimisticAction(rollAction);
                 try {
                     await postRoomAction(rollAction);
                 } catch (_) {
