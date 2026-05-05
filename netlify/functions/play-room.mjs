@@ -57,6 +57,7 @@ export default async (req) => {
         const url = new URL(req.url);
         const roomId = sanitizeRoomId(url.searchParams.get("roomId") || "fairy-town");
         const joinedAt = url.searchParams.get("joinedAt") || "";
+        const userId = String(url.searchParams.get("userId") || "").trim();
         if (!roomId) {
             return jsonResponse({ error: "Invalid roomId" }, 400);
         }
@@ -72,7 +73,7 @@ export default async (req) => {
             }
             return jsonResponse({
                 success: true,
-                snapshot: buildPlayRoomView(room, { joinedAt })
+                snapshot: buildPlayRoomView(room, { joinedAt, userId })
             });
         } catch (error) {
             console.error("play-room get failed:", error);
@@ -111,7 +112,7 @@ export default async (req) => {
             await store.setJSON(`rooms/${roomId}/current`, nextRoom);
             return jsonResponse({
                 success: true,
-                snapshot: buildPlayRoomView(nextRoom, { joinedAt })
+                snapshot: buildPlayRoomView(nextRoom, { joinedAt, userId: String(action?.userId || "").trim() })
             });
         } catch (error) {
             console.error("play-room post failed:", error);

@@ -233,6 +233,88 @@ function testClearShouldResetBustStatus() {
     assert.ok(!room.bustStatus.u1, "bust status should be cleared after clear-roll-total");
 }
 
+function testOnlySweetOwnerCanSetRoomPassword() {
+    let room = createInitialPlayRoomState();
+    room = applyPlayRoomAction(room, {
+        type: "sit",
+        userId: "owner",
+        profile: { name: "甜歌", gender: "female" },
+        seatId: 0
+    }, "2026-05-06T10:00:00.000Z");
+
+    room = applyPlayRoomAction(room, {
+        type: "set-room-password",
+        userId: "owner",
+        profile: { name: "甜歌", gender: "female" },
+        enabled: true,
+        password: "2580"
+    }, "2026-05-06T10:00:01.000Z");
+
+    assert.strictEqual(room.roomAccess && room.roomAccess.passwordEnabled, true, "owner should enable password");
+    assert.strictEqual(room.roomAccess && room.roomAccess.passwordValue, "2580", "owner should set password");
+
+    const before = JSON.stringify(room.roomAccess || {});
+    room = applyPlayRoomAction(room, {
+        type: "set-room-password",
+        userId: "u2",
+        profile: { name: "卡通", gender: "male" },
+        enabled: true,
+        password: "9999"
+    }, "2026-05-06T10:00:02.000Z");
+    const after = JSON.stringify(room.roomAccess || {});
+
+    assert.strictEqual(after, before, "non-owner should not change room password");
+}
+
+function testPasswordEnabledShouldBlockSitUntilJoinRoomSuccess() {
+    let room = createInitialPlayRoomState();
+    room = applyPlayRoomAction(room, {
+        type: "sit",
+        userId: "owner",
+        profile: { name: "甜歌", gender: "female" },
+        seatId: 0
+    }, "2026-05-06T10:10:00.000Z");
+    room = applyPlayRoomAction(room, {
+        type: "set-room-password",
+        userId: "owner",
+        profile: { name: "甜歌", gender: "female" },
+        enabled: true,
+        password: "1234"
+    }, "2026-05-06T10:10:01.000Z");
+
+    room = applyPlayRoomAction(room, {
+        type: "sit",
+        userId: "u2",
+        profile: { name: "卡通", gender: "male" },
+        seatId: 2
+    }, "2026-05-06T10:10:02.000Z");
+    assert.strictEqual(room.seats[2], null, "user should be blocked before password verification");
+
+    room = applyPlayRoomAction(room, {
+        type: "join-room",
+        userId: "u2",
+        profile: { name: "卡通", gender: "male" },
+        password: "1111"
+    }, "2026-05-06T10:10:03.000Z");
+    assert.strictEqual(room.roomAccess && room.roomAccess.lastErrorByUserId && room.roomAccess.lastErrorByUserId.u2, "密码错误", "wrong password should set error");
+
+    room = applyPlayRoomAction(room, {
+        type: "join-room",
+        userId: "u2",
+        profile: { name: "卡通", gender: "male" },
+        password: "1234"
+    }, "2026-05-06T10:10:04.000Z");
+
+    room = applyPlayRoomAction(room, {
+        type: "sit",
+        userId: "u2",
+        profile: { name: "卡通", gender: "male" },
+        seatId: 2
+    }, "2026-05-06T10:10:05.000Z");
+
+    assert.strictEqual(room.seats[2] && room.seats[2].userId, "u2", "user should be allowed after password verification");
+}
+
 function run() {
     testRollShouldAccumulatePerUser();
     testClearShouldResetRollTotal();
@@ -245,6 +327,8 @@ function run() {
     testBustWhenTotalExceeds21();
     testWinAtExactly21();
     testClearShouldResetBustStatus();
+    testOnlySweetOwnerCanSetRoomPassword();
+    testPasswordEnabledShouldBlockSitUntilJoinRoomSuccess();
     console.log("test-play-room-state passed");
 }
 

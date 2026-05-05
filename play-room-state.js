@@ -41,6 +41,10 @@
         return numeric;
     }
 
+    function sanitizePassword(value) {
+        return sanitizeText(value, 16);
+    }
+
     function effectiveRollValue(rawValue) {
         return rawValue === 0 ? 10 : rawValue;
     }
@@ -59,6 +63,35 @@
         if (room.bustStatus) delete room.bustStatus[userId];
     }
 
+    function ensureRoomAccess(room) {
+        if (!room.roomAccess || typeof room.roomAccess !== "object") {
+            room.roomAccess = {};
+        }
+        if (typeof room.roomAccess.passwordEnabled !== "boolean") {
+            room.roomAccess.passwordEnabled = false;
+        }
+        if (typeof room.roomAccess.passwordValue !== "string") {
+            room.roomAccess.passwordValue = "";
+        }
+        if (!room.roomAccess.allowedUserIds || typeof room.roomAccess.allowedUserIds !== "object") {
+            room.roomAccess.allowedUserIds = {};
+        }
+        if (!room.roomAccess.lastErrorByUserId || typeof room.roomAccess.lastErrorByUserId !== "object") {
+            room.roomAccess.lastErrorByUserId = {};
+        }
+    }
+
+    function hasRoomAccess(room, userId) {
+        ensureRoomAccess(room);
+        if (!room.roomAccess.passwordEnabled) return true;
+        return !!room.roomAccess.allowedUserIds[userId];
+    }
+
+    function isSweetOwner(room, userId) {
+        var bossSeat = room.seats && room.seats[0];
+        return !!(bossSeat && bossSeat.userId === userId && bossSeat.profile && bossSeat.profile.name === "甜歌");
+    }
+
     function createInitialPlayRoomState() {
         return {
             roomId: "fairy-town",
@@ -66,6 +99,12 @@
             seatResults: {},
             rollTotals: {},
             bustStatus: {},
+            roomAccess: {
+                passwordEnabled: false,
+                passwordValue: "",
+                allowedUserIds: {},
+                lastErrorByUserId: {}
+            },
             messages: [],
             updatedAt: ""
         };
@@ -97,6 +136,7 @@
 
     function applyPlayRoomAction(currentRoom, action, nowInput) {
         var room = clone(currentRoom || createInitialPlayRoomState());
+        ensureRoomAccess(room);
         var now = toIsoString(nowInput);
         var input = action && typeof action === "object" ? action : {};
         var type = sanitizeText(input.type, 32);
@@ -109,6 +149,67 @@
         }
 
         if (!userId) {
+            room.updatedAt = now;
+            return room;
+        }
+
+        if (type === "set-room-password") {
+            if (!isSweetOwner(room, userId)) {
+                room.updatedAt = now;
+                return room;
+            }
+            var enabled = !!input.enabled;
+            if (!enabled) {
+                room.roomAccess.passwordEnabled = false;
+                room.roomAccess.passwordValue = "";
+                room.roomAccess.allowedUserIds = {};
+                room.roomAccess.lastErrorByUserId = {};
+                appendMessage(room, buildMessage("系统", "房间密码已关闭", now, true));
+                room.updatedAt = now;
+                return room;
+            }
+
+            var password = sanitizePassword(input.password);
+            if (!password) {
+                room.updatedAt = now;
+                return room;
+            }
+
+            room.roomAccess.passwordEnabled = true;
+            room.roomAccess.passwordValue = password;
+            room.roomAccess.allowedUserIds = {};
+            room.roomAccess.allowedUserIds[userId] = true;
+            room.roomAccess.lastErrorByUserId = {};
+            appendMessage(room, buildMessage("系统", "房间密码已开启", now, true));
+            room.updatedAt = now;
+            return room;
+        }
+
+        if (type === "join-room") {
+            if (!room.roomAccess.passwordEnabled) {
+                room.roomAccess.allowedUserIds[userId] = true;
+                delete room.roomAccess.lastErrorByUserId[userId];
+                room.updatedAt = now;
+                return room;
+            }
+
+            var joinedPassword = sanitizePassword(input.password);
+            if (joinedPassword && joinedPassword === room.roomAccess.passwordValue) {
+                room.roomAccess.allowedUserIds[userId] = true;
+                delete room.roomAccess.lastErrorByUserId[userId];
+            } else {
+                room.roomAccess.lastErrorByUserId[userId] = "密码错误";
+            }
+            room.updatedAt = now;
+            return room;
+        }
+
+        var requiresAccess = type === "sit"
+            || type === "roll"
+            || type === "clear-roll-total"
+            || type === "message"
+            || type === "heartbeat";
+        if (requiresAccess && !hasRoomAccess(room, userId)) {
             room.updatedAt = now;
             return room;
         }
@@ -256,6 +357,16 @@
             seatResults: room.seatResults,
             rollTotals: room.rollTotals,
             bustStatus: room.bustStatus || {},
+            roomAccess: {
+                passwordEnabled: !!(room.roomAccess && room.roomAccess.passwordEnabled),
+                accessGranted: !!(sanitizeText(options && options.userId, 64) && hasRoomAccess(room, sanitizeText(options && options.userId, 64))),
+                authError: sanitizeText(
+                    room.roomAccess
+                    && room.roomAccess.lastErrorByUserId
+                    && room.roomAccess.lastErrorByUserId[sanitizeText(options && options.userId, 64)],
+                    64
+                )
+            },
             messages: visibleMessages,
             updatedAt: room.updatedAt
         };

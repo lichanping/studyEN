@@ -47,18 +47,18 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            border: 2px dashed rgba(139, 92, 246, 0.2);
+            border: none;
             border-radius: 20px;
             background: rgba(255,255,255,0.02);
             transition: all 0.3s;
             cursor: pointer;
             padding: 10px 4px 8px;
         }
-        .seat:hover { border-color: rgba(139, 92, 246, 0.5); background: rgba(139, 92, 246, 0.05); }
+        .seat:hover { background: rgba(139, 92, 246, 0.05); }
 
         /* 已入座状态 */
         .seat.occupied {
-            border: 2px solid var(--accent-purple);
+            border: none;
             background: rgba(139, 92, 246, 0.1);
             cursor: default;
             box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
@@ -67,11 +67,11 @@
 
         /* Boss 位特殊样式 */
         .seat.boss {
-            border: 2px solid rgba(251, 191, 36, 0.3);
+            border: none;
             background: rgba(251, 191, 36, 0.05);
             cursor: pointer;
         }
-        .seat.boss:hover { border-color: rgba(251, 191, 36, 0.5); box-shadow: 0 0 15px rgba(251, 191, 36, 0.2); }
+        .seat.boss:hover { box-shadow: 0 0 15px rgba(251, 191, 36, 0.2); }
 
         /* 头像区域 */
         .avatar-wrap {
@@ -254,13 +254,13 @@
 
         /* 爆牌/胜利 座位状态 */
         .seat.bust {
-            border-color: rgba(239, 68, 68, 0.6) !important;
+            border: 2px solid rgba(239, 68, 68, 0.6) !important;
             box-shadow: 0 0 18px rgba(239, 68, 68, 0.35);
             animation: bustShake 0.5s ease;
         }
         .seat.bust .seat-meta { color: #f87171 !important; }
         .seat.win {
-            border-color: rgba(251, 191, 36, 0.8) !important;
+            border: 2px solid rgba(251, 191, 36, 0.8) !important;
             box-shadow: 0 0 22px rgba(251, 191, 36, 0.5);
         }
         .seat.win .seat-meta { color: #fde68a !important; font-weight: 700; }
@@ -337,6 +337,112 @@
         .confirm-btn { width: 100%; padding: 14px; background: linear-gradient(90deg, #8b5cf6, #6d28d9); color: #fff; border: none; border-radius: 14px; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(109, 40, 217, 0.4); transition: transform 0.2s; }
         .confirm-btn:active { transform: scale(0.97); }
 
+        .hidden { display: none !important; }
+
+        .room-settings-modal,
+        .room-entry-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.72);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s;
+            z-index: 320;
+        }
+        .room-settings-modal.active,
+        .room-entry-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .room-settings-card,
+        .room-entry-card {
+            width: min(360px, calc(100% - 36px));
+            background: var(--bg-card);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.12);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.55);
+            padding: 22px 18px 18px;
+        }
+        .room-settings-title,
+        .room-entry-title {
+            font-size: 22px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 8px;
+            color: #f8fafc;
+        }
+        .room-entry-subtitle,
+        .room-settings-subtitle {
+            font-size: 14px;
+            color: #cbd5e1;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .room-radio-row {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 14px;
+        }
+        .room-radio {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #e2e8f0;
+            font-size: 14px;
+        }
+        .room-password-input {
+            width: 100%;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 20px;
+            letter-spacing: 6px;
+            text-align: center;
+            padding: 12px;
+            outline: none;
+            margin-bottom: 10px;
+        }
+        .room-password-input:focus {
+            border-color: rgba(139, 92, 246, 0.8);
+            background: rgba(139, 92, 246, 0.14);
+        }
+        .room-entry-error {
+            min-height: 20px;
+            text-align: center;
+            font-size: 13px;
+            color: #f87171;
+            margin-bottom: 4px;
+        }
+        .room-settings-actions,
+        .room-entry-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .room-btn {
+            flex: 1;
+            border: none;
+            border-radius: 12px;
+            padding: 11px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            background: rgba(255,255,255,0.12);
+        }
+        .room-btn.primary {
+            background: linear-gradient(90deg, #8b5cf6, #6d28d9);
+            box-shadow: 0 4px 14px rgba(109, 40, 217, 0.45);
+        }
+
         /* Toast */
         .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8); background: rgba(0,0,0,0.85); color: #fff; padding: 12px 24px; border-radius: 12px; font-size: 14px; opacity: 0; pointer-events: none; transition: all 0.3s; z-index: 200; }
         .toast.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
@@ -400,6 +506,7 @@
         <div class="toolbar-actions">
             <button class="toolbar-clear-btn" id="toolbarClearButton" type="button" onclick="clearRollTotal()">清零</button>
             <button class="icon-btn" aria-label="游戏规则" type="button" onclick="openHintModal()">❓</button>
+            <button class="icon-btn hidden" id="roomSettingsButton" aria-label="房间设置" type="button" onclick="openRoomSettingsModal()">⚙️</button>
             <button class="icon-btn" aria-label="编辑资料" type="button" onclick="openProfileModal()">👤</button>
         </div>
     </div>
@@ -416,6 +523,40 @@
                 <li>🔄 点击 <strong>清零</strong> 可重新开始本轮</li>
             </ul>
             <button class="hint-close" onclick="closeHintModal()">知道了</button>
+        </div>
+    </div>
+
+    <div class="room-settings-modal" id="roomSettingsModal" onclick="closeRoomSettingsModal(event)">
+        <div class="room-settings-card" onclick="event.stopPropagation()">
+            <div class="room-settings-title">房间设置</div>
+            <div class="room-settings-subtitle">仅甜歌房主可设置入房密码</div>
+            <div class="room-radio-row">
+                <label class="room-radio">
+                    <input type="radio" name="roomPasswordSwitch" value="off" checked>
+                    不开启密码
+                </label>
+                <label class="room-radio">
+                    <input type="radio" name="roomPasswordSwitch" value="on">
+                    开启密码
+                </label>
+            </div>
+            <input class="room-password-input" id="roomSettingsPasswordInput" type="password" inputmode="numeric" maxlength="16" placeholder="设置房间密码">
+            <div class="room-settings-actions">
+                <button class="room-btn" type="button" onclick="closeRoomSettingsModal()">取消</button>
+                <button class="room-btn primary" type="button" onclick="submitRoomSettings()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="room-entry-modal" id="roomEntryModal" onclick="closeRoomEntryModal(event)">
+        <div class="room-entry-card" onclick="event.stopPropagation()">
+            <div class="room-entry-title">房间密码</div>
+            <div class="room-entry-subtitle">请输入房间密码</div>
+            <input class="room-password-input" id="roomEntryPasswordInput" type="password" inputmode="numeric" maxlength="16" placeholder="输入密码">
+            <div class="room-entry-error" id="roomEntryError"></div>
+            <div class="room-entry-actions">
+                <button class="room-btn primary" type="button" onclick="submitRoomEntryPassword()">进入房间</button>
+            </div>
         </div>
     </div>
 
@@ -505,6 +646,34 @@
             return null;
         }
 
+        function getRoomAccessState() {
+            return state.roomSnapshot.roomAccess || { passwordEnabled: false, accessGranted: true, authError: '' };
+        }
+
+        function hasRoomAccess() {
+            const access = getRoomAccessState();
+            if (!access.passwordEnabled) return true;
+            return !!access.accessGranted;
+        }
+
+        function isSweetOwnerSelf() {
+            const seat0 = (state.roomSnapshot.seats || [])[0];
+            return !!(seat0 && seat0.userId === state.user.userId && state.user.name === '甜歌');
+        }
+
+        function updateRoomAccessUI() {
+            const access = getRoomAccessState();
+            const modal = document.getElementById('roomEntryModal');
+            const err = document.getElementById('roomEntryError');
+            if (access.passwordEnabled && !access.accessGranted) {
+                modal.classList.add('active');
+                err.textContent = access.authError || '';
+            } else {
+                modal.classList.remove('active');
+                err.textContent = '';
+            }
+        }
+
         function clamp(value, min, max) {
             return Math.max(min, Math.min(max, value));
         }
@@ -582,7 +751,7 @@
             if (Date.now() < state.syncLockUntilMs) return;
             const requestSeq = ++state.fetchRequestSeq;
             const requestMutationVersion = state.localMutationVersion;
-            const response = await fetch(`/.netlify/functions/play-room?roomId=${encodeURIComponent(ROOM_ID)}&joinedAt=${encodeURIComponent(state.joinedAt)}`);
+            const response = await fetch(`/.netlify/functions/play-room?roomId=${encodeURIComponent(ROOM_ID)}&joinedAt=${encodeURIComponent(state.joinedAt)}&userId=${encodeURIComponent(state.user.userId || '')}`);
             if (!response.ok) {
                 throw new Error(`load failed: ${response.status}`);
             }
@@ -597,6 +766,7 @@
             state.roomSnapshot = data.snapshot;
             renderSeats();
             renderChat();
+            updateRoomAccessUI();
         }
 
         async function postRoomAction(action, options = {}) {
@@ -627,6 +797,7 @@
                     if (!options.skipRender) {
                         renderSeats();
                         renderChat();
+                        updateRoomAccessUI();
                     }
                 }
                 const endMs = (window.performance && typeof window.performance.now === 'function')
@@ -694,9 +865,92 @@
             } catch (_) {
                 showToast('房间同步失败，稍后重试');
             }
+            updateRoomAccessUI();
             startPolling();
             if (!state.user.name) {
                 openProfileModal();
+            }
+        }
+
+        function openRoomEntryModal() {
+            const input = document.getElementById('roomEntryPasswordInput');
+            input.value = '';
+            document.getElementById('roomEntryModal').classList.add('active');
+            document.getElementById('roomEntryError').textContent = getRoomAccessState().authError || '';
+            setTimeout(() => input.focus(), 20);
+        }
+
+        function closeRoomEntryModal(event) {
+            if (event && event.currentTarget !== event.target) return;
+            if (!hasRoomAccess()) return;
+            document.getElementById('roomEntryModal').classList.remove('active');
+        }
+
+        async function submitRoomEntryPassword() {
+            const input = document.getElementById('roomEntryPasswordInput');
+            const password = input.value.trim();
+            if (!password) return;
+            try {
+                await postRoomAction({
+                    type: 'join-room',
+                    userId: state.user.userId,
+                    profile: state.user,
+                    password
+                });
+                updateRoomAccessUI();
+                if (hasRoomAccess()) {
+                    document.getElementById('roomEntryModal').classList.remove('active');
+                    document.getElementById('roomEntryError').textContent = '';
+                } else {
+                    document.getElementById('roomEntryError').textContent = '密码错误';
+                }
+            } catch (_) {
+                document.getElementById('roomEntryError').textContent = '密码错误';
+            }
+        }
+
+        function openRoomSettingsModal() {
+            if (!isSweetOwnerSelf()) return;
+            const access = getRoomAccessState();
+            const onRadio = document.querySelector('input[name="roomPasswordSwitch"][value="on"]');
+            const offRadio = document.querySelector('input[name="roomPasswordSwitch"][value="off"]');
+            if (access.passwordEnabled) {
+                onRadio.checked = true;
+            } else {
+                offRadio.checked = true;
+            }
+            document.getElementById('roomSettingsPasswordInput').value = '';
+            document.getElementById('roomSettingsModal').classList.add('active');
+        }
+
+        function closeRoomSettingsModal(event) {
+            if (event && event.currentTarget !== event.target) return;
+            document.getElementById('roomSettingsModal').classList.remove('active');
+        }
+
+        async function submitRoomSettings() {
+            if (!isSweetOwnerSelf()) {
+                showToast('仅甜歌房主可设置');
+                return;
+            }
+            const enabled = document.querySelector('input[name="roomPasswordSwitch"]:checked').value === 'on';
+            const password = document.getElementById('roomSettingsPasswordInput').value.trim();
+            if (enabled && !password) {
+                showToast('请输入房间密码');
+                return;
+            }
+            try {
+                await postRoomAction({
+                    type: 'set-room-password',
+                    userId: state.user.userId,
+                    profile: state.user,
+                    enabled,
+                    password
+                });
+                closeRoomSettingsModal();
+                showToast(enabled ? '房间密码已开启' : '房间密码已关闭');
+            } catch (_) {
+                showToast('设置失败，请重试');
             }
         }
 
@@ -757,6 +1011,7 @@
         function renderSeats() {
             const container = document.getElementById('seatsContainer');
             const toolbarClearButton = document.getElementById('toolbarClearButton');
+            const roomSettingsButton = document.getElementById('roomSettingsButton');
             let html = '';
 
             // 第一排：0号
@@ -774,6 +1029,9 @@
 
             if (toolbarClearButton) {
                 toolbarClearButton.classList.toggle('show', getCurrentSeatId() !== null);
+            }
+            if (roomSettingsButton) {
+                roomSettingsButton.classList.toggle('hidden', !isSweetOwnerSelf());
             }
         }
 
@@ -854,6 +1112,10 @@
                 openProfileModal();
                 return;
             }
+            if (!hasRoomAccess()) {
+                openRoomEntryModal();
+                return;
+            }
             const currentSeatId = getCurrentSeatId();
             if (currentSeatId !== null && currentSeatId !== id) return showToast('您已入座，请离座后再选');
             if (id === 0 && state.user.name !== '甜歌') return showToast('房主位仅甜歌可入座');
@@ -878,6 +1140,10 @@
         }
 
         async function clearRollTotal() {
+            if (!hasRoomAccess()) {
+                openRoomEntryModal();
+                return;
+            }
             const action = { type: 'clear-roll-total', userId: state.user.userId };
             applyOptimisticAction(action);
             try {
@@ -893,6 +1159,10 @@
         const screen = document.getElementById('micScreen');
 
         btn.addEventListener('click', () => {
+            if (!hasRoomAccess()) {
+                openRoomEntryModal();
+                return;
+            }
             const currentSeatId = getCurrentSeatId();
             if (currentSeatId === null) return showToast('请先点击空座入座');
             if (state.isShaking) return;
@@ -945,6 +1215,7 @@
         async function sendMessage(text) {
             if (!text.trim()) return;
             if (!state.user.name) return openProfileModal();
+            if (!hasRoomAccess()) return openRoomEntryModal();
             try {
                 await postRoomAction({ type: 'message', userId: state.user.userId, profile: state.user, content: text.trim() });
                 chatInput.value = '';
@@ -994,6 +1265,14 @@
 
         chatInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') sendMessage(chatInput.value);
+        });
+
+        document.getElementById('roomEntryPasswordInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') submitRoomEntryPassword();
+        });
+
+        document.getElementById('roomSettingsPasswordInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') submitRoomSettings();
         });
 
         window.addEventListener('pagehide', sendLeaveBeacon);
