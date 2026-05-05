@@ -37,7 +37,7 @@
 
     function sanitizeRollValue(value) {
         var numeric = Number(value);
-        if (!Number.isInteger(numeric) || numeric < 0 || numeric > 9) return null;
+        if (!Number.isInteger(numeric) || numeric < 0 || numeric > 8) return null;
         return numeric;
     }
 

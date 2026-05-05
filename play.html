@@ -98,9 +98,9 @@
         .avatar-wrap {
             width: clamp(50px, 14vw, 56px); height: clamp(50px, 14vw, 56px); border-radius: 50%; overflow: hidden; margin-bottom: 8px;
             background: var(--bg-card); border: 2px solid rgba(255,255,255,0.1); position: relative;
-            display: flex; align-items: center; justify-content: center;
+            display: flex; align-items: center; justify-content: center; flex: 0 0 auto;
         }
-        .avatar-wrap svg, .avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
+        .avatar-wrap svg, .avatar-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; flex: 0 0 auto; }
 
         /* 摇到的数字悬浮层 */
         .mic-num {
@@ -209,17 +209,21 @@
             padding: 12px 16px 24px; 
             display: flex; 
             align-items: center; 
-            justify-content: space-between; /* FIX 1: Space items out */
+            justify-content: space-between;
             z-index: 100;
         }
         .chat-input {
             flex: 1; 
-            max-width: 200px; /* Limit input width to make room for mic button */
+            min-width: 0;
             background: rgba(255,255,255,0.08); border: none; border-radius: 20px;
             padding: 10px 14px; color: #fff; font-size: 14px; outline: none; margin-right: 10px;
         }
-        
-        /* FIX 1: Edit Profile Button Styling */
+        .toolbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
         .icon-btn { 
             width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,0.08); 
             display: flex; align-items: center; justify-content: center; cursor: pointer; 
@@ -227,6 +231,28 @@
             flex-shrink: 0;
         }
         .icon-btn:active { transform: scale(0.92); background: rgba(255,255,255,0.15); }
+        .toolbar-leave-btn {
+            min-width: 52px;
+            height: 42px;
+            padding: 0 10px;
+            border-radius: 16px;
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            font-size: 13px;
+            font-weight: 700;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .toolbar-leave-btn.show {
+            display: inline-flex;
+        }
+        .toolbar-leave-btn:active {
+            transform: scale(0.95);
+            background: rgba(239, 68, 68, 0.3);
+        }
 
         /* 麦序机按钮 */
         .mic-btn {
@@ -251,6 +277,10 @@
             .room-header { padding: 24px 12px 18px; }
             .seats-container { padding: 8px 12px 10px; }
             .seat-row { gap: 10px; margin-bottom: 14px; }
+            .toolbar { padding: 12px 12px 20px; }
+            .chat-input { margin-right: 8px; }
+            .toolbar-actions { gap: 6px; }
+            .toolbar-leave-btn { min-width: 46px; padding: 0 8px; font-size: 12px; }
         }
 
         /* 资料设置弹窗 */
@@ -355,8 +385,10 @@
             <div class="label">麦序机</div>
         </div>
 
-        <!-- 编辑资料按钮 (FIX 1: Kept this button visible) -->
-        <button class="icon-btn" aria-label="编辑资料" onclick="openProfileModal()">👤</button>
+        <div class="toolbar-actions">
+            <button class="toolbar-leave-btn" id="toolbarLeaveButton" type="button" onclick="leaveSeat()">离座</button>
+            <button class="icon-btn" aria-label="编辑资料" type="button" onclick="openProfileModal()">👤</button>
+        </div>
     </div>
 
     <div class="toast" id="toast"></div>
@@ -390,6 +422,7 @@
         let selectedGender = 'male';
         let rollTimer = null;
         let pollTimer = null;
+        let lastRenderedMessagesSignature = '';
 
         function createUserId() {
             if (window.crypto && typeof window.crypto.randomUUID === 'function') {
@@ -536,6 +569,7 @@
         // 渲染座位 (布局 0 / 1-4 / 5-8)
         function renderSeats() {
             const container = document.getElementById('seatsContainer');
+            const toolbarLeaveButton = document.getElementById('toolbarLeaveButton');
             let html = '';
 
             // 第一排：0号
@@ -550,6 +584,10 @@
             html += `</div>`;
 
             container.innerHTML = html;
+
+            if (toolbarLeaveButton) {
+                toolbarLeaveButton.classList.toggle('show', getCurrentSeatId() !== null);
+            }
         }
 
         function seatHTML(s) {
@@ -578,7 +616,7 @@
             }
 
             const statusHTML = isCurrentUser
-                ? `<div class="seat-actions"><button class="leave-btn" onclick="event.stopPropagation(); leaveSeat()">离座</button><button class="clear-btn" onclick="event.stopPropagation(); clearRollTotal()">清零</button></div>`
+                ? `<div class="seat-actions"><button class="clear-btn" onclick="event.stopPropagation(); clearRollTotal()">清零</button></div>`
                 : isOccupied
                     ? `<div class="seat-tag">已入座</div>`
                     : `<div class="seat-tag">${s.tag || '点击入座'}</div>`;
@@ -687,7 +725,7 @@
 
             let currentNum = 0;
             rollTimer = setInterval(() => {
-                currentNum = Math.floor(Math.random() * 10);
+                currentNum = Math.floor(Math.random() * 9);
                 overlay.querySelector('.roll-num').textContent = currentNum;
             }, 60);
 
@@ -696,7 +734,7 @@
                 seatEl.classList.remove('rolling');
                 overlay.remove();
 
-                const finalNum = Math.floor(Math.random() * 10);
+                const finalNum = Math.floor(Math.random() * 9);
                 try {
                     await postRoomAction({ type: 'roll', userId: state.user.userId, value: finalNum });
                 } catch (_) {
@@ -725,8 +763,16 @@
         }
 
         function renderChat() {
+            const messages = state.roomSnapshot.messages || [];
+            const nextSignature = messages.map((msg) => `${msg.id}:${msg.content}`).join('|');
+            if (nextSignature === lastRenderedMessagesSignature) {
+                return;
+            }
+            lastRenderedMessagesSignature = nextSignature;
+
+            const wasNearBottom = chatMessages.scrollHeight - chatMessages.scrollTop - chatMessages.clientHeight < 24;
             chatMessages.innerHTML = '';
-            (state.roomSnapshot.messages || []).forEach(msg => {
+            messages.forEach(msg => {
                 const div = document.createElement('div');
                 div.className = 'chat-item';
                 if (msg.isSystem) {
@@ -736,7 +782,9 @@
                 div.textContent = `${msg.user}: ${msg.content}`;
                 chatMessages.appendChild(div);
             });
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            if (wasNearBottom || messages.length <= 1) {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
         }
 
         chatInput.addEventListener('keydown', (e) => {

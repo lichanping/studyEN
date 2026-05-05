@@ -53,6 +53,26 @@ function testClearShouldResetRollTotal() {
     assert.strictEqual(room.messages[2].content, "hi 已清零");
 }
 
+function testRollShouldRejectNine() {
+    let room = createInitialPlayRoomState();
+    room = applyPlayRoomAction(room, {
+        type: "sit",
+        userId: "u1",
+        profile: { name: "hi", gender: "female" },
+        seatId: 2
+    }, "2026-05-05T10:00:00.000Z");
+
+    room = applyPlayRoomAction(room, {
+        type: "roll",
+        userId: "u1",
+        value: 9
+    }, "2026-05-05T10:00:01.000Z");
+
+    assert.strictEqual(room.seatResults[2], undefined);
+    assert.strictEqual(room.rollTotals.u1, 0);
+    assert.strictEqual(room.messages.length, 1);
+}
+
 function testBuildViewShouldFilterMessagesByJoinTime() {
     let room = createInitialPlayRoomState();
     room = applyPlayRoomAction(room, {
@@ -93,6 +113,7 @@ function testSitShouldEvictPreviousSeatOfSameUser() {
 function run() {
     testRollShouldAccumulatePerUser();
     testClearShouldResetRollTotal();
+    testRollShouldRejectNine();
     testBuildViewShouldFilterMessagesByJoinTime();
     testSitShouldEvictPreviousSeatOfSameUser();
     console.log("test-play-room-state passed");
