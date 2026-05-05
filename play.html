@@ -458,6 +458,7 @@
         let lastRenderedMessagesSignature = '';
         let lastRenderedMessageIds = [];
         let lastHeartbeatAtMs = 0;
+        let audioCtx = null;
 
         function createUserId() {
             if (window.crypto && typeof window.crypto.randomUUID === 'function') {
@@ -506,6 +507,47 @@
             renderChat();
         }
 
+        function ensureAudioContext() {
+            if (!audioCtx) {
+                const AudioCtor = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtor) return null;
+                audioCtx = new AudioCtor();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume().catch(() => {});
+            }
+            return audioCtx;
+        }
+
+        function playTone(frequency, durationMs, gain, type, delaySeconds) {
+            const ctx = ensureAudioContext();
+            if (!ctx) return;
+            const now = ctx.currentTime + (delaySeconds || 0);
+            const osc = ctx.createOscillator();
+            const amp = ctx.createGain();
+            osc.type = type || 'sine';
+            osc.frequency.setValueAtTime(frequency, now);
+            amp.gain.setValueAtTime(0.0001, now);
+            amp.gain.exponentialRampToValueAtTime(gain || 0.08, now + 0.01);
+            amp.gain.exponentialRampToValueAtTime(0.0001, now + durationMs / 1000);
+            osc.connect(amp);
+            amp.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + durationMs / 1000 + 0.02);
+        }
+
+        function playRollStartSound() {
+            playTone(380, 70, 0.06, 'square', 0);
+            playTone(520, 90, 0.05, 'square', 0.05);
+        }
+
+        function playRollResultSound(finalNum) {
+            const shown = finalNum === 0 ? 10 : finalNum;
+            const base = shown === 10 ? 780 : 440 + shown * 20;
+            playTone(base, 120, 0.08, 'triangle', 0);
+            playTone(base * 1.25, 170, 0.07, 'triangle', 0.12);
+        }
+
         async function fetchRoomSnapshot() {
             if (state.pendingActionCount > 0) return;
             const requestSeq = ++state.fetchRequestSeq;
@@ -546,7 +588,7 @@
                 if (!data || !data.success || !data.snapshot) {
                     throw new Error('invalid action snapshot');
                 }
-                if (actionSeq === state.actionRequestSeq) {
+                if (actionSeq === state.actionRequestSeq && !options.skipSnapshot) {
                     state.roomSnapshot = data.snapshot;
                     if (!options.skipRender) {
                         renderSeats();
@@ -562,11 +604,12 @@
         async function sendHeartbeatIfNeeded() {
             const currentSeatId = getCurrentSeatId();
             if (currentSeatId === null) return;
+            if (state.pendingActionCount > 0) return;
             const nowMs = Date.now();
             if (nowMs - lastHeartbeatAtMs < HEARTBEAT_INTERVAL_MS) return;
             lastHeartbeatAtMs = nowMs;
             try {
-                await postRoomAction({ type: 'heartbeat', userId: state.user.userId }, { skipRender: true });
+                await postRoomAction({ type: 'heartbeat', userId: state.user.userId }, { skipRender: true, skipSnapshot: true });
             } catch (_) {
                 // ignore heartbeat errors; next poll will reconcile
             }
@@ -814,6 +857,7 @@
             if (currentSeatId === null) return showToast('请先点击空座入座');
             if (state.isShaking) return;
 
+            playRollStartSound();
             state.isShaking = true;
             btn.classList.add('disabled');
             screen.textContent = '摇';
@@ -839,6 +883,7 @@
 
                 const finalNum = Math.floor(Math.random() * 9);
                 screen.textContent = finalNum === 0 ? '10' : String(finalNum);
+                playRollResultSound(finalNum);
                 const rollAction = { type: 'roll', userId: state.user.userId, value: finalNum };
                 applyOptimisticAction(rollAction);
                 try {
