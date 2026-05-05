@@ -4,8 +4,11 @@ import playRoomStateApi from "../../play-room-state.js";
 const {
     createInitialPlayRoomState,
     applyPlayRoomAction,
-    buildPlayRoomView
+    buildPlayRoomView,
+    clearInactiveSeats
 } = playRoomStateApi;
+
+const PRESENCE_TTL_MS = 30 * 1000;
 
 function corsHeaders() {
     return {
@@ -59,7 +62,14 @@ export default async (req) => {
         }
 
         try {
-            const room = await loadRoom(store, roomId);
+            const rawRoom = await loadRoom(store, roomId);
+            const room = clearInactiveSeats(rawRoom, {
+                now: new Date().toISOString(),
+                ttlMs: PRESENCE_TTL_MS
+            });
+            if (JSON.stringify(room) !== JSON.stringify(rawRoom)) {
+                await store.setJSON(`rooms/${roomId}/current`, room);
+            }
             return jsonResponse({
                 success: true,
                 snapshot: buildPlayRoomView(room, { joinedAt })
@@ -89,8 +99,15 @@ export default async (req) => {
         }
 
         try {
-            const currentRoom = await loadRoom(store, roomId);
-            const nextRoom = applyPlayRoomAction(currentRoom, action, new Date().toISOString());
+            const nowIso = new Date().toISOString();
+            const currentRoom = clearInactiveSeats(await loadRoom(store, roomId), {
+                now: nowIso,
+                ttlMs: PRESENCE_TTL_MS
+            });
+            const nextRoom = clearInactiveSeats(applyPlayRoomAction(currentRoom, action, nowIso), {
+                now: nowIso,
+                ttlMs: PRESENCE_TTL_MS
+            });
             await store.setJSON(`rooms/${roomId}/current`, nextRoom);
             return jsonResponse({
                 success: true,

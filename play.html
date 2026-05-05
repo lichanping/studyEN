@@ -393,6 +393,7 @@
 
         const ROOM_ID = 'fairy-town';
         const POLL_INTERVAL_MS = 2500;
+        const HEARTBEAT_INTERVAL_MS = 10 * 1000;
 
         // 座位配置 (ID从0开始，共9个座位)
         const SEATS_CONFIG = [
@@ -412,6 +413,7 @@
         let pollTimer = null;
         let lastRenderedMessagesSignature = '';
         let lastRenderedMessageIds = [];
+        let lastHeartbeatAtMs = 0;
 
         function createUserId() {
             if (window.crypto && typeof window.crypto.randomUUID === 'function') {
@@ -467,7 +469,7 @@
             renderChat();
         }
 
-        async function postRoomAction(action) {
+        async function postRoomAction(action, options = {}) {
             const response = await fetch('/.netlify/functions/play-room', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -485,15 +487,53 @@
                 throw new Error('invalid action snapshot');
             }
             state.roomSnapshot = data.snapshot;
-            renderSeats();
-            renderChat();
+            if (!options.skipRender) {
+                renderSeats();
+                renderChat();
+            }
+            return data.snapshot;
+        }
+
+        async function sendHeartbeatIfNeeded() {
+            const currentSeatId = getCurrentSeatId();
+            if (currentSeatId === null) return;
+            const nowMs = Date.now();
+            if (nowMs - lastHeartbeatAtMs < HEARTBEAT_INTERVAL_MS) return;
+            lastHeartbeatAtMs = nowMs;
+            try {
+                await postRoomAction({ type: 'heartbeat', userId: state.user.userId }, { skipRender: true });
+            } catch (_) {
+                // ignore heartbeat errors; next poll will reconcile
+            }
         }
 
         function startPolling() {
             if (pollTimer) clearInterval(pollTimer);
             pollTimer = setInterval(() => {
                 fetchRoomSnapshot().catch(() => {});
+                sendHeartbeatIfNeeded();
             }, POLL_INTERVAL_MS);
+        }
+
+        function sendLeaveBeacon() {
+            const currentSeatId = getCurrentSeatId();
+            if (currentSeatId === null || !state.user.userId) return;
+            const payload = JSON.stringify({
+                roomId: ROOM_ID,
+                joinedAt: state.joinedAt,
+                action: { type: 'leave', userId: state.user.userId }
+            });
+            if (navigator.sendBeacon) {
+                const blob = new Blob([payload], { type: 'application/json' });
+                navigator.sendBeacon('/.netlify/functions/play-room', blob);
+                return;
+            }
+            fetch('/.netlify/functions/play-room', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: payload,
+                keepalive: true
+            }).catch(() => {});
         }
 
         // 初始化
@@ -787,6 +827,9 @@
         chatInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') sendMessage(chatInput.value);
         });
+
+        window.addEventListener('pagehide', sendLeaveBeacon);
+        window.addEventListener('beforeunload', sendLeaveBeacon);
 
         function showToast(msg) {
             const t = document.getElementById('toast');

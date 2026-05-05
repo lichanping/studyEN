@@ -2,7 +2,8 @@ const assert = require("assert");
 const {
     createInitialPlayRoomState,
     applyPlayRoomAction,
-    buildPlayRoomView
+    buildPlayRoomView,
+    clearInactiveSeats
 } = require("../play-room-state.js");
 
 function testRollShouldAccumulatePerUser() {
@@ -110,12 +111,59 @@ function testSitShouldEvictPreviousSeatOfSameUser() {
     assert.strictEqual(room.seats[5].userId, "u1");
 }
 
+function testClearInactiveSeatsShouldEvictStaleSeatAndRollData() {
+    let room = createInitialPlayRoomState();
+    room = applyPlayRoomAction(room, {
+        type: "sit",
+        userId: "u1",
+        profile: { name: "hi", gender: "female" },
+        seatId: 2
+    }, "2026-05-05T10:00:00.000Z");
+    room = applyPlayRoomAction(room, {
+        type: "roll",
+        userId: "u1",
+        value: 4
+    }, "2026-05-05T10:00:05.000Z");
+
+    room = clearInactiveSeats(room, {
+        now: "2026-05-05T10:02:00.000Z",
+        ttlMs: 30 * 1000
+    });
+
+    assert.strictEqual(room.seats[2], null);
+    assert.strictEqual(room.seatResults[2], undefined);
+    assert.strictEqual(room.rollTotals.u1, undefined);
+}
+
+function testHeartbeatShouldKeepSeatAlive() {
+    let room = createInitialPlayRoomState();
+    room = applyPlayRoomAction(room, {
+        type: "sit",
+        userId: "u1",
+        profile: { name: "hi", gender: "female" },
+        seatId: 2
+    }, "2026-05-05T10:00:00.000Z");
+    room = applyPlayRoomAction(room, {
+        type: "heartbeat",
+        userId: "u1"
+    }, "2026-05-05T10:00:20.000Z");
+
+    room = clearInactiveSeats(room, {
+        now: "2026-05-05T10:00:35.000Z",
+        ttlMs: 30 * 1000
+    });
+
+    assert.strictEqual(room.seats[2] && room.seats[2].userId, "u1");
+}
+
 function run() {
     testRollShouldAccumulatePerUser();
     testClearShouldResetRollTotal();
     testRollShouldRejectNine();
     testBuildViewShouldFilterMessagesByJoinTime();
     testSitShouldEvictPreviousSeatOfSameUser();
+    testClearInactiveSeatsShouldEvictStaleSeatAndRollData();
+    testHeartbeatShouldKeepSeatAlive();
     console.log("test-play-room-state passed");
 }
 

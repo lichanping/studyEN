@@ -41,6 +41,19 @@
         return numeric;
     }
 
+    function toTimeMs(value) {
+        var ts = new Date(value).getTime();
+        return Number.isFinite(ts) ? ts : null;
+    }
+
+    function clearSeatByUserId(room, userId) {
+        var seatId = findSeatIdByUserId(room, userId);
+        if (seatId === null) return;
+        room.seats[seatId] = null;
+        delete room.seatResults[seatId];
+        delete room.rollTotals[userId];
+    }
+
     function createInitialPlayRoomState() {
         return {
             roomId: "fairy-town",
@@ -119,7 +132,8 @@
             room.seats[seatId] = {
                 userId: userId,
                 profile: profile,
-                seatedAt: now
+                seatedAt: now,
+                lastSeenAt: now
             };
             if (typeof room.rollTotals[userId] !== "number") {
                 room.rollTotals[userId] = 0;
@@ -150,6 +164,7 @@
             }
             room.seatResults[rollSeatId] = rollValue;
             room.rollTotals[userId] = (Number(room.rollTotals[userId]) || 0) + rollValue;
+            room.seats[rollSeatId].lastSeenAt = now;
             appendMessage(
                 room,
                 buildMessage(
@@ -184,6 +199,18 @@
             if (messageUserName && messageContent) {
                 appendMessage(room, buildMessage(messageUserName, messageContent, now, false));
             }
+            if (messageSeatId !== null) {
+                room.seats[messageSeatId].lastSeenAt = now;
+            }
+            room.updatedAt = now;
+            return room;
+        }
+
+        if (type === "heartbeat") {
+            var heartbeatSeatId = findSeatIdByUserId(room, userId);
+            if (heartbeatSeatId !== null) {
+                room.seats[heartbeatSeatId].lastSeenAt = now;
+            }
             room.updatedAt = now;
             return room;
         }
@@ -212,11 +239,35 @@
         };
     }
 
+    function clearInactiveSeats(roomInput, options) {
+        var room = clone(roomInput || createInitialPlayRoomState());
+        var nowMs = toTimeMs(options && options.now ? options.now : new Date().toISOString());
+        var ttlMs = Number(options && options.ttlMs);
+        var timeoutMs = Number.isFinite(ttlMs) && ttlMs > 0 ? ttlMs : 30 * 1000;
+        if (nowMs === null) return room;
+
+        for (var i = 0; i < room.seats.length; i += 1) {
+            var seat = room.seats[i];
+            if (!seat || !seat.userId) continue;
+            var lastSeenMs = toTimeMs(seat.lastSeenAt || seat.seatedAt);
+            if (lastSeenMs === null) {
+                clearSeatByUserId(room, seat.userId);
+                continue;
+            }
+            if (nowMs - lastSeenMs > timeoutMs) {
+                clearSeatByUserId(room, seat.userId);
+            }
+        }
+
+        return room;
+    }
+
     var api = {
         SEAT_COUNT: SEAT_COUNT,
         createInitialPlayRoomState: createInitialPlayRoomState,
         applyPlayRoomAction: applyPlayRoomAction,
         buildPlayRoomView: buildPlayRoomView,
+        clearInactiveSeats: clearInactiveSeats,
         sanitizeProfile: sanitizeProfile
     };
 
