@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>玩</title>
+    <style>
+        :root {
+            --bg-dark: #0b0f1a;
+            --bg-card: #151b2b;
+            --accent-purple: #8b5cf6;
+            --accent-yellow: #fbbf24;
+            --accent-red: #ef4444;
+            --text-light: #f8fafc;
+            --text-gray: #94a3b8;
+            --toolbar-bg: rgba(11, 15, 26, 0.95);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(160deg, #0b0f1a 0%, #1a103c 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* 房间头部 */
+        .room-header {
+            text-align: center;
+            padding: 30px 16px 20px;
+            background: linear-gradient(180deg, rgba(26, 16, 60, 0.8) 0%, transparent 100%);
+            z-index: 10;
+        }
+        .room-name {
+            font-size: 26px;
+            font-weight: 800;
+            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+        }
+
+        /* 座位网格 */
+        .seats-container {
+            flex: 1;
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 10px 16px 100px;
+            width: 100%;
+        }
+        .seat-row { display: flex; justify-content: center; gap: 14px; margin-bottom: 18px; }
+
+        /* 座位样式 */
+        .seat {
+            position: relative;
+            width: 80px;
+            min-height: 110px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 2px dashed rgba(139, 92, 246, 0.2);
+            border-radius: 20px;
+            background: rgba(255,255,255,0.02);
+            transition: all 0.3s;
+            cursor: pointer;
+            padding: 10px 4px 8px;
+        }
+        .seat:hover { border-color: rgba(139, 92, 246, 0.5); background: rgba(139, 92, 246, 0.05); }
+
+        /* 已入座状态 */
+        .seat.occupied {
+            border: 2px solid var(--accent-purple);
+            background: rgba(139, 92, 246, 0.1);
+            cursor: default;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+        }
+        .seat.occupied:hover { transform: none; }
+
+        /* Boss 位特殊样式 */
+        .seat.boss {
+            border: 2px solid rgba(251, 191, 36, 0.3);
+            background: rgba(251, 191, 36, 0.05);
+            cursor: pointer;
+        }
+        .seat.boss:hover { border-color: rgba(251, 191, 36, 0.5); box-shadow: 0 0 15px rgba(251, 191, 36, 0.2); }
+
+        /* 头像区域 */
+        .avatar-wrap {
+            width: 56px; height: 56px; border-radius: 50%; overflow: hidden; margin-bottom: 8px;
+            background: var(--bg-card); border: 2px solid rgba(255,255,255,0.1); position: relative;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .avatar-wrap svg, .avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* 摇到的数字悬浮层 */
+        .mic-num {
+            position: absolute; top: -28px; left: 50%; transform: translateX(-50%) scale(0);
+            background: linear-gradient(135deg, #6d28d9, #4c1d95); color: #fff;
+            width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 16px; font-weight: bold; box-shadow: 0 0 12px rgba(139, 92, 246, 0.6);
+            opacity: 0; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 10;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        .mic-num.show { transform: translateX(-50%) scale(1); opacity: 1; }
+        .mic-num::after { content: ''; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid #4c1d95; }
+
+        .seat-name { font-size: 13px; font-weight: 600; color: var(--text-light); margin-bottom: 4px; text-align: center; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        /* 状态标签/按钮容器 */
+        .seat-status {
+            font-size: 11px; text-align: center; width: 100%;
+        }
+        .seat-tag {
+            color: var(--text-gray); background: rgba(255,255,255,0.05);
+            padding: 3px 8px; border-radius: 8px; display: inline-block;
+        }
+        .leave-btn {
+            background: rgba(239, 68, 68, 0.25); color: #fca5a5; font-size: 11px;
+            padding: 4px 10px; border-radius: 8px; cursor: pointer; border: 1px solid rgba(239, 68, 68, 0.3);
+            transition: all 0.2s; font-weight: 500;
+        }
+        .leave-btn:active { background: rgba(239, 68, 68, 0.4); transform: scale(0.95); }
+
+        /* 滚动摇号遮罩层 */
+        .seat.rolling .roll-overlay {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 68px; height: 84px; border-radius: 18px;
+            background: linear-gradient(135deg, #6d28d9, #3b82f6);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 30; border: 2px solid rgba(255,255,255,0.3);
+            box-shadow: 0 0 25px rgba(109, 40, 217, 0.7);
+            animation: pulseOverlay 0.8s infinite alternate;
+            pointer-events: none;
+        }
+        .seat.rolling .roll-num {
+            font-size: 38px; font-weight: 900; color: #fff;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.4); letter-spacing: 2px;
+        }
+        .seat.rolling .roll-go {
+            margin-top: 10px; width: 34px; height: 16px;
+            background: linear-gradient(90deg, #ef4444, #dc2626); border-radius: 8px;
+            font-size: 9px; color: #fff; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        @keyframes pulseOverlay {
+            from { box-shadow: 0 0 15px rgba(109, 40, 217, 0.5); }
+            to { box-shadow: 0 0 35px rgba(109, 40, 217, 0.9); }
+        }
+
+        /* 公屏聊天区 */
+        .chat-layer {
+            position: fixed; bottom: 80px; left: 16px; right: 16px;
+            pointer-events: none; z-index: 50;
+            display: flex; flex-direction: column; justify-content: flex-end;
+            max-height: 300px;
+        }
+        .chat-messages {
+            pointer-events: auto; overflow-y: auto; max-height: 200px;
+            display: flex; flex-direction: column; gap: 6px; padding-bottom: 10px;
+            scrollbar-width: none; -ms-overflow-style: none;
+        }
+        .chat-messages::-webkit-scrollbar { display: none; }
+        .chat-item {
+            background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(4px);
+            padding: 8px 12px; border-radius: 12px; font-size: 13px; color: #fff;
+            max-width: 80%; align-self: flex-start; animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 底部工具栏 */
+        .toolbar {
+            position: fixed; bottom: 0; left: 0; right: 0; background: var(--toolbar-bg);
+            backdrop-filter: blur(12px); border-top: 1px solid rgba(255,255,255,0.08);
+            padding: 12px 16px 24px; display: flex; align-items: center; justify-content: space-between; z-index: 100;
+        }
+        .chat-input {
+            flex: 1; background: rgba(255,255,255,0.08); border: none; border-radius: 20px;
+            padding: 10px 14px; color: #fff; font-size: 14px; outline: none; margin-right: 10px;
+        }
+        .icon-btn { width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; border: none; color: #fff; font-size: 18px; }
+        .icon-btn:active { transform: scale(0.92); background: rgba(255,255,255,0.15); }
+
+        /* 麦序机按钮 */
+        .mic-btn {
+            position: relative; width: 60px; height: 60px; cursor: pointer;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b); border-radius: 14px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: 0 0 18px rgba(251, 191, 36, 0.4); border: 2px solid #fef3c7; margin: 0 6px;
+        }
+        .mic-btn.disabled { opacity: 0.5; pointer-events: none; filter: grayscale(0.8); }
+        .mic-btn .screen { width: 44px; height: 32px; background: linear-gradient(135deg, #7c3aed, #4c1d95); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: bold; color: #fff; margin-bottom: 4px; box-shadow: inset 0 0 6px rgba(0,0,0,0.3); }
+        .mic-btn .go-pill { width: 28px; height: 14px; background: linear-gradient(90deg, #ef4444, #dc2626); border-radius: 8px; font-size: 8px; color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .mic-btn .label { font-size: 9px; color: #fff; margin-top: 3px; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+        .mic-btn .bulb { position: absolute; width: 5px; height: 5px; background: #fff; border-radius: 50%; box-shadow: 0 0 5px #fbbf24; animation: blink 1.5s infinite; }
+        .mic-btn .bulb:nth-child(1) { top: 4px; left: 4px; animation-delay: 0s; }
+        .mic-btn .bulb:nth-child(2) { top: 4px; right: 4px; animation-delay: 0.3s; }
+        .mic-btn .bulb:nth-child(3) { bottom: 4px; left: 4px; animation-delay: 0.6s; }
+        .mic-btn .bulb:nth-child(4) { bottom: 4px; right: 4px; animation-delay: 0.9s; }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+        /* 资料设置弹窗 */
+        .profile-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 200;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        .profile-modal.active { opacity: 1; pointer-events: auto; }
+        .modal-card {
+            background: var(--bg-card); border-radius: 24px; padding: 28px 24px; width: 320px; text-align: center;
+            border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+        }
+        .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; color: var(--accent-yellow); display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+        /* 头像上传区 */
+        .avatar-upload {
+            width: 88px; height: 88px; border-radius: 50%; border: 2px dashed rgba(255,255,255,0.2);
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            margin: 0 auto 24px; background: rgba(255,255,255,0.05); overflow: hidden;
+            transition: all 0.2s; position: relative;
+        }
+        .avatar-upload:hover { border-color: var(--accent-purple); background: rgba(139,92,246,0.15); }
+        .avatar-upload svg { width: 42px; height: 42px; color: var(--text-gray); }
+        #avatarPreview { width: 100%; height: 100%; object-fit: cover; display: none; }
+
+        .input-field { width: 100%; padding: 14px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; color: #fff; font-size: 15px; margin-bottom: 24px; outline: none; }
+        .input-field:focus { border-color: var(--accent-purple); background: rgba(255,255,255,0.12); }
+        .gender-select { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; }
+        .gender-opt {
+            width: 68px; height: 68px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;
+            background: rgba(255,255,255,0.05);
+        }
+        .gender-opt.active { border-color: var(--accent-purple); background: rgba(139,92,246,0.2); box-shadow: 0 0 12px rgba(139,92,246,0.3); }
+        .gender-opt svg { width: 38px; height: 38px; }
+        .confirm-btn { width: 100%; padding: 14px; background: linear-gradient(90deg, #8b5cf6, #6d28d9); color: #fff; border: none; border-radius: 14px; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(109, 40, 217, 0.4); transition: transform 0.2s; }
+        .confirm-btn:active { transform: scale(0.97); }
+
+        /* Toast */
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8); background: rgba(0,0,0,0.85); color: #fff; padding: 12px 24px; border-radius: 12px; font-size: 14px; opacity: 0; pointer-events: none; transition: all 0.3s; z-index: 200; }
+        .toast.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    </style>
+</head>
+<body>
+
+    <!-- 资料设置弹窗 -->
+    <div class="profile-modal" id="profileModal">
+        <div class="modal-card">
+            <div class="modal-title" id="modalTitle">👤 设置个人资料</div>
+            <!-- 头像上传 -->
+            <div class="avatar-upload" id="avatarUpload" onclick="document.getElementById('avatarInput').click()">
+                <img id="avatarPreview" src="" alt="头像预览">
+                <svg id="avatarPlaceholder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <input type="file" id="avatarInput" accept="image/*" style="display:none;">
+
+            <input type="text" class="input-field" id="nickInput" placeholder="输入昵称 (2-8字)" maxlength="8">
+            <div class="gender-select">
+                <div class="gender-opt active" data-gender="male" onclick="selectGender('male')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M3 21v-2a9 9 0 0 1 18 0v2"/></svg>
+                </div>
+                <div class="gender-opt" data-gender="female" onclick="selectGender('female')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 4C8.686 4 6 6.686 6 10C6 13.314 8.686 16 12 16C15.314 16 18 13.314 18 10C18 6.686 15.314 4 12 4Z" fill="#fce7f3" stroke="#f472b6"/>
+                        <path d="M9 16V21" stroke="#f472b6"/><path d="M15 16V21" stroke="#f472b6"/><path d="M12 16V21" stroke="#f472b6"/>
+                        <path d="M10 7C10 7 11 9 12 9C13 9 14 7 14 7" stroke="#f472b6"/>
+                        <circle cx="10" cy="5.5" r="1.2" fill="#f472b6"/><circle cx="14" cy="5.5" r="1.2" fill="#f472b6"/>
+                    </svg>
+                </div>
+            </div>
+            <button class="confirm-btn" id="saveBtn" onclick="saveProfile()">确认修改</button>
+        </div>
+    </div>
+
+    <!-- 房间头部 -->
+    <div class="room-header">
+        <div class="room-name">👑 童话镇</div>
+    </div>
+
+    <!-- 座位网格 -->
+    <div class="seats-container" id="seatsContainer">
+        <!-- JS 动态渲染 -->
+    </div>
+
+    <!-- 公屏聊天区 -->
+    <div class="chat-layer">
+        <div class="chat-messages" id="chatMessages">
+            <!-- 消息会插入到这里 -->
+        </div>
+    </div>
+
+    <!-- 底部工具栏 -->
+    <div class="toolbar">
+        <input type="text" class="chat-input" id="chatInput" placeholder="说点什么...">
+        <button class="icon-btn" aria-label="表情">😊</button>
+        <button class="icon-btn" aria-label="礼物">🎁</button>
+        <button class="icon-btn" aria-label="音量">🔊</button>
+        <button class="icon-btn" aria-label="消息">📩</button>
+
+        <div class="mic-btn" id="micOrderBtn" aria-label="麦序机">
+            <div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div>
+            <div class="screen" id="micScreen">5</div>
+            <div class="go-pill">GO</div>
+            <div class="label">麦序机</div>
+        </div>
+
+        <button class="icon-btn" aria-label="编辑资料" onclick="openProfileModal()">👤</button>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // 状态管理
+        const state = {
+            user: { name: '', gender: '', avatar: '' },
+            seatId: null,
+            isShaking: false,
+            seatResults: {},
+            messages: []
+        };
+
+        // 座位配置 (ID从0开始，共9个座位)
+        const SEATS_CONFIG = [
+            { id: 0, type: 'boss', name: '房主', tag: '可入座' },
+            { id: 1, type: 'normal', name: '', tag: '点击入座' },
+            { id: 2, type: 'normal', name: '', tag: '点击入座' },
+            { id: 3, type: 'normal', name: '', tag: '点击入座' },
+            { id: 4, type: 'normal', name: '', tag: '点击入座' },
+            { id: 5, type: 'normal', name: '', tag: '点击入座' },
+            { id: 6, type: 'normal', name: '', tag: '点击入座' },
+            { id: 7, type: 'normal', name: '', tag: '点击入座' },
+            { id: 8, type: 'normal', name: '', tag: '点击入座' },
+        ];
+
+        let selectedGender = 'male';
+        let rollTimer = null;
+
+        // 初始化
+        function init() {
+            const saved = localStorage.getItem('micProfile');
+            if (saved) {
+                state.user = JSON.parse(saved);
+                renderSeats();
+                addSystemMessage('欢迎进入童话镇');
+            } else {
+                openProfileModal();
+            }
+        }
+
+        // 打开/切换资料弹窗
+        function openProfileModal() {
+            const modal = document.getElementById('profileModal');
+            const title = document.getElementById('modalTitle');
+            const nickInput = document.getElementById('nickInput');
+            const saveBtn = document.getElementById('saveBtn');
+            const preview = document.getElementById('avatarPreview');
+            const placeholder = document.getElementById('avatarPlaceholder');
+
+            if (state.user.name) {
+                title.textContent = '👤 编辑个人资料';
+                nickInput.value = state.user.name;
+                saveBtn.textContent = '确认修改';
+
+                // 同步头像显示
+                if (state.user.avatar) {
+                    preview.src = state.user.avatar;
+                    preview.style.display = 'block';
+                    placeholder.style.display = 'none';
+                } else {
+                    preview.style.display = 'none';
+                    placeholder.style.display = 'flex';
+                }
+
+                // 同步性别选择
+                document.querySelectorAll('.gender-opt').forEach(el => {
+                    el.classList.toggle('active', el.dataset.gender === state.user.gender);
+                });
+            } else {
+                title.textContent = '👤 设置个人资料';
+                nickInput.value = '';
+                saveBtn.textContent = '确认入座';
+                preview.style.display = 'none';
+                placeholder.style.display = 'flex';
+                selectedGender = 'male';
+                document.querySelectorAll('.gender-opt').forEach(el => el.classList.toggle('active', el.dataset.gender === 'male'));
+            }
+
+            // 重置文件输入，允许重复选择同一文件
+            document.getElementById('avatarInput').value = '';
+            modal.classList.add('active');
+        }
+
+        // 渲染座位 (布局 0 / 1-4 / 5-8)
+        function renderSeats() {
+            const container = document.getElementById('seatsContainer');
+            let html = '';
+
+            // 第一排：0号
+            html += `<div class="seat-row">${seatHTML(SEATS_CONFIG[0])}</div>`;
+            // 第二排：1-4号
+            html += `<div class="seat-row">`;
+            for (let i = 1; i <= 4; i++) html += seatHTML(SEATS_CONFIG[i]);
+            html += `</div>`;
+            // 第三排：5-8号
+            html += `<div class="seat-row">`;
+            for (let i = 5; i <= 8; i++) html += seatHTML(SEATS_CONFIG[i]);
+            html += `</div>`;
+
+            container.innerHTML = html;
+        }
+
+        function seatHTML(s) {
+            const isOccupied = state.seatId === s.id;
+            const hasResult = state.seatResults[s.id] !== undefined;
+            const resultNum = hasResult ? state.seatResults[s.id] : '';
+
+            let avatarContent = `<svg viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>`;
+            if (isOccupied) {
+                if (state.user.avatar) {
+                    avatarContent = `<img src="${state.user.avatar}">`;
+                } else if (state.user.gender === 'female') {
+                    avatarContent = `<svg viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 4C8.686 4 6 6.686 6 10C6 13.314 8.686 16 12 16C15.314 16 18 13.314 18 10C18 6.686 15.314 4 12 4Z" fill="#fce7f3" stroke="#f472b6"/>
+                        <path d="M9 16V21" stroke="#f472b6"/><path d="M15 16V21" stroke="#f472b6"/><path d="M12 16V21" stroke="#f472b6"/>
+                        <path d="M10 7C10 7 11 9 12 9C13 9 14 7 14 7" stroke="#f472b6"/>
+                        <circle cx="10" cy="5.5" r="1.2" fill="#f472b6"/><circle cx="14" cy="5.5" r="1.2" fill="#f472b6"/>
+                       </svg>`;
+                } else {
+                    avatarContent = `<svg viewBox="0 0 24 24" fill="#94a3b8"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a8.5 8.5 0 0 1 13 0"/></svg>`;
+                }
+            }
+
+            const statusHTML = isOccupied
+                ? `<button class="leave-btn" onclick="event.stopPropagation(); leaveSeat()">离座</button>`
+                : `<div class="seat-tag">${s.tag || '点击入座'}</div>`;
+
+            return `
+            <div class="seat ${isOccupied ? 'occupied' : ''} ${s.type === 'boss' ? 'boss' : ''}" data-id="${s.id}" onclick="handleSeatClick(${s.id})">
+                <div class="mic-num ${hasResult ? 'show' : ''}" id="num-${s.id}">${resultNum}</div>
+                <div class="avatar-wrap">${avatarContent}</div>
+                <div class="seat-name">${isOccupied ? (s.name || state.user.name) : ''}</div>
+                <div class="seat-status">${statusHTML}</div>
+            </div>`;
+        }
+
+        // 资料设置
+        function selectGender(g) {
+            selectedGender = g;
+            document.querySelectorAll('.gender-opt').forEach(el => el.classList.toggle('active', el.dataset.gender === g));
+        }
+
+        function saveProfile() {
+            const name = document.getElementById('nickInput').value.trim();
+            if (!name) return showToast('请输入昵称');
+
+            state.user = { name, gender: selectedGender, avatar: state.user.avatar };
+            localStorage.setItem('micProfile', JSON.stringify(state.user));
+            document.getElementById('profileModal').classList.remove('active');
+            renderSeats();
+            addSystemMessage(`欢迎 ${state.user.name} 进入房间`);
+        }
+
+        // 座位交互
+        function handleSeatClick(id) {
+            if (state.seatId) return showToast('您已入座，请离座后再选');
+            if (id === 0 && state.user.name !== '甜歌') return showToast('房主位仅甜歌可入座');
+
+            state.seatId = id;
+            renderSeats();
+            showToast(`已入座 ${id} 号位`);
+        }
+
+        function leaveSeat() {
+            state.seatId = null;
+            renderSeats();
+            showToast('已离座');
+        }
+
+        // 麦序机逻辑 (含滚动动效)
+        const btn = document.getElementById('micOrderBtn');
+        const screen = document.getElementById('micScreen');
+
+        btn.addEventListener('click', () => {
+            if (!state.seatId) return showToast('请先点击空座入座');
+            if (state.isShaking) return;
+
+            state.isShaking = true;
+            btn.classList.add('disabled');
+            screen.textContent = '摇';
+
+            document.querySelectorAll('.mic-num').forEach(el => { el.classList.remove('show'); el.textContent = ''; });
+
+            const seatEl = document.querySelector(`.seat[data-id="${state.seatId}"]`);
+            seatEl.classList.add('rolling');
+
+            const overlay = document.createElement('div');
+            overlay.className = 'roll-overlay';
+            overlay.innerHTML = `<div class="roll-num">0</div><div class="roll-go">GO</div>`;
+            seatEl.appendChild(overlay);
+
+            let currentNum = 0;
+            rollTimer = setInterval(() => {
+                currentNum = Math.floor(Math.random() * 9);
+                overlay.querySelector('.roll-num').textContent = currentNum;
+            }, 60);
+
+            setTimeout(() => {
+                clearInterval(rollTimer);
+                seatEl.classList.remove('rolling');
+                overlay.remove();
+
+                const finalNum = Math.floor(Math.random() * 9);
+                state.seatResults[state.seatId] = finalNum;
+
+                const numEl = document.getElementById(`num-${state.seatId}`);
+                numEl.textContent = finalNum;
+                setTimeout(() => numEl.classList.add('show'), 50);
+
+                addSystemMessage(`${state.user.name} 麦序机摇到 ${finalNum} 号`);
+
+                screen.textContent = '5';
+                btn.classList.remove('disabled');
+                state.isShaking = false;
+            }, 2000);
+        });
+
+        // 公屏逻辑
+        const chatInput = document.getElementById('chatInput');
+        const chatMessages = document.getElementById('chatMessages');
+
+        function sendMessage(text) {
+            if (!text.trim()) return;
+            const msg = { id: Date.now(), user: state.user.name || '我', content: text, isSystem: false };
+            state.messages.push(msg);
+            renderChat();
+            chatInput.value = '';
+        }
+
+        function addSystemMessage(text) {
+            const msg = { id: Date.now(), user: '系统', content: text, isSystem: true };
+            state.messages.push(msg);
+            renderChat();
+        }
+
+        function renderChat() {
+            chatMessages.innerHTML = '';
+            state.messages.forEach(msg => {
+                const div = document.createElement('div');
+                div.className = 'chat-item';
+                if (msg.isSystem) {
+                    div.style.color = '#fbbf24';
+                    div.style.background = 'rgba(251, 191, 36, 0.1)';
+                }
+                div.textContent = `${msg.user}: ${msg.content}`;
+                chatMessages.appendChild(div);
+            });
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        chatInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') sendMessage(chatInput.value);
+        });
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 1500);
+        }
+
+        // 监听头像上传
+        document.getElementById('avatarInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const preview = document.getElementById('avatarPreview');
+                const placeholder = document.getElementById('avatarPlaceholder');
+                preview.src = evt.target.result;
+                preview.style.display = 'block';
+                placeholder.style.display = 'none';
+                state.user.avatar = evt.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        init();
+    </script>
+</body>
+</html>
