@@ -48,14 +48,11 @@
 
         /* 座位网格 */
         .seats-container {
-            flex: 1;
+            flex-shrink: 0;
             max-width: 520px;
             margin: 0 auto;
-            padding: 10px 16px 10px; /* Reduced bottom padding as toolbar is fixed */
+            padding: 10px 16px 6px;
             width: 100%;
-            overflow: hidden; /* FIX 2: Prevent seat area scrolling */
-            display: flex;
-            flex-direction: column;
         }
         .seat-row { display: flex; justify-content: center; gap: 14px; margin-bottom: 18px; }
 
@@ -170,19 +167,22 @@
 
         /* 公屏聊天区 */
         .chat-layer {
-            position: fixed; bottom: 80px; left: 16px; right: 16px;
-            pointer-events: none; z-index: 50;
-            display: flex; flex-direction: column; justify-content: flex-end;
-            max-height: 300px;
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            padding: 8px 16px 90px;
+            max-width: 520px;
+            width: 100%;
+            margin: 0 auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.2) transparent;
         }
+        .chat-layer::-webkit-scrollbar { width: 4px; }
+        .chat-layer::-webkit-scrollbar-track { background: transparent; }
+        .chat-layer::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
         .chat-messages {
-            pointer-events: auto; 
-            overflow-y: auto; /* Only chat messages scroll */
-            max-height: 200px;
-            display: flex; flex-direction: column; gap: 6px; padding-bottom: 10px;
-            scrollbar-width: none; -ms-overflow-style: none;
+            display: flex; flex-direction: column; gap: 6px;
         }
-        .chat-messages::-webkit-scrollbar { display: none; }
         .chat-item {
             background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(4px);
             padding: 8px 12px; border-radius: 12px; font-size: 13px; color: #fff;
@@ -403,7 +403,7 @@
     </div>
 
     <!-- 公屏聊天区 -->
-    <div class="chat-layer">
+    <div class="chat-layer" id="chatLayer">
         <div class="chat-messages" id="chatMessages">
             <!-- 消息会插入到这里 -->
         </div>
@@ -794,8 +794,12 @@
         }
 
         async function clearRollTotal() {
+            const action = { type: 'clear-roll-total', userId: state.user.userId };
+            state.roomSnapshot = window.PlayRoomState.applyPlayRoomAction(state.roomSnapshot, action, new Date().toISOString());
+            renderSeats();
+            renderChat();
             try {
-                await postRoomAction({ type: 'clear-roll-total', userId: state.user.userId });
+                await postRoomAction(action);
                 showToast('累计已清零');
             } catch (_) {
                 showToast('清零失败，请重试');
@@ -836,8 +840,13 @@
 
                 const finalNum = Math.floor(Math.random() * 9);
                 screen.textContent = finalNum === 0 ? '10' : String(finalNum);
+                const rollAction = { type: 'roll', userId: state.user.userId, value: finalNum };
+                // Optimistic update — render immediately, server reconciles in background
+                state.roomSnapshot = window.PlayRoomState.applyPlayRoomAction(state.roomSnapshot, rollAction, new Date().toISOString());
+                renderSeats();
+                renderChat();
                 try {
-                    await postRoomAction({ type: 'roll', userId: state.user.userId, value: finalNum });
+                    await postRoomAction(rollAction);
                 } catch (_) {
                     showToast('摇号同步失败');
                 } finally {
@@ -872,7 +881,8 @@
                 return;
             }
 
-            const wasNearBottom = chatMessages.scrollHeight - chatMessages.scrollTop - chatMessages.clientHeight < 24;
+            const chatLayer = document.getElementById('chatLayer');
+            const wasNearBottom = chatLayer.scrollHeight - chatLayer.scrollTop - chatLayer.clientHeight < 24;
             const canAppendOnly = !isSameIds
                 && nextIds.length >= lastRenderedMessageIds.length
                 && lastRenderedMessageIds.every((id, index) => id === nextIds[index]);
@@ -897,7 +907,7 @@
             lastRenderedMessagesSignature = nextSignature;
 
             if (wasNearBottom || messages.length <= 1) {
-                chatMessages.scrollTop = chatMessages.scrollHeight;
+                chatLayer.scrollTop = chatLayer.scrollHeight;
             }
         }
 
