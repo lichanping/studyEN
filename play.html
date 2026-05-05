@@ -432,12 +432,16 @@
             localMutationVersion: 0,
             pendingActionCount: 0,
             fetchRequestSeq: 0,
-            actionRequestSeq: 0
+            actionRequestSeq: 0,
+            syncLockUntilMs: 0
         };
 
         const ROOM_ID = 'fairy-town';
         const POLL_INTERVAL_MS = 2500;
         const HEARTBEAT_INTERVAL_MS = 10 * 1000;
+        const ACTION_SYNC_LOCK_DEFAULT_MS = 1800;
+        const ACTION_SYNC_LOCK_MIN_MS = 900;
+        const ACTION_SYNC_LOCK_MAX_MS = 4200;
 
         // 座位配置 (ID从0开始，共9个座位)
         const SEATS_CONFIG = [
@@ -459,6 +463,7 @@
         let lastRenderedMessageIds = [];
         let lastHeartbeatAtMs = 0;
         let audioCtx = null;
+        let recentActionRttMs = [];
 
         function createUserId() {
             if (window.crypto && typeof window.crypto.randomUUID === 'function') {
@@ -500,8 +505,32 @@
             return null;
         }
 
+        function clamp(value, min, max) {
+            return Math.max(min, Math.min(max, value));
+        }
+
+        function recordActionRtt(rttMs) {
+            if (!Number.isFinite(rttMs) || rttMs <= 0) return;
+            recentActionRttMs.push(rttMs);
+            if (recentActionRttMs.length > 3) {
+                recentActionRttMs = recentActionRttMs.slice(-3);
+            }
+        }
+
+        function getAdaptiveSyncLockMs() {
+            if (!recentActionRttMs.length) return ACTION_SYNC_LOCK_DEFAULT_MS;
+            const sum = recentActionRttMs.reduce((acc, item) => acc + item, 0);
+            const avg = sum / recentActionRttMs.length;
+            const last = recentActionRttMs[recentActionRttMs.length - 1];
+            const estimatedMs = Math.round(Math.max(avg, last) * 2 + 250);
+            return clamp(estimatedMs, ACTION_SYNC_LOCK_MIN_MS, ACTION_SYNC_LOCK_MAX_MS);
+        }
+
         function applyOptimisticAction(action) {
             state.localMutationVersion += 1;
+            state.syncLockUntilMs = Date.now() + getAdaptiveSyncLockMs();
+            // Invalidate in-flight fetch responses started before the local mutation.
+            state.fetchRequestSeq += 1;
             state.roomSnapshot = window.PlayRoomState.applyPlayRoomAction(state.roomSnapshot, action, new Date().toISOString());
             renderSeats();
             renderChat();
@@ -550,6 +579,7 @@
 
         async function fetchRoomSnapshot() {
             if (state.pendingActionCount > 0) return;
+            if (Date.now() < state.syncLockUntilMs) return;
             const requestSeq = ++state.fetchRequestSeq;
             const requestMutationVersion = state.localMutationVersion;
             const response = await fetch(`/.netlify/functions/play-room?roomId=${encodeURIComponent(ROOM_ID)}&joinedAt=${encodeURIComponent(state.joinedAt)}`);
@@ -561,6 +591,7 @@
                 throw new Error('invalid room snapshot');
             }
             if (state.pendingActionCount > 0) return;
+            if (Date.now() < state.syncLockUntilMs) return;
             if (requestSeq !== state.fetchRequestSeq) return;
             if (requestMutationVersion !== state.localMutationVersion) return;
             state.roomSnapshot = data.snapshot;
@@ -571,6 +602,9 @@
         async function postRoomAction(action, options = {}) {
             const actionSeq = ++state.actionRequestSeq;
             state.pendingActionCount += 1;
+            const startMs = (window.performance && typeof window.performance.now === 'function')
+                ? window.performance.now()
+                : Date.now();
             try {
                 const response = await fetch('/.netlify/functions/play-room', {
                     method: 'POST',
@@ -594,6 +628,12 @@
                         renderSeats();
                         renderChat();
                     }
+                }
+                const endMs = (window.performance && typeof window.performance.now === 'function')
+                    ? window.performance.now()
+                    : Date.now();
+                if (!action || action.type !== 'heartbeat') {
+                    recordActionRtt(endMs - startMs);
                 }
                 return data.snapshot;
             } finally {
