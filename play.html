@@ -40,6 +40,7 @@
             font-size: 26px;
             font-weight: 800;
             background: linear-gradient(90deg, #fbbf24, #f59e0b);
+            background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
@@ -61,11 +62,12 @@
         /* 座位样式 */
         .seat {
             position: relative;
-            width: 80px;
-            min-height: 110px;
+            width: clamp(72px, 19vw, 82px);
+            height: clamp(126px, 31vw, 142px);
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: flex-start;
             border: 2px dashed rgba(139, 92, 246, 0.2);
             border-radius: 20px;
             background: rgba(255,255,255,0.02);
@@ -94,7 +96,7 @@
 
         /* 头像区域 */
         .avatar-wrap {
-            width: 56px; height: 56px; border-radius: 50%; overflow: hidden; margin-bottom: 8px;
+            width: clamp(50px, 14vw, 56px); height: clamp(50px, 14vw, 56px); border-radius: 50%; overflow: hidden; margin-bottom: 8px;
             background: var(--bg-card); border: 2px solid rgba(255,255,255,0.1); position: relative;
             display: flex; align-items: center; justify-content: center;
         }
@@ -112,15 +114,32 @@
         .mic-num.show { transform: translateX(-50%) scale(1); opacity: 1; }
         .mic-num::after { content: ''; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid #4c1d95; }
 
-        .seat-name { font-size: 13px; font-weight: 600; color: var(--text-light); margin-bottom: 4px; text-align: center; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .seat-name {
+            font-size: 13px; font-weight: 600; color: var(--text-light); margin-bottom: 4px; text-align: center;
+            max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-height: 18px;
+        }
+        .seat-meta {
+            font-size: 11px;
+            color: #fbbf24;
+            min-height: 16px;
+            margin-bottom: 6px;
+        }
 
         /* 状态标签/按钮容器 */
         .seat-status {
-            font-size: 11px; text-align: center; width: 100%;
+            font-size: 11px; text-align: center; width: 100%; min-height: 34px;
+            display: flex; align-items: center; justify-content: center;
         }
         .seat-tag {
             color: var(--text-gray); background: rgba(255,255,255,0.05);
             padding: 3px 8px; border-radius: 8px; display: inline-block;
+        }
+        .seat-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            flex-wrap: wrap;
         }
         .leave-btn {
             background: rgba(239, 68, 68, 0.25); color: #fca5a5; font-size: 11px;
@@ -128,6 +147,12 @@
             transition: all 0.2s; font-weight: 500;
         }
         .leave-btn:active { background: rgba(239, 68, 68, 0.4); transform: scale(0.95); }
+        .clear-btn {
+            background: rgba(251, 191, 36, 0.18); color: #fde68a; font-size: 11px;
+            padding: 4px 10px; border-radius: 8px; cursor: pointer; border: 1px solid rgba(251, 191, 36, 0.28);
+            transition: all 0.2s; font-weight: 500;
+        }
+        .clear-btn:active { background: rgba(251, 191, 36, 0.3); transform: scale(0.95); }
 
         /* 滚动摇号遮罩层 */
         .seat.rolling .roll-overlay {
@@ -221,6 +246,12 @@
         .mic-btn .bulb:nth-child(3) { bottom: 4px; left: 4px; animation-delay: 0.6s; }
         .mic-btn .bulb:nth-child(4) { bottom: 4px; right: 4px; animation-delay: 0.9s; }
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+        @media (max-width: 420px) {
+            .room-header { padding: 24px 12px 18px; }
+            .seats-container { padding: 8px 12px 10px; }
+            .seat-row { gap: 10px; margin-bottom: 14px; }
+        }
 
         /* 资料设置弹窗 */
         .profile-modal {
@@ -330,15 +361,18 @@
 
     <div class="toast" id="toast"></div>
 
+    <script src="./play-room-state.js"></script>
     <script>
         // 状态管理
         const state = {
-            user: { name: '', gender: '', avatar: '' },
-            seatId: null,
+            user: { userId: '', name: '', gender: 'male', avatar: '' },
+            joinedAt: new Date().toISOString(),
             isShaking: false,
-            seatResults: {},
-            messages: []
+            roomSnapshot: window.PlayRoomState.createInitialPlayRoomState()
         };
+
+        const ROOM_ID = 'fairy-town';
+        const POLL_INTERVAL_MS = 2500;
 
         // 座位配置 (ID从0开始，共9个座位)
         const SEATS_CONFIG = [
@@ -355,15 +389,103 @@
 
         let selectedGender = 'male';
         let rollTimer = null;
+        let pollTimer = null;
+
+        function createUserId() {
+            if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+                return window.crypto.randomUUID();
+            }
+            return 'u_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+        }
+
+        function persistProfile() {
+            localStorage.setItem('micProfile', JSON.stringify(state.user));
+        }
+
+        function loadProfile() {
+            try {
+                const saved = localStorage.getItem('micProfile');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    state.user = {
+                        userId: parsed.userId || createUserId(),
+                        name: parsed.name || '',
+                        gender: parsed.gender === 'female' ? 'female' : 'male',
+                        avatar: parsed.avatar || ''
+                    };
+                } else {
+                    state.user.userId = createUserId();
+                }
+            } catch (_) {
+                state.user = { userId: createUserId(), name: '', gender: 'male', avatar: '' };
+            }
+            selectedGender = state.user.gender || 'male';
+            persistProfile();
+        }
+
+        function getCurrentSeatId() {
+            const seats = state.roomSnapshot.seats || [];
+            for (let i = 0; i < seats.length; i += 1) {
+                if (seats[i] && seats[i].userId === state.user.userId) return i;
+            }
+            return null;
+        }
+
+        async function fetchRoomSnapshot() {
+            const response = await fetch(`/.netlify/functions/play-room?roomId=${encodeURIComponent(ROOM_ID)}&joinedAt=${encodeURIComponent(state.joinedAt)}`);
+            if (!response.ok) {
+                throw new Error(`load failed: ${response.status}`);
+            }
+            const data = await response.json();
+            if (!data || !data.success || !data.snapshot) {
+                throw new Error('invalid room snapshot');
+            }
+            state.roomSnapshot = data.snapshot;
+            renderSeats();
+            renderChat();
+        }
+
+        async function postRoomAction(action) {
+            const response = await fetch('/.netlify/functions/play-room', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    roomId: ROOM_ID,
+                    joinedAt: state.joinedAt,
+                    action
+                })
+            });
+            if (!response.ok) {
+                throw new Error(`action failed: ${response.status}`);
+            }
+            const data = await response.json();
+            if (!data || !data.success || !data.snapshot) {
+                throw new Error('invalid action snapshot');
+            }
+            state.roomSnapshot = data.snapshot;
+            renderSeats();
+            renderChat();
+        }
+
+        function startPolling() {
+            if (pollTimer) clearInterval(pollTimer);
+            pollTimer = setInterval(() => {
+                fetchRoomSnapshot().catch(() => {});
+            }, POLL_INTERVAL_MS);
+        }
 
         // 初始化
-        function init() {
-            const saved = localStorage.getItem('micProfile');
-            if (saved) {
-                state.user = JSON.parse(saved);
-                renderSeats();
-                addSystemMessage('欢迎进入童话镇');
-            } else {
+        async function init() {
+            loadProfile();
+            renderSeats();
+            renderChat();
+            try {
+                await fetchRoomSnapshot();
+            } catch (_) {
+                showToast('房间同步失败，稍后重试');
+            }
+            startPolling();
+            if (!state.user.name) {
                 openProfileModal();
             }
         }
@@ -431,15 +553,19 @@
         }
 
         function seatHTML(s) {
-            const isOccupied = state.seatId === s.id;
-            const hasResult = state.seatResults[s.id] !== undefined;
-            const resultNum = hasResult ? state.seatResults[s.id] : '';
+            const occupant = (state.roomSnapshot.seats || [])[s.id];
+            const isOccupied = !!occupant;
+            const isCurrentUser = isOccupied && occupant.userId === state.user.userId;
+            const hasResult = state.roomSnapshot.seatResults[s.id] !== undefined;
+            const resultNum = hasResult ? state.roomSnapshot.seatResults[s.id] : '';
+            const total = isOccupied ? (Number(state.roomSnapshot.rollTotals[occupant.userId]) || 0) : null;
 
             let avatarContent = `<svg viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>`;
             if (isOccupied) {
-                if (state.user.avatar) {
-                    avatarContent = `<img src="${state.user.avatar}">`;
-                } else if (state.user.gender === 'female') {
+                const profile = occupant.profile || {};
+                if (profile.avatar) {
+                    avatarContent = `<img src="${profile.avatar}">`;
+                } else if (profile.gender === 'female') {
                     avatarContent = `<svg viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 4C8.686 4 6 6.686 6 10C6 13.314 8.686 16 12 16C15.314 16 18 13.314 18 10C18 6.686 15.314 4 12 4Z" fill="#fce7f3" stroke="#f472b6"/>
                         <path d="M9 16V21" stroke="#f472b6"/><path d="M15 16V21" stroke="#f472b6"/><path d="M12 16V21" stroke="#f472b6"/>
@@ -451,15 +577,18 @@
                 }
             }
 
-            const statusHTML = isOccupied
-                ? `<button class="leave-btn" onclick="event.stopPropagation(); leaveSeat()">离座</button>`
-                : `<div class="seat-tag">${s.tag || '点击入座'}</div>`;
+            const statusHTML = isCurrentUser
+                ? `<div class="seat-actions"><button class="leave-btn" onclick="event.stopPropagation(); leaveSeat()">离座</button><button class="clear-btn" onclick="event.stopPropagation(); clearRollTotal()">清零</button></div>`
+                : isOccupied
+                    ? `<div class="seat-tag">已入座</div>`
+                    : `<div class="seat-tag">${s.tag || '点击入座'}</div>`;
 
             return `
             <div class="seat ${isOccupied ? 'occupied' : ''} ${s.type === 'boss' ? 'boss' : ''}" data-id="${s.id}" onclick="handleSeatClick(${s.id})">
                 <div class="mic-num ${hasResult ? 'show' : ''}" id="num-${s.id}">${resultNum}</div>
                 <div class="avatar-wrap">${avatarContent}</div>
-                <div class="seat-name">${isOccupied ? (s.name || state.user.name) : ''}</div>
+                <div class="seat-name">${isOccupied ? ((occupant.profile && occupant.profile.name) || '') : ''}</div>
+                <div class="seat-meta">${isOccupied ? `累计 ${total}` : '&nbsp;'}</div>
                 <div class="seat-status">${statusHTML}</div>
             </div>`;
         }
@@ -470,31 +599,67 @@
             document.querySelectorAll('.gender-opt').forEach(el => el.classList.toggle('active', el.dataset.gender === g));
         }
 
-        function saveProfile() {
+        async function saveProfile() {
             const name = document.getElementById('nickInput').value.trim();
             if (!name) return showToast('请输入昵称');
 
-            state.user = { name, gender: selectedGender, avatar: state.user.avatar };
-            localStorage.setItem('micProfile', JSON.stringify(state.user));
+            state.user = { userId: state.user.userId, name, gender: selectedGender, avatar: state.user.avatar };
+            persistProfile();
             document.getElementById('profileModal').classList.remove('active');
+            const currentSeatId = getCurrentSeatId();
             renderSeats();
-            addSystemMessage(`欢迎 ${state.user.name} 进入房间`);
+            if (currentSeatId !== null) {
+                try {
+                    await postRoomAction({
+                        type: 'sit',
+                        userId: state.user.userId,
+                        profile: state.user,
+                        seatId: currentSeatId
+                    });
+                } catch (_) {
+                    showToast('资料同步失败');
+                }
+            } else {
+                showToast('资料已保存');
+            }
         }
 
         // 座位交互
-        function handleSeatClick(id) {
-            if (state.seatId) return showToast('您已入座，请离座后再选');
+        async function handleSeatClick(id) {
+            if (!state.user.name) {
+                openProfileModal();
+                return;
+            }
+            const currentSeatId = getCurrentSeatId();
+            if (currentSeatId !== null && currentSeatId !== id) return showToast('您已入座，请离座后再选');
             if (id === 0 && state.user.name !== '甜歌') return showToast('房主位仅甜歌可入座');
+            const occupant = (state.roomSnapshot.seats || [])[id];
+            if (occupant && occupant.userId !== state.user.userId) return showToast('该座位已有人');
 
-            state.seatId = id;
-            renderSeats();
-            showToast(`已入座 ${id} 号位`);
+            try {
+                await postRoomAction({ type: 'sit', userId: state.user.userId, profile: state.user, seatId: id });
+                showToast(`已入座 ${id}`);
+            } catch (_) {
+                showToast('入座失败，请重试');
+            }
         }
 
-        function leaveSeat() {
-            state.seatId = null;
-            renderSeats();
-            showToast('已离座');
+        async function leaveSeat() {
+            try {
+                await postRoomAction({ type: 'leave', userId: state.user.userId });
+                showToast('已离座');
+            } catch (_) {
+                showToast('离座失败，请重试');
+            }
+        }
+
+        async function clearRollTotal() {
+            try {
+                await postRoomAction({ type: 'clear-roll-total', userId: state.user.userId });
+                showToast('累计已清零');
+            } catch (_) {
+                showToast('清零失败，请重试');
+            }
         }
 
         // 麦序机逻辑 (含滚动动效)
@@ -502,7 +667,8 @@
         const screen = document.getElementById('micScreen');
 
         btn.addEventListener('click', () => {
-            if (!state.seatId) return showToast('请先点击空座入座');
+            const currentSeatId = getCurrentSeatId();
+            if (currentSeatId === null) return showToast('请先点击空座入座');
             if (state.isShaking) return;
 
             state.isShaking = true;
@@ -511,7 +677,7 @@
 
             document.querySelectorAll('.mic-num').forEach(el => { el.classList.remove('show'); el.textContent = ''; });
 
-            const seatEl = document.querySelector(`.seat[data-id="${state.seatId}"]`);
+            const seatEl = document.querySelector(`.seat[data-id="${currentSeatId}"]`);
             seatEl.classList.add('rolling');
 
             const overlay = document.createElement('div');
@@ -521,27 +687,25 @@
 
             let currentNum = 0;
             rollTimer = setInterval(() => {
-                currentNum = Math.floor(Math.random() * 9);
+                currentNum = Math.floor(Math.random() * 10);
                 overlay.querySelector('.roll-num').textContent = currentNum;
             }, 60);
 
-            setTimeout(() => {
+            setTimeout(async () => {
                 clearInterval(rollTimer);
                 seatEl.classList.remove('rolling');
                 overlay.remove();
 
-                const finalNum = Math.floor(Math.random() * 9);
-                state.seatResults[state.seatId] = finalNum;
-
-                const numEl = document.getElementById(`num-${state.seatId}`);
-                numEl.textContent = finalNum;
-                setTimeout(() => numEl.classList.add('show'), 50);
-
-                addSystemMessage(`${state.user.name} 麦序机摇到 ${finalNum} 号`);
-
-                screen.textContent = '5';
-                btn.classList.remove('disabled');
-                state.isShaking = false;
+                const finalNum = Math.floor(Math.random() * 10);
+                try {
+                    await postRoomAction({ type: 'roll', userId: state.user.userId, value: finalNum });
+                } catch (_) {
+                    showToast('摇号同步失败');
+                } finally {
+                    screen.textContent = '5';
+                    btn.classList.remove('disabled');
+                    state.isShaking = false;
+                }
             }, 2000);
         });
 
@@ -549,23 +713,20 @@
         const chatInput = document.getElementById('chatInput');
         const chatMessages = document.getElementById('chatMessages');
 
-        function sendMessage(text) {
+        async function sendMessage(text) {
             if (!text.trim()) return;
-            const msg = { id: Date.now(), user: state.user.name || '我', content: text, isSystem: false };
-            state.messages.push(msg);
-            renderChat();
-            chatInput.value = '';
-        }
-
-        function addSystemMessage(text) {
-            const msg = { id: Date.now(), user: '系统', content: text, isSystem: true };
-            state.messages.push(msg);
-            renderChat();
+            if (!state.user.name) return openProfileModal();
+            try {
+                await postRoomAction({ type: 'message', userId: state.user.userId, profile: state.user, content: text.trim() });
+                chatInput.value = '';
+            } catch (_) {
+                showToast('发言失败，请重试');
+            }
         }
 
         function renderChat() {
             chatMessages.innerHTML = '';
-            state.messages.forEach(msg => {
+            (state.roomSnapshot.messages || []).forEach(msg => {
                 const div = document.createElement('div');
                 div.className = 'chat-item';
                 if (msg.isSystem) {
@@ -601,6 +762,7 @@
                 preview.style.display = 'block';
                 placeholder.style.display = 'none';
                 state.user.avatar = evt.target.result;
+                persistProfile();
             };
             reader.readAsDataURL(file);
         });
