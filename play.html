@@ -726,6 +726,11 @@
             return null;
         }
 
+        function getCurrentRoundStatus() {
+            const bustStatus = state.roomSnapshot.bustStatus || {};
+            return bustStatus[state.user.userId] || '';
+        }
+
         function getRoomAccessState() {
             return state.roomSnapshot.roomAccess || { passwordEnabled: false, accessGranted: true, authError: '' };
         }
@@ -1261,6 +1266,9 @@
             const currentSeatId = getCurrentSeatId();
             if (currentSeatId === null) return showToast('请先点击空座入座');
             if (state.isShaking) return;
+            if (getCurrentRoundStatus()) {
+                return showToast('本轮已结束，请先清零再开始');
+            }
 
             playRollStartSound();
             state.isShaking = true;

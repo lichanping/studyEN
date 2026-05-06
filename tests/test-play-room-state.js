@@ -111,6 +111,33 @@ function testSitShouldEvictPreviousSeatOfSameUser() {
     assert.strictEqual(room.seats[5].userId, "u1");
 }
 
+function testSitAndRollShouldNotMixAcrossUsers() {
+    let room = createInitialPlayRoomState();
+
+    room = applyPlayRoomAction(room, {
+        type: "sit",
+        userId: "u1",
+        profile: { name: "A", gender: "female" },
+        seatId: 1
+    }, "2026-05-05T09:00:00.000Z");
+    room = applyPlayRoomAction(room, {
+        type: "sit",
+        userId: "u2",
+        profile: { name: "B", gender: "male" },
+        seatId: 2
+    }, "2026-05-05T09:00:01.000Z");
+
+    room = applyPlayRoomAction(room, { type: "roll", userId: "u1", value: 4 }, "2026-05-05T09:00:02.000Z");
+    room = applyPlayRoomAction(room, { type: "roll", userId: "u2", value: 6 }, "2026-05-05T09:00:03.000Z");
+
+    assert.strictEqual(room.seats[1] && room.seats[1].userId, "u1");
+    assert.strictEqual(room.seats[2] && room.seats[2].userId, "u2");
+    assert.strictEqual(room.rollTotals.u1, 4, "u1 total should remain independent");
+    assert.strictEqual(room.rollTotals.u2, 6, "u2 total should remain independent");
+    assert.strictEqual(room.seatResults[1], 4, "seat 1 result should belong to u1");
+    assert.strictEqual(room.seatResults[2], 6, "seat 2 result should belong to u2");
+}
+
 function testClearInactiveSeatsShouldEvictStaleSeatAndRollData() {
     let room = createInitialPlayRoomState();
     room = applyPlayRoomAction(room, {
@@ -364,6 +391,7 @@ function run() {
     testRollShouldRejectNine();
     testBuildViewShouldFilterMessagesByJoinTime();
     testSitShouldEvictPreviousSeatOfSameUser();
+    testSitAndRollShouldNotMixAcrossUsers();
     testClearInactiveSeatsShouldEvictStaleSeatAndRollData();
     testHeartbeatShouldKeepSeatAlive();
     testRollZeroShouldBeTreatedAsTen();
