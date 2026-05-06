@@ -654,15 +654,22 @@
             pendingActionCount: 0,
             fetchRequestSeq: 0,
             actionRequestSeq: 0,
-            syncLockUntilMs: 0
+            syncLockUntilMs: 0,
+            lastMutationAtMs: 0
         };
 
         const ROOM_ID = 'fairy-town';
         const POLL_INTERVAL_MS = 2500;
         const HEARTBEAT_INTERVAL_MS = 10 * 1000;
-        const ACTION_SYNC_LOCK_DEFAULT_MS = 1800;
-        const ACTION_SYNC_LOCK_MIN_MS = 900;
-        const ACTION_SYNC_LOCK_MAX_MS = 4200;
+        // ACTION_SYNC_LOCK_DEFAULT_MS must be > POLL_INTERVAL_MS to prevent
+        // the first poll after an action from overwriting optimistic updates.
+        const ACTION_SYNC_LOCK_DEFAULT_MS = 3500;
+        const ACTION_SYNC_LOCK_MIN_MS = 1800;
+        const ACTION_SYNC_LOCK_MAX_MS = 5000;
+        // POST_ACTION_PROPAGATION_MS: minimum time to wait after a local
+        // mutation before accepting a poll response.  Netlify Blobs has
+        // eventual consistency — writes may not be immediately visible.
+        const POST_ACTION_PROPAGATION_MS = 3000;
 
         // 座位配置 (ID从0开始，共9个座位)
         const SEATS_CONFIG = [
@@ -787,6 +794,7 @@
         function applyOptimisticAction(action) {
             state.localMutationVersion += 1;
             state.syncLockUntilMs = Date.now() + getAdaptiveSyncLockMs();
+            state.lastMutationAtMs = Date.now();
             // Invalidate in-flight fetch responses started before the local mutation.
             state.fetchRequestSeq += 1;
             state.roomSnapshot = window.PlayRoomState.applyPlayRoomAction(state.roomSnapshot, action, new Date().toISOString());
@@ -838,6 +846,17 @@
         async function fetchRoomSnapshot() {
             if (state.pendingActionCount > 0) return;
             if (Date.now() < state.syncLockUntilMs) return;
+            // Propagation delay guard: after a local mutation, wait at least
+            // POST_ACTION_PROPAGATION_MS before accepting a poll response.
+            // Netlify Blobs has eventual consistency — writes may not be
+            // immediately visible, and accepting a stale snapshot causes
+            // seat / message rollback.
+            if (state.lastMutationAtMs > 0) {
+                const elapsed = Date.now() - state.lastMutationAtMs;
+                if (elapsed < POST_ACTION_PROPAGATION_MS) {
+                    return;
+                }
+            }
             const requestSeq = ++state.fetchRequestSeq;
             const requestMutationVersion = state.localMutationVersion;
             const response = await fetch(`/.netlify/functions/play-room?roomId=${encodeURIComponent(ROOM_ID)}&joinedAt=${encodeURIComponent(state.joinedAt)}&userId=${encodeURIComponent(state.user.userId || '')}`);
