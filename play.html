@@ -193,7 +193,21 @@
             align-items: center;
             gap: 8px;
             flex-shrink: 0;
+            position: relative;
         }
+        .chat-send-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(90deg, #22c55e, #16a34a);
+            color: #fff;
+            font-size: 16px;
+            font-weight: 700;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.32);
+        }
+        .chat-send-btn:active { transform: scale(0.94); }
         .icon-btn { 
             width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,0.08); 
             display: flex; align-items: center; justify-content: center; cursor: pointer; 
@@ -201,6 +215,14 @@
             flex-shrink: 0;
         }
         .icon-btn:active { transform: scale(0.92); background: rgba(255,255,255,0.15); }
+        .narrow-actions-panel {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .fold-toggle-btn {
+            display: none;
+        }
         .toolbar-clear-btn {
             min-width: 52px;
             height: 42px;
@@ -247,9 +269,63 @@
             .seats-container { padding: 8px 12px 10px; }
             .seat-row { gap: 10px; margin-bottom: 14px; }
             .toolbar { padding: 12px 12px 20px; }
-            .chat-input { margin-right: 8px; }
+            .chat-input { margin-right: 6px; min-width: 92px; }
             .toolbar-actions { gap: 6px; }
             .toolbar-clear-btn { min-width: 46px; padding: 0 8px; font-size: 12px; }
+            .icon-btn, .chat-send-btn { width: 38px; height: 38px; font-size: 15px; }
+        }
+
+        @media (max-width: 360px) {
+            .toolbar {
+                padding: 10px 8px 16px;
+            }
+            .chat-input {
+                min-width: 72px;
+                padding: 8px 10px;
+                font-size: 13px;
+                margin-right: 4px;
+            }
+            .toolbar-clear-btn {
+                min-width: 42px;
+                height: 36px;
+                font-size: 11px;
+                padding: 0 6px;
+            }
+            .mic-btn {
+                width: 52px;
+                height: 52px;
+                margin: 0 3px;
+            }
+            .mic-btn .screen {
+                width: 38px;
+                height: 26px;
+                font-size: 18px;
+            }
+            .icon-btn,
+            .chat-send-btn,
+            .fold-toggle-btn {
+                width: 34px;
+                height: 34px;
+                font-size: 14px;
+            }
+            .fold-toggle-btn {
+                display: inline-flex;
+            }
+            .narrow-actions-panel {
+                display: none;
+                position: absolute;
+                right: 0;
+                bottom: 44px;
+                background: rgba(11, 15, 26, 0.98);
+                border: 1px solid rgba(255,255,255,0.12);
+                border-radius: 12px;
+                padding: 6px;
+                box-shadow: 0 8px 22px rgba(0,0,0,0.45);
+                z-index: 140;
+            }
+            .narrow-actions-panel.open {
+                display: flex;
+            }
         }
 
         /* 爆牌/胜利 座位状态 */
@@ -494,6 +570,7 @@
     <!-- 底部工具栏 -->
     <div class="toolbar">
         <input type="text" class="chat-input" id="chatInput" placeholder="说点什么...">
+        <button class="chat-send-btn" id="chatSendButton" type="button" onclick="sendMessage(document.getElementById('chatInput').value)">发</button>
         
         <!-- 麦序机按钮 -->
         <div class="mic-btn" id="micOrderBtn" aria-label="麦序机">
@@ -505,9 +582,12 @@
 
         <div class="toolbar-actions">
             <button class="toolbar-clear-btn" id="toolbarClearButton" type="button" onclick="clearRollTotal()">清零</button>
-            <button class="icon-btn" aria-label="游戏规则" type="button" onclick="openHintModal()">❓</button>
             <button class="icon-btn hidden" id="roomSettingsButton" aria-label="房间设置" type="button" onclick="openRoomSettingsModal()">⚙️</button>
-            <button class="icon-btn" aria-label="编辑资料" type="button" onclick="openProfileModal()">👤</button>
+            <button class="icon-btn fold-toggle-btn" id="toolbarFoldToggle" aria-label="更多操作" type="button" onclick="toggleNarrowActionsPanel(event)">⋯</button>
+            <div class="narrow-actions-panel" id="narrowActionsPanel">
+                <button class="icon-btn" aria-label="游戏规则" type="button" onclick="openHintModal(); closeNarrowActionsPanel()">❓</button>
+                <button class="icon-btn" aria-label="编辑资料" type="button" onclick="openProfileModal(); closeNarrowActionsPanel()">👤</button>
+            </div>
         </div>
     </div>
 
@@ -661,6 +741,10 @@
             return !!(seat0 && seat0.userId === state.user.userId && state.user.name === '甜歌');
         }
 
+        function canSeeRoomSettingsButton() {
+            return (state.user && state.user.name === '甜歌');
+        }
+
         function updateRoomAccessUI() {
             const access = getRoomAccessState();
             const modal = document.getElementById('roomEntryModal');
@@ -770,7 +854,8 @@
         }
 
         async function postRoomAction(action, options = {}) {
-            const actionSeq = ++state.actionRequestSeq;
+            const shouldSequenceSnapshot = !options.skipSnapshot;
+            const actionSeq = shouldSequenceSnapshot ? ++state.actionRequestSeq : state.actionRequestSeq;
             state.pendingActionCount += 1;
             const startMs = (window.performance && typeof window.performance.now === 'function')
                 ? window.performance.now()
@@ -792,7 +877,7 @@
                 if (!data || !data.success || !data.snapshot) {
                     throw new Error('invalid action snapshot');
                 }
-                if (actionSeq === state.actionRequestSeq && !options.skipSnapshot) {
+                if (!options.skipSnapshot && actionSeq === state.actionRequestSeq) {
                     state.roomSnapshot = data.snapshot;
                     if (!options.skipRender) {
                         renderSeats();
@@ -964,6 +1049,17 @@
             document.getElementById('hintModal').classList.remove('active');
         }
 
+        function toggleNarrowActionsPanel(event) {
+            if (event) event.stopPropagation();
+            const panel = document.getElementById('narrowActionsPanel');
+            panel.classList.toggle('open');
+        }
+
+        function closeNarrowActionsPanel() {
+            const panel = document.getElementById('narrowActionsPanel');
+            panel.classList.remove('open');
+        }
+
         // 打开/切换资料弹窗
         function openProfileModal() {
             const modal = document.getElementById('profileModal');
@@ -1031,7 +1127,7 @@
                 toolbarClearButton.classList.toggle('show', getCurrentSeatId() !== null);
             }
             if (roomSettingsButton) {
-                roomSettingsButton.classList.toggle('hidden', !isSweetOwnerSelf());
+                roomSettingsButton.classList.toggle('hidden', !canSeeRoomSettingsButton());
             }
         }
 
@@ -1277,6 +1373,13 @@
 
         window.addEventListener('pagehide', sendLeaveBeacon);
         window.addEventListener('beforeunload', sendLeaveBeacon);
+        document.addEventListener('click', (event) => {
+            const panel = document.getElementById('narrowActionsPanel');
+            const toggle = document.getElementById('toolbarFoldToggle');
+            if (!panel || !toggle) return;
+            if (panel.contains(event.target) || toggle.contains(event.target)) return;
+            closeNarrowActionsPanel();
+        });
 
         function showToast(msg) {
             const t = document.getElementById('toast');
