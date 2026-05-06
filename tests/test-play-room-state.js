@@ -233,6 +233,49 @@ function testClearShouldResetBustStatus() {
     assert.ok(!room.bustStatus.u1, "bust status should be cleared after clear-roll-total");
 }
 
+function testShouldBlockFurtherRollAfterBustOrWinUntilClear() {
+    let bustRoom = createInitialPlayRoomState();
+    bustRoom = applyPlayRoomAction(bustRoom, {
+        type: "sit",
+        userId: "u1",
+        profile: { name: "hi", gender: "female" },
+        seatId: 2
+    }, "2026-05-05T10:00:00.000Z");
+    bustRoom = applyPlayRoomAction(bustRoom, { type: "roll", userId: "u1", value: 8 }, "2026-05-05T10:00:01.000Z");
+    bustRoom = applyPlayRoomAction(bustRoom, { type: "roll", userId: "u1", value: 8 }, "2026-05-05T10:00:02.000Z");
+    bustRoom = applyPlayRoomAction(bustRoom, { type: "roll", userId: "u1", value: 8 }, "2026-05-05T10:00:03.000Z");
+    assert.strictEqual(bustRoom.rollTotals.u1, 24);
+    assert.strictEqual(bustRoom.bustStatus.u1, "bust");
+
+    const bustMessagesBefore = bustRoom.messages.length;
+    bustRoom = applyPlayRoomAction(bustRoom, { type: "roll", userId: "u1", value: 1 }, "2026-05-05T10:00:04.000Z");
+    assert.strictEqual(bustRoom.rollTotals.u1, 24, "should keep total unchanged after bust");
+    assert.strictEqual(bustRoom.messages.length, bustMessagesBefore, "should not append roll message after bust");
+
+    bustRoom = applyPlayRoomAction(bustRoom, { type: "clear-roll-total", userId: "u1" }, "2026-05-05T10:00:05.000Z");
+    assert.strictEqual(bustRoom.rollTotals.u1, 0, "clear should reset total after bust");
+    bustRoom = applyPlayRoomAction(bustRoom, { type: "roll", userId: "u1", value: 2 }, "2026-05-05T10:00:06.000Z");
+    assert.strictEqual(bustRoom.rollTotals.u1, 2, "roll should work again after clear");
+
+    let winRoom = createInitialPlayRoomState();
+    winRoom = applyPlayRoomAction(winRoom, {
+        type: "sit",
+        userId: "u2",
+        profile: { name: "ok", gender: "female" },
+        seatId: 3
+    }, "2026-05-05T11:00:00.000Z");
+    winRoom = applyPlayRoomAction(winRoom, { type: "roll", userId: "u2", value: 7 }, "2026-05-05T11:00:01.000Z");
+    winRoom = applyPlayRoomAction(winRoom, { type: "roll", userId: "u2", value: 7 }, "2026-05-05T11:00:02.000Z");
+    winRoom = applyPlayRoomAction(winRoom, { type: "roll", userId: "u2", value: 7 }, "2026-05-05T11:00:03.000Z");
+    assert.strictEqual(winRoom.rollTotals.u2, 21);
+    assert.strictEqual(winRoom.bustStatus.u2, "win");
+
+    const winMessagesBefore = winRoom.messages.length;
+    winRoom = applyPlayRoomAction(winRoom, { type: "roll", userId: "u2", value: 1 }, "2026-05-05T11:00:04.000Z");
+    assert.strictEqual(winRoom.rollTotals.u2, 21, "should keep total unchanged after win");
+    assert.strictEqual(winRoom.messages.length, winMessagesBefore, "should not append roll message after win");
+}
+
 function testOnlySweetOwnerCanSetRoomPassword() {
     let room = createInitialPlayRoomState();
     room = applyPlayRoomAction(room, {
@@ -327,6 +370,7 @@ function run() {
     testBustWhenTotalExceeds21();
     testWinAtExactly21();
     testClearShouldResetBustStatus();
+    testShouldBlockFurtherRollAfterBustOrWinUntilClear();
     testOnlySweetOwnerCanSetRoomPassword();
     testPasswordEnabledShouldBlockSitUntilJoinRoomSuccess();
     console.log("test-play-room-state passed");

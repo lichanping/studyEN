@@ -1241,7 +1241,6 @@
                 return;
             }
             const action = { type: 'clear-roll-total', userId: state.user.userId };
-            applyOptimisticAction(action);
             try {
                 await postRoomAction(action);
                 showToast('累计已清零');
@@ -1291,7 +1290,6 @@
                 screen.textContent = finalNum === 0 ? '10' : String(finalNum);
                 playRollResultSound(finalNum);
                 const rollAction = { type: 'roll', userId: state.user.userId, value: finalNum };
-                applyOptimisticAction(rollAction);
                 try {
                     await postRoomAction(rollAction);
                 } catch (_) {

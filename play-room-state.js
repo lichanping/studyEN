@@ -269,6 +269,11 @@
                 room.updatedAt = now;
                 return room;
             }
+            if (room.bustStatus && room.bustStatus[userId]) {
+                room.seats[rollSeatId].lastSeenAt = now;
+                room.updatedAt = now;
+                return room;
+            }
             var effectiveValue = effectiveRollValue(rollValue);
             room.seatResults[rollSeatId] = effectiveValue;
             room.rollTotals[userId] = (Number(room.rollTotals[userId]) || 0) + effectiveValue;
