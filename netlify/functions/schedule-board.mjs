@@ -22,6 +22,11 @@ function sanitizeText(value, maxLen = 256) {
     return text.slice(0, maxLen);
 }
 
+function parsePositiveInt(value, fallback) {
+    const parsed = Number.parseInt(String(value || "").trim(), 10);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
 export default async (req) => {
     if (req.method === "OPTIONS") {
         return new Response("", { status: 204, headers: corsHeaders() });
@@ -61,9 +66,23 @@ export default async (req) => {
         headers["x-user-id"] = userId;
     }
 
-    const upstreamUrl = mode === "completed"
-        ? "https://apiv2.lxll.com/customer/training/orders?pageNumber=1&pageSize=50&status=COMPLETED"
-        : "https://apiv2.lxll.com/customer/training/board";
+    let upstreamUrl;
+    if (mode === "completed") {
+        const pageNumber = parsePositiveInt(reqUrl.searchParams.get("pageNumber") || body?.pageNumber, 1);
+        const pageSize = parsePositiveInt(reqUrl.searchParams.get("pageSize") || body?.pageSize, 50);
+        upstreamUrl = `https://apiv2.lxll.com/customer/training/orders?pageNumber=${pageNumber}&pageSize=${pageSize}&status=COMPLETED`;
+    } else if (mode === "anti-forgetting-list") {
+        // 抗遗忘复习计划核对：线上真实接口
+        const studentName = sanitizeText(body?.studentName, 64);
+        const startDate = sanitizeText(body?.startDate, 32);
+        const endDate = sanitizeText(body?.endDate, 32);
+        if (!studentName || !startDate || !endDate) {
+            return jsonResponse({ error: "Missing parameters: studentName, startDate, endDate required" }, 400);
+        }
+        upstreamUrl = "https://apiv2.lxll.com/customer/anti-forget/record/teacher";
+    } else {
+        upstreamUrl = "https://apiv2.lxll.com/customer/training/board";
+    }
 
     try {
         const resp = await fetch(upstreamUrl, {

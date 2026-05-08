@@ -7,6 +7,7 @@
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1d1e21">
     <title>抗遗忘复习</title>
     <link rel="stylesheet" href="index.css?v=20260405-1">
+    <script src="./student-name-alias.js"></script>
     <script type="module">
         import * as commonFunctions from './commonFunctions.js?v=20260428-1';
         commonFunctions.checkLoginStatus();
@@ -83,6 +84,41 @@
             flex-wrap: wrap;
             margin-top: 10px;
         }
+        .hint-icon-btn {
+            width: 34px;
+            height: 34px;
+            padding: 0;
+            border-radius: 999px;
+            border: 1px solid #c8b58f;
+            background: linear-gradient(180deg, #fff8ea 0%, #f2e0bb 100%);
+            color: #8a5a12;
+            font-size: 18px;
+            font-weight: 700;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 1px 4px rgba(138, 90, 18, 0.16);
+        }
+        .hint-icon-btn:hover {
+            transform: translateY(-1px);
+            background: linear-gradient(180deg, #fff4dc 0%, #ecd29b 100%);
+            box-shadow: 0 4px 8px rgba(138, 90, 18, 0.22);
+        }
+        .collapse-toggle-btn {
+            width: 100%;
+            text-align: left;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 13px;
+            background-color: var(--panel-bg);
+            color: var(--muted-text);
+            border: 1px solid var(--panel-border);
+        }
+        .collapse-toggle-btn:hover {
+            background-color: var(--menu-hover-bg);
+        }
         /* 两列网格布局 */
         .two-col {
             display: grid;
@@ -151,6 +187,14 @@
             }
             .primary-btn:hover {
                 background: linear-gradient(135deg, #b89450 0%, #8c6a30 100%);
+            }
+            .hint-icon-btn {
+                border-color: #8d6c32;
+                background: linear-gradient(180deg, #5d4723 0%, #3f3117 100%);
+                color: #f6deaa;
+            }
+            .hint-icon-btn:hover {
+                background: linear-gradient(180deg, #735828 0%, #4a3919 100%);
             }
         }
         /* 学员选择器醒目样式 */
@@ -247,8 +291,9 @@
             <select id="userName"></select>
             <label for="reviewTime">复习时间：</label>
             <input type="datetime-local" id="reviewTime">
+            <button id="noReviewTodayButton" type="button">今日无复习</button>
         </div>
-        <div class="hint">支持右键粘贴；该页面仅用于快速复制抗遗忘内容，不涉及工资统计。切换学员会自动清空表单。重点语言点和语言点实战区按“每个非空行=1条”自动计入复习词数。</div>
+        <div id="noReviewTodayNames" class="hint">支持右键粘贴；该页面仅用于快速复制抗遗忘内容，不涉及工资统计。切换学员会自动清空表单。重点语言点和语言点实战区按“每个非空行=1条”自动计入复习词数。</div>
     </div>
 
     <div class="panel">
@@ -265,6 +310,24 @@
         <div class="actions">
             <button id="antiForgettingFeedbackButton" type="button" class="primary-btn">抗遗忘课堂反馈</button>
             <button id="newFeedbackButton" type="button">新版反馈</button>
+            <button id="checkReviewScheduleBtn" type="button">📋 核对复习计划</button>
+            <button id="reviewScheduleHintToggle" type="button" class="hint-icon-btn" aria-label="查看复习公式说明" title="查看复习公式说明">?</button>
+        </div>
+        <div id="reviewScheduleHintPanel" class="hint" style="display:none;margin-top:10px;">
+            复习公式：复习日期 = 正课日期 + 1/2/3/5/7/9/12/14/17/21 天。<br>
+            例如正课是 2026-04-17，则对应复习日依次为 2026-04-18、04-19、04-20、04-22、04-24、04-26、04-29、05-01、05-04、05-08。
+        </div>
+
+        <div id="reviewScheduleCheckPanel" style="margin-top:12px;">
+            <button id="reviewScheduleCollapseToggle" type="button" class="collapse-toggle-btn">📊 复习计划核对结果（点击展开）</button>
+            <div id="reviewScheduleCollapseBody" style="display:none;margin-top:10px;">
+                <div id="reviewScheduleSummary" style="margin-bottom:12px;"></div>
+                <div id="reviewScheduleDiff"></div>
+                <div class="actions" style="margin-top:12px;">
+                    <button id="exportReviewScheduleCSV" type="button">📥 导出CSV</button>
+                    <button id="closeReviewPanel" type="button">收起</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -304,6 +367,7 @@
             <textarea id="practiceArea"></textarea>
         </div>
     </div>
+
 </div>
 
 <script type="module">
@@ -312,6 +376,45 @@
     const SCHEDULE_CONFIG_OVERRIDE_KEY = 'schedule-config-override-v1';
     const CUSTOM_STUDENTS_STORAGE_KEY = 'custom-students-v1';
     const EXTRA_ENTRIES_STORAGE_KEY = 'schedule-extra-entries-v1';
+
+    function normalizeStudentName(value) {
+        const trimmed = String(value || '').trim();
+        const aliasApi = window.StudentNameAlias;
+        if (aliasApi && typeof aliasApi.normalizeStudentName === 'function') {
+            return aliasApi.normalizeStudentName(trimmed);
+        }
+        return trimmed;
+    }
+
+    function getCanonicalStudentEntries(studentNames) {
+        const aliasApi = window.StudentNameAlias;
+        const aliasMap = aliasApi && aliasApi.STUDENT_NAME_ALIAS ? aliasApi.STUDENT_NAME_ALIAS : {};
+        const entriesByCanonicalName = new Map();
+
+        studentNames.forEach((studentName) => {
+            const displayName = String(studentName || '').trim();
+            if (!displayName) return;
+
+            const canonicalName = normalizeStudentName(displayName);
+            const prefersAliasDisplay = aliasMap[displayName] === canonicalName;
+            const existing = entriesByCanonicalName.get(canonicalName);
+
+            if (!existing || prefersAliasDisplay) {
+                entriesByCanonicalName.set(canonicalName, {
+                    displayName,
+                    canonicalName
+                });
+            }
+        });
+
+        return Array.from(entriesByCanonicalName.values()).sort((a, b) => a.displayName.localeCompare(b.displayName, 'zh-CN'));
+    }
+
+    function getDisplayedStudentNames() {
+        return Array.from(document.getElementById('userName').options)
+            .map((option) => String(option?.value || '').trim())
+            .filter(Boolean);
+    }
 
     async function loadStudentOptions() {
         const userNameSelect = document.getElementById('userName');
@@ -420,6 +523,717 @@
 
     document.getElementById('userName').addEventListener('change', clearFormFields);
 
+    // ── 复习计划核对功能 ──
+    const REVIEW_OFFSETS = [1, 2, 3, 5, 7, 9, 12, 14, 17, 21];
+
+    // 独立获取学生列表（不修改现有逻辑）
+    function getStudentsForScheduleCheck() {
+        const students = new Set();
+        
+        // 1. teacherData 硬编码数据
+        const teacherDataKeys = ['liTeacher', 'shiTeacher'];
+        teacherDataKeys.forEach(teacherKey => {
+            const usersKey = `teacherData_${teacherKey}_users`;
+            // 从 localStorage 读取（如果存在）
+            try {
+                const stored = localStorage.getItem(usersKey);
+                if (stored) {
+                    const users = JSON.parse(stored);
+                    Object.keys(users || {}).forEach(name => students.add(name));
+                }
+            } catch (_) {}
+        });
+        
+        // 2. localStorage 自定义学生
+        try {
+            const custom = JSON.parse(localStorage.getItem(CUSTOM_STUDENTS_STORAGE_KEY) || '[]');
+            custom.forEach(name => students.add(name));
+        } catch (_) {}
+        
+        // 3. 排课配置学生
+        try {
+            const override = JSON.parse(localStorage.getItem(SCHEDULE_CONFIG_OVERRIDE_KEY) || 'null');
+            (override?.entries || []).forEach(entry => {
+                if (entry?.student) students.add(entry.student);
+            });
+        } catch (_) {}
+        
+        // 4. 临时加课学生
+        try {
+            const extraState = JSON.parse(localStorage.getItem(EXTRA_ENTRIES_STORAGE_KEY) || '{}');
+            Object.values(extraState || {}).forEach((rows) => {
+                (Array.isArray(rows) ? rows : []).forEach((entry) => {
+                    if (entry?.student) students.add(entry.student);
+                });
+            });
+        } catch (_) {}
+        
+        // 5. classStatistics 键中的学生名
+        for (let i = 0; i < localStorage.length; i += 1) {
+            const key = localStorage.key(i) || '';
+            if (key.endsWith('_classStatistics')) {
+                const name = key.replace(/_classStatistics$/, '').trim();
+                if (name) students.add(name);
+            }
+        }
+        
+        return [...students].sort((a, b) => a.localeCompare(b, 'zh-CN'));
+    }
+
+    // 日期工具函数
+    function parseDate(dateStr) {
+        if (!dateStr) return null;
+        const d = new Date(dateStr + 'T00:00:00');
+        return isNaN(d.getTime()) ? null : d;
+    }
+
+    function formatDate(date) {
+        if (!date) return '';
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    }
+
+    function addDays(date, days) {
+        const d = new Date(date);
+        d.setDate(d.getDate() + days);
+        return d;
+    }
+
+    function isSameDay(d1, d2) {
+        return formatDate(d1) === formatDate(d2);
+    }
+
+    function toTimestampFromYmd(ymd) {
+        const d = parseDate(ymd);
+        return d ? d.getTime() : NaN;
+    }
+
+    function getSelectedReviewDate() {
+        const reviewInput = document.getElementById('reviewTime');
+        const raw = String(reviewInput?.value || '').trim();
+        if (!raw) return formatDate(new Date());
+        const m = raw.match(/^(\d{4})[-\/](\d{2})[-\/](\d{2})/);
+        if (!m) return formatDate(new Date(raw));
+        return `${m[1]}-${m[2]}-${m[3]}`;
+    }
+
+    function extractTrainingDateFromRecord(record) {
+        const raw = record?.trainingTime || record?.trainingDate || record?.date || record?.orderTime || record?.scheduleTime || record?.scheduleDate;
+        if (!raw) return null;
+
+        if (typeof raw === 'string') {
+            const maybeYmd = raw.slice(0, 10);
+            if (/^\d{4}-\d{2}-\d{2}$/.test(maybeYmd)) {
+                return parseDate(maybeYmd);
+            }
+        }
+
+        const parsed = new Date(raw);
+        if (Number.isNaN(parsed.getTime())) return null;
+        parsed.setHours(0, 0, 0, 0);
+        return parsed;
+    }
+
+    function getScheduleBoardProxyCandidates(query) {
+        const suffix = query ? `?${query}` : '';
+        return [
+            `/.netlify/functions/schedule-board${suffix}`,
+            `/netlify/functions/schedule-board${suffix}`
+        ];
+    }
+
+    async function postScheduleBoardWithFallback(query, payload, operationName) {
+        const candidates = getScheduleBoardProxyCandidates(query);
+        let lastFailureStatus = null;
+        let lastFailureError = null;
+
+        for (const url of candidates) {
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.status === 404) {
+                    lastFailureStatus = response.status;
+                    continue;
+                }
+
+                return response;
+            } catch (error) {
+                lastFailureError = error;
+            }
+        }
+
+        if (lastFailureStatus === 404) {
+            throw new Error(`${operationName}失败：未找到 Netlify Functions 代理接口，请使用 npm run dev:local 启动本地环境后重试。`);
+        }
+
+        if (lastFailureError) {
+            throw new Error(`${operationName}失败：代理请求异常（${lastFailureError.message || 'unknown error'}）`);
+        }
+
+        throw new Error(`${operationName}失败：代理请求不可用。`);
+    }
+
+    // 获取已完成训练记录（通过 Netlify function 代理）
+    async function fetchCompletedTrainingRecords(token, userId) {
+        const allRecords = [];
+        let pageNumber = 1;
+        const pageSize = 500;
+        const seenPageSignatures = new Set();
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const cutoffDate = addDays(today, -21);
+        
+        while (true) {
+            try {
+                // 使用 Netlify function 作为代理来解决 CORS 问题
+                const response = await postScheduleBoardWithFallback(
+                    `mode=completed&pageNumber=${pageNumber}&pageSize=${pageSize}`,
+                    { token, userId, xUa: 'ct=2&v=5.0.96' },
+                    '获取已完成训练记录'
+                );
+                
+                if (!response.ok) {
+                    throw new Error(`代理请求失败: HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                const records = data?.data?.data || [];
+                
+                if (records.length === 0) break;
+
+                const recordsWithDate = records
+                    .map((record) => ({ record, trainingDate: extractTrainingDateFromRecord(record) }))
+                    .filter((item) => item.trainingDate);
+
+                const hasRecentRecord = recordsWithDate.some((item) => item.trainingDate >= cutoffDate);
+                const hasAnyDatedRecord = recordsWithDate.length > 0;
+
+                const pageSignature = records
+                    .slice(0, 5)
+                    .map((r) => String(r?.id || r?.orderId || r?.scheduleId || r?.trainingTime || r?.orderTime || ''))
+                    .join('|') + `:${records.length}`;
+                if (seenPageSignatures.has(pageSignature)) {
+                    console.warn('fetchCompletedTrainingRecords 检测到重复分页结果，提前终止，避免循环请求', { pageNumber, pageSignature });
+                    break;
+                }
+                seenPageSignatures.add(pageSignature);
+
+                // 仅保留可能产生 today 及未来复习计划的训练记录（today-21 及之后）
+                const recentRecords = recordsWithDate
+                    .filter((item) => item.trainingDate >= cutoffDate)
+                    .map((item) => item.record);
+                allRecords.push(...recentRecords);
+
+                // training/orders 在生产中按时间倒序返回：当整页都早于 cutoff，可提前终止后续分页
+                if (hasAnyDatedRecord && !hasRecentRecord) {
+                    console.log('fetchCompletedTrainingRecords 命中 today-21 截止，提前结束分页', {
+                        pageNumber,
+                        cutoffDate: formatDate(cutoffDate)
+                    });
+                    break;
+                }
+                
+                // 首先按当前页返回条数判断末页，避免 total/pageSize 字段异常导致循环
+                const apiPageSizeRaw = Number(data?.data?.pageSize ?? data?.data?.size);
+                const apiPageSize = Number.isFinite(apiPageSizeRaw) && apiPageSizeRaw > 0 ? apiPageSizeRaw : pageSize;
+                if (records.length < apiPageSize) break;
+
+                // 仅在 total 合法时使用 totalPages 作为辅助终止条件
+                const totalRaw = Number(data?.data?.total);
+                if (Number.isFinite(totalRaw) && totalRaw >= 0) {
+                    const totalPages = Math.ceil(totalRaw / apiPageSize);
+                    if (pageNumber >= totalPages) break;
+                }
+
+                // 最后兜底，避免上游异常时无限循环
+                if (pageNumber >= 1000) {
+                    console.warn('fetchCompletedTrainingRecords 触发分页上限保护，提前终止', { pageNumber });
+                    break;
+                }
+                
+                pageNumber++;
+            } catch (error) {
+                console.error('fetchCompletedTrainingRecords 错误:', error);
+                throw error;
+            }
+        }
+        
+        return allRecords;
+    }
+
+    // 计算复习计划
+    function calculateReviewSchedule(trainingRecords, targetStudent) {
+        const reviewSchedule = new Map(); // reviewDate -> [reviewItems]
+        const targetCanonicalName = normalizeStudentName(targetStudent);
+        
+        trainingRecords.forEach(record => {
+            const studentName = (
+                record.userName ||
+                record.studentName ||
+                record.trainerName ||
+                record.student?.name ||
+                ''
+            ).trim();
+            if (normalizeStudentName(studentName) !== targetCanonicalName) return;
+            
+            const trainingDate = extractTrainingDateFromRecord(record);
+            if (!trainingDate) return;
+            
+            // 只计算从今天开始的复习计划
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            REVIEW_OFFSETS.forEach(offset => {
+                const reviewDate = addDays(trainingDate, offset);
+                if (reviewDate < today) return; // 跳过已过期的复习日期
+                const reviewDateStr = formatDate(reviewDate);
+                
+                const reviewItem = {
+                    trainingDate: formatDate(trainingDate),
+                    reviewDate: reviewDateStr,
+                    offset: offset,
+                    student: targetStudent,
+                    courseType: record.courseName || record.type || record.category || record.material?.name || record.materialName || '词汇课'
+                };
+                
+                if (!reviewSchedule.has(reviewDateStr)) {
+                    reviewSchedule.set(reviewDateStr, []);
+                }
+                reviewSchedule.get(reviewDateStr).push(reviewItem);
+            });
+        });
+        
+        return reviewSchedule;
+    }
+
+    // 获取实际复习列表（通过 Netlify function 代理解决 CORS）
+    async function fetchActualReviewList(token, userId, studentName, startDate, endDate) {
+        try {
+            const displayStudentName = String(studentName || '').trim();
+            const normalizedStudentName = normalizeStudentName(displayStudentName);
+            if (!normalizedStudentName) {
+                console.warn('fetchActualReviewList 跳过请求：studentName 为空');
+                return [];
+            }
+
+            // 使用 schedule-board function 的 proxy 功能
+            const response = await postScheduleBoardWithFallback(
+                '',
+                {
+                    token,
+                    userId,
+                    xUa: 'ct=2&v=5.0.96',
+                    mode: 'anti-forgetting-list',
+                    studentName: normalizedStudentName,
+                    startDate,
+                    endDate
+                },
+                '获取实际复习列表'
+            );
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.warn('fetchActualReviewList 代理请求失败，返回空列表', {
+                    status: response.status,
+                    response: errorText
+                });
+                return [];
+            }
+            
+            const data = await response.json();
+            const list = data?.data;
+
+            // 兼容旧接口结构：{ data: { data: [...] } } 或 { data: [...] }
+            if (Array.isArray(data?.data?.data)) {
+                return data.data.data;
+            }
+            if (!Array.isArray(list)) {
+                return Array.isArray(list) ? list : [];
+            }
+
+            // 线上真实接口结构：[{ time, students:[{ studentName, antiForgets:[{ trainTime, ... }] }] }]
+            const startTs = toTimestampFromYmd(startDate);
+            const endTs = toTimestampFromYmd(endDate);
+            return list.flatMap((day) => {
+                const reviewDate = formatDate(new Date(Number(day?.time || 0)));
+                const reviewTs = toTimestampFromYmd(reviewDate);
+                if (!reviewDate || !Number.isFinite(reviewTs)) return [];
+                if (Number.isFinite(startTs) && reviewTs < startTs) return [];
+                if (Number.isFinite(endTs) && reviewTs > endTs) return [];
+
+                const students = Array.isArray(day?.students) ? day.students : [];
+                const targetStudent = students.find((s) => normalizeStudentName(s?.studentName) === normalizedStudentName);
+                if (!targetStudent) return [];
+
+                const antiForgets = Array.isArray(targetStudent?.antiForgets) ? targetStudent.antiForgets : [];
+                return antiForgets.map((item) => {
+                    const trainingDate = formatDate(new Date(Number(item?.trainTime || 0)));
+                    return {
+                        reviewDate,
+                        trainingDate,
+                        sourceDate: trainingDate,
+                        studentName: displayStudentName,
+                        canonicalStudentName: normalizedStudentName,
+                        materialName: item?.materialName || '',
+                        antiForgetId: item?.antiForgetId,
+                        status: item?.status
+                    };
+                }).filter((item) => item.trainingDate);
+            });
+        } catch (error) {
+            console.error('fetchActualReviewList 错误:', error);
+            return [];
+        }
+    }
+
+    function renderNoReviewTodayNames(checkDate, studentEntries, noReviewEntries) {
+        const target = document.getElementById('noReviewTodayNames');
+        if (!target) return;
+
+        if (noReviewEntries.length === 0) {
+            target.textContent = `核对日期：${checkDate}。当天所有学员均有抗遗忘复习。`;
+            return;
+        }
+
+        const joinedNames = noReviewEntries.map((entry) => entry.displayName).join('、');
+        target.textContent = `核对日期：${checkDate}。当天无抗遗忘复习学员：${joinedNames}`;
+    }
+
+    function setReviewScheduleExpanded(expanded) {
+        const body = document.getElementById('reviewScheduleCollapseBody');
+        const toggle = document.getElementById('reviewScheduleCollapseToggle');
+        if (!body || !toggle) return;
+        body.style.display = expanded ? 'block' : 'none';
+        toggle.textContent = expanded
+            ? '📊 复习计划核对结果（点击折叠）'
+            : '📊 复习计划核对结果（点击展开）';
+    }
+
+    // 对比差异
+    function compareSchedules(expectedSchedule, actualList) {
+        const diff = {
+            normal: [],
+            missing: [],
+            extra: [],
+            summary: { normal: 0, missing: 0, extra: 0 }
+        };
+        
+        // 构建实际复习 Map
+        const actualMap = new Map();
+        actualList.forEach(item => {
+            const reviewDate = formatDate(parseDate(item.reviewDate || item.date));
+            if (!reviewDate) return;
+            if (!actualMap.has(reviewDate)) {
+                actualMap.set(reviewDate, []);
+            }
+            actualMap.get(reviewDate).push(item);
+        });
+        
+        const processedReviewDates = new Set();
+
+        // 遍历预期计划
+        expectedSchedule.forEach((items, reviewDate) => {
+            processedReviewDates.add(reviewDate);
+            const actualItems = actualMap.get(reviewDate) || [];
+
+            // 去重比较：以 trainingDate 为粒度
+            const expectedByTrainingDate = new Map();
+            items.forEach((item) => {
+                const key = String(item?.trainingDate || '').trim();
+                if (!key) return;
+                if (!expectedByTrainingDate.has(key)) {
+                    expectedByTrainingDate.set(key, item);
+                }
+            });
+
+            const actualByTrainingDate = new Map();
+            actualItems.forEach((item) => {
+                const key = formatDate(parseDate(item.trainingDate || item.sourceDate));
+                if (!key) return;
+                if (!actualByTrainingDate.has(key)) {
+                    actualByTrainingDate.set(key, item);
+                }
+            });
+
+            expectedByTrainingDate.forEach((expected, trainingDate) => {
+                if (actualByTrainingDate.has(trainingDate)) {
+                    diff.normal.push({ ...expected, status: 'normal' });
+                    diff.summary.normal++;
+                } else {
+                    diff.missing.push({ ...expected, status: 'missing' });
+                    diff.summary.missing++;
+                }
+            });
+
+            actualByTrainingDate.forEach((actual, trainingDate) => {
+                if (!expectedByTrainingDate.has(trainingDate)) {
+                    diff.extra.push({
+                        ...actual,
+                        reviewDate: reviewDate,
+                        status: 'extra',
+                        expectedOffsets: []
+                    });
+                    diff.summary.extra++;
+                }
+            });
+        });
+
+        // 处理实际存在但预期不存在的日期，全部判定为多排
+        actualMap.forEach((items, reviewDate) => {
+            if (processedReviewDates.has(reviewDate)) return;
+            items.forEach((actual) => {
+                diff.extra.push({
+                    ...actual,
+                    reviewDate: reviewDate,
+                    status: 'extra',
+                    expectedOffsets: []
+                });
+                diff.summary.extra++;
+            });
+        });
+        
+        return diff;
+    }
+
+    // 渲染核对结果
+    function renderScheduleCheckResult(diff, studentName, checkDate) {
+        const summaryEl = document.getElementById('reviewScheduleSummary');
+        const diffEl = document.getElementById('reviewScheduleDiff');
+        
+        if (!summaryEl || !diffEl) return;
+        
+        const { normal, missing, extra, summary } = diff;
+        
+        // 摘要
+        const summaryHtml = `
+            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
+                <span style="padding:4px 12px;border-radius:12px;background:#d1fae5;color:#065f46;font-weight:700;">✅ 正常 ${summary.normal}</span>
+                <span style="padding:4px 12px;border-radius:12px;background:#fee2e2;color:#991b1b;font-weight:700;">❌ 漏排 ${summary.missing}</span>
+                <span style="padding:4px 12px;border-radius:12px;background:#fef3c7;color:#92400e;font-weight:700;">⚠️ 多排 ${summary.extra}</span>
+            </div>
+            <div style="font-size:13px;color:var(--muted-text);">学员：${studentName} | 核对日期：${checkDate}</div>
+        `;
+        summaryEl.innerHTML = summaryHtml;
+        
+        // 差异详情
+        let diffHtml = '';
+        
+        if (missing.length > 0) {
+            diffHtml += '<h4 style="color:#991b1b;margin:8px 0;">❌ 漏排（应排但未排）</h4>';
+            diffHtml += '<table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:8px;">';
+            diffHtml += '<thead><tr style="background:var(--table-head-bg);"><th style="padding:6px;border:1px solid var(--panel-border);">复习日期</th><th style="padding:6px;border:1px solid var(--panel-border);">应排来源</th><th style="padding:6px;border:1px solid var(--panel-border);">复习节点</th><th style="padding:6px;border:1px solid var(--panel-border);">状态</th></tr></thead>';
+            diffHtml += '<tbody>';
+            missing.forEach(item => {
+                diffHtml += `<tr><td style="padding:6px;border:1px solid var(--panel-border);">${item.reviewDate}</td><td style="padding:6px;border:1px solid var(--panel-border);">${item.trainingDate}</td><td style="padding:6px;border:1px solid var(--panel-border);">+${item.offset}</td><td style="padding:6px;border:1px solid var(--panel-border);color:#991b1b;">漏排</td></tr>`;
+            });
+            diffHtml += '</tbody></table>';
+        }
+        
+        if (extra.length > 0) {
+            diffHtml += '<h4 style="color:#92400e;margin:8px 0;">⚠️ 多排（不应排但已排）</h4>';
+            diffHtml += '<table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:8px;">';
+            diffHtml += '<thead><tr style="background:var(--table-head-bg);"><th style="padding:6px;border:1px solid var(--panel-border);">复习日期</th><th style="padding:6px;border:1px solid var(--panel-border);">来源</th><th style="padding:6px;border:1px solid var(--panel-border);">复习节点</th><th style="padding:6px;border:1px solid var(--panel-border);">状态</th></tr></thead>';
+            diffHtml += '<tbody>';
+            extra.forEach(item => {
+                diffHtml += `<tr><td style="padding:6px;border:1px solid var(--panel-border);">${item.reviewDate}</td><td style="padding:6px;border:1px solid var(--panel-border);">${item.trainingDate || item.sourceDate}</td><td style="padding:6px;border:1px solid var(--panel-border);">?</td><td style="padding:6px;border:1px solid var(--panel-border);color:#92400e;">多排</td></tr>`;
+            });
+            diffHtml += '</tbody></table>';
+        }
+
+        if (normal.length > 0) {
+            diffHtml += '<h4 style="color:#065f46;margin:8px 0;">✅ 正常（按计划已排）</h4>';
+            diffHtml += '<table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:8px;">';
+            diffHtml += '<thead><tr style="background:var(--table-head-bg);"><th style="padding:6px;border:1px solid var(--panel-border);">复习日期</th><th style="padding:6px;border:1px solid var(--panel-border);">来源</th><th style="padding:6px;border:1px solid var(--panel-border);">复习节点</th><th style="padding:6px;border:1px solid var(--panel-border);">状态</th></tr></thead>';
+            diffHtml += '<tbody>';
+            normal.forEach(item => {
+                diffHtml += `<tr><td style="padding:6px;border:1px solid var(--panel-border);">${item.reviewDate}</td><td style="padding:6px;border:1px solid var(--panel-border);">${item.trainingDate}</td><td style="padding:6px;border:1px solid var(--panel-border);">+${item.offset}</td><td style="padding:6px;border:1px solid var(--panel-border);color:#065f46;">正常</td></tr>`;
+            });
+            diffHtml += '</tbody></table>';
+        }
+        
+        if (missing.length === 0 && extra.length === 0) {
+            diffHtml += '<div style="padding:12px;background:#d1fae5;border-radius:8px;color:#065f46;font-weight:700;">🎉 完全正确，所有复习任务均已安排！</div>';
+        }
+        
+        diffEl.innerHTML = diffHtml;
+    }
+
+    // 核对复习计划按钮事件
+    document.getElementById('checkReviewScheduleBtn').addEventListener('click', async () => {
+        const token = localStorage.getItem('x-token-c');
+        const userId = localStorage.getItem('x-user-id') || '144620';
+        
+        if (!token) {
+            alert('未找到登录 token，请先点击"设置登录信息"后重试。');
+            return;
+        }
+        
+        const btn = document.getElementById('checkReviewScheduleBtn');
+        btn.textContent = '⏳ 核对中...';
+        btn.disabled = true;
+        
+        try {
+            const studentName = String(document.getElementById('userName').value || '').trim();
+            if (!studentName) {
+                setReviewScheduleExpanded(true);
+                document.getElementById('reviewScheduleSummary').innerHTML = '<div style="color:#991b1b;">❌ 请先选择学员，再执行核对。</div>';
+                document.getElementById('reviewScheduleDiff').innerHTML = '';
+                return;
+            }
+
+            const checkDate = getSelectedReviewDate();
+            
+            // 显示加载状态
+            setReviewScheduleExpanded(true);
+            document.getElementById('reviewScheduleSummary').innerHTML = '<div>正在获取训练记录...</div>';
+            document.getElementById('reviewScheduleDiff').innerHTML = '';
+            
+            // 获取已完成训练记录
+            const trainingRecords = await fetchCompletedTrainingRecords(token, userId);
+            console.log(`获取到 ${trainingRecords.length} 条训练记录`);
+            
+            // 计算应排复习计划
+            const expectedScheduleAll = calculateReviewSchedule(trainingRecords, studentName);
+            const expectedSchedule = new Map();
+            expectedSchedule.set(checkDate, expectedScheduleAll.get(checkDate) || []);
+            console.log(`应排复习计划（${checkDate}）：${(expectedSchedule.get(checkDate) || []).length} 条`);
+            
+            // 获取实际复习列表
+            const actualList = await fetchActualReviewList(token, userId, studentName, checkDate, checkDate);
+            console.log(`实际复习记录：${actualList.length} 条`);
+            
+            // 对比差异
+            const diff = compareSchedules(expectedSchedule, actualList);
+            
+            // 渲染结果
+            renderScheduleCheckResult(diff, studentName, checkDate);
+            
+        } catch (error) {
+            console.error('核对失败:', error);
+            document.getElementById('reviewScheduleSummary').innerHTML = `<div style="color:#991b1b;">❌ 核对失败：${error.message}</div>`;
+            document.getElementById('reviewScheduleDiff').innerHTML = '';
+        } finally {
+            btn.textContent = '📋 核对复习计划';
+            btn.disabled = false;
+        }
+    });
+
+    // 关闭核对面板按钮
+    document.getElementById('closeReviewPanel').addEventListener('click', () => {
+        setReviewScheduleExpanded(false);
+    });
+
+    document.getElementById('reviewScheduleCollapseToggle').addEventListener('click', () => {
+        const body = document.getElementById('reviewScheduleCollapseBody');
+        const expanded = body && body.style.display !== 'none';
+        setReviewScheduleExpanded(!expanded);
+    });
+
+    document.getElementById('reviewScheduleHintToggle').addEventListener('click', () => {
+        const panel = document.getElementById('reviewScheduleHintPanel');
+        if (!panel) return;
+        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    });
+
+    document.getElementById('noReviewTodayButton').addEventListener('click', async () => {
+        const token = localStorage.getItem('x-token-c');
+        const userId = localStorage.getItem('x-user-id') || '144620';
+        if (!token) {
+            alert('未找到登录 token，请先点击"设置登录信息"后重试。');
+            return;
+        }
+
+        const btn = document.getElementById('noReviewTodayButton');
+        const namesEl = document.getElementById('noReviewTodayNames');
+        const checkDate = getSelectedReviewDate();
+        const studentEntries = getCanonicalStudentEntries(getDisplayedStudentNames());
+
+        btn.textContent = '⏳ 查询中...';
+        btn.disabled = true;
+        if (namesEl) {
+            namesEl.textContent = `核对日期：${checkDate}。正在查找当天无抗遗忘复习的学员...`;
+        }
+
+        try {
+            const results = await Promise.all(studentEntries.map(async (entry) => {
+                const actualList = await fetchActualReviewList(token, userId, entry.displayName, checkDate, checkDate);
+                return {
+                    entry,
+                    hasReview: actualList.length > 0
+                };
+            }));
+
+            const noReviewEntries = results.filter((item) => !item.hasReview).map((item) => item.entry);
+            renderNoReviewTodayNames(checkDate, studentEntries, noReviewEntries);
+            commonFunctions.handleReviewLateReminderClick();
+        } catch (error) {
+            console.error('查询今日无复习学员失败:', error);
+            if (namesEl) {
+                namesEl.textContent = `查询失败：${error.message}`;
+            }
+        } finally {
+            btn.textContent = '今日无复习';
+            btn.disabled = false;
+        }
+    });
+
+    // 导出CSV功能
+    let lastCheckResult = null;
+    
+    document.getElementById('exportReviewScheduleCSV').addEventListener('click', () => {
+        if (!lastCheckResult || (!lastCheckResult.normal?.length && !lastCheckResult.missing?.length && !lastCheckResult.extra?.length)) {
+            alert('请先执行核对操作后再导出CSV');
+            return;
+        }
+        
+        const { normal, missing, extra } = lastCheckResult;
+        const csvRows = [];
+        
+        // CSV 表头
+        csvRows.push(['复习日期', '应排来源', '复习节点', '状态']);
+
+        // 正常数据
+        normal.forEach(item => {
+            csvRows.push([item.reviewDate, item.trainingDate, `+${item.offset}`, '正常']);
+        });
+        
+        // 漏排数据
+        missing.forEach(item => {
+            csvRows.push([item.reviewDate, item.trainingDate, `+${item.offset}`, '漏排']);
+        });
+        
+        // 多排数据
+        extra.forEach(item => {
+            csvRows.push([item.reviewDate, item.trainingDate || item.sourceDate, '?', '多排']);
+        });
+        
+        // 生成 CSV 内容（添加 BOM 以支持中文）
+        const csvContent = '\uFEFF' + csvRows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
+        
+        // 触发下载
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        const today = new Date().toISOString().split('T')[0];
+        link.download = `复习计划核对结果_${today}.csv`;
+        link.click();
+    });
+
+    // 保存最后核对结果供导出使用
+    const originalRender = renderScheduleCheckResult;
+    renderScheduleCheckResult = function(diff, studentName, checkDate) {
+        lastCheckResult = diff;
+        return originalRender(diff, studentName, checkDate);
+    };
+
     document.getElementById('navigateToFormalClass').addEventListener('click', commonFunctions.navigateToFormalClass);
     document.getElementById('navigateToSchedulePage').addEventListener('click', () => {
         window.location.href = 'schedule.html';
@@ -439,6 +1253,7 @@
     commonFunctions.initTtsPrefixMaintenanceUI();
 
     setDefaultReviewTime();
+    setReviewScheduleExpanded(false);
     loadStudentOptions();
 </script>
 </body>
