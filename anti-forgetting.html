@@ -648,6 +648,7 @@
         const candidates = getScheduleBoardProxyCandidates(query);
         let lastFailureStatus = null;
         let lastFailureError = null;
+        let sawMethodNotSupported = false;
 
         for (const url of candidates) {
             try {
@@ -664,6 +665,12 @@
                     continue;
                 }
 
+                if (response.status === 501) {
+                    sawMethodNotSupported = true;
+                    lastFailureStatus = response.status;
+                    continue;
+                }
+
                 return response;
             } catch (error) {
                 lastFailureError = error;
@@ -672,6 +679,10 @@
 
         if (lastFailureStatus === 404) {
             throw new Error(`${operationName}失败：未找到 Netlify Functions 代理接口，请使用 npm run dev:local 启动本地环境后重试。`);
+        }
+
+        if (sawMethodNotSupported || lastFailureStatus === 501) {
+            throw new Error(`${operationName}失败：当前服务不支持 POST（HTTP 501）。你正在使用静态服务器，请改用 npm run dev:local 启动本地环境后重试。`);
         }
 
         if (lastFailureError) {
@@ -917,6 +928,16 @@
             : '📊 复习计划核对结果（点击展开）';
     }
 
+    // 计算实际复习偏移（用于多排场景）
+    function calculateActualOffset(trainingDate, reviewDate) {
+        const training = parseDate(trainingDate);
+        const review = parseDate(reviewDate);
+        if (!training || !review) return null;
+        const diffTime = review.getTime() - training.getTime();
+        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays > 0 ? diffDays : null;
+    }
+
     // 对比差异
     function compareSchedules(expectedSchedule, actualList) {
         const diff = {
@@ -975,10 +996,12 @@
 
             actualByTrainingDate.forEach((actual, trainingDate) => {
                 if (!expectedByTrainingDate.has(trainingDate)) {
+                    const actualOffset = calculateActualOffset(actual.trainingDate || actual.sourceDate, reviewDate);
                     diff.extra.push({
                         ...actual,
                         reviewDate: reviewDate,
                         status: 'extra',
+                        actualOffset: actualOffset,
                         expectedOffsets: []
                     });
                     diff.summary.extra++;
@@ -990,10 +1013,12 @@
         actualMap.forEach((items, reviewDate) => {
             if (processedReviewDates.has(reviewDate)) return;
             items.forEach((actual) => {
+                const actualOffset = calculateActualOffset(actual.trainingDate || actual.sourceDate, reviewDate);
                 diff.extra.push({
                     ...actual,
                     reviewDate: reviewDate,
                     status: 'extra',
+                    actualOffset: actualOffset,
                     expectedOffsets: []
                 });
                 diff.summary.extra++;
@@ -1043,7 +1068,8 @@
             diffHtml += '<thead><tr style="background:var(--table-head-bg);"><th style="padding:6px;border:1px solid var(--panel-border);">复习日期</th><th style="padding:6px;border:1px solid var(--panel-border);">来源</th><th style="padding:6px;border:1px solid var(--panel-border);">复习节点</th><th style="padding:6px;border:1px solid var(--panel-border);">状态</th></tr></thead>';
             diffHtml += '<tbody>';
             extra.forEach(item => {
-                diffHtml += `<tr><td style="padding:6px;border:1px solid var(--panel-border);">${item.reviewDate}</td><td style="padding:6px;border:1px solid var(--panel-border);">${item.trainingDate || item.sourceDate}</td><td style="padding:6px;border:1px solid var(--panel-border);">?</td><td style="padding:6px;border:1px solid var(--panel-border);color:#92400e;">多排</td></tr>`;
+                const offsetDisplay = item.actualOffset !== null ? `+${item.actualOffset}` : '?';
+                diffHtml += `<tr><td style="padding:6px;border:1px solid var(--panel-border);">${item.reviewDate}</td><td style="padding:6px;border:1px solid var(--panel-border);">${item.trainingDate || item.sourceDate}</td><td style="padding:6px;border:1px solid var(--panel-border);">${offsetDisplay}</td><td style="padding:6px;border:1px solid var(--panel-border);color:#92400e;">多排</td></tr>`;
             });
             diffHtml += '</tbody></table>';
         }
