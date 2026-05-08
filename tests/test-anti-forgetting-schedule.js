@@ -325,6 +325,10 @@ assert(
     '折叠开关应绑定点击事件'
 );
 assert(
+    antiForgettingHtml.includes('response.status === 501') && antiForgettingHtml.includes('不支持 POST（HTTP 501）') && antiForgettingHtml.includes('npm run dev:local'),
+    '代理请求应识别静态服务器 501 并提示使用 npm run dev:local'
+);
+assert(
     antiForgettingHtml.includes('id="reviewScheduleHintToggle"') && antiForgettingHtml.includes('aria-label="查看复习公式说明"'),
     '页面应提供复习公式 Hint 图标按钮'
 );
