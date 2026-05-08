@@ -9,6 +9,9 @@
  * 运行方式: node tests/test-anti-forgetting-schedule.js
  */
 
+const fs = require('fs');
+const path = require('path');
+
 // ==================== 模拟核心函数 ====================
 
 const REVIEW_OFFSETS = [1, 2, 3, 5, 7, 9, 12, 14, 17, 21];
@@ -32,15 +35,30 @@ function parseDate(str) {
     return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
 }
 
+function extractTrainingDateFromRecord(record) {
+    const raw = record?.trainingTime || record?.trainingDate || record?.date || record?.orderTime || record?.scheduleTime;
+    if (!raw) return null;
+
+    if (typeof raw === 'string') {
+        const ymd = raw.slice(0, 10);
+        if (/^\d{4}-\d{2}-\d{2}$/.test(ymd)) {
+            return parseDate(ymd);
+        }
+    }
+
+    const dt = new Date(raw);
+    if (Number.isNaN(dt.getTime())) return null;
+    return new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
+}
+
 function calculateReviewSchedule(trainingRecords, targetStudent) {
     const reviewSchedule = new Map(); // Date -> [reviewItems]
     
     trainingRecords.forEach(record => {
-        const studentName = (record.userName || record.studentName || record.trainerName || '').trim();
+        const studentName = (record.userName || record.studentName || record.trainerName || record.student?.name || '').trim();
         if (studentName !== targetStudent) return;
         
-        const trainingDateStr = record.trainingTime || record.trainingDate || record.date || record.orderTime;
-        const trainingDate = parseDate(trainingDateStr);
+        const trainingDate = extractTrainingDateFromRecord(record);
         if (!trainingDate) return;
         
         // Use date-only to avoid timezone issues
@@ -146,14 +164,30 @@ function compareSchedules(expectedSchedule, actualList) {
         actualMap.get(key).push(item);
     });
     
+    const processedReviewDates = new Set();
+
     expectedSchedule.forEach((items, reviewDateKey) => {
+        processedReviewDates.add(reviewDateKey);
         const reviewDate = new Date(reviewDateKey);
         const reviewDateStr = formatDate(reviewDate);
         const actualItems = actualMap.get(reviewDateKey) || [];
-        const actualTrainingDates = new Set(actualItems.map(i => i.trainingDate || i.sourceDate));
-        
-        items.forEach(expected => {
-            if (actualTrainingDates.has(expected.trainingDate)) {
+
+        const expectedByTrainingDate = new Map();
+        items.forEach((item) => {
+            const key = String(item?.trainingDate || '').trim();
+            if (!key) return;
+            if (!expectedByTrainingDate.has(key)) expectedByTrainingDate.set(key, item);
+        });
+
+        const actualByTrainingDate = new Map();
+        actualItems.forEach((item) => {
+            const key = String(item?.trainingDate || item?.sourceDate || '').trim();
+            if (!key) return;
+            if (!actualByTrainingDate.has(key)) actualByTrainingDate.set(key, item);
+        });
+
+        expectedByTrainingDate.forEach((expected, trainingDate) => {
+            if (actualByTrainingDate.has(trainingDate)) {
                 diff.normal.push({ ...expected, status: 'normal' });
                 diff.summary.normal++;
             } else {
@@ -161,19 +195,31 @@ function compareSchedules(expectedSchedule, actualList) {
                 diff.summary.missing++;
             }
         });
-        
-        actualItems.forEach(actual => {
-            const actualTrainingDate = actual.trainingDate || actual.sourceDate;
-            const isExpected = items.some(e => e.trainingDate === actualTrainingDate);
-            if (!isExpected) {
+
+        actualByTrainingDate.forEach((actual, trainingDate) => {
+            if (!expectedByTrainingDate.has(trainingDate)) {
                 diff.extra.push({
                     ...actual,
                     reviewDate: reviewDateStr,
                     status: 'extra',
-                    expectedOffsets: items.map(i => i.offset)
+                    expectedOffsets: []
                 });
                 diff.summary.extra++;
             }
+        });
+    });
+
+    actualMap.forEach((items, reviewDateKey) => {
+        if (processedReviewDates.has(reviewDateKey)) return;
+        const reviewDateStr = formatDate(new Date(reviewDateKey));
+        items.forEach(actual => {
+            diff.extra.push({
+                ...actual,
+                reviewDate: reviewDateStr,
+                status: 'extra',
+                expectedOffsets: []
+            });
+            diff.summary.extra++;
         });
     });
     
@@ -233,9 +279,120 @@ for (let i = 0; i < REVIEW_OFFSETS.length; i++) {
 assertEqual(baseSchedule.size, REVIEW_OFFSETS.length, 
     `复习日期数量 = ${REVIEW_OFFSETS.length}，实际 = ${baseSchedule.size}`);
 
+console.log('\n📦 anti-forgetting.html - 回归防护');
+const antiForgettingHtml = fs.readFileSync(path.join(__dirname, '..', 'anti-forgetting.html'), 'utf8');
+const extractFunctionStart = antiForgettingHtml.indexOf('function extractTrainingDateFromRecord(record)');
+const extractFunctionEnd = antiForgettingHtml.indexOf('function fetchCompletedTrainingRecords(token, userId)', extractFunctionStart);
+const extractFunctionContent = extractFunctionStart >= 0 && extractFunctionEnd > extractFunctionStart
+    ? antiForgettingHtml.slice(extractFunctionStart, extractFunctionEnd)
+    : '';
+assert(
+    extractFunctionContent.includes('record?.scheduleTime'),
+    'extractTrainingDateFromRecord 必须兼容 scheduleTime 字段（防止 expected 被算空）'
+);
+assert(
+    antiForgettingHtml.includes('<script src="./student-name-alias.js"></script>') || antiForgettingHtml.includes("student-name-alias.js"),
+    'anti-forgetting.html 应接入共享姓名映射 student-name-alias.js'
+);
+assert(
+    antiForgettingHtml.includes('normalizeStudentName('),
+    'anti-forgetting.html 应在核对逻辑中使用 normalizeStudentName'
+);
+assert(
+    antiForgettingHtml.includes('✅ 正常（按计划已排）'),
+    'renderScheduleCheckResult 应展示正常列表，且位置在异常列表之后'
+);
+const reviewPanelIndex = antiForgettingHtml.indexOf('id="reviewScheduleCheckPanel"');
+const checkButtonIndex = antiForgettingHtml.indexOf('id="checkReviewScheduleBtn"');
+assert(
+    reviewPanelIndex > checkButtonIndex,
+    '核对结果 Section 应位于“核对复习计划”按钮下方就地展示'
+);
+assert(
+    antiForgettingHtml.includes('id="reviewScheduleCollapseToggle"'),
+    '核对结果应提供折叠开关按钮'
+);
+assert(
+    antiForgettingHtml.includes('id="reviewScheduleCollapseBody"') && antiForgettingHtml.includes('display:none;'),
+    '核对结果内容应默认折叠'
+);
+assert(
+    antiForgettingHtml.includes('setReviewScheduleExpanded('),
+    '核对结果应通过统一方法控制展开/折叠'
+);
+assert(
+    antiForgettingHtml.includes("document.getElementById('reviewScheduleCollapseToggle').addEventListener('click'"),
+    '折叠开关应绑定点击事件'
+);
+assert(
+    antiForgettingHtml.includes('id="reviewScheduleHintToggle"') && antiForgettingHtml.includes('aria-label="查看复习公式说明"'),
+    '页面应提供复习公式 Hint 图标按钮'
+);
+assert(
+    antiForgettingHtml.includes('class="hint-icon-btn"') && (antiForgettingHtml.includes('>?</button>') || antiForgettingHtml.includes('>？</button>')),
+    'Hint 应使用问号图标按钮样式'
+);
+assert(
+    antiForgettingHtml.includes('id="reviewScheduleHintPanel"') && antiForgettingHtml.includes('display:none;'),
+    '复习公式 Hint 面板应默认隐藏'
+);
+assert(
+    antiForgettingHtml.includes('id="noReviewTodayButton"'),
+    '页面应提供“今日无复习”按钮'
+);
+assert(
+    antiForgettingHtml.includes('id="noReviewTodayNames"'),
+    '页面应提供顶部学员名单展示区以替换原提示文本'
+);
+assert(
+    antiForgettingHtml.includes("document.getElementById('noReviewTodayButton').addEventListener('click'"),
+    '“今日无复习”按钮应绑定点击事件'
+);
+assert(
+    antiForgettingHtml.includes("Array.from(document.getElementById('userName').options)") || antiForgettingHtml.includes('getDisplayedStudentNames()'),
+    '“今日无复习”应直接使用页面当前下拉框中的学员列表'
+);
+assert(
+    antiForgettingHtml.includes('commonFunctions.handleReviewLateReminderClick()') || antiForgettingHtml.includes('尊敬的家长，您好！'),
+    '点击“今日无复习”应复制与 index 页面相同的提示文案'
+);
+assert(
+    antiForgettingHtml.includes("join('、')") || antiForgettingHtml.includes("join('，')") || antiForgettingHtml.includes("join('、'") || antiForgettingHtml.includes("join('、')") || antiForgettingHtml.includes("join('、')"),
+    '无复习学员名称应以分隔符拼接展示'
+);
+assert(
+    antiForgettingHtml.includes('正课日期 + 1/2/3/5/7/9/12/14/17/21 天') || antiForgettingHtml.includes('+1,+2,+3,+5,+7,+9,+12,+14,+17,+21'),
+    'Hint 面板应说明 +1 到 +21 的复习计算公式'
+);
+assert(
+    antiForgettingHtml.includes("const { normal, missing, extra } = lastCheckResult;"),
+    '导出 CSV 应读取 normal/missing/extra 三类结果'
+);
+assert(
+    antiForgettingHtml.includes("csvRows.push([item.reviewDate, item.trainingDate, `+${item.offset}`, '正常']);"),
+    '导出 CSV 应包含正常项'
+);
+
 // 检查 T+1 是否有复习记录
 const t1Items = mapGetByDate(baseSchedule, '2027-06-02');
 assertEqual(t1Items?.length, 1, `T+1 有 1 条复习记录`);
+
+console.log();
+
+// ---------- calculateReviewSchedule - 兼容线上 training/orders 结构 ----------
+console.log('📦 calculateReviewSchedule - 兼容线上 training/orders 结构');
+
+const nestedRecordSchedule = calculateReviewSchedule([
+    {
+        student: { name: '于熠凡' },
+        scheduleTime: Date.parse('2027-05-03T11:00:00+08:00'),
+        material: { name: '新-中阶-考纲单词（乱序）' },
+        status: 'COMPLETED'
+    }
+], '于熠凡');
+
+assert(mapHasByDate(nestedRecordSchedule, '2027-05-04'), '嵌套结构记录应生成 2027-05-04 (T+1)');
+assert(mapHasByDate(nestedRecordSchedule, '2027-05-24'), '嵌套结构记录应生成 2027-05-24 (T+21)');
 
 console.log();
 
@@ -414,6 +571,24 @@ const diffExtra = compareSchedules(expectedSchedule, actualExtra);
 assertEqual(diffExtra.summary.normal, 1, `正常匹配 = 1`);
 assertEqual(diffExtra.summary.missing, 9, `缺失 = 9`);
 assertEqual(diffExtra.summary.extra, 1, `多余 = 1`);
+
+// 非预期日期上的实际复习也应计为多余
+const actualOnUnexpectedDate = [
+    { trainingDate: '2027-06-15', reviewDate: '2027-07-01' }
+];
+const diffUnexpectedDate = compareSchedules(expectedSchedule, actualOnUnexpectedDate);
+assertEqual(diffUnexpectedDate.summary.normal, 0, `正常匹配 = 0`);
+assertEqual(diffUnexpectedDate.summary.missing, 10, `缺失 = 10`);
+assertEqual(diffUnexpectedDate.summary.extra, 1, `非预期日期上的实际复习应计为多余 = 1`);
+
+// 同一天同训练日期重复项去重后不应重复计数
+const actualWithDuplicateTrainingDate = [
+    { trainingDate: '2027-06-01', reviewDate: '2027-06-02' },
+    { trainingDate: '2027-06-01', reviewDate: '2027-06-02' }
+];
+const diffDedup = compareSchedules(expectedSchedule, actualWithDuplicateTrainingDate);
+assertEqual(diffDedup.summary.normal, 1, `去重后正常匹配 = 1`);
+assertEqual(diffDedup.summary.extra, 0, `去重后多余 = 0`);
 
 console.log();
 

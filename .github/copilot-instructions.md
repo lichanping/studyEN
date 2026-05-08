@@ -2,6 +2,26 @@
 
 These instructions apply to all coding tasks in this repository.
 
+## 工作规约
+
+### 提交和推送前必须确认
+
+在执行 `git commit` 和 `git push` 操作之前，必须先向用户展示将要提交的内容和消息，并获得用户的明确确认后才能执行。
+
+**流程：**
+1. 执行 `git status` 和 `git diff --staged` 展示待提交内容
+2. 向用户说明将要提交的 message 内容
+3. 等待用户确认（"可以提交" 或 "等一下" 等）
+4. 用户确认后执行 `git commit`
+5. 展示将要推送的远程分支
+6. 等待用户确认后才能执行 `git push`
+
+**例外情况**（仍需告知用户但不需要等待确认）：
+- 分支创建和切换
+- 文件读取和查看
+- 代码分析和调研
+- 文档编写（但最终推送需要确认）
+
 ## Core Rule
 
 - Use TDD by default: Red -> Green -> Refactor.
