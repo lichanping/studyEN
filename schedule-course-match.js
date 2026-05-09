@@ -162,6 +162,22 @@
         return "词汇课";
     }
 
+    function inferSalaryTypeFromCompletedRecord(row, fallbackCourseName) {
+        var hints = [
+            fallbackCourseName,
+            row && row.category,
+            row && row.type,
+            row && row.materialName,
+            row && row.material && row.material.name,
+            row && row.course && row.course.name
+        ].map(function (value) {
+            return String(value || "").trim();
+        }).filter(Boolean);
+
+        var joined = hints.join("|");
+        return inferSalaryTypeFromCourse(joined);
+    }
+
     function toYmdFromAny(raw) {
         if (raw === null || typeof raw === "undefined") return "";
 
@@ -278,7 +294,7 @@
         var durationMinutes = parseCompletedDurationMinutes(row);
         if (!studentName || !date || !durationMinutes) return null;
 
-        var salaryType = inferSalaryTypeFromCourse(courseName);
+        var salaryType = inferSalaryTypeFromCompletedRecord(row, courseName);
         var rate = SALARY_RATE_MAP[salaryType] || 50;
         var durationHours = Number((durationMinutes / 60).toFixed(2));
         var fee = Number((durationHours * rate).toFixed(2));

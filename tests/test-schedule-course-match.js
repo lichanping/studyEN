@@ -173,6 +173,22 @@ function testInferSalaryTypeFromCourse() {
     assert.strictEqual(inferSalaryTypeFromCourse("托福高频词汇"), "词汇课");
 }
 
+function testNormalizeCompletedRecordForSalaryShouldDetectTrialFromCategory() {
+    const row = {
+        id: 2001,
+        scheduleTime: Date.parse("2025-06-01T20:00:00+08:00"),
+        type: "MINUTE_60",
+        courseName: "上海高考英语考纲词汇（乱序）",
+        category: "体验课",
+        student: { name: "测试学生" }
+    };
+
+    const actual = normalizeCompletedRecordForSalary(row);
+    assert.strictEqual(actual.salaryType, "体验课");
+    assert.strictEqual(actual.rate, 40);
+    assert.strictEqual(actual.fee, 40);
+}
+
 function testNormalizeCompletedRecordForSalary() {
     const row = {
         id: 1001,
@@ -258,6 +274,7 @@ function run() {
     testResolveCompletedQueryPlan();
     testInferSalaryTypeFromCourse();
     testNormalizeCompletedRecordForSalary();
+    testNormalizeCompletedRecordForSalaryShouldDetectTrialFromCategory();
     testBuildSalaryRowsFromCompletedRecordsShouldFilterAndDedup();
     console.log("test-schedule-course-match passed");
 }
