@@ -187,6 +187,7 @@ function testNormalizeCompletedRecordForSalary() {
         sourceId: "1001",
         date: "2026-05-02",
         studentName: "陈怡睿",
+        courseName: "阅读专项",
         salaryType: "阅读完型语法课",
         durationHours: 0.5,
         rate: 55,
@@ -240,6 +241,7 @@ function testBuildSalaryRowsFromCompletedRecordsShouldFilterAndDedup() {
 
     assert.strictEqual(rows.length, 3, "should keep rows in range and remove duplicated sourceId");
     assert.deepStrictEqual(rows.map((r) => r.sourceId), ["1", "2", "3"]);
+    assert.deepStrictEqual(rows.map((r) => r.courseName), ["托福高频词汇", "阅读理解", "体验课"]);
     assert.strictEqual(rows[0].fee, 50);
     assert.strictEqual(rows[1].fee, 27.5);
     assert.strictEqual(rows[2].fee, 40);

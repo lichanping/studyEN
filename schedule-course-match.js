@@ -267,6 +267,7 @@
         if (!row || typeof row !== "object") return null;
 
         var studentName = extractCompletedStudentName(row);
+        var courseName = extractCompletedCourseText(row);
         var date = toYmdFromAny(
             row.scheduleTime ||
             row.trainingTime ||
@@ -277,7 +278,7 @@
         var durationMinutes = parseCompletedDurationMinutes(row);
         if (!studentName || !date || !durationMinutes) return null;
 
-        var salaryType = inferSalaryTypeFromCourse(extractCompletedCourseText(row));
+        var salaryType = inferSalaryTypeFromCourse(courseName);
         var rate = SALARY_RATE_MAP[salaryType] || 50;
         var durationHours = Number((durationMinutes / 60).toFixed(2));
         var fee = Number((durationHours * rate).toFixed(2));
@@ -287,6 +288,7 @@
             sourceId: sourceId,
             date: date,
             studentName: studentName,
+            courseName: courseName,
             salaryType: salaryType,
             durationHours: durationHours,
             rate: rate,

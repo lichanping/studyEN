@@ -1060,11 +1060,11 @@
         </div>
         <div class="hint" style="margin-top: 6px;">自动检查本排课表学员的 30/60 分钟课时与陪伴课余额。工资统计改为按已完成上课记录（API）计算，排课变化不会影响历史工资结果。</div>
         <div class="hint" style="margin-top: 6px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-            <span id="scheduleSalarySummary">工资统计口径：按已完成上课记录（status=COMPLETED）统计，单词课 50 元/小时，阅读完型语法课 55 元/小时，体验课 40 元/小时；半小时按小时费率折半，仅统计今天以前。</span>
+            <span id="scheduleSalarySummary">工资统计口径：按已完成上课记录（status=COMPLETED）统计，单词课 50 元/小时，阅读完型语法课 55 元/小时，体验课 40 元/小时；半小时按小时费率折半，统计范围由月份/年份决定。</span>
             <span class="help-tip" tabindex="0" aria-label="工资字段说明">?
                 <span class="help-tip-content">字段说明
 数据来源：已完成上课记录（status=COMPLETED）
-统计窗口：选中月份/年份，且不晚于昨天
+统计窗口：选中月份/年份范围
 
 单条工资字段
 date: 上课日期
@@ -3361,19 +3361,8 @@ sourceId: 上课记录唯一标识（用于去重）</span>
         }
 
         const { range } = getPeriodConfig(periodType, monthValue, yearValue);
-        const today = new Date();
-        const yesterday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
-        const cutoff = range.end < yesterday ? range.end : yesterday;
-
-        if (cutoff < range.start) {
-            return {
-                rows: [],
-                dateRangeText: "无可统计日期"
-            };
-        }
-
         const startDate = dateToYmd(range.start);
-        const endDate = dateToYmd(cutoff);
+        const endDate = dateToYmd(range.end);
         const completedRecords = await fetchCompletedRecordsForSalary();
         const rows = window.ScheduleCourseMatch.buildSalaryRowsFromCompletedRecords(completedRecords, {
             startDate,
@@ -3384,43 +3373,6 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             rows,
             dateRangeText: startDate + " 至 " + endDate
         };
-    }
-
-    function getStatsUntilYesterday(periodType, monthValue, yearValue) {
-        const { range } = getPeriodConfig(periodType, monthValue, yearValue);
-
-        const today = new Date();
-        const yesterday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
-        const periodStart = range.start;
-        const cutoff = range.end < yesterday ? range.end : yesterday;
-        const ledger = loadSalaryLedger();
-        const startDateObj = new Date(getLedgerStartDate(ledger) + "T00:00:00");
-        const effectiveStartObj = periodStart > startDateObj ? periodStart : startDateObj;
-
-        if (cutoff < effectiveStartObj) {
-            return { rows: [], warnings: [], dateRangeText: "无可统计日期" };
-        }
-
-        const effectiveStart = dateToYmd(effectiveStartObj);
-        const cutoffYmd = dateToYmd(cutoff);
-        const rows = [];
-        Object.entries(ledger.byDate || {}).forEach(([dateValue, dateRows]) => {
-            if (dateValue < effectiveStart || dateValue > cutoffYmd) return;
-            (Array.isArray(dateRows) ? dateRows : []).forEach((row) => {
-                rows.push({
-                    date: dateValue,
-                    studentName: row.studentName,
-                    salaryType: row.salaryType,
-                    durationHours: Number(row.durationHours) || 0,
-                    rate: Number(row.rate) || (SALARY_RATE_MAP[row.salaryType] || 50),
-                    fee: Number(row.fee) || 0
-                });
-            });
-        });
-
-        rows.sort((a, b) => new Date(a.date) - new Date(b.date) || a.studentName.localeCompare(b.studentName, "zh-CN"));
-        const dateRangeText = `${effectiveStart} 至 ${cutoffYmd}`;
-        return { rows, warnings: [], dateRangeText };
     }
 
     function summarizeSalaryRows(rows) {
@@ -3454,9 +3406,9 @@ sourceId: 上课记录唯一标识（用于去重）</span>
         csvRows.push(["统计周期", periodLabel]);
         csvRows.push([]);
 
-        csvRows.push(["学生姓名", "日期", "课程类型", "课时", "单价", "课时费(元)"]);
+        csvRows.push(["学生姓名", "日期", "课程名称", "课程类别", "课时", "单价", "课时费(元)"]);
         rows.forEach((row) => {
-            csvRows.push([row.studentName, row.date, row.salaryType, row.durationHours, row.rate, row.fee]);
+            csvRows.push([row.studentName, row.date, row.courseName || "", row.salaryType, row.durationHours, row.rate, row.fee]);
         });
 
         csvRows.push([]);
