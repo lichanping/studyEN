@@ -213,18 +213,50 @@ function testNormalizeCompletedRecordForSalaryShouldParseTrialFromStartEndTimeFi
         id: 3002,
         startTime: "2026-02-03 19:52",
         endTime: "2026-02-03 20:30",
-        reserveTime: "2026-02-03 19:30 ~ 20:30",
         type: "体验训练",
         category: "体验课",
         userName: "徐智浩 XP15775781"
     };
 
     const actual = normalizeCompletedRecordForSalary(row);
-    assert.ok(actual, "trial row with start/end time should not be dropped");
-    assert.strictEqual(actual.date, "2026-02-03");
+    assert.strictEqual(actual, null, "without duration fields, row should be ignored");
+}
+
+function testNormalizeCompletedRecordForSalaryShouldClampTrialToOneHour() {
+    const row = {
+        id: 3003,
+        startTime: "2026-02-03 19:52",
+        endTime: "2026-02-03 20:44",
+        type: "体验训练",
+        category: "体验课",
+        trainingTime: "60分钟",
+        userName: "徐智浩 XP15775781"
+    };
+
+    const actual = normalizeCompletedRecordForSalary(row);
+    assert.ok(actual, "trial row should be normalized");
     assert.strictEqual(actual.salaryType, "体验课");
-    assert.strictEqual(actual.durationHours, 1);
+    assert.strictEqual(actual.durationHours, 1, "trial classes should be fixed at 1 hour");
+    assert.strictEqual(actual.rate, 40);
     assert.strictEqual(actual.fee, 40);
+}
+
+function testNormalizeCompletedRecordForSalaryShouldIgnoreActualStartEndForVocabClass() {
+    const row = {
+        id: 3004,
+        scheduleTime: "2026-02-09 19:44",
+        startTime: "2026-02-09 19:51",
+        endTime: "2026-02-09 20:43",
+        type: "MINUTE_60",
+        category: "词汇课",
+        userName: "徐智浩 XP15775781"
+    };
+
+    const actual = normalizeCompletedRecordForSalary(row);
+    assert.ok(actual, "vocab row should be normalized by scheduled duration");
+    assert.strictEqual(actual.salaryType, "词汇课");
+    assert.strictEqual(actual.durationHours, 1, "should use scheduled duration instead of actual start/end");
+    assert.strictEqual(actual.fee, 50);
 }
 
 function testNormalizeCompletedRecordForSalary() {
@@ -315,6 +347,8 @@ function run() {
     testNormalizeCompletedRecordForSalaryShouldDetectTrialFromCategory();
     testNormalizeCompletedRecordForSalaryShouldParseTrialTrainingDurationText();
     testNormalizeCompletedRecordForSalaryShouldParseTrialFromStartEndTimeFields();
+    testNormalizeCompletedRecordForSalaryShouldClampTrialToOneHour();
+    testNormalizeCompletedRecordForSalaryShouldIgnoreActualStartEndForVocabClass();
     testBuildSalaryRowsFromCompletedRecordsShouldFilterAndDedup();
     console.log("test-schedule-course-match passed");
 }

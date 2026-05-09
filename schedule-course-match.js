@@ -47,59 +47,6 @@
         return null;
     }
 
-    function parseDurationMinutesFromRangeText(value) {
-        var text = String(value || "").trim();
-        if (!text) return null;
-
-        var range = text.match(/(\d{1,2}:\d{2})\s*[~～\-—]\s*(\d{1,2}:\d{2})/);
-        if (!range) return null;
-
-        var start = range[1].split(":");
-        var end = range[2].split(":");
-        var startMinutes = Number(start[0]) * 60 + Number(start[1]);
-        var endMinutes = Number(end[0]) * 60 + Number(end[1]);
-        if (!Number.isFinite(startMinutes) || !Number.isFinite(endMinutes)) return null;
-
-        var diff = endMinutes - startMinutes;
-        if (diff <= 0) diff += 24 * 60;
-        return normalizeDurationMinutes(diff);
-    }
-
-    function parseTimestampMsFromAny(raw) {
-        if (raw === null || typeof raw === "undefined") return null;
-        if (raw instanceof Date) {
-            return Number.isFinite(raw.getTime()) ? raw.getTime() : null;
-        }
-
-        if (typeof raw === "number") {
-            if (!Number.isFinite(raw)) return null;
-            if (raw > 1e12) return raw;
-            if (raw > 1e9) return raw * 1000;
-            return null;
-        }
-
-        var text = String(raw).trim();
-        if (!text) return null;
-        var asNumber = Number(text);
-        if (Number.isFinite(asNumber)) {
-            if (asNumber > 1e12) return asNumber;
-            if (asNumber > 1e9) return asNumber * 1000;
-        }
-
-        var parsed = new Date(text);
-        if (Number.isFinite(parsed.getTime())) return parsed.getTime();
-        return null;
-    }
-
-    function parseDurationMinutesFromStartEnd(startRaw, endRaw) {
-        var startMs = parseTimestampMsFromAny(startRaw);
-        var endMs = parseTimestampMsFromAny(endRaw);
-        if (!Number.isFinite(startMs) || !Number.isFinite(endMs)) return null;
-        var diffMinutes = Math.round((endMs - startMs) / 60000);
-        if (diffMinutes <= 0) return null;
-        return normalizeDurationMinutes(diffMinutes);
-    }
-
     function normalizeBoardRecord(row) {
         if (!row || typeof row !== "object") return null;
         var student = normalizeStudentName(row.student && row.student.name);
@@ -316,34 +263,6 @@
             if (minutesFromText) return minutesFromText;
         }
 
-        var rangeCandidates = [
-            row.reserveTime,
-            row.bookedTime,
-            row.scheduleRange,
-            row.bookingRange,
-            row.appointmentTime,
-            row.period,
-            row.timeRange
-        ];
-        for (var m = 0; m < rangeCandidates.length; m += 1) {
-            var minutesFromRange = parseDurationMinutesFromRangeText(rangeCandidates[m]);
-            if (minutesFromRange) return minutesFromRange;
-        }
-
-        var startEndPairs = [
-            [row.startTime, row.endTime],
-            [row.beginTime, row.finishTime],
-            [row.actualStartTime, row.actualEndTime],
-            [row.scheduleStartTime, row.scheduleEndTime],
-            [row.reserveStartTime, row.reserveEndTime],
-            [row.bookedStartTime, row.bookedEndTime]
-        ];
-        for (var n = 0; n < startEndPairs.length; n += 1) {
-            var pair = startEndPairs[n];
-            var minutesFromStartEnd = parseDurationMinutesFromStartEnd(pair[0], pair[1]);
-            if (minutesFromStartEnd) return minutesFromStartEnd;
-        }
-
         return null;
     }
 
@@ -386,12 +305,11 @@
         var courseName = extractCompletedCourseText(row);
         var date = toYmdFromAny(
             row.scheduleTime ||
-            row.trainingTime ||
-            row.trainTime ||
             row.startTime ||
             row.beginTime ||
             row.actualStartTime ||
             row.reserveStartTime ||
+            row.trainTime ||
             row.orderTime ||
             row.date
         );
@@ -400,7 +318,7 @@
 
         var salaryType = inferSalaryTypeFromCompletedRecord(row, courseName);
         var rate = SALARY_RATE_MAP[salaryType] || 50;
-        var durationHours = Number((durationMinutes / 60).toFixed(2));
+        var durationHours = salaryType === "体验课" ? 1 : Number((durationMinutes / 60).toFixed(2));
         var fee = Number((durationHours * rate).toFixed(2));
         var sourceId = extractCompletedSourceId(row);
 
