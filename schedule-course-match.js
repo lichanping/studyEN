@@ -65,6 +65,41 @@
         return normalizeDurationMinutes(diff);
     }
 
+    function parseTimestampMsFromAny(raw) {
+        if (raw === null || typeof raw === "undefined") return null;
+        if (raw instanceof Date) {
+            return Number.isFinite(raw.getTime()) ? raw.getTime() : null;
+        }
+
+        if (typeof raw === "number") {
+            if (!Number.isFinite(raw)) return null;
+            if (raw > 1e12) return raw;
+            if (raw > 1e9) return raw * 1000;
+            return null;
+        }
+
+        var text = String(raw).trim();
+        if (!text) return null;
+        var asNumber = Number(text);
+        if (Number.isFinite(asNumber)) {
+            if (asNumber > 1e12) return asNumber;
+            if (asNumber > 1e9) return asNumber * 1000;
+        }
+
+        var parsed = new Date(text);
+        if (Number.isFinite(parsed.getTime())) return parsed.getTime();
+        return null;
+    }
+
+    function parseDurationMinutesFromStartEnd(startRaw, endRaw) {
+        var startMs = parseTimestampMsFromAny(startRaw);
+        var endMs = parseTimestampMsFromAny(endRaw);
+        if (!Number.isFinite(startMs) || !Number.isFinite(endMs)) return null;
+        var diffMinutes = Math.round((endMs - startMs) / 60000);
+        if (diffMinutes <= 0) return null;
+        return normalizeDurationMinutes(diffMinutes);
+    }
+
     function normalizeBoardRecord(row) {
         if (!row || typeof row !== "object") return null;
         var student = normalizeStudentName(row.student && row.student.name);
@@ -254,10 +289,7 @@
             row.durationMinutes,
             row.duration,
             row.trainDurationMinutes,
-            row.classDurationMinutes,
-            row.trainingTime,
-            row.trainTimeText,
-            row.trainingDurationText
+            row.classDurationMinutes
         ];
 
         for (var i = 0; i < minuteCandidates.length; i += 1) {
@@ -288,12 +320,28 @@
             row.reserveTime,
             row.bookedTime,
             row.scheduleRange,
+            row.bookingRange,
+            row.appointmentTime,
             row.period,
             row.timeRange
         ];
         for (var m = 0; m < rangeCandidates.length; m += 1) {
             var minutesFromRange = parseDurationMinutesFromRangeText(rangeCandidates[m]);
             if (minutesFromRange) return minutesFromRange;
+        }
+
+        var startEndPairs = [
+            [row.startTime, row.endTime],
+            [row.beginTime, row.finishTime],
+            [row.actualStartTime, row.actualEndTime],
+            [row.scheduleStartTime, row.scheduleEndTime],
+            [row.reserveStartTime, row.reserveEndTime],
+            [row.bookedStartTime, row.bookedEndTime]
+        ];
+        for (var n = 0; n < startEndPairs.length; n += 1) {
+            var pair = startEndPairs[n];
+            var minutesFromStartEnd = parseDurationMinutesFromStartEnd(pair[0], pair[1]);
+            if (minutesFromStartEnd) return minutesFromStartEnd;
         }
 
         return null;
@@ -340,6 +388,10 @@
             row.scheduleTime ||
             row.trainingTime ||
             row.trainTime ||
+            row.startTime ||
+            row.beginTime ||
+            row.actualStartTime ||
+            row.reserveStartTime ||
             row.orderTime ||
             row.date
         );
