@@ -146,6 +146,184 @@
         };
     }
 
+    var SALARY_RATE_MAP = {
+        "词汇课": 50,
+        "阅读完型语法课": 55,
+        "体验课": 40
+    };
+
+    function inferSalaryTypeFromCourse(courseText) {
+        var text = String(courseText || "").trim();
+        if (!text) return "词汇课";
+        if (text.indexOf("体验") !== -1) return "体验课";
+        if (text.indexOf("阅读") !== -1 || text.indexOf("完型") !== -1 || text.indexOf("语法") !== -1) {
+            return "阅读完型语法课";
+        }
+        return "词汇课";
+    }
+
+    function toYmdFromAny(raw) {
+        if (raw === null || typeof raw === "undefined") return "";
+
+        if (typeof raw === "string") {
+            var maybeYmd = raw.slice(0, 10);
+            if (/^\d{4}-\d{2}-\d{2}$/.test(maybeYmd)) {
+                return maybeYmd;
+            }
+
+            var parsedFromString = new Date(raw);
+            if (Number.isFinite(parsedFromString.getTime())) {
+                return toYmdByTimestamp(parsedFromString.getTime());
+            }
+            return "";
+        }
+
+        if (raw instanceof Date) {
+            if (!Number.isFinite(raw.getTime())) return "";
+            return toYmdByTimestamp(raw.getTime());
+        }
+
+        return toYmdByTimestamp(raw);
+    }
+
+    function extractCompletedSourceId(row) {
+        var candidates = [
+            row && row.id,
+            row && row.orderId,
+            row && row.scheduleId,
+            row && row.trainingId,
+            row && row.antiForgetId
+        ];
+
+        for (var i = 0; i < candidates.length; i += 1) {
+            var candidate = String(candidates[i] || "").trim();
+            if (candidate) return candidate;
+        }
+        return "";
+    }
+
+    function parseCompletedDurationMinutes(row) {
+        if (!row || typeof row !== "object") return null;
+
+        var byType = parseBoardDurationMinutes(row.type, null);
+        if (byType) return byType;
+
+        var minuteCandidates = [
+            row.durationMinutes,
+            row.duration,
+            row.trainDurationMinutes,
+            row.classDurationMinutes
+        ];
+
+        for (var i = 0; i < minuteCandidates.length; i += 1) {
+            var minutes = normalizeDurationMinutes(minuteCandidates[i]);
+            if (minutes) return minutes;
+        }
+
+        var hourCandidates = [row.durationHours, row.hours];
+        for (var j = 0; j < hourCandidates.length; j += 1) {
+            var hourValue = Number(hourCandidates[j]);
+            if (Number.isFinite(hourValue) && hourValue > 0) {
+                return normalizeDurationMinutes(hourValue * 60);
+            }
+        }
+
+        return null;
+    }
+
+    function extractCompletedCourseText(row) {
+        var values = [
+            row && row.courseName,
+            row && row.category,
+            row && row.materialName,
+            row && row.material && row.material.name,
+            row && row.course && row.course.name,
+            row && row.type
+        ];
+
+        for (var i = 0; i < values.length; i += 1) {
+            var text = String(values[i] || "").trim();
+            if (text) return text;
+        }
+        return "";
+    }
+
+    function extractCompletedStudentName(row) {
+        var values = [
+            row && row.student && row.student.name,
+            row && row.userName,
+            row && row.studentName,
+            row && row.trainerName
+        ];
+
+        for (var i = 0; i < values.length; i += 1) {
+            var text = normalizeStudentName(values[i]);
+            if (text) return text;
+        }
+        return "";
+    }
+
+    function normalizeCompletedRecordForSalary(row) {
+        if (!row || typeof row !== "object") return null;
+
+        var studentName = extractCompletedStudentName(row);
+        var date = toYmdFromAny(
+            row.scheduleTime ||
+            row.trainingTime ||
+            row.trainTime ||
+            row.orderTime ||
+            row.date
+        );
+        var durationMinutes = parseCompletedDurationMinutes(row);
+        if (!studentName || !date || !durationMinutes) return null;
+
+        var salaryType = inferSalaryTypeFromCourse(extractCompletedCourseText(row));
+        var rate = SALARY_RATE_MAP[salaryType] || 50;
+        var durationHours = Number((durationMinutes / 60).toFixed(2));
+        var fee = Number((durationHours * rate).toFixed(2));
+        var sourceId = extractCompletedSourceId(row);
+
+        return {
+            sourceId: sourceId,
+            date: date,
+            studentName: studentName,
+            salaryType: salaryType,
+            durationHours: durationHours,
+            rate: rate,
+            fee: fee
+        };
+    }
+
+    function buildSalaryRowsFromCompletedRecords(records, options) {
+        var list = Array.isArray(records) ? records : [];
+        var startDate = String(options && options.startDate || "").trim();
+        var endDate = String(options && options.endDate || "").trim();
+        var rows = [];
+        var seen = new Set();
+
+        list.forEach(function (record) {
+            var normalized = normalizeCompletedRecordForSalary(record);
+            if (!normalized) return;
+
+            if (startDate && normalized.date < startDate) return;
+            if (endDate && normalized.date > endDate) return;
+
+            var dedupeKey = normalized.sourceId ||
+                (normalized.studentName + "__" + normalized.date + "__" + normalized.durationHours + "__" + normalized.salaryType);
+            if (seen.has(dedupeKey)) return;
+            seen.add(dedupeKey);
+            rows.push(normalized);
+        });
+
+        rows.sort(function (a, b) {
+            var byDate = a.date.localeCompare(b.date);
+            if (byDate !== 0) return byDate;
+            return a.studentName.localeCompare(b.studentName, "zh-CN");
+        });
+
+        return rows;
+    }
+
     function getCourseMatchState(index, targetCourse) {
         if (!index || !index.keys) return "none";
         var key = buildCourseMatchKey(targetCourse);
@@ -168,7 +346,10 @@
         getCourseMatchState: getCourseMatchState,
         hasScheduledCourse: hasScheduledCourse,
         resolveBoardQueryPlan: resolveBoardQueryPlan,
-        resolveCompletedQueryPlan: resolveCompletedQueryPlan
+        resolveCompletedQueryPlan: resolveCompletedQueryPlan,
+        inferSalaryTypeFromCourse: inferSalaryTypeFromCourse,
+        normalizeCompletedRecordForSalary: normalizeCompletedRecordForSalary,
+        buildSalaryRowsFromCompletedRecords: buildSalaryRowsFromCompletedRecords
     };
 
     globalScope.ScheduleCourseMatch = api;

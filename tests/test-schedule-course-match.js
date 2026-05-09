@@ -6,7 +6,10 @@ const {
     hasScheduledCourse,
     getCourseMatchState,
     resolveBoardQueryPlan,
-    resolveCompletedQueryPlan
+    resolveCompletedQueryPlan,
+    inferSalaryTypeFromCourse,
+    normalizeCompletedRecordForSalary,
+    buildSalaryRowsFromCompletedRecords
 } = require("../schedule-course-match.js");
 
 function testNormalizeBoardRecord() {
@@ -163,6 +166,85 @@ function testResolveCompletedQueryPlan() {
     });
 }
 
+function testInferSalaryTypeFromCourse() {
+    assert.strictEqual(inferSalaryTypeFromCourse("阅读理解专项"), "阅读完型语法课");
+    assert.strictEqual(inferSalaryTypeFromCourse("完型语法提升"), "阅读完型语法课");
+    assert.strictEqual(inferSalaryTypeFromCourse("体验课-试听"), "体验课");
+    assert.strictEqual(inferSalaryTypeFromCourse("托福高频词汇"), "词汇课");
+}
+
+function testNormalizeCompletedRecordForSalary() {
+    const row = {
+        id: 1001,
+        scheduleTime: Date.parse("2026-05-02T20:00:00+08:00"),
+        type: "MINUTE_30",
+        courseName: "阅读专项",
+        student: { name: "陈怡睿" }
+    };
+
+    const actual = normalizeCompletedRecordForSalary(row);
+    assert.deepStrictEqual(actual, {
+        sourceId: "1001",
+        date: "2026-05-02",
+        studentName: "陈怡睿",
+        salaryType: "阅读完型语法课",
+        durationHours: 0.5,
+        rate: 55,
+        fee: 27.5
+    });
+}
+
+function testBuildSalaryRowsFromCompletedRecordsShouldFilterAndDedup() {
+    const records = [
+        {
+            id: 1,
+            scheduleTime: Date.parse("2026-05-02T20:00:00+08:00"),
+            type: "MINUTE_60",
+            courseName: "托福高频词汇",
+            student: { name: "陈怡睿" }
+        },
+        {
+            id: 2,
+            scheduleTime: Date.parse("2026-05-03T20:00:00+08:00"),
+            type: "MINUTE_30",
+            courseName: "阅读理解",
+            student: { name: "胡贝妮" }
+        },
+        {
+            id: 2,
+            scheduleTime: Date.parse("2026-05-03T20:00:00+08:00"),
+            type: "MINUTE_30",
+            courseName: "阅读理解",
+            student: { name: "胡贝妮" }
+        },
+        {
+            id: 3,
+            scheduleTime: Date.parse("2026-05-04T20:00:00+08:00"),
+            type: "MINUTE_60",
+            courseName: "体验课",
+            student: { name: "俞新硕" }
+        },
+        {
+            id: 4,
+            scheduleTime: Date.parse("2026-05-07T20:00:00+08:00"),
+            type: "MINUTE_60",
+            courseName: "托福高频词汇",
+            student: { name: "陈怡睿" }
+        }
+    ];
+
+    const rows = buildSalaryRowsFromCompletedRecords(records, {
+        startDate: "2026-05-01",
+        endDate: "2026-05-05"
+    });
+
+    assert.strictEqual(rows.length, 3, "should keep rows in range and remove duplicated sourceId");
+    assert.deepStrictEqual(rows.map((r) => r.sourceId), ["1", "2", "3"]);
+    assert.strictEqual(rows[0].fee, 50);
+    assert.strictEqual(rows[1].fee, 27.5);
+    assert.strictEqual(rows[2].fee, 40);
+}
+
 function run() {
     testNormalizeBoardRecord();
     testBuildCourseMatchKey();
@@ -172,6 +254,9 @@ function run() {
     testGetCourseMatchStateShouldReturnNoneWhenNoMatch();
     testResolveBoardQueryPlan();
     testResolveCompletedQueryPlan();
+    testInferSalaryTypeFromCourse();
+    testNormalizeCompletedRecordForSalary();
+    testBuildSalaryRowsFromCompletedRecordsShouldFilterAndDedup();
     console.log("test-schedule-course-match passed");
 }
 
