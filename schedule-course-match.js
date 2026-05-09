@@ -39,6 +39,32 @@
         return normalizeDurationMinutes(fallbackMinutes);
     }
 
+    function parseDurationMinutesFromText(value) {
+        var text = String(value || "").trim();
+        if (!text) return null;
+        var match = text.match(/(\d+(?:\.\d+)?)\s*分钟/);
+        if (match) return normalizeDurationMinutes(Number(match[1]));
+        return null;
+    }
+
+    function parseDurationMinutesFromRangeText(value) {
+        var text = String(value || "").trim();
+        if (!text) return null;
+
+        var range = text.match(/(\d{1,2}:\d{2})\s*[~～\-—]\s*(\d{1,2}:\d{2})/);
+        if (!range) return null;
+
+        var start = range[1].split(":");
+        var end = range[2].split(":");
+        var startMinutes = Number(start[0]) * 60 + Number(start[1]);
+        var endMinutes = Number(end[0]) * 60 + Number(end[1]);
+        if (!Number.isFinite(startMinutes) || !Number.isFinite(endMinutes)) return null;
+
+        var diff = endMinutes - startMinutes;
+        if (diff <= 0) diff += 24 * 60;
+        return normalizeDurationMinutes(diff);
+    }
+
     function normalizeBoardRecord(row) {
         if (!row || typeof row !== "object") return null;
         var student = normalizeStudentName(row.student && row.student.name);
@@ -228,7 +254,10 @@
             row.durationMinutes,
             row.duration,
             row.trainDurationMinutes,
-            row.classDurationMinutes
+            row.classDurationMinutes,
+            row.trainingTime,
+            row.trainTimeText,
+            row.trainingDurationText
         ];
 
         for (var i = 0; i < minuteCandidates.length; i += 1) {
@@ -242,6 +271,29 @@
             if (Number.isFinite(hourValue) && hourValue > 0) {
                 return normalizeDurationMinutes(hourValue * 60);
             }
+        }
+
+        var textCandidates = [
+            row.trainingTime,
+            row.trainTimeText,
+            row.trainingDurationText,
+            row.durationText
+        ];
+        for (var k = 0; k < textCandidates.length; k += 1) {
+            var minutesFromText = parseDurationMinutesFromText(textCandidates[k]);
+            if (minutesFromText) return minutesFromText;
+        }
+
+        var rangeCandidates = [
+            row.reserveTime,
+            row.bookedTime,
+            row.scheduleRange,
+            row.period,
+            row.timeRange
+        ];
+        for (var m = 0; m < rangeCandidates.length; m += 1) {
+            var minutesFromRange = parseDurationMinutesFromRangeText(rangeCandidates[m]);
+            if (minutesFromRange) return minutesFromRange;
         }
 
         return null;

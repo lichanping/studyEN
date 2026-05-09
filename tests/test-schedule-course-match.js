@@ -189,6 +189,25 @@ function testNormalizeCompletedRecordForSalaryShouldDetectTrialFromCategory() {
     assert.strictEqual(actual.fee, 40);
 }
 
+function testNormalizeCompletedRecordForSalaryShouldParseTrialTrainingDurationText() {
+    const row = {
+        id: 3001,
+        scheduleTime: "2026-02-03 19:52",
+        type: "体验训练",
+        category: "体验课",
+        trainingTime: "60分钟",
+        studentName: "徐智浩 XP15775781",
+        trainerName: "李婵娉 XT144620"
+    };
+
+    const actual = normalizeCompletedRecordForSalary(row);
+    assert.ok(actual, "trial training row with text duration should not be dropped");
+    assert.strictEqual(actual.date, "2026-02-03");
+    assert.strictEqual(actual.salaryType, "体验课");
+    assert.strictEqual(actual.durationHours, 1);
+    assert.strictEqual(actual.fee, 40);
+}
+
 function testNormalizeCompletedRecordForSalary() {
     const row = {
         id: 1001,
@@ -275,6 +294,7 @@ function run() {
     testInferSalaryTypeFromCourse();
     testNormalizeCompletedRecordForSalary();
     testNormalizeCompletedRecordForSalaryShouldDetectTrialFromCategory();
+    testNormalizeCompletedRecordForSalaryShouldParseTrialTrainingDurationText();
     testBuildSalaryRowsFromCompletedRecordsShouldFilterAndDedup();
     console.log("test-schedule-course-match passed");
 }
