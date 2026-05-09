@@ -72,12 +72,12 @@
 | 1 | +1 | 正课次日 |
 | 2 | +2 | 第 2 天 |
 | 3 | +3 | 第 3 天 |
-| 4 | +5 | 第 5 天 |
-| 5 | +7 | 第 7 天 |
-| 6 | +9 | 第 9 天 |
-| 7 | +12 | 第 12 天 |
-| 8 | +14 | 第 14 天 |
-| 9 | +17 | 第 17 天 |
+| 4 | +6 | 第 6 天 |
+| 5 | +9 | 第 9 天 |
+| 6 | +12 | 第 12 天 |
+| 7 | +15 | 第 15 天 |
+| 8 | +17 | 第 17 天 |
+| 9 | +19 | 第 19 天 |
 | 10 | +21 | 第 21 天 |
 
 ### 3.2 昵称映射规则
@@ -177,8 +177,8 @@
 ```html
 <button id="reviewScheduleHintToggle" class="hint-icon-btn">?</button>
 <div id="reviewScheduleHintPanel" class="hint" style="display:none;">
-    复习公式：复习日期 = 正课日期 + 1/2/3/5/7/9/12/14/17/21 天。<br>
-    例如正课是 2026-04-17，则对应复习日依次为 2026-04-18、04-19、04-20、04-22、04-24、04-26、04-29、05-01、05-04、05-08。
+    复习公式：复习日期 = 正课日期 + 1/2/3/6/9/12/15/17/19/21 天。<br>
+    例如正课是 2026-04-17，则对应复习日依次为 2026-04-18、04-19、04-20、04-23、04-26、04-29、05-02、05-04、05-06、05-08。
 </div>
 ```
 
@@ -213,7 +213,7 @@ POST /.netlify/functions/schedule-board?mode=completed&pageNumber=1&pageSize=500
 ### 5.2 复习计划计算
 
 ```javascript
-const REVIEW_OFFSETS = [1, 2, 3, 5, 7, 9, 12, 14, 17, 21];
+const REVIEW_OFFSETS = [1, 2, 3, 6, 9, 12, 15, 17, 19, 21];
 
 function calculateReviewSchedule(trainingRecords, targetStudent) {
     const reviewSchedule = new Map();
