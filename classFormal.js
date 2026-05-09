@@ -1151,7 +1151,7 @@ function createReviewScheduleTable(dateStr, userName) {
     if (entryDate.getTime() !== today.getTime()) return null;
 
     // 生成复习日期数组
-    const intervals = [1, 2, 3, 5, 7, 9, 12, 14, 17, 21];
+    const intervals = [1, 2, 3, 6, 9, 12, 15, 17, 19, 21];
     const reviewDates = intervals.map(offset => {
         const d = new Date(today);
         d.setDate(d.getDate() + offset);
