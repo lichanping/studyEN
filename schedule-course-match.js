@@ -253,6 +253,7 @@
         }
 
         var textCandidates = [
+            row.duration,
             row.trainingTime,
             row.trainTimeText,
             row.trainingDurationText,
