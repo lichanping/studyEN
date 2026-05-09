@@ -314,8 +314,8 @@
             <button id="reviewScheduleHintToggle" type="button" class="hint-icon-btn" aria-label="查看复习公式说明" title="查看复习公式说明">?</button>
         </div>
         <div id="reviewScheduleHintPanel" class="hint" style="display:none;margin-top:10px;">
-            复习公式：复习日期 = 正课日期 + 1/2/3/5/7/9/12/14/17/21 天。<br>
-            例如正课是 2026-04-17，则对应复习日依次为 2026-04-18、04-19、04-20、04-22、04-24、04-26、04-29、05-01、05-04、05-08。
+            复习公式：复习日期 = 正课日期 + 1/2/3/6/9/12/15/17/19/21 天。<br>
+            例如正课是 2026-04-17，则对应复习日依次为 2026-04-18、04-19、04-20、04-23、04-26、04-29、05-02、05-04、05-06、05-08。
         </div>
 
         <div id="reviewScheduleCheckPanel" style="margin-top:12px;">
@@ -524,7 +524,7 @@
     document.getElementById('userName').addEventListener('change', clearFormFields);
 
     // ── 复习计划核对功能 ──
-    const REVIEW_OFFSETS = [1, 2, 3, 5, 7, 9, 12, 14, 17, 21];
+    const REVIEW_OFFSETS = [1, 2, 3, 6, 9, 12, 15, 17, 19, 21];
 
     // 独立获取学生列表（不修改现有逻辑）
     function getStudentsForScheduleCheck() {
