@@ -209,6 +209,8 @@ function testNormalizeCompletedRecordForSalaryShouldParseTrialTrainingDurationTe
 }
 
 function testNormalizeCompletedRecordForSalaryShouldParseTrialFromStartEndTimeFields() {
+    // Trial class with NO explicit duration field — only startTime/endTime.
+    // Since trial is always fixed at 1 hour / 40 yuan, the record must NOT be dropped.
     const row = {
         id: 3002,
         startTime: "2026-02-03 19:52",
@@ -219,7 +221,12 @@ function testNormalizeCompletedRecordForSalaryShouldParseTrialFromStartEndTimeFi
     };
 
     const actual = normalizeCompletedRecordForSalary(row);
-    assert.strictEqual(actual, null, "without duration fields, row should be ignored");
+    assert.ok(actual, "trial class without explicit duration should still be kept (fixed 1h)");
+    assert.strictEqual(actual.date, "2026-02-03");
+    assert.strictEqual(actual.salaryType, "体验课");
+    assert.strictEqual(actual.durationHours, 1, "trial is always 1 hour");
+    assert.strictEqual(actual.rate, 40);
+    assert.strictEqual(actual.fee, 40);
 }
 
 function testNormalizeCompletedRecordForSalaryShouldClampTrialToOneHour() {
