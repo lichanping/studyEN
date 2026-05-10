@@ -358,6 +358,70 @@ function testBuildSalaryRowsFromCompletedRecordsShouldFilterAndDedup() {
     assert.strictEqual(rows[2].fee, 40);
 }
 
+function testBuildSalaryRowsFromCompletedRecordsShouldExcludeByTrainerName() {
+    // When trainerName contains a name, that name should be excluded from salary rows.
+    const records = [
+        {
+            id: 11,
+            scheduleTime: Date.parse("2026-05-02T20:00:00+08:00"),
+            type: "MINUTE_60",
+            courseName: "陪练练习",
+            student: { name: "陈怡睿" },
+            trainerName: "陈怡睿 XP123456"
+        },
+        {
+            id: 12,
+            scheduleTime: Date.parse("2026-05-03T20:00:00+08:00"),
+            type: "MINUTE_60",
+            courseName: "文章补全（7-5）",
+            student: { name: "胡贝妮" }
+        },
+        {
+            id: 13,
+            scheduleTime: Date.parse("2026-05-04T20:00:00+08:00"),
+            type: "MINUTE_60",
+            courseName: "托福高频词汇",
+            student: { name: "陈怡睿" }
+        }
+    ];
+
+    const rows = buildSalaryRowsFromCompletedRecords(records, {
+        startDate: "2026-05-01",
+        endDate: "2026-05-31"
+    });
+
+    assert.strictEqual(rows.length, 2, "only test-course row should be excluded");
+    assert.deepStrictEqual(rows.map((r) => r.sourceId), ["12", "13"]);
+    assert.deepStrictEqual(rows.map((r) => r.studentName), ["胡贝妮", "陈怡睿"]);
+}
+
+function testBuildSalaryRowsFromCompletedRecordsShouldNotExcludeWhenNoTrainerName() {
+    const records = [
+        {
+            id: 11,
+            scheduleTime: Date.parse("2026-05-02T20:00:00+08:00"),
+            type: "MINUTE_60",
+            courseName: "陪练练习",
+            student: { name: "陈怡睿" }
+        },
+        {
+            id: 12,
+            scheduleTime: Date.parse("2026-05-03T20:00:00+08:00"),
+            type: "MINUTE_60",
+            courseName: "文章补全（7-5）",
+            student: { name: "胡贝妮" }
+        }
+    ];
+
+    const rows = buildSalaryRowsFromCompletedRecords(records, {
+        startDate: "2026-05-01",
+        endDate: "2026-05-31"
+    });
+
+    assert.strictEqual(rows.length, 2, "all rows should be kept when no trainerName available");
+    assert.deepStrictEqual(rows.map((r) => r.studentName), ["陈怡睿", "胡贝妮"]);
+}
+
 function run() {
     testNormalizeBoardRecord();
     testBuildCourseMatchKey();
@@ -376,6 +440,8 @@ function run() {
     testNormalizeCompletedRecordForSalaryShouldParseTextDurationField();
     testNormalizeCompletedRecordForSalaryShouldIgnoreActualStartEndForVocabClass();
     testBuildSalaryRowsFromCompletedRecordsShouldFilterAndDedup();
+    testBuildSalaryRowsFromCompletedRecordsShouldExcludeByTrainerName();
+    testBuildSalaryRowsFromCompletedRecordsShouldNotExcludeWhenNoTrainerName();
     console.log("test-schedule-course-match passed");
 }
 

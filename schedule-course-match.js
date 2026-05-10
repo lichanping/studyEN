@@ -342,8 +342,101 @@
         };
     }
 
+    function extractTeacherNamesFromRecords(records) {
+        var nameSet = new Set();
+        var list = Array.isArray(records) ? records : [];
+        list.forEach(function (record) {
+            if (!record || typeof record !== "object") return;
+            var candidates = [
+                record.trainerName,
+                record.teacherName,
+                record.teacher && record.teacher.name,
+                record.trainer && record.trainer.name,
+                record.teacherNameText,
+                record.trainerNameText
+            ];
+            candidates.forEach(function (val) {
+                var text = String(val || "").trim();
+                if (!text) return;
+                if (text.indexOf(" ") !== -1) {
+                    var parts = text.split(/\s+/);
+                    var namePart = parts[0];
+                    if (namePart && namePart.length > 1) {
+                        nameSet.add(namePart);
+                    }
+                } else if (text.length > 1) {
+                    nameSet.add(text);
+                }
+            });
+        });
+        return Array.from(nameSet);
+    }
+
+    function hasTeacherIdentity(record) {
+        if (!record || typeof record !== "object") return false;
+        var candidates = [
+            record.trainerName,
+            record.teacherName,
+            record.teacher && record.teacher.name,
+            record.trainer && record.trainer.name,
+            record.teacherNameText,
+            record.trainerNameText
+        ];
+        for (var i = 0; i < candidates.length; i += 1) {
+            var text = String(candidates[i] || "").trim();
+            if (text) return true;
+        }
+        return false;
+    }
+
+    function containsPattern(text, patterns) {
+        var normalized = String(text || "").trim();
+        if (!normalized || !Array.isArray(patterns) || patterns.length === 0) return false;
+        for (var i = 0; i < patterns.length; i += 1) {
+            if (normalized.indexOf(patterns[i]) !== -1) return true;
+        }
+        return false;
+    }
+
+    function buildExcludedSalaryPatterns(completedRecords) {
+        var list = Array.isArray(completedRecords) ? completedRecords : [];
+        if (list.length === 0) {
+            return Object.freeze({ studentPatterns: [], coursePatterns: [] });
+        }
+
+        var names = extractTeacherNamesFromRecords(list);
+        if (names.length === 0) {
+            return Object.freeze({ studentPatterns: [], coursePatterns: [] });
+        }
+
+        var testCourseSet = new Set();
+        list.forEach(function (record) {
+            if (!hasTeacherIdentity(record)) return;
+
+            var student = extractCompletedStudentName(record);
+            var course = extractCompletedCourseText(record);
+            if (!student || !course) return;
+            if (!containsPattern(student, names)) return;
+
+            testCourseSet.add(course);
+        });
+
+        return Object.freeze({
+            studentPatterns: Object.freeze(names),
+            coursePatterns: Object.freeze(Array.from(testCourseSet))
+        });
+    }
+
+    function shouldExcludeSalaryStudent(studentName, courseName, excludedPatterns) {
+        if (!excludedPatterns || typeof excludedPatterns !== "object") return false;
+        if (!containsPattern(studentName, excludedPatterns.studentPatterns)) return false;
+        if (!containsPattern(courseName, excludedPatterns.coursePatterns)) return false;
+        return true;
+    }
+
     function buildSalaryRowsFromCompletedRecords(records, options) {
         var list = Array.isArray(records) ? records : [];
+        var excludedPatterns = buildExcludedSalaryPatterns(list);
         var startDate = String(options && options.startDate || "").trim();
         var endDate = String(options && options.endDate || "").trim();
         var rows = [];
@@ -352,6 +445,7 @@
         list.forEach(function (record) {
             var normalized = normalizeCompletedRecordForSalary(record);
             if (!normalized) return;
+            if (shouldExcludeSalaryStudent(normalized.studentName, normalized.courseName, excludedPatterns)) return;
 
             if (startDate && normalized.date < startDate) return;
             if (endDate && normalized.date > endDate) return;
