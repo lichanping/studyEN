@@ -39,6 +39,14 @@
         return normalizeDurationMinutes(fallbackMinutes);
     }
 
+    function parseDurationMinutesFromText(value) {
+        var text = String(value || "").trim();
+        if (!text) return null;
+        var match = text.match(/(\d+(?:\.\d+)?)\s*分钟/);
+        if (match) return normalizeDurationMinutes(Number(match[1]));
+        return null;
+    }
+
     function normalizeBoardRecord(row) {
         if (!row || typeof row !== "object") return null;
         var student = normalizeStudentName(row.student && row.student.name);
@@ -146,6 +154,318 @@
         };
     }
 
+    var SALARY_RATE_MAP = {
+        "词汇课": 50,
+        "阅读完型语法课": 55,
+        "体验课": 40
+    };
+
+    function inferSalaryTypeFromCourse(courseText) {
+        var text = String(courseText || "").trim();
+        if (!text) return "词汇课";
+        if (text.indexOf("体验") !== -1) return "体验课";
+        if (text.indexOf("阅读") !== -1 || text.indexOf("完型") !== -1 || text.indexOf("语法") !== -1) {
+            return "阅读完型语法课";
+        }
+        return "词汇课";
+    }
+
+    function inferSalaryTypeFromCompletedRecord(row, fallbackCourseName) {
+        var hints = [
+            fallbackCourseName,
+            row && row.category,
+            row && row.type,
+            row && row.materialName,
+            row && row.material && row.material.name,
+            row && row.course && row.course.name
+        ].map(function (value) {
+            return String(value || "").trim();
+        }).filter(Boolean);
+
+        var joined = hints.join("|");
+        return inferSalaryTypeFromCourse(joined);
+    }
+
+    function toYmdFromAny(raw) {
+        if (raw === null || typeof raw === "undefined") return "";
+
+        if (typeof raw === "string") {
+            var maybeYmd = raw.slice(0, 10);
+            if (/^\d{4}-\d{2}-\d{2}$/.test(maybeYmd)) {
+                return maybeYmd;
+            }
+
+            var parsedFromString = new Date(raw);
+            if (Number.isFinite(parsedFromString.getTime())) {
+                return toYmdByTimestamp(parsedFromString.getTime());
+            }
+            return "";
+        }
+
+        if (raw instanceof Date) {
+            if (!Number.isFinite(raw.getTime())) return "";
+            return toYmdByTimestamp(raw.getTime());
+        }
+
+        return toYmdByTimestamp(raw);
+    }
+
+    function extractCompletedSourceId(row) {
+        var candidates = [
+            row && row.id,
+            row && row.orderId,
+            row && row.scheduleId,
+            row && row.trainingId,
+            row && row.antiForgetId
+        ];
+
+        for (var i = 0; i < candidates.length; i += 1) {
+            var candidate = String(candidates[i] || "").trim();
+            if (candidate) return candidate;
+        }
+        return "";
+    }
+
+    function parseCompletedDurationMinutes(row) {
+        if (!row || typeof row !== "object") return null;
+
+        var byType = parseBoardDurationMinutes(row.type, null);
+        if (byType) return byType;
+
+        var minuteCandidates = [
+            row.durationMinutes,
+            row.duration,
+            row.trainDurationMinutes,
+            row.classDurationMinutes
+        ];
+
+        for (var i = 0; i < minuteCandidates.length; i += 1) {
+            var minutes = normalizeDurationMinutes(minuteCandidates[i]);
+            if (minutes) return minutes;
+        }
+
+        var hourCandidates = [row.durationHours, row.hours];
+        for (var j = 0; j < hourCandidates.length; j += 1) {
+            var hourValue = Number(hourCandidates[j]);
+            if (Number.isFinite(hourValue) && hourValue > 0) {
+                return normalizeDurationMinutes(hourValue * 60);
+            }
+        }
+
+        var textCandidates = [
+            row.duration,
+            row.trainingTime,
+            row.trainTimeText,
+            row.trainingDurationText,
+            row.durationText
+        ];
+        for (var k = 0; k < textCandidates.length; k += 1) {
+            var minutesFromText = parseDurationMinutesFromText(textCandidates[k]);
+            if (minutesFromText) return minutesFromText;
+        }
+
+        return null;
+    }
+
+    function extractCompletedCourseText(row) {
+        var values = [
+            row && row.courseName,
+            row && row.category,
+            row && row.materialName,
+            row && row.material && row.material.name,
+            row && row.course && row.course.name,
+            row && row.type
+        ];
+
+        for (var i = 0; i < values.length; i += 1) {
+            var text = String(values[i] || "").trim();
+            if (text) return text;
+        }
+        return "";
+    }
+
+    function extractCompletedStudentName(row) {
+        var values = [
+            row && row.student && row.student.name,
+            row && row.userName,
+            row && row.studentName,
+            row && row.trainerName
+        ];
+
+        for (var i = 0; i < values.length; i += 1) {
+            var text = normalizeStudentName(values[i]);
+            if (text) return text;
+        }
+        return "";
+    }
+
+    function normalizeCompletedRecordForSalary(row) {
+        if (!row || typeof row !== "object") return null;
+
+        var studentName = extractCompletedStudentName(row);
+        var courseName = extractCompletedCourseText(row);
+        var date = toYmdFromAny(
+            row.scheduleTime ||
+            row.startTime ||
+            row.beginTime ||
+            row.actualStartTime ||
+            row.reserveStartTime ||
+            row.trainTime ||
+            row.orderTime ||
+            row.date
+        );
+        var durationMinutes = parseCompletedDurationMinutes(row);
+
+        var salaryType = inferSalaryTypeFromCompletedRecord(row, courseName);
+
+        // Trial classes are always fixed at 1 hour; do not drop them for missing duration
+        if (!durationMinutes && salaryType === "体验课") {
+            durationMinutes = 60;
+        }
+
+        if (!studentName || !date || !durationMinutes) return null;
+
+        var rate = SALARY_RATE_MAP[salaryType] || 50;
+        var durationHours = salaryType === "体验课" ? 1 : Number((durationMinutes / 60).toFixed(2));
+        var fee = Number((durationHours * rate).toFixed(2));
+        var sourceId = extractCompletedSourceId(row);
+
+        return {
+            sourceId: sourceId,
+            date: date,
+            studentName: studentName,
+            courseName: courseName,
+            salaryType: salaryType,
+            durationHours: durationHours,
+            rate: rate,
+            fee: fee
+        };
+    }
+
+    function extractTeacherNamesFromRecords(records) {
+        var nameSet = new Set();
+        var list = Array.isArray(records) ? records : [];
+        list.forEach(function (record) {
+            if (!record || typeof record !== "object") return;
+            var candidates = [
+                record.trainerName,
+                record.teacherName,
+                record.teacher && record.teacher.name,
+                record.trainer && record.trainer.name,
+                record.teacherNameText,
+                record.trainerNameText
+            ];
+            candidates.forEach(function (val) {
+                var text = String(val || "").trim();
+                if (!text) return;
+                if (text.indexOf(" ") !== -1) {
+                    var parts = text.split(/\s+/);
+                    var namePart = parts[0];
+                    if (namePart && namePart.length > 1) {
+                        nameSet.add(namePart);
+                    }
+                } else if (text.length > 1) {
+                    nameSet.add(text);
+                }
+            });
+        });
+        return Array.from(nameSet);
+    }
+
+    function hasTeacherIdentity(record) {
+        if (!record || typeof record !== "object") return false;
+        var candidates = [
+            record.trainerName,
+            record.teacherName,
+            record.teacher && record.teacher.name,
+            record.trainer && record.trainer.name,
+            record.teacherNameText,
+            record.trainerNameText
+        ];
+        for (var i = 0; i < candidates.length; i += 1) {
+            var text = String(candidates[i] || "").trim();
+            if (text) return true;
+        }
+        return false;
+    }
+
+    function containsPattern(text, patterns) {
+        var normalized = String(text || "").trim();
+        if (!normalized || !Array.isArray(patterns) || patterns.length === 0) return false;
+        for (var i = 0; i < patterns.length; i += 1) {
+            if (normalized.indexOf(patterns[i]) !== -1) return true;
+        }
+        return false;
+    }
+
+    function buildExcludedSalaryPatterns(completedRecords) {
+        var list = Array.isArray(completedRecords) ? completedRecords : [];
+        if (list.length === 0) {
+            return Object.freeze({ studentPatterns: [], coursePatterns: [] });
+        }
+
+        var names = extractTeacherNamesFromRecords(list);
+        if (names.length === 0) {
+            return Object.freeze({ studentPatterns: [], coursePatterns: [] });
+        }
+
+        var testCourseSet = new Set();
+        list.forEach(function (record) {
+            if (!hasTeacherIdentity(record)) return;
+
+            var student = extractCompletedStudentName(record);
+            var course = extractCompletedCourseText(record);
+            if (!student || !course) return;
+            if (!containsPattern(student, names)) return;
+
+            testCourseSet.add(course);
+        });
+
+        return Object.freeze({
+            studentPatterns: Object.freeze(names),
+            coursePatterns: Object.freeze(Array.from(testCourseSet))
+        });
+    }
+
+    function shouldExcludeSalaryStudent(studentName, courseName, excludedPatterns) {
+        if (!excludedPatterns || typeof excludedPatterns !== "object") return false;
+        if (!containsPattern(studentName, excludedPatterns.studentPatterns)) return false;
+        if (!containsPattern(courseName, excludedPatterns.coursePatterns)) return false;
+        return true;
+    }
+
+    function buildSalaryRowsFromCompletedRecords(records, options) {
+        var list = Array.isArray(records) ? records : [];
+        var excludedPatterns = buildExcludedSalaryPatterns(list);
+        var startDate = String(options && options.startDate || "").trim();
+        var endDate = String(options && options.endDate || "").trim();
+        var rows = [];
+        var seen = new Set();
+
+        list.forEach(function (record) {
+            var normalized = normalizeCompletedRecordForSalary(record);
+            if (!normalized) return;
+            if (shouldExcludeSalaryStudent(normalized.studentName, normalized.courseName, excludedPatterns)) return;
+
+            if (startDate && normalized.date < startDate) return;
+            if (endDate && normalized.date > endDate) return;
+
+            var dedupeKey = normalized.sourceId ||
+                (normalized.studentName + "__" + normalized.date + "__" + normalized.durationHours + "__" + normalized.salaryType);
+            if (seen.has(dedupeKey)) return;
+            seen.add(dedupeKey);
+            rows.push(normalized);
+        });
+
+        rows.sort(function (a, b) {
+            var byDate = a.date.localeCompare(b.date);
+            if (byDate !== 0) return byDate;
+            return a.studentName.localeCompare(b.studentName, "zh-CN");
+        });
+
+        return rows;
+    }
+
     function getCourseMatchState(index, targetCourse) {
         if (!index || !index.keys) return "none";
         var key = buildCourseMatchKey(targetCourse);
@@ -168,7 +488,10 @@
         getCourseMatchState: getCourseMatchState,
         hasScheduledCourse: hasScheduledCourse,
         resolveBoardQueryPlan: resolveBoardQueryPlan,
-        resolveCompletedQueryPlan: resolveCompletedQueryPlan
+        resolveCompletedQueryPlan: resolveCompletedQueryPlan,
+        inferSalaryTypeFromCourse: inferSalaryTypeFromCourse,
+        normalizeCompletedRecordForSalary: normalizeCompletedRecordForSalary,
+        buildSalaryRowsFromCompletedRecords: buildSalaryRowsFromCompletedRecords
     };
 
     globalScope.ScheduleCourseMatch = api;
