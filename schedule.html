@@ -1048,7 +1048,7 @@
             <input id="salaryMonthPicker" type="month">
             <label for="salaryYearPicker">工资年份：</label>
             <input id="salaryYearPicker" type="number" min="2000" max="2100" step="1" style="width: 90px;">
-            <button id="generateScheduleSalaryButton" type="button">按排课生成工资统计</button>
+            <button id="generateScheduleSalaryButton" type="button">按实际上课生成工资统计</button>
             <button id="verifySalaryStorageButton" type="button">检查工资本地数据</button>
 
             <span class="controls-break" aria-hidden="true"></span>
@@ -1058,24 +1058,22 @@
             <label for="antiForgettingStartTime">提醒时间：</label>
             <input id="antiForgettingStartTime" type="datetime-local" step="60" value="">
         </div>
-        <div class="hint" style="margin-top: 6px;">自动检查本排课表学员的 30/60 分钟课时与陪伴课余额。排课学生管理页会覆盖排课配置；工资统计按独立账本，只有补录才写入。</div>
+        <div class="hint" style="margin-top: 6px;">自动检查本排课表学员的 30/60 分钟课时与陪伴课余额。工资统计改为按已完成上课记录（API）计算，排课变化不会影响历史工资结果。</div>
         <div class="hint" style="margin-top: 6px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-            <span id="scheduleSalarySummary">工资统计口径：独立账本（key: schedule-salary-ledger-v1），默认从 2026-04-01 起按当天实际课次入账（自动补录昨天，缺失时；也可手动补录更早日期），仅统计今天以前。</span>
+            <span id="scheduleSalarySummary">工资统计口径：按已完成上课记录（status=COMPLETED）统计，单词课 50 元/小时，阅读完型语法课 55 元/小时，体验课 40 元/小时；半小时按小时费率折半，统计范围由月份/年份决定。</span>
             <span class="help-tip" tabindex="0" aria-label="工资字段说明">?
                 <span class="help-tip-content">字段说明
-version: 账本结构版本号
-startDate: 账本起算日（当前账本最早入账日期）
-byDate: 按日期分组的课次明细
-updatedAt: 账本最后更新时间
+数据来源：已完成上课记录（status=COMPLETED）
+统计窗口：选中月份/年份范围
 
-单条课次字段
+单条工资字段
 date: 上课日期
 studentName: 学员姓名
 salaryType: 工资课型（词汇课/阅读完型语法课/体验课）
 durationHours: 课时（小时）
 rate: 单价（元/小时）
 fee: 该条工资（durationHours × rate）
-entryKey: 课次标识（用于区分排课项）</span>
+sourceId: 上课记录唯一标识（用于去重）</span>
             </span>
         </div>
         <div id="topAbnormalQuotaBlock" class="quota-result-group" style="margin-top: 10px; display: none;">
@@ -1201,7 +1199,7 @@ entryKey: 课次标识（用于区分排课项）</span>
 }
 </script>
 <script src="./student-name-alias.js?v=20260501"></script>
-<script src="./schedule-course-match.js?v=20260503"></script>
+<script src="./schedule-course-match.js?v=20260509-1"></script>
 
 <script>
     const WEEK_DAYS = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
@@ -3267,41 +3265,114 @@ entryKey: 课次标识（用于区分排课项）</span>
         return { periodLabel: String(monthValue).trim(), range, fileTag: String(monthValue).trim() };
     }
 
-    function getStatsUntilYesterday(periodType, monthValue, yearValue) {
-        const { range } = getPeriodConfig(periodType, monthValue, yearValue);
+    function getCompletedQueryUrlWithPage(baseUrl, pageNumber, pageSize) {
+        const hasMode = /(?:\?|&)mode=completed(?:&|$)/.test(baseUrl);
+        const prefix = baseUrl + (baseUrl.includes("?") ? "&" : "?");
+        const urlWithMode = hasMode ? baseUrl : (prefix + "mode=completed");
+        return urlWithMode + (urlWithMode.includes("?") ? "&" : "?") +
+            "pageNumber=" + pageNumber + "&pageSize=" + pageSize;
+    }
 
-        const today = new Date();
-        const yesterday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
-        const periodStart = range.start;
-        const cutoff = range.end < yesterday ? range.end : yesterday;
-        const ledger = loadSalaryLedger();
-        const startDateObj = new Date(getLedgerStartDate(ledger) + "T00:00:00");
-        const effectiveStartObj = periodStart > startDateObj ? periodStart : startDateObj;
-
-        if (cutoff < effectiveStartObj) {
-            return { rows: [], warnings: [], dateRangeText: "无可统计日期" };
+    async function fetchCompletedRecordsForSalary() {
+        let token = getBoardToken();
+        if (!token) {
+            await safeLoginApp().catch(() => {});
+            token = getBoardToken();
+            if (!token) {
+                throw new Error("未找到登录 token，请先设置登录信息");
+            }
         }
 
-        const effectiveStart = dateToYmd(effectiveStartObj);
-        const cutoffYmd = dateToYmd(cutoff);
-        const rows = [];
-        Object.entries(ledger.byDate || {}).forEach(([dateValue, dateRows]) => {
-            if (dateValue < effectiveStart || dateValue > cutoffYmd) return;
-            (Array.isArray(dateRows) ? dateRows : []).forEach((row) => {
-                rows.push({
-                    date: dateValue,
-                    studentName: row.studentName,
-                    salaryType: row.salaryType,
-                    durationHours: Number(row.durationHours) || 0,
-                    rate: Number(row.rate) || (SALARY_RATE_MAP[row.salaryType] || 50),
-                    fee: Number(row.fee) || 0
+        const userId = String(localStorage.getItem("x-user-id") || "").trim();
+        const plan = (typeof window.ScheduleCourseMatch?.resolveCompletedQueryPlan === "function")
+            ? window.ScheduleCourseMatch.resolveCompletedQueryPlan(window.location.hostname)
+            : { url: "/.netlify/functions/schedule-board?mode=completed", useProxy: true };
+
+        const pageSize = 200;
+        let pageNumber = 1;
+        const allRecords = [];
+        const seenPageSignatures = new Set();
+
+        while (true) {
+            const response = plan.useProxy
+                ? await fetch(getCompletedQueryUrlWithPage(plan.url, pageNumber, pageSize), {
+                    method: "POST",
+                    headers: {
+                        "accept": "application/json, text/plain, */*",
+                        "content-type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        token,
+                        userId,
+                        xUa: BOARD_DEFAULT_X_UA,
+                        mode: "completed",
+                        pageNumber,
+                        pageSize
+                    })
+                })
+                : await fetch("https://apiv2.lxll.com/customer/training/orders?pageNumber=" + pageNumber + "&pageSize=" + pageSize + "&status=COMPLETED", {
+                    method: "GET",
+                    headers: {
+                        "accept": "application/json, text/plain, */*",
+                        "authorization": "Bearer " + token,
+                        "x-token-c": token,
+                        "x-user-id": userId,
+                        "x-ua": BOARD_DEFAULT_X_UA
+                    }
                 });
-            });
+
+            if (!response.ok) {
+                throw new Error("上课记录接口失败: " + response.status);
+            }
+
+            const data = await response.json();
+            const records = Array.isArray(data?.data?.data) ? data.data.data : [];
+            if (records.length === 0) break;
+
+            const pageSignature = records
+                .slice(0, 5)
+                .map((item) => String(item?.id || item?.orderId || item?.scheduleId || item?.scheduleTime || ""))
+                .join("|") + ":" + records.length;
+
+            if (seenPageSignatures.has(pageSignature)) {
+                break;
+            }
+            seenPageSignatures.add(pageSignature);
+
+            allRecords.push(...records);
+
+            if (records.length < pageSize) break;
+            const total = Number(data?.data?.total);
+            if (Number.isFinite(total) && total >= 0) {
+                const totalPages = Math.ceil(total / pageSize);
+                if (pageNumber >= totalPages) break;
+            }
+
+            pageNumber += 1;
+            if (pageNumber > 200) break;
+        }
+
+        return allRecords;
+    }
+
+    async function getSalaryRowsFromCompletedApi(periodType, monthValue, yearValue) {
+        if (typeof window.ScheduleCourseMatch?.buildSalaryRowsFromCompletedRecords !== "function") {
+            throw new Error("工资计算模块未加载");
+        }
+
+        const { range } = getPeriodConfig(periodType, monthValue, yearValue);
+        const startDate = dateToYmd(range.start);
+        const endDate = dateToYmd(range.end);
+        const completedRecords = await fetchCompletedRecordsForSalary();
+        const rows = window.ScheduleCourseMatch.buildSalaryRowsFromCompletedRecords(completedRecords, {
+            startDate,
+            endDate
         });
 
-        rows.sort((a, b) => new Date(a.date) - new Date(b.date) || a.studentName.localeCompare(b.studentName, "zh-CN"));
-        const dateRangeText = `${effectiveStart} 至 ${cutoffYmd}`;
-        return { rows, warnings: [], dateRangeText };
+        return {
+            rows,
+            dateRangeText: startDate + " 至 " + endDate
+        };
     }
 
     function summarizeSalaryRows(rows) {
@@ -3335,9 +3406,9 @@ entryKey: 课次标识（用于区分排课项）</span>
         csvRows.push(["统计周期", periodLabel]);
         csvRows.push([]);
 
-        csvRows.push(["学生姓名", "日期", "课程类型", "课时", "单价", "课时费(元)"]);
+        csvRows.push(["学生姓名", "日期", "课程名称", "课程类别", "课时", "单价", "课时费(元)"]);
         rows.forEach((row) => {
-            csvRows.push([row.studentName, row.date, row.salaryType, row.durationHours, row.rate, row.fee]);
+            csvRows.push([row.studentName, row.date, row.courseName || "", row.salaryType, row.durationHours, row.rate, row.fee]);
         });
 
         csvRows.push([]);
@@ -3791,9 +3862,10 @@ entryKey: 课次标识（用于区分排课项）</span>
             const monthValue = (salaryMonthPicker?.value || getCurrentMonthValue()).trim();
             const yearValue = String(salaryYearPicker?.value || getCurrentYearValue()).trim();
             const periodLabel = periodType === "year" ? yearValue : monthValue;
-
-            const { rows } = getStatsUntilYesterday(periodType, monthValue, yearValue);
-            renderScheduleSalaryQuickSummary(periodLabel, rows);
+            const summaryEl = document.getElementById("scheduleSalarySummary");
+            if (summaryEl) {
+                summaryEl.textContent = `工资统计口径：按已完成上课记录（status=COMPLETED）统计；当前统计周期 ${periodLabel}。点击“按实际上课生成工资统计”后导出 CSV。`;
+            }
         } catch (error) {
             console.error("工资摘要刷新失败:", error);
         }
@@ -3851,10 +3923,13 @@ entryKey: 课次标识（用于区分排课项）</span>
             const yearValue = String(salaryYearPicker?.value || getCurrentYearValue()).trim();
             const { periodLabel, fileTag } = getPeriodConfig(periodType, monthValue, yearValue);
 
-            const { rows, warnings, dateRangeText } = getStatsUntilYesterday(periodType, monthValue, yearValue);
+            const { rows, dateRangeText } = await getSalaryRowsFromCompletedApi(periodType, monthValue, yearValue);
 
             if (rows.length === 0) {
-                renderScheduleSalaryQuickSummary(periodLabel, rows);
+                const summaryEl = document.getElementById("scheduleSalarySummary");
+                if (summaryEl) {
+                    summaryEl.textContent = `工资统计口径：按已完成上课记录（status=COMPLETED）统计。${periodLabel} 在 ${dateRangeText} 无可统计课时。`;
+                }
                 window.showToast?.(`当前周期无可统计课时（${dateRangeText}），未生成文件`, 4500);
                 return;
             }
@@ -3862,18 +3937,14 @@ entryKey: 课次标识（用于区分排课项）</span>
             const { content, summary } = buildScheduleSalaryReport(periodLabel, rows);
             downloadCsv(`schedule_${fileTag}_工资.csv`, content);
             await copyToClipboard(content);
-            renderScheduleSalaryQuickSummary(periodLabel, rows);
-
-            if (warnings.length > 0) {
-                const hint = warnings.slice(0, 3).join("\n");
-                const more = warnings.length > 3 ? `\n...另有${warnings.length - 3}条` : "";
-                window.showToast?.(`已生成工资统计：${summary.total}元\n${hint}${more}`, 6000);
-            } else {
-                window.showToast?.(`已生成工资统计：${summary.total}元`, 3500);
+            const summaryEl = document.getElementById("scheduleSalarySummary");
+            if (summaryEl) {
+                summaryEl.textContent = `工资统计口径：按已完成上课记录（status=COMPLETED）统计。${periodLabel} 在 ${dateRangeText} 共 ${rows.length} 节，收入 ${summary.total} 元。`;
             }
+            window.showToast?.(`已生成工资统计：${summary.total}元（${rows.length}节）`, 4200);
         } catch (error) {
-            console.error("按排课生成工资统计失败:", error);
-            window.showToast?.("生成失败，请检查月份格式");
+            console.error("按实际上课生成工资统计失败:", error);
+            window.showToast?.("生成失败，请检查登录状态与月份格式");
         }
     });
 

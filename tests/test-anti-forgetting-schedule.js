@@ -14,7 +14,7 @@ const path = require('path');
 
 // ==================== 模拟核心函数 ====================
 
-const REVIEW_OFFSETS = [1, 2, 3, 5, 7, 9, 12, 14, 17, 21];
+const REVIEW_OFFSETS = [1, 2, 3, 6, 9, 12, 15, 17, 19, 21];
 
 function addDays(date, days) {
     const result = new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
@@ -365,8 +365,12 @@ assert(
     '无复习学员名称应以分隔符拼接展示'
 );
 assert(
-    antiForgettingHtml.includes('正课日期 + 1/2/3/5/7/9/12/14/17/21 天') || antiForgettingHtml.includes('+1,+2,+3,+5,+7,+9,+12,+14,+17,+21'),
-    'Hint 面板应说明 +1 到 +21 的复习计算公式'
+    antiForgettingHtml.includes('正课日期 + 1/2/3/6/9/12/15/17/19/21 天') || antiForgettingHtml.includes('+1,+2,+3,+6,+9,+12,+15,+17,+19,+21'),
+    'Hint 面板应说明升级后 +1 到 +21 的复习计算公式'
+);
+assert(
+    antiForgettingHtml.includes('const REVIEW_OFFSETS = [1, 2, 3, 6, 9, 12, 15, 17, 19, 21];'),
+    'anti-forgetting.html 应使用升级后复习节点 [1,2,3,6,9,12,15,17,19,21]'
 );
 assert(
     antiForgettingHtml.includes("const { normal, missing, extra } = lastCheckResult;"),
@@ -423,17 +427,16 @@ const multiDateRecords = [
 ];
 const multiDateSchedule = calculateReviewSchedule(multiDateRecords, '测试学生');
 
-// 检查 6-29 应复习 6-15 的 T14
-const jun29Items = mapGetByDate(multiDateSchedule, '2027-06-29');
-assertEqual(jun29Items?.length, 1, `6-29 应复习 1 条(6-15 T14)`);
+// 检查 6-30 应复习 6-15 的 T15
+const jun30Items = mapGetByDate(multiDateSchedule, '2027-06-30');
+assertEqual(jun30Items?.length, 1, `6-30 应复习 1 条(6-15 T15)`);
 
-// 检查 6-22 应复习 6-01 的 T21 + 6-15 的 T7 = 2条
+// 检查 6-22 仅应复习 6-01 的 T21 = 1条
 const jun22Items = mapGetByDate(multiDateSchedule, '2027-06-22');
-assertEqual(jun22Items?.length, 2, `6-22 应复习 2 条(6-01 T21, 6-15 T7)`);
+assertEqual(jun22Items?.length, 1, `6-22 应复习 1 条(6-01 T21)`);
 if (jun22Items) {
     const trainingDates = jun22Items.map(i => i.trainingDate);
     assert(trainingDates.includes('2027-06-01'), `6-22 应包含 6-01`);
-    assert(trainingDates.includes('2027-06-15'), `6-22 应包含 6-15`);
 }
 
 console.log();
@@ -453,23 +456,23 @@ const yufanSchedule = calculateReviewSchedule(yufanRecords, '于熠凡');
 
 console.log('  📅 各天应复习列表:');
 
-// 5.6 应复习: 4.22(T14), 5.3(T3), 5.4(T2) = 3条
+// 5.6 应复习: 5.3(T3), 5.4(T2) = 2条
 const may06Items = mapGetByDate(yufanSchedule, '2027-05-06');
 console.log('  5.6 应复习:');
-assertEqual(may06Items?.length, 3, `5.6 应复习 3 条(4.22, 5.3, 5.4)`);
+assertEqual(may06Items?.length, 2, `5.6 应复习 2 条(5.3, 5.4)`);
 if (may06Items) {
     const trainingDates = may06Items.map(i => i.trainingDate);
-    assert(trainingDates.includes('2027-04-22'), `5.6 应包含 4.22`);
     assert(trainingDates.includes('2027-05-03'), `5.6 应包含 5.3`);
     assert(trainingDates.includes('2027-05-04'), `5.6 应包含 5.4`);
 }
 
-// 5.7 应复习: 4.25(T12), 5.4(T3) = 2条
+// 5.7 应复习: 4.22(T15), 4.25(T12), 5.4(T3) = 3条
 const may07Items = mapGetByDate(yufanSchedule, '2027-05-07');
 console.log('  5.7 应复习:');
-assertEqual(may07Items?.length, 2, `5.7 应复习 2 条(4.25, 5.4)`);
+assertEqual(may07Items?.length, 3, `5.7 应复习 3 条(4.22, 4.25, 5.4)`);
 if (may07Items) {
     const trainingDates = may07Items.map(i => i.trainingDate);
+    assert(trainingDates.includes('2027-04-22'), `5.7 应包含 4.22`);
     assert(trainingDates.includes('2027-04-25'), `5.7 应包含 4.25`);
     assert(trainingDates.includes('2027-05-04'), `5.7 应包含 5.4`);
 }
@@ -480,20 +483,19 @@ console.log();
 console.log('📦 calculateExpectedReviews - 日期范围过滤');
 
 // 使用 2027 年日期确保都在未来
-// 2027-06-01 的正课，复习日期为: 06-02(T+1), 06-03(T+2), 06-04(T+3), 06-06(T+5), 06-08(T+7), 06-10(T+9), ...
-// 在范围 [06-05, 06-10] 内的有: 06-06(T+5), 06-08(T+7), 06-10(T+9)
+// 2027-06-01 的正课，复习日期为: 06-02(T+1), 06-03(T+2), 06-04(T+3), 06-07(T+6), 06-10(T+9), ...
+// 在范围 [06-05, 06-10] 内的有: 06-07(T+6), 06-10(T+9)
 const expectedReviews = calculateExpectedReviews('2027-06-01', '2027-06-05', '2027-06-10');
 
 assert(!mapHasByDate(expectedReviews, '2027-06-05'), '不包含 2027-06-05 (06-01+偏移不产生06-05)');
-assert(mapHasByDate(expectedReviews, '2027-06-06'), '包含 2027-06-06 (T+5)');
-assert(mapHasByDate(expectedReviews, '2027-06-08'), '包含 2027-06-08 (T+7)');
+assert(mapHasByDate(expectedReviews, '2027-06-07'), '包含 2027-06-07 (T+6)');
 assert(mapHasByDate(expectedReviews, '2027-06-10'), '包含 2027-06-10 (T+9)');
 assert(!mapHasByDate(expectedReviews, '2027-06-04'), '不包含 2027-06-04 (范围外)');
 assert(!mapHasByDate(expectedReviews, '2027-06-11'), '不包含 2027-06-11 (范围外)');
 
-// 检查 06-08 应有 1 条 (T+7)
-const jun08Items = mapGetByDate(expectedReviews, '2027-06-08');
-assertEqual(jun08Items?.length, 1, `06-08 应有 1 条复习(06-01 T+7)`);
+// 检查 06-07 应有 1 条 (T+6)
+const jun07Items = mapGetByDate(expectedReviews, '2027-06-07');
+assertEqual(jun07Items?.length, 1, `06-07 应有 1 条复习(06-01 T+6)`);
 
 console.log();
 
