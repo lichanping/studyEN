@@ -481,7 +481,7 @@
             }
         }
 
-        const sorted = Array.from(students).sort((a, b) => a.localeCompare(b, 'zh-CN'));
+        const sorted = commonFunctions.filterLegacyStudents(Array.from(students)).sort((a, b) => a.localeCompare(b, 'zh-CN'));
         userNameSelect.innerHTML = '';
         sorted.forEach((name) => {
             const opt = document.createElement('option');

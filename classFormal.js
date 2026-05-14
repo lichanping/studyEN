@@ -9,7 +9,8 @@ import {
     storeNewLearnedWords,
     loginApp,
     displayToast,
-    validateBeforeClassFeedbackSubmit
+    validateBeforeClassFeedbackSubmit,
+    filterLegacyStudents
 } from './commonFunctions.js'
 
 let hasAutoSyncedNewWordFromReviewWord = false;
@@ -99,13 +100,6 @@ const teacherData = {
                 hours: [21, 0],
                 courseWordCount: 92,
                 duration: 1
-            },
-            "施博睿": {
-                schedule: "施博睿-三年级小学男生，周末1小时的单词课",
-                course: "人教版单词课程",
-                hours: [13, 30],
-                courseWordCount: 92,
-                duration: 1
             }
         }
     },
@@ -162,9 +156,9 @@ function loadScheduleOverrideStudents() {
 }
 
 function getMergedStudentNames(selectedTeacher) {
-    const teacherUsers = Object.keys(teacherData[selectedTeacher]?.users || {});
-    const scheduleStudents = loadScheduleOverrideStudents();
-    const customStudents = loadCustomStudents();
+    const teacherUsers = filterLegacyStudents(Object.keys(teacherData[selectedTeacher]?.users || {}));
+    const scheduleStudents = filterLegacyStudents(loadScheduleOverrideStudents());
+    const customStudents = filterLegacyStudents(loadCustomStudents());
     const merged = [];
     const seen = new Set();
 

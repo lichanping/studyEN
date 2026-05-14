@@ -1,4 +1,4 @@
-import {copyToClipboard, getRandomMotto, showAlert, showLongText, storeClassStatistics, validateBeforeClassFeedbackSubmit} from './commonFunctions.js'
+import {copyToClipboard, getRandomMotto, showAlert, showLongText, storeClassStatistics, validateBeforeClassFeedbackSubmit, filterLegacyStudents} from './commonFunctions.js'
 // Attach the function when the page loads
 // window.addEventListener("load", copyToClipboard);
 const setInitialDateTime = () => {
@@ -61,7 +61,7 @@ function updateTrialUserOptions() {
     // MVP: 新增/最近维护的学生优先展示在最顶部（custom-students-v1 在管理页会 move-to-front）
     const priorityStudents = [];
     const seenPriority = new Set();
-    [...loadCustomStudents(), ...loadScheduleOverrideStudents()].forEach((name) => {
+    [...filterLegacyStudents(loadCustomStudents()), ...filterLegacyStudents(loadScheduleOverrideStudents())].forEach((name) => {
         const trimmed = String(name || "").trim();
         if (!trimmed || seenPriority.has(trimmed)) return;
         seenPriority.add(trimmed);
