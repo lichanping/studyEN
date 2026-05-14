@@ -1,0 +1,50 @@
+services:
+  - type: web
+    name: studyen-static
+    runtime: static
+    buildCommand: echo static-site
+    staticPublishPath: .
+    pullRequestPreviewsEnabled: false
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-XSS-Protection
+        value: 1; mode=block
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*.js
+        name: Cache-Control
+        value: no-store, no-cache, must-revalidate
+      - path: /*.css
+        name: Cache-Control
+        value: public, max-age=31536000
+      - path: /*.html
+        name: Cache-Control
+        value: public, max-age=0, must-revalidate
+      - path: /*.png
+        name: Cache-Control
+        value: public, max-age=31536000
+      - path: /*.jpg
+        name: Cache-Control
+        value: public, max-age=31536000
+      - path: /*.jpeg
+        name: Cache-Control
+        value: public, max-age=31536000
+      - path: /*.gif
+        name: Cache-Control
+        value: public, max-age=31536000
+      - path: /*.ico
+        name: Cache-Control
+        value: public, max-age=31536000
+      - path: /*.mp3
+        name: Cache-Control
+        value: public, max-age=31536000
+      - path: /*.woff
+        name: Cache-Control
+        value: public, max-age=31536000
+      - path: /*.woff2
+        name: Cache-Control
+        value: public, max-age=31536000
