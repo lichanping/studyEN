@@ -29,6 +29,14 @@ export function navigateToReadClass() {
     window.location.href = "class-read.html";
 }
 
+export const LEGACY_STUDENT_NAMES = Object.freeze(["李敏维"]);
+const LEGACY_STUDENT_NAME_SET = new Set(LEGACY_STUDENT_NAMES);
+
+export function filterLegacyStudents(list) {
+    if (!Array.isArray(list)) return [];
+    return list.filter((name) => !LEGACY_STUDENT_NAME_SET.has(String(name || "").trim()));
+}
+
 export function checkLoginStatus() {
     const currentDate = new Date().toDateString(); // Get today's date
 

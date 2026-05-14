@@ -6,7 +6,8 @@ import {
     showLongText,
     storeClassStatistics,
     storeNewLearnedWords,
-    validateBeforeClassFeedbackSubmit
+    validateBeforeClassFeedbackSubmit,
+    filterLegacyStudents
 } from './commonFunctions.js'
 
 const setInitialDateTime = () => {
@@ -116,11 +117,11 @@ export function updateUserNameOptions2() {
     const selectedTeacher = document.getElementById("teacherName").value;
     const previousValue = userNameSelect.value;
     userNameSelect.innerHTML = "";
-    const teacherUserNames = Object.keys(teacherData[selectedTeacher].users);
+    const teacherUserNames = filterLegacyStudents(Object.keys(teacherData[selectedTeacher].users));
 
     const mergedNames = [];
     const seen = new Set();
-    [teacherUserNames, loadScheduleOverrideStudents(), loadCustomStudents()].forEach((list) => {
+    [teacherUserNames, filterLegacyStudents(loadScheduleOverrideStudents()), filterLegacyStudents(loadCustomStudents())].forEach((list) => {
         list.forEach((name) => {
             const trimmed = String(name || "").trim();
             if (!trimmed || seen.has(trimmed)) return;
