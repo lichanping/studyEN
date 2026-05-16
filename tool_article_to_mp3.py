@@ -32,7 +32,8 @@ class TextToSpeechConverter:
         """Extract only English article content.
 
         Rule 1: Prefer lines like "【1】...".
-        Rule 2: If no numbered lines exist, take lines before the first CJK line.
+        Rule 2: If no numbered lines exist, skip non-English headers, then
+        keep English lines until Chinese explanation starts.
         """
         lines = [line.strip() for line in text_content.splitlines() if line.strip()]
 
@@ -45,11 +46,31 @@ class TextToSpeechConverter:
         if numbered_lines:
             return "\n".join(numbered_lines)
 
+        def take_before_cjk(line):
+            match = self.CJK_PATTERN.search(line)
+            if not match:
+                return line.strip()
+            return line[:match.start()].strip()
+
         fallback_lines = []
+        started = False
         for line in lines:
-            if self.CJK_PATTERN.search(line):
+            has_cjk = bool(self.CJK_PATTERN.search(line))
+            has_latin = bool(re.search(r"[A-Za-z]", line))
+
+            if not started:
+                if not has_latin:
+                    continue
+                started = True
+
+            if has_latin:
+                english_part = take_before_cjk(line)
+                if re.search(r"[A-Za-z]", english_part):
+                    fallback_lines.append(english_part)
+                    continue
+
+            if started and has_cjk:
                 break
-            fallback_lines.append(line)
 
         return "\n".join(fallback_lines).strip()
 
