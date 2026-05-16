@@ -77,3 +77,13 @@ Apply the following behavior by default in all coding tasks:
   - Define clear success criteria before implementation.
   - For multi-step tasks, keep a short plan and verify each step.
   - For bug fixes, prefer reproducing the bug in a test before changing implementation.
+
+## Audio Generation Convention (Project Level)
+
+- For reading article TXT to MP3 generation, prefer the reusable shell entrypoint:
+  - `bash scripts/generate_article_audio.sh "<user_data子目录名>"`
+- Default output location must be:
+  - `user_data/<子目录名>/audio/`
+- Do not create one-off conversion scripts when `scripts/generate_article_audio.sh` already satisfies the task.
+- If extraction logic is adjusted, add/update pytest coverage in:
+  - `tests/test_tool_article_to_mp3.py`

@@ -106,6 +106,43 @@ bash ./scripts/rollback_sync.sh --target HEAD~1 --yes --push
 
 ## Python 工具：工资单月份统计（V5 HTML 解析）
 
+## Python 工具：阅读原文提取英文并生成 MP3
+
+### 现有方法总览
+
+- 文章转音频主脚本（先提取英文，再转 MP3）：`tool_article_to_mp3.py`
+- 词汇级 TTS（基于 MissingSound.txt，不是整篇文章）：`tool_generate_tts.py`
+- 词汇表与音频检查工具（配合词汇音频使用）：`tool_generate_xls.py`
+
+### 主方法位置（文章转 MP3）
+
+- 类：`TextToSpeechConverter`
+- 英文提取：`extract_english_article(self, text_content)`
+- 文本清洗：`normalize_tts_text(self, text)`
+- 单文件处理：`process_text_file(self, text_file_name, input_folder_path, output_folder)`
+- 批量转换入口：`convert_text_to_speech(self, input_folder, output_folder)`
+
+### 默认目录约定（与 sample 一致）
+
+- 输入目录：`user_data/<阅读目录>/*.txt`
+- 输出目录：`user_data/<阅读目录>/audio/*.mp3`
+- 输出文件名：与 txt 同名，仅扩展名改为 `.mp3`
+
+### 直接运行方式（示例）
+
+1. 推荐：使用统一脚本（可指定目录）
+  `bash scripts/generate_article_audio.sh "!【5.0】中考阅读真题"`
+2. 不传参数时，使用脚本默认目录
+  `bash scripts/generate_article_audio.sh`
+3. 若直接运行 Python 主脚本（使用脚本内默认目录）
+  `/Users/cnShirLi/hackson/studyEN/.venv/bin/python tool_article_to_mp3.py`
+
+### 注意事项
+
+- 文章转 MP3 使用 `edge_tts`。
+- 当 txt 内包含中英混排内容时，脚本会优先提取英文正文后再生成音频。
+- 若目录下没有生成音频，先检查 txt 是否包含可提取的英文正文。
+
 ### 唯一的 Python 调用入口
 
 ```python
