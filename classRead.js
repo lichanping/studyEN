@@ -35,7 +35,7 @@ const teacherData = {
         users: {
             "胡贝妮": {
                 schedule: "每周1 胡贝妮 (七年级)",
-                course: "【中级】初中分级阅读_阅读理解_25篇",
+                course: "【5.0】中考阅读真题",
                 hours: [10, 0],
                 duration: 1
             },
