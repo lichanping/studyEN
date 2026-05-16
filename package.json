@@ -6,9 +6,10 @@
     "dev:localhost": "bash ./scripts/dev_localhost.sh",
     "dev:localhost:check": "bash ./scripts/dev_localhost.sh --check",
     "test:meeting-config": "node tests/test-meeting-config.js",
+    "test:play-room": "node tests/test-play-room-state.js",
     "test:quota": "node tests/test-quota-check.js",
     "test:schedule-match": "node tests/test-schedule-course-match.js",
-    "test:all": "npm run test:meeting-config && npm run test:quota && npm run test:schedule-match && node tests/test-student-name-alias.js",
+    "test:all": "npm run test:meeting-config && npm run test:play-room && npm run test:quota && npm run test:schedule-match && node tests/test-student-name-alias.js",
     "rollback:sync": "bash ./scripts/rollback_sync.sh --target HEAD~1 --yes",
     "rollback:sync:dry": "bash ./scripts/rollback_sync.sh --target HEAD~1 --dry-run"
   },
