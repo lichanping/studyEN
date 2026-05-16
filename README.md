@@ -2,6 +2,11 @@
 
 静态站点（Netlify）英语教学工具集合。
 
+## 在线访问
+
+- Netlify 登录页：https://engaid.netlify.app/login.html
+- Render 站点：https://studyen-static.onrender.com
+
 ## 当前发布结论
 
 - 当前这版可以发布，**不需要再改业务代码**。
