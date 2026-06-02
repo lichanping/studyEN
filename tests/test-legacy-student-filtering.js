@@ -23,8 +23,11 @@ assert(
 );
 
 assert(
-    commonFunctionsContent.includes("李敏维") && !commonFunctionsContent.includes("施博睿"),
-    "commonFunctions.js 中的 legacy 名单应仅包含需要过滤的学生"
+    commonFunctionsContent.includes("李敏维") &&
+    commonFunctionsContent.includes("季筱雯") &&
+    commonFunctionsContent.includes("施博睿") &&
+    commonFunctionsContent.includes("于熠凡"),
+    "commonFunctions.js 中的 legacy 名单应包含新增需过滤学员：季筱雯、施博睿、于熠凡"
 );
 
 assert(
