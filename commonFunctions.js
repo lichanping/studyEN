@@ -29,7 +29,7 @@ export function navigateToReadClass() {
     window.location.href = "class-read.html";
 }
 
-export const LEGACY_STUDENT_NAMES = Object.freeze(["李敏维"]);
+export const LEGACY_STUDENT_NAMES = Object.freeze(["李敏维", "季筱雯", "施博睿", "于熠凡"]);
 const LEGACY_STUDENT_NAME_SET = new Set(LEGACY_STUDENT_NAMES);
 
 export function filterLegacyStudents(list) {
