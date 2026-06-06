@@ -186,18 +186,6 @@ h1 {
     min-height: 52vh;
 }
 
-.share-status {
-    min-height: 20px;
-}
-
-.share-expire {
-    margin-top: 2px;
-    font-size: 10px;
-    color: rgba(109, 116, 128, 0.45) !important;
-    opacity: 0.15;
-    letter-spacing: 0.2px;
-}
-
 @media (max-width: 900px) {
     .content-grid {
         grid-template-columns: 1fr;
