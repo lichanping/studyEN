@@ -7,19 +7,23 @@
     --accent: #486f74;
     --accent-soft: #d5dfdd;
     --warm: #9c724f;
+    --font-ui: "Avenir Next", "SF Pro Text", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    --font-content: "Avenir Next", "SF Pro Text", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
 }
 
 * { box-sizing: border-box; }
 
 body {
     margin: 0;
-    font-family: "Noto Serif SC", "Source Han Serif SC", "PingFang SC", serif;
+    font-family: var(--font-ui);
     color: var(--ink);
     background:
         radial-gradient(circle at 8% 12%, rgba(156, 114, 79, 0.07), transparent 32%),
         radial-gradient(circle at 90% 20%, rgba(72, 111, 116, 0.08), transparent 35%),
         linear-gradient(180deg, #ece7dd 0%, #e4ddd2 100%);
     min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
 }
 
 .reading-app {
@@ -45,11 +49,13 @@ body {
 h1 {
     margin: 8px 0 6px;
     font-size: 28px;
+    letter-spacing: 0.2px;
 }
 
 .subtitle {
     margin: 0;
     color: var(--muted);
+    font-weight: 500;
 }
 
 .toolbar {
@@ -133,6 +139,7 @@ h1 {
     margin-bottom: 8px;
     cursor: pointer;
     background: #f7f3eb;
+    font-weight: 500;
 }
 
 .article-item.active {
@@ -180,8 +187,11 @@ h1 {
     border-radius: 12px;
     border: 1px solid #ede4d5;
     background: #f7f4ee;
+    font-family: var(--font-content);
     line-height: 1.7;
     font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.15px;
     white-space: pre-wrap;
     min-height: 52vh;
 }
