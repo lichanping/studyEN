@@ -29,7 +29,7 @@
         setStatus("");
         if (els.title) els.title.textContent = payload.title;
         if (els.content) els.content.textContent = payload.textContent;
-        if (els.expireAt) els.expireAt.textContent = `debug · exp ${formatDateTime(payload.expiresAt)}`;
+        if (els.expireAt) els.expireAt.textContent = `exp ${formatDateTime(payload.expiresAt)}`;
         if (els.audio) {
             els.audio.src = payload.audioUrl;
             els.audio.load();
