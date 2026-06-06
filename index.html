@@ -54,7 +54,7 @@
     <button id="navigateToReadClass">阅读课</button>
     <button id="navigateToAntiForgettingPage">抗遗忘页</button>
     <button id="wordSelfCheckButton">单词自检</button>
-    <button id="navigateToPlayPage">玩</button>
+    <button id="navigateToReadingArticlePage">阅读文章页</button>
 </div>
 
 <!-- 课堂反馈区 -->
@@ -182,7 +182,7 @@
     document.getElementById("navigateToTiyanClass").addEventListener("click", commonFunctions.navigateToTiyanClass);
     document.getElementById("navigateToReadClass").addEventListener("click", commonFunctions.navigateToReadClass);
     document.getElementById("wordSelfCheckButton").addEventListener('click', commonFunctions.navigateToLearnWords);
-    document.getElementById("navigateToPlayPage").addEventListener('click', () => { window.location.href = 'play.html'; });
+    document.getElementById("navigateToReadingArticlePage").addEventListener('click', () => { window.location.href = 'reading-articles/index.html'; });
     document.getElementById("userName").addEventListener("change", script.updateLabel);
     document.getElementById("groupGreetingButton").addEventListener("click", commonFunctions.handleGroupGreetingClick);
     document.getElementById("viewTotalHoursButton").addEventListener("click", script.viewTotalHoursClick);
