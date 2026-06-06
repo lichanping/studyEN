@@ -78,6 +78,12 @@ async function testCreateResolveAndAudioHandlers() {
     assert.strictEqual(audioResp.status, 200);
     assert.strictEqual(await audioResp.text(), "FAKE-MP3-DATA");
 
+    const audioHeadResp = await audioHandler({
+        method: "HEAD",
+        url: `https://example.test/.netlify/functions/reading-article-share-audio?token=${encodeURIComponent(createBody.token)}`,
+    });
+    assert.strictEqual(audioHeadResp.status, 200);
+
     global.fetch = originalFetch;
 }
 

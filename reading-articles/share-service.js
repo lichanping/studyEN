@@ -49,9 +49,12 @@ async function loadTextAsset(reqUrl, relativePath) {
     return await resp.text();
 }
 
-async function loadBinaryAsset(reqUrl, relativePath) {
+async function loadBinaryAsset(reqUrl, relativePath, options = {}) {
     const assetUrl = toAssetUrl(reqUrl, relativePath);
-    const resp = await fetch(assetUrl);
+    const resp = await fetch(assetUrl, {
+        method: options.method || "GET",
+        headers: options.headers || {},
+    });
     if (!resp.ok) {
         throw new Error(`asset fetch failed: ${resp.status}`);
     }

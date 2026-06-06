@@ -24,7 +24,7 @@ export default async (req) => {
         return new Response("", { status: 204, headers: corsHeaders() });
     }
 
-    if (req.method !== "GET") {
+    if (req.method !== "GET" && req.method !== "HEAD") {
         return jsonResponse({ error: "Method not allowed" }, 405);
     }
 
@@ -35,19 +35,37 @@ export default async (req) => {
         return jsonResponse({ error: verified.reason === "expired" ? "Share link expired" : "Invalid share token" }, verified.reason === "expired" ? 410 : 401);
     }
 
-    const manifest = await shareService.loadManifest();
-    const article = shareService.findArticle(manifest, verified.payload.albumId, verified.payload.articleTitle);
-    if (!article) {
-        return jsonResponse({ error: "Article not found" }, 404);
-    }
+    try {
+        const manifest = await shareService.loadManifest(req.url);
+        const article = shareService.findArticle(manifest, verified.payload.albumId, verified.payload.articleTitle);
+        if (!article) {
+            return jsonResponse({ error: "Article not found" }, 404);
+        }
 
-    const upstream = await shareService.loadBinaryAsset(req.url, article.audioPath);
-    return new Response(upstream.body, {
-        status: upstream.status,
-        headers: {
-            "Content-Type": upstream.headers.get("Content-Type") || "audio/mpeg",
-            "Cache-Control": "no-store",
-            ...corsHeaders(),
-        },
-    });
+        const rangeHeader = req.headers?.get?.("range");
+        const forwardHeaders = {};
+        if (rangeHeader) {
+            forwardHeaders.range = rangeHeader;
+        }
+
+        const upstream = await shareService.loadBinaryAsset(req.url, article.audioPath, {
+            method: req.method,
+            headers: forwardHeaders,
+        });
+
+        return new Response(req.method === "HEAD" ? null : upstream.body, {
+            status: upstream.status,
+            headers: {
+                "Content-Type": upstream.headers.get("Content-Type") || "audio/mpeg",
+                "Content-Length": upstream.headers.get("Content-Length") || "",
+                "Content-Range": upstream.headers.get("Content-Range") || "",
+                "Accept-Ranges": upstream.headers.get("Accept-Ranges") || "bytes",
+                "Cache-Control": "no-store",
+                ...corsHeaders(),
+            },
+        });
+    } catch (error) {
+        console.error("reading-article-share-audio failed:", error);
+        return jsonResponse({ error: "Failed to load shared audio" }, 500);
+    }
 };
