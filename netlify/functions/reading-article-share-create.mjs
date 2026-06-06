@@ -19,10 +19,23 @@ function jsonResponse(data, status = 200) {
     });
 }
 
-function normalizeTtlHours(value) {
-    const allowed = [1, 6, 24, 72];
-    const parsed = Number.parseInt(String(value || "").trim(), 10);
-    return allowed.includes(parsed) ? parsed : 24;
+function normalizeTtlMinutes(body) {
+    const allowedMinutes = [5, 60, 360, 1440, 4320];
+
+    const parsedMinutes = Number.parseInt(String(body?.expiresInMinutes || "").trim(), 10);
+    if (allowedMinutes.includes(parsedMinutes)) {
+        return parsedMinutes;
+    }
+
+    const parsedHours = Number.parseInt(String(body?.expiresInHours || "").trim(), 10);
+    if (Number.isFinite(parsedHours) && parsedHours > 0) {
+        const hourAsMinutes = parsedHours * 60;
+        if (allowedMinutes.includes(hourAsMinutes)) {
+            return hourAsMinutes;
+        }
+    }
+
+    return 1440;
 }
 
 export default async (req) => {
@@ -43,7 +56,7 @@ export default async (req) => {
 
     const albumId = String(body?.albumId || "").trim();
     const articleTitle = String(body?.articleTitle || "").trim();
-    const ttlHours = normalizeTtlHours(body?.expiresInHours);
+    const ttlMinutes = normalizeTtlMinutes(body);
 
     if (!albumId || !articleTitle) {
         return jsonResponse({ error: "albumId and articleTitle are required" }, 400);
@@ -56,7 +69,7 @@ export default async (req) => {
             return jsonResponse({ error: "Article not found" }, 404);
         }
 
-        const expiresAt = Date.now() + ttlHours * 60 * 60 * 1000;
+        const expiresAt = Date.now() + ttlMinutes * 60 * 1000;
         const token = shareToken.createShareToken({ albumId, articleTitle, expiresAt });
         const shareUrl = shareToken.buildSharedArticleUrl(
             `${new URL(req.url).origin}/reading-articles/shared.html`,
@@ -69,7 +82,7 @@ export default async (req) => {
             expiresAt,
             albumId,
             articleTitle,
-            ttlHours,
+            ttlMinutes,
         });
     } catch (error) {
         console.error("reading-article-share-create failed:", error);

@@ -16,6 +16,13 @@
 
     <section class="toolbar">
         <input id="article-search" class="search-input" type="search" placeholder="搜索文章名...">
+        <select id="share-expiry" class="expiry-select" aria-label="分享有效期">
+            <option value="5">5分钟</option>
+            <option value="60">1小时</option>
+            <option value="360">6小时</option>
+            <option value="1440" selected>24小时</option>
+            <option value="4320">72小时</option>
+        </select>
         <button id="share-current" class="share-btn" type="button">分享当前文章</button>
     </section>
 

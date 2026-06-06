@@ -20,6 +20,7 @@
         articleContent: document.getElementById("article-content"),
         articleAudio: document.getElementById("article-audio"),
         shareCurrent: document.getElementById("share-current"),
+        shareExpiry: document.getElementById("share-expiry"),
         searchInput: document.getElementById("article-search"),
         progress: document.getElementById("reading-progress"),
     };
@@ -195,7 +196,7 @@
                 body: JSON.stringify({
                     albumId: state.activeAlbumId,
                     articleTitle: article.title,
-                    expiresInHours: 24,
+                    expiresInMinutes: Number.parseInt(String(els.shareExpiry?.value || "1440"), 10) || 1440,
                 }),
             });
 

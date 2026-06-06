@@ -54,12 +54,13 @@ async function testCreateResolveAndAudioHandlers() {
         json: async () => ({
             albumId: album.id,
             articleTitle: article.title,
-            expiresInHours: 24,
+            expiresInMinutes: 5,
         }),
     });
     const createBody = await createResp.json();
     assert.strictEqual(createResp.status, 200);
     assert.ok(createBody.shareUrl.includes("/reading-articles/shared.html?token="));
+    assert.strictEqual(createBody.ttlMinutes, 5);
 
     const resolveResp = await resolveHandler({
         method: "GET",
