@@ -1,0 +1,429 @@
+{
+  "generatedAt": "2026-06-06T10:48:55.376Z",
+  "albums": [
+    {
+      "id": "mid50",
+      "title": "中阶阅读50篇",
+      "abbr": "R50",
+      "folder": "user_data/!【5.0】【中级】-中阶-阅读50篇",
+      "count": 50,
+      "articles": [
+        {
+          "album": "mid50",
+          "title": "Chapter 1 Community Canteens Attract the Young（社区食堂吸引年轻人）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 1 Community Canteens Attract the Young（社区食堂吸引年轻人）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 1 Community Canteens Attract the Young（社区食堂吸引年轻人）.mp3",
+          "order": 1
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 2 Tips for Staying Healthy（保持健康的小贴士）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 2 Tips for Staying Healthy（保持健康的小贴士）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 2 Tips for Staying Healthy（保持健康的小贴士）.mp3",
+          "order": 2
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 3 The Importance of Nerves（神经的重要性）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 3 The Importance of Nerves（神经的重要性）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 3 The Importance of Nerves（神经的重要性）.mp3",
+          "order": 3
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 4 Ways to Deal with Sadness（应对悲伤的方法）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 4 Ways to Deal with Sadness（应对悲伤的方法）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 4 Ways to Deal with Sadness（应对悲伤的方法）.mp3",
+          "order": 4
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 5 Early to Bed and Early to Rise（早睡早起）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 5 Early to Bed and Early to Rise（早睡早起）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 5 Early to Bed and Early to Rise（早睡早起）.mp3",
+          "order": 5
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 6 A Trip to London（伦敦之旅）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 6 A Trip to London（伦敦之旅）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 6 A Trip to London（伦敦之旅）.mp3",
+          "order": 6
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 7 A Bottle of Water（一瓶水）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 7 A Bottle of Water（一瓶水）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 7 A Bottle of Water（一瓶水）.mp3",
+          "order": 7
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 8 Self-Driving Cars in Wuhan（武汉的自动驾驶汽车）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 8 Self-Driving Cars in Wuhan（武汉的自动驾驶汽车）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 8 Self-Driving Cars in Wuhan（武汉的自动驾驶汽车）.mp3",
+          "order": 8
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 9 A Great Teacher_ Wu Yuren（伟大的教师：吴於人）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 9 A Great Teacher_ Wu Yuren（伟大的教师：吴於人）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 9 A Great Teacher_ Wu Yuren（伟大的教师：吴於人）.mp3",
+          "order": 9
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 10 The Importance of Sharing Feelings（分享感受的重要性）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 10 The Importance of Sharing Feelings（分享感受的重要性）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 10 The Importance of Sharing Feelings（分享感受的重要性）.mp3",
+          "order": 10
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 11 13-Year-Old Girl Bridges AI and Learning with AI-Button（13岁少女用AI-Button架起AI与学习的桥梁）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 11 13-Year-Old Girl Bridges AI and Learning with AI-Button（13岁少女用AI-Button架起AI与学习的桥梁）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 11 13-Year-Old Girl Bridges AI and Learning with AI-Button（13岁少女用AI-Button架起AI与学习的桥梁）.mp3",
+          "order": 11
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 12 A Little Bird’s Big Role（小鸟的大角色）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 12 A Little Bird’s Big Role（小鸟的大角色）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 12 A Little Bird’s Big Role（小鸟的大角色）.mp3",
+          "order": 12
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 13 Mary's Journey to Excellence（玛丽追求卓越的旅程）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 13 Mary's Journey to Excellence（玛丽追求卓越的旅程）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 13 Mary's Journey to Excellence（玛丽追求卓越的旅程）.mp3",
+          "order": 13
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 14 Fish Doorbell Launched_ 100,000 Clicks to Save Migrating Fish（鱼门铃上线：10万次点击拯救洄游鱼群）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 14 Fish Doorbell Launched_ 100,000 Clicks to Save Migrating Fish（鱼门铃上线：10万次点击拯救洄游鱼群）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 14 Fish Doorbell Launched_ 100,000 Clicks to Save Migrating Fish（鱼门铃上线：10万次点击拯救洄游鱼群）.mp3",
+          "order": 14
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 15 The Champion on Leg Braces_ Wilma Rudolph（腿支架上的冠军：威尔玛·鲁道夫）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 15 The Champion on Leg Braces_ Wilma Rudolph（腿支架上的冠军：威尔玛·鲁道夫）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 15 The Champion on Leg Braces_ Wilma Rudolph（腿支架上的冠军：威尔玛·鲁道夫）.mp3",
+          "order": 15
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 16 Healthy Lifestyle Secrets of My Elderly Father（我年迈父亲的健康生活方式秘诀）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 16 Healthy Lifestyle Secrets of My Elderly Father（我年迈父亲的健康生活方式秘诀）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 16 Healthy Lifestyle Secrets of My Elderly Father（我年迈父亲的健康生活方式秘诀）.mp3",
+          "order": 16
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 17 A Meaningful Day at the Animal Hospital（在动物医院的有意义一天）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 17 A Meaningful Day at the Animal Hospital（在动物医院的有意义一天）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 17 A Meaningful Day at the Animal Hospital（在动物医院的有意义一天）.mp3",
+          "order": 17
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 18 Future Olympic Host Cities_ Paris and Los Angeles（未来奥运主办城市：巴黎与洛杉矶）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 18 Future Olympic Host Cities_ Paris and Los Angeles（未来奥运主办城市：巴黎与洛杉矶）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 18 Future Olympic Host Cities_ Paris and Los Angeles（未来奥运主办城市：巴黎与洛杉矶）.mp3",
+          "order": 18
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 19 The Value of the Journey_ Ben's Mountain Experience（旅程的价值：本的山间历险）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 19 The Value of the Journey_ Ben's Mountain Experience（旅程的价值：本的山间历险）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 19 The Value of the Journey_ Ben's Mountain Experience（旅程的价值：本的山间历险）.mp3",
+          "order": 19
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 20 Posture Helps Improve Math Performance（姿势有助于提升数学成绩）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 20 Posture Helps Improve Math Performance（姿势有助于提升数学成绩）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 20 Posture Helps Improve Math Performance（姿势有助于提升数学成绩）.mp3",
+          "order": 20
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 21 The Value of Different Mindsets in Work（工作中不同心态的价值）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 21 The Value of Different Mindsets in Work（工作中不同心态的价值）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 21 The Value of Different Mindsets in Work（工作中不同心态的价值）.mp3",
+          "order": 21
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 22 Ordinary Heroes in Their Fields（平凡领域的英雄）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 22 Ordinary Heroes in Their Fields（平凡领域的英雄）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 22 Ordinary Heroes in Their Fields（平凡领域的英雄）.mp3",
+          "order": 22
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 23 The Musicians and the Rain（音乐家与雨水）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 23 The Musicians and the Rain（音乐家与雨水）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 23 The Musicians and the Rain（音乐家与雨水）.mp3",
+          "order": 23
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 24 Nita's Special Birthday（妮塔的特别生日）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 24 Nita's Special Birthday（妮塔的特别生日）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 24 Nita's Special Birthday（妮塔的特别生日）.mp3",
+          "order": 24
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 25 Solving Food Shortage with Seaweed（用海藻解决粮食短缺）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 25 Solving Food Shortage with Seaweed（用海藻解决粮食短缺）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 25 Solving Food Shortage with Seaweed（用海藻解决粮食短缺）.mp3",
+          "order": 25
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 26 Ella’s Castle Adventure（艾拉的城堡冒险）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 26 Ella’s Castle Adventure（艾拉的城堡冒险）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 26 Ella’s Castle Adventure（艾拉的城堡冒险）.mp3",
+          "order": 26
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 27 Chinese Traditions and Their Significance（中国传统及其意义）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 27 Chinese Traditions and Their Significance（中国传统及其意义）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 27 Chinese Traditions and Their Significance（中国传统及其意义）.mp3",
+          "order": 27
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 28 Rwandan Star on Douyin_ Sarah Brightman（抖音上的卢旺达明星：莎拉・布莱曼）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 28 Rwandan Star on Douyin_ Sarah Brightman（抖音上的卢旺达明星：莎拉・布莱曼）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 28 Rwandan Star on Douyin_ Sarah Brightman（抖音上的卢旺达明星：莎拉・布莱曼）.mp3",
+          "order": 28
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 29 Mike’s Bike Dream（迈克的自行车梦想）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 29 Mike’s Bike Dream（迈克的自行车梦想）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 29 Mike’s Bike Dream（迈克的自行车梦想）.mp3",
+          "order": 29
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 30 A Gamer's Guide for Parents（给家长的游戏玩家指南）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 30 A Gamer's Guide for Parents（给家长的游戏玩家指南）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 30 A Gamer's Guide for Parents（给家长的游戏玩家指南）.mp3",
+          "order": 30
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 31 How to Make Delicious Chicken Soup（如何制作美味鸡汤）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 31 How to Make Delicious Chicken Soup（如何制作美味鸡汤）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 31 How to Make Delicious Chicken Soup（如何制作美味鸡汤）.mp3",
+          "order": 31
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 32 The Lantern Festival（元宵节）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 32 The Lantern Festival（元宵节）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 32 The Lantern Festival（元宵节）.mp3",
+          "order": 32
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 33 Why Do English People Say _Sorry_ So Much_（英国人为何频繁说 “抱歉”？）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 33 Why Do English People Say _Sorry_ So Much_（英国人为何频繁说 “抱歉”？）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 33 Why Do English People Say _Sorry_ So Much_（英国人为何频繁说 “抱歉”？）.mp3",
+          "order": 33
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 34 How Hobbies Change with Age, Job, and Season（爱好如何随年龄、职业和季节变化）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 34 How Hobbies Change with Age, Job, and Season（爱好如何随年龄、职业和季节变化）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 34 How Hobbies Change with Age, Job, and Season（爱好如何随年龄、职业和季节变化）.mp3",
+          "order": 34
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 35 Global Birthday Traditions（全球生日传统）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 35 Global Birthday Traditions（全球生日传统）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 35 Global Birthday Traditions（全球生日传统）.mp3",
+          "order": 35
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 36 Smart Kitchen of the Future（未来智能厨房）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 36 Smart Kitchen of the Future（未来智能厨房）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 36 Smart Kitchen of the Future（未来智能厨房）.mp3",
+          "order": 36
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 37 Finding and Keeping Friendship（寻找并维系友谊）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 37 Finding and Keeping Friendship（寻找并维系友谊）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 37 Finding and Keeping Friendship（寻找并维系友谊）.mp3",
+          "order": 37
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 38 Germs and Health（细菌与健康）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 38 Germs and Health（细菌与健康）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 38 Germs and Health（细菌与健康）.mp3",
+          "order": 38
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 39 Alan's School Life（艾伦的学校生活）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 39 Alan's School Life（艾伦的学校生活）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 39 Alan's School Life（艾伦的学校生活）.mp3",
+          "order": 39
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 40 A Bike's Journey（一辆自行车的旅程）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 40 A Bike's Journey（一辆自行车的旅程）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 40 A Bike's Journey（一辆自行车的旅程）.mp3",
+          "order": 40
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 41 How to Make Friends（如何交朋友）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 41 How to Make Friends（如何交朋友）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 41 How to Make Friends（如何交朋友）.mp3",
+          "order": 41
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 42 A Wonderful Talent Show（精彩的才艺表演）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 42 A Wonderful Talent Show（精彩的才艺表演）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 42 A Wonderful Talent Show（精彩的才艺表演）.mp3",
+          "order": 42
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 43 My Friends, Teacher, and Me（我的朋友、老师和我）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 43 My Friends, Teacher, and Me（我的朋友、老师和我）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 43 My Friends, Teacher, and Me（我的朋友、老师和我）.mp3",
+          "order": 43
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 44 Sports Heroes from Other Countries（其他国家的体育英雄）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 44 Sports Heroes from Other Countries（其他国家的体育英雄）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 44 Sports Heroes from Other Countries（其他国家的体育英雄）.mp3",
+          "order": 44
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 45 Street Crossing Rules（过马路规则）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 45 Street Crossing Rules（过马路规则）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 45 Street Crossing Rules（过马路规则）.mp3",
+          "order": 45
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 46 One Yuan Metropolis Survival（一元都市生存挑战）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 46 One Yuan Metropolis Survival（一元都市生存挑战）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 46 One Yuan Metropolis Survival（一元都市生存挑战）.mp3",
+          "order": 46
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 47 Fast Walking in China（中国的快走文化）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 47 Fast Walking in China（中国的快走文化）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 47 Fast Walking in China（中国的快走文化）.mp3",
+          "order": 47
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 48 Life in 2045（2045 年的生活）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 48 Life in 2045（2045 年的生活）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 48 Life in 2045（2045 年的生活）.mp3",
+          "order": 48
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 49 Mountain Vacation（山区度假）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 49 Mountain Vacation（山区度假）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 49 Mountain Vacation（山区度假）.mp3",
+          "order": 49
+        },
+        {
+          "album": "mid50",
+          "title": "Chapter 50 Future Life 2035（2035 年的未来生活）",
+          "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 50 Future Life 2035（2035 年的未来生活）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 50 Future Life 2035（2035 年的未来生活）.mp3",
+          "order": 50
+        }
+      ]
+    },
+    {
+      "id": "zk",
+      "title": "中考阅读真题",
+      "abbr": "ZK",
+      "folder": "user_data/!【5.0】中考阅读真题",
+      "count": 8,
+      "articles": [
+        {
+          "album": "zk",
+          "title": "1_The Earth Is Always Changing（地球一直在变化）",
+          "textPath": "user_data/!【5.0】中考阅读真题/1_The Earth Is Always Changing（地球一直在变化）.txt",
+          "audioPath": "user_data/!【5.0】中考阅读真题/audio/1_The Earth Is Always Changing（地球一直在变化）.mp3",
+          "order": 1
+        },
+        {
+          "album": "zk",
+          "title": "2_Hair Loss and Why We Have Hair（脱发以及我们为什么会有头发）",
+          "textPath": "user_data/!【5.0】中考阅读真题/2_Hair Loss and Why We Have Hair（脱发以及我们为什么会有头发）.txt",
+          "audioPath": "user_data/!【5.0】中考阅读真题/audio/2_Hair Loss and Why We Have Hair（脱发以及我们为什么会有头发）.mp3",
+          "order": 2
+        },
+        {
+          "album": "zk",
+          "title": "3_The Development of Western Mealtime Manners（西方用餐礼仪的发展历程）",
+          "textPath": "user_data/!【5.0】中考阅读真题/3_The Development of Western Mealtime Manners（西方用餐礼仪的发展历程）.txt",
+          "audioPath": "user_data/!【5.0】中考阅读真题/audio/3_The Development of Western Mealtime Manners（西方用餐礼仪的发展历程）.mp3",
+          "order": 3
+        },
+        {
+          "album": "zk",
+          "title": "4_The Meaning of Success to Teenagers（成功对于青少年的意义）",
+          "textPath": "user_data/!【5.0】中考阅读真题/4_The Meaning of Success to Teenagers（成功对于青少年的意义）.txt",
+          "audioPath": "user_data/!【5.0】中考阅读真题/audio/4_The Meaning of Success to Teenagers（成功对于青少年的意义）.mp3",
+          "order": 4
+        },
+        {
+          "album": "zk",
+          "title": "5_The Problem of Short Sight（近视问题）",
+          "textPath": "user_data/!【5.0】中考阅读真题/5_The Problem of Short Sight（近视问题）.txt",
+          "audioPath": "user_data/!【5.0】中考阅读真题/audio/5_The Problem of Short Sight（近视问题）.mp3",
+          "order": 5
+        },
+        {
+          "album": "zk",
+          "title": "6_Modern and Ancient Education in China（中国现代和古代教育）",
+          "textPath": "user_data/!【5.0】中考阅读真题/6_Modern and Ancient Education in China（中国现代和古代教育）.txt",
+          "audioPath": "user_data/!【5.0】中考阅读真题/audio/6_Modern and Ancient Education in China（中国现代和古代教育）.mp3",
+          "order": 6
+        },
+        {
+          "album": "zk",
+          "title": "7_Develop Modern Vocational Education in China（发展中国的现代职业教育）",
+          "textPath": "user_data/!【5.0】中考阅读真题/7_Develop Modern Vocational Education in China（发展中国的现代职业教育）.txt",
+          "audioPath": "user_data/!【5.0】中考阅读真题/audio/7_Develop Modern Vocational Education in China（发展中国的现代职业教育）.mp3",
+          "order": 7
+        },
+        {
+          "album": "zk",
+          "title": "8_Hydrogen-Powered Trains（氢动力火车）",
+          "textPath": "user_data/!【5.0】中考阅读真题/8_Hydrogen-Powered Trains（氢动力火车）.txt",
+          "audioPath": "user_data/!【5.0】中考阅读真题/audio/8_Hydrogen-Powered Trains（氢动力火车）.mp3",
+          "order": 8
+        }
+      ]
+    }
+  ]
+}

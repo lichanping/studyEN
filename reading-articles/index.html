@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>阅读文章页</title>
+    <link rel="stylesheet" href="style.css?v=20260606-6">
+    <script type="module">
+        import * as commonFunctions from "../commonFunctions.js?v=20260403-1";
+        commonFunctions.checkLoginStatus();
+    </script>
+</head>
+<body>
+<main class="reading-app">
+    <header class="reading-header">
+        <a class="back-link" href="../index.html">返回正式课</a>
+        <h1>阅读文章页</h1>
+        <p class="subtitle">严谨阅读 · 跟读训练 · 分享学习</p>
+    </header>
+
+    <section class="toolbar">
+        <input id="article-search" class="search-input" type="search" placeholder="搜索文章名...">
+        <select id="share-expiry" class="expiry-select" aria-label="分享有效期">
+            <option value="5">5分钟</option>
+            <option value="60">1小时</option>
+            <option value="360">6小时</option>
+            <option value="1440" selected>24小时</option>
+            <option value="4320">72小时</option>
+        </select>
+        <button id="share-current" class="share-btn" type="button">分享当前文章</button>
+    </section>
+
+    <section class="album-tabs" id="album-tabs" aria-label="专辑切换"></section>
+
+    <section class="content-grid">
+        <aside class="article-list-panel">
+            <h2 id="album-title">专辑</h2>
+            <ul id="article-list" class="article-list"></ul>
+        </aside>
+
+        <article class="reader-panel">
+            <div class="reader-top">
+                <h2 id="article-title">请选择文章</h2>
+            </div>
+            <audio id="article-audio" controls preload="metadata"></audio>
+            <div class="progress-wrap">
+                <label for="reading-progress">阅读进度</label>
+                <input id="reading-progress" type="range" min="0" max="100" value="0">
+            </div>
+            <pre id="article-content" class="article-content">请选择左侧文章开始学习。</pre>
+        </article>
+    </section>
+</main>
+
+<script src="library.js?v=20260606-2"></script>
+<script src="script.js?v=20260606-2"></script>
+</body>
+</html>

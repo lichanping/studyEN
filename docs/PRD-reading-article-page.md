@@ -1,0 +1,67 @@
+# PRD：阅读文章页（首期双专辑）
+
+## 1. 背景与目标
+
+当前首页存在“玩”入口，无法支撑英语阅读文章的系统化学习。首期将替换为“阅读文章页”入口，聚焦阅读文本+音频跟读+分享学习。
+
+本期分享能力需要复用 tiange 主播放器的分享 token 思路：分享链接必须携带服务端签名 token 和过期时间，未分享或已过期时，M2 不能访问分享页。
+
+## 2. 范围（P0）
+
+1. 首页移除“玩”按钮及其跳转绑定。
+2. 首页新增“阅读文章页”入口，跳转到独立目录页面 `reading-articles/index.html`。
+3. 阅读页首期支持两个专辑（Tab 形式，使用缩略词）：
+   1. `R50`：`user_data/!【5.0】【中级】-中阶-阅读50篇`
+   2. `ZK`：`user_data/!【5.0】中考阅读真题`
+4. 专辑内展示文章列表（仅展示存在 txt+audio 配对的条目）。
+5. 支持文章名搜索，仅做当前专辑内过滤。
+6. 点击文章后显示正文并加载对应音频。
+7. 支持“分享当前文章”：先请求服务端创建带有效期的 token，再优先调用 `navigator.share`，不支持时降级复制链接。
+8. 分享页必须通过 token 校验后才能打开；未分享、篡改或过期链接一律拒绝访问。
+9. 支持阅读进度记忆，按“专辑 + 文章名”保存到本地。
+
+## 3. 非目标（本期不做）
+
+2. 登录鉴权与受限访问控制。
+3. 更多专辑自动接入后台管理。
+4. 全文检索与高亮。
+
+## 4. 交互与信息架构
+
+1. 顶部：返回首页、页面标题、教育风副标题。
+2. 专辑切换：tab 使用缩略词，避免手机截断。
+3. 左侧（移动端置顶）：文章列表。
+4. 右侧：文章标题、音频播放器、正文预览。
+6. 分享：分享当前文章时先创建 token，再进入独立分享页 `reading-articles/shared.html?token=...`。
+
+## 5. 分享策略
+
+1. 主页面调用 `POST /.netlify/functions/reading-article-share-create` 创建 token。
+2. 默认有效期 24 小时，可在固定选项中切换。
+3. 分享页调用 `GET /.netlify/functions/reading-article-share-resolve?token=...` 获取文章元信息与正文。
+4. 分享页音频通过 `GET /.netlify/functions/reading-article-share-audio?token=...` 加载。
+5. token 采用服务端密钥签名，必须校验 `expiresAt`，过期直接拒绝。
+6. 任何未带 token、token 被篡改、token 已过期的分享页请求，都必须返回明确错误提示。
+
+## 6. 数据策略
+
+1. 使用静态 manifest：`user_data/reading_articles_manifest.json`。
+2. manifest 由脚本 `scripts/generate_reading_articles_manifest.js` 从两专辑目录扫描生成。
+3. 配对规则：同名 `.txt` 与 `.mp3` 才进入可播放列表。
+
+## 7. TDD 验收标准
+
+1. 能产出两个专辑 tab，缩略词分别为 `R50`、`ZK`。
+2. 只收录 txt/audio 成对文章，且排序稳定（按章节序号优先）。
+3. 分享链接必须包含 token，并可由服务端 resolve 出文章内容。
+4. 首页不再出现“玩”入口，替换为“阅读文章页”并可正常跳转。
+5. 专辑内搜索可以即时过滤当前列表。
+6. 重新打开同一文章时，可恢复上次阅读进度。
+7. 未分享、篡改或过期 token 访问分享页时，必须被拒绝。
+
+## 8. 实施顺序（TDD）
+
+1. Red：先写 `tests/test-reading-article-library.js`、`tests/test-reading-articles-page-regression.js`、`tests/test-reading-article-share-token.js`，覆盖 tab、配对排序、入口回归、token 过期。
+2. Green：实现 `reading-articles/` 独立目录下的 library/page/script/style/sharing helpers。
+3. Refactor：补充 Netlify functions、manifest 生成脚本并生成首版静态数据。
+4. 回归：执行相关测试并手工验证页面跳转、搜索、进度、分享与 token 过期拦截。
