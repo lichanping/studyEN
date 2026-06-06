@@ -1,12 +1,12 @@
 :root {
-    --bg: #f4efe5;
-    --ink: #2a2d34;
-    --muted: #5f6672;
-    --paper: #fffdf8;
-    --line: #dfd4c2;
-    --accent: #1f6a78;
-    --accent-soft: #d7ebef;
-    --warm: #b66d39;
+    --bg: #e8e3d8;
+    --ink: #2f333b;
+    --muted: #6d7480;
+    --paper: #f4f0e8;
+    --line: #ccc2b3;
+    --accent: #486f74;
+    --accent-soft: #d5dfdd;
+    --warm: #9c724f;
 }
 
 * { box-sizing: border-box; }
@@ -16,9 +16,9 @@ body {
     font-family: "Noto Serif SC", "Source Han Serif SC", "PingFang SC", serif;
     color: var(--ink);
     background:
-        radial-gradient(circle at 8% 12%, rgba(182, 109, 57, 0.08), transparent 32%),
-        radial-gradient(circle at 90% 20%, rgba(31, 106, 120, 0.1), transparent 35%),
-        linear-gradient(180deg, #f9f5ec 0%, #f3eee4 100%);
+        radial-gradient(circle at 8% 12%, rgba(156, 114, 79, 0.07), transparent 32%),
+        radial-gradient(circle at 90% 20%, rgba(72, 111, 116, 0.08), transparent 35%),
+        linear-gradient(180deg, #ece7dd 0%, #e4ddd2 100%);
     min-height: 100vh;
 }
 
@@ -29,7 +29,7 @@ body {
 }
 
 .reading-header {
-    background: rgba(255, 253, 248, 0.82);
+    background: rgba(244, 240, 232, 0.88);
     border: 1px solid var(--line);
     border-radius: 16px;
     padding: 14px 16px;
@@ -64,7 +64,7 @@ h1 {
     flex: 1;
     min-width: 220px;
     border: 1px solid var(--line);
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(244, 240, 232, 0.9);
     border-radius: 12px;
     padding: 10px 12px;
     font-size: 15px;
@@ -72,7 +72,7 @@ h1 {
 
 .expiry-select {
     border: 1px solid var(--line);
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(244, 240, 232, 0.9);
     border-radius: 12px;
     padding: 10px 12px;
     font-size: 15px;
@@ -88,7 +88,7 @@ h1 {
 
 .album-tab {
     border: 1px solid var(--line);
-    background: #fff8ec;
+    background: #f1e9dc;
     color: var(--ink);
     border-radius: 999px;
     padding: 8px 14px;
@@ -132,7 +132,7 @@ h1 {
     padding: 10px;
     margin-bottom: 8px;
     cursor: pointer;
-    background: #fff;
+    background: #f7f3eb;
 }
 
 .article-item.active {
@@ -179,11 +179,22 @@ h1 {
     padding: 12px;
     border-radius: 12px;
     border: 1px solid #ede4d5;
-    background: #fff;
+    background: #f7f4ee;
     line-height: 1.7;
     font-size: 15px;
     white-space: pre-wrap;
     min-height: 52vh;
+}
+
+.share-status {
+    min-height: 20px;
+}
+
+.share-expire {
+    margin-top: 2px;
+    font-size: 12px;
+    color: rgba(109, 116, 128, 0.55);
+    letter-spacing: 0.2px;
 }
 
 @media (max-width: 900px) {
