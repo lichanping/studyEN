@@ -193,7 +193,7 @@ h1 {
 .share-expire {
     margin-top: 2px;
     font-size: 10px;
-    color: rgba(109, 116, 128, 0.25) !important;
+    color: rgba(109, 116, 128, 0.45) !important;
     opacity: 0.15;
     letter-spacing: 0.2px;
 }
