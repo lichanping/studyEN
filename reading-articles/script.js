@@ -218,8 +218,18 @@
                 }
             }
 
-            await navigator.clipboard.writeText(shareUrl);
-            alert("分享链接已复制");
+            if (navigator.clipboard?.writeText) {
+                try {
+                    await navigator.clipboard.writeText(shareUrl);
+                    alert("分享链接已复制，可粘贴到微信");
+                    return;
+                } catch (error) {
+                    console.warn("clipboard write failed", error);
+                }
+            }
+
+            // WeChat WebView often blocks navigator.share/clipboard. Provide manual copy fallback.
+            window.prompt("复制下方链接后分享到微信", shareUrl);
         } catch (error) {
             console.error("shareCurrentArticle failed", error);
             alert("创建分享链接失败，请稍后重试");

@@ -3,8 +3,22 @@ const path = require("node:path");
 
 let manifestCache = null;
 
-async function loadManifest() {
+async function loadManifest(reqUrl) {
     if (manifestCache) return manifestCache;
+
+    if (reqUrl) {
+        try {
+            const manifestUrl = toAssetUrl(reqUrl, "reading-articles/manifest.json");
+            const resp = await fetch(manifestUrl);
+            if (resp.ok) {
+                manifestCache = await resp.json();
+                return manifestCache;
+            }
+        } catch (_) {
+            // Fallback to local file read below.
+        }
+    }
+
     const manifestPath = path.resolve(process.cwd(), "reading-articles/manifest.json");
     const raw = await fs.readFile(manifestPath, "utf8");
     manifestCache = JSON.parse(raw);

@@ -27,6 +27,12 @@ async function testCreateResolveAndAudioHandlers() {
     global.fetch = async (url) => {
         const urlText = String(url);
         const decodedUrlText = decodeURIComponent(urlText);
+        if (decodedUrlText.endsWith("/reading-articles/manifest.json")) {
+            return new Response(JSON.stringify({ albums: [{ id: album.id, articles: [article] }] }), {
+                status: 200,
+                headers: { "Content-Type": "application/json; charset=utf-8" },
+            });
+        }
         if (decodedUrlText.endsWith(article.textPath)) {
             return new Response("Sample reading article text", {
                 status: 200,

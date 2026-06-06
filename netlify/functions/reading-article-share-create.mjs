@@ -49,25 +49,30 @@ export default async (req) => {
         return jsonResponse({ error: "albumId and articleTitle are required" }, 400);
     }
 
-    const manifest = await shareService.loadManifest();
-    const article = shareService.findArticle(manifest, albumId, articleTitle);
-    if (!article) {
-        return jsonResponse({ error: "Article not found" }, 404);
+    try {
+        const manifest = await shareService.loadManifest(req.url);
+        const article = shareService.findArticle(manifest, albumId, articleTitle);
+        if (!article) {
+            return jsonResponse({ error: "Article not found" }, 404);
+        }
+
+        const expiresAt = Date.now() + ttlHours * 60 * 60 * 1000;
+        const token = shareToken.createShareToken({ albumId, articleTitle, expiresAt });
+        const shareUrl = shareToken.buildSharedArticleUrl(
+            `${new URL(req.url).origin}/reading-articles/shared.html`,
+            token
+        );
+
+        return jsonResponse({
+            token,
+            shareUrl,
+            expiresAt,
+            albumId,
+            articleTitle,
+            ttlHours,
+        });
+    } catch (error) {
+        console.error("reading-article-share-create failed:", error);
+        return jsonResponse({ error: "Failed to create share link" }, 500);
     }
-
-    const expiresAt = Date.now() + ttlHours * 60 * 60 * 1000;
-    const token = shareToken.createShareToken({ albumId, articleTitle, expiresAt });
-    const shareUrl = shareToken.buildSharedArticleUrl(
-        `${new URL(req.url).origin}/reading-articles/shared.html`,
-        token
-    );
-
-    return jsonResponse({
-        token,
-        shareUrl,
-        expiresAt,
-        albumId,
-        articleTitle,
-        ttlHours,
-    });
 };

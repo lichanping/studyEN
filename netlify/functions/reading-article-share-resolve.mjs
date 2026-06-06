@@ -35,22 +35,27 @@ export default async (req) => {
         return jsonResponse({ error: verified.reason === "expired" ? "Share link expired" : "Invalid share token" }, verified.reason === "expired" ? 410 : 401);
     }
 
-    const manifest = await shareService.loadManifest();
-    const article = shareService.findArticle(manifest, verified.payload.albumId, verified.payload.articleTitle);
-    if (!article) {
-        return jsonResponse({ error: "Article not found" }, 404);
+    try {
+        const manifest = await shareService.loadManifest(req.url);
+        const article = shareService.findArticle(manifest, verified.payload.albumId, verified.payload.articleTitle);
+        if (!article) {
+            return jsonResponse({ error: "Article not found" }, 404);
+        }
+
+        const textContent = await shareService.loadTextAsset(req.url, article.textPath);
+        const expiresAt = Number(verified.payload.expiresAt);
+        const audioUrl = `/.netlify/functions/reading-article-share-audio?token=${encodeURIComponent(token)}`;
+
+        return jsonResponse({
+            albumId: verified.payload.albumId,
+            articleTitle: verified.payload.articleTitle,
+            title: article.title,
+            textContent,
+            audioUrl,
+            expiresAt,
+        });
+    } catch (error) {
+        console.error("reading-article-share-resolve failed:", error);
+        return jsonResponse({ error: "Failed to resolve share link" }, 500);
     }
-
-    const textContent = await shareService.loadTextAsset(req.url, article.textPath);
-    const expiresAt = Number(verified.payload.expiresAt);
-    const audioUrl = `/.netlify/functions/reading-article-share-audio?token=${encodeURIComponent(token)}`;
-
-    return jsonResponse({
-        albumId: verified.payload.albumId,
-        articleTitle: verified.payload.articleTitle,
-        title: article.title,
-        textContent,
-        audioUrl,
-        expiresAt,
-    });
 };
