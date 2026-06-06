@@ -16,7 +16,7 @@ function testIndexShouldUseReadingArticleEntry() {
 function testReadingArticlesFolderShouldContainEntryFiles() {
     const html = readWorkspaceFile("reading-articles/index.html");
     assert.ok(html.includes('script.js?v=20260606-2'), "reading-articles page should use folder-local script");
-    assert.ok(html.includes('style.css?v=20260606-2'), "reading-articles page should use folder-local style");
+    assert.ok(html.includes('style.css?v=20260606-6'), "reading-articles page should use folder-local style");
     assert.ok(html.includes("checkLoginStatus"), "reading-articles page should be protected by login status check");
 }
 

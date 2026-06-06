@@ -28,7 +28,11 @@
 
         setStatus("");
         if (els.title) els.title.textContent = payload.title;
-        if (els.content) els.content.textContent = payload.textContent;
+        if (els.content) {
+            const normalized = String(payload.textContent || "")
+                .replace(/^\s*训前准备原文\s*/u, "原文\n\n");
+            els.content.textContent = normalized;
+        }
         if (els.expireAt) els.expireAt.textContent = `exp ${formatDateTime(payload.expiresAt)}`;
         if (els.audio) {
             els.audio.src = payload.audioUrl;
