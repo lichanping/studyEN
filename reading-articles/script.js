@@ -22,7 +22,6 @@
         shareCurrent: document.getElementById("share-current"),
         shareExpiry: document.getElementById("share-expiry"),
         searchInput: document.getElementById("article-search"),
-        progress: document.getElementById("reading-progress"),
     };
 
     init().catch((error) => {
@@ -65,18 +64,7 @@
             state.searchQuery = els.searchInput.value.trim();
             renderList();
         });
-        els.progress.addEventListener("input", () => {
-            const key = getProgressKey();
-            window.localStorage.setItem(key, String(els.progress.value || "0"));
-        });
-
         if (els.articleAudio) {
-            els.articleAudio.addEventListener("loadedmetadata", () => {
-                const saved = window.localStorage.getItem(getProgressKey());
-                if (saved !== null) {
-                    els.progress.value = saved;
-                }
-            });
             els.articleAudio.addEventListener("ended", handleAudioEnded);
         }
 
@@ -103,10 +91,6 @@
         const album = getActiveAlbum();
         const articles = album ? album.articles : [];
         return lib.filterArticles(articles, state.searchQuery);
-    }
-
-    function getProgressKey() {
-        return lib.buildProgressKey(state.activeAlbumId, state.activeArticleTitle || "");
     }
 
     function toRootAssetUrl(relativePath) {
@@ -168,8 +152,6 @@
         }
 
         els.articleContent.textContent = await textRes.text();
-        const saved = window.localStorage.getItem(getProgressKey());
-        els.progress.value = saved !== null ? saved : "0";
         syncUrl(article.title);
 
         if (shouldAutoPlay) {

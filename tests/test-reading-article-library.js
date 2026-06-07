@@ -10,10 +10,10 @@ const {
     shouldEnableContinuousPlay,
 } = require("../reading-articles/library.js");
 
-function testBuildAlbumTabsShouldExposeThreeAlbumsWithAbbr() {
+function testBuildAlbumTabsShouldExposeFourAlbumsWithAbbr() {
     const tabs = buildAlbumTabs(ALBUM_CONFIG);
-    assert.strictEqual(tabs.length, 3);
-    assert.deepStrictEqual(tabs.map((item) => item.abbr), ["R50", "ZK", "WC"]);
+    assert.strictEqual(tabs.length, 4);
+    assert.deepStrictEqual(tabs.map((item) => item.abbr), ["R50", "ZK", "WC", "GY"]);
 }
 
 function testBuildArticleEntriesShouldKeepOnlyTxtAudioPairsAndSortByChapter() {
@@ -84,7 +84,7 @@ function testShouldEnableContinuousPlayShouldDependOnSearchQuery() {
 }
 
 function run() {
-    testBuildAlbumTabsShouldExposeThreeAlbumsWithAbbr();
+    testBuildAlbumTabsShouldExposeFourAlbumsWithAbbr();
     testBuildArticleEntriesShouldKeepOnlyTxtAudioPairsAndSortByChapter();
     testBuildShareUrlShouldAttachAlbumAndArticle();
     testFilterArticlesShouldMatchTitleCaseInsensitive();

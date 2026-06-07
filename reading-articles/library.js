@@ -17,6 +17,12 @@ const ALBUM_CONFIG = [
         title: "高中中级完型填空",
         folder: "user_data/!高中中级完型填空",
     },
+    {
+        id: "gy",
+        abbr: "GY",
+        title: "高中中级阅读",
+        folder: "user_data/!高中中级阅读",
+    },
 ];
 
 function normalizePath(input) {
