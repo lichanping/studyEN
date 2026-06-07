@@ -10,21 +10,25 @@
 
 1. 首页移除“玩”按钮及其跳转绑定。
 2. 首页新增“阅读文章页”入口，跳转到独立目录页面 `reading-articles/index.html`。
-3. 阅读页首期支持两个专辑（Tab 形式，使用缩略词）：
+3. 阅读页首期支持三个专辑（Tab 形式，使用缩略词）：
    1. `R50`：`user_data/!【5.0】【中级】-中阶-阅读50篇`
    2. `ZK`：`user_data/!【5.0】中考阅读真题`
+   3. `WC`：`user_data/!高中中级完型填空`
 4. 专辑内展示文章列表（仅展示存在 txt+audio 配对的条目）。
 5. 支持文章名搜索，仅做当前专辑内过滤。
 6. 点击文章后显示正文并加载对应音频。
 7. 支持“分享当前文章”：先请求服务端创建带有效期的 token，再优先调用 `navigator.share`，不支持时降级复制链接。
 8. 分享页必须通过 token 校验后才能打开；未分享、篡改或过期链接一律拒绝访问。
 9. 支持阅读进度记忆，按“专辑 + 文章名”保存到本地。
+10. 连续播放（MVP）：仅当“未使用搜索过滤（搜索框为空）”时，单篇音频播放结束后自动切换并自动播放下一篇；到最后一篇后循环回第一篇。
+11. 连续播放不得影响分享链路：分享 token 的创建、解析、分享页播放行为保持原有逻辑。
 
 ## 3. 非目标（本期不做）
 
 2. 登录鉴权与受限访问控制。
 3. 更多专辑自动接入后台管理。
 4. 全文检索与高亮。
+5. 连续播放模式开关、随机播放、单曲循环等高级播放策略。
 
 ## 4. 交互与信息架构
 
@@ -33,6 +37,7 @@
 3. 左侧（移动端置顶）：文章列表。
 4. 右侧：文章标题、音频播放器、正文预览。
 6. 分享：分享当前文章时先创建 token，再进入独立分享页 `reading-articles/shared.html?token=...`。
+7. 连续播放触发条件：仅在主页面搜索框为空时生效；有过滤条件时保持当前单篇播放行为。
 
 ## 5. 分享策略
 
@@ -58,10 +63,13 @@
 5. 专辑内搜索可以即时过滤当前列表。
 6. 重新打开同一文章时，可恢复上次阅读进度。
 7. 未分享、篡改或过期 token 访问分享页时，必须被拒绝。
+8. 当搜索框为空时，音频播放结束自动切到下一篇并自动播放；专辑内最后一篇后回到第一篇继续播放。
+9. 当搜索框不为空时，音频播放结束不自动跳转。
+10. 分享功能在连续播放开启/关闭状态下都能正常创建并访问分享链接。
 
 ## 8. 实施顺序（TDD）
 
-1. Red：先写 `tests/test-reading-article-library.js`、`tests/test-reading-articles-page-regression.js`、`tests/test-reading-article-share-token.js`，覆盖 tab、配对排序、入口回归、token 过期。
+1. Red：先写 `tests/test-reading-article-library.js`、`tests/test-reading-articles-page-regression.js`、`tests/test-reading-article-share-token.js`，覆盖三专辑 tab、配对排序、连续播放索引规则、入口回归、token 过期。
 2. Green：实现 `reading-articles/` 独立目录下的 library/page/script/style/sharing helpers。
 3. Refactor：补充 Netlify functions、manifest 生成脚本并生成首版静态数据。
 4. 回归：执行相关测试并手工验证页面跳转、搜索、进度、分享与 token 过期拦截。

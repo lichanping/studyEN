@@ -11,6 +11,12 @@ const ALBUM_CONFIG = [
         title: "中考阅读真题",
         folder: "user_data/!【5.0】中考阅读真题",
     },
+    {
+        id: "wc",
+        abbr: "WC",
+        title: "高中中级完型填空",
+        folder: "user_data/!高中中级完型填空",
+    },
 ];
 
 function normalizePath(input) {
@@ -113,6 +119,21 @@ function buildProgressKey(albumId, articleTitle) {
     return `${albumId}::${articleTitle}`;
 }
 
+function shouldEnableContinuousPlay(searchQuery) {
+    return String(searchQuery || "").trim() === "";
+}
+
+function getNextArticleTitle(articles, currentTitle) {
+    const list = Array.isArray(articles) ? articles : [];
+    if (list.length === 0) return "";
+
+    const currentIndex = list.findIndex((item) => item && item.title === currentTitle);
+    if (currentIndex < 0) return list[0].title || "";
+
+    const nextIndex = (currentIndex + 1) % list.length;
+    return list[nextIndex].title || "";
+}
+
 const api = {
     ALBUM_CONFIG,
     buildAlbumTabs,
@@ -121,6 +142,8 @@ const api = {
     buildSharedArticleUrl,
     filterArticles,
     buildProgressKey,
+    shouldEnableContinuousPlay,
+    getNextArticleTitle,
 };
 
 if (typeof module !== "undefined" && module.exports) {

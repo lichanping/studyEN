@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-06T10:48:55.376Z",
+  "generatedAt": "2026-06-07T03:42:39.052Z",
   "albums": [
     {
       "id": "mid50",
@@ -422,6 +422,155 @@
           "textPath": "user_data/!【5.0】中考阅读真题/8_Hydrogen-Powered Trains（氢动力火车）.txt",
           "audioPath": "user_data/!【5.0】中考阅读真题/audio/8_Hydrogen-Powered Trains（氢动力火车）.mp3",
           "order": 8
+        }
+      ]
+    },
+    {
+      "id": "wc",
+      "title": "高中中级完型填空",
+      "abbr": "WC",
+      "folder": "user_data/!高中中级完型填空",
+      "count": 20,
+      "articles": [
+        {
+          "album": "wc",
+          "title": "4.3.2.01_Chat Benches",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.01_Chat Benches.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.01_Chat Benches.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.02_Rani",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.02_Rani.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.02_Rani.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.03_A Chess Class",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.03_A Chess Class.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.03_A Chess Class.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.04_Warmth on a Cold Night",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.04_Warmth on a Cold Night.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.04_Warmth on a Cold Night.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.05_The Homeless Hero",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.05_The Homeless Hero.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.05_The Homeless Hero.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.06_An Encounter of Having a Personal Growth",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.06_An Encounter of Having a Personal Growth.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.06_An Encounter of Having a Personal Growth.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.07_A blessing From An Unknown Person",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.07_A blessing From An Unknown Person.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.07_A blessing From An Unknown Person.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.08_The greatest moment",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.08_The greatest moment.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.08_The greatest moment.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.09_Freddy",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.09_Freddy.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.09_Freddy.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.10_My Path to Growth",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.10_My Path to Growth.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.10_My Path to Growth.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.11_A Kind Person with Kind Deed",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.11_A Kind Person with Kind Deed.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.11_A Kind Person with Kind Deed.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.12_Self-confidence",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.12_Self-confidence.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.12_Self-confidence.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.13_Taking the Wrong Bus",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.13_Taking the Wrong Bus.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.13_Taking the Wrong Bus.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.14_One of My Favorite Professors Dr. Lee",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.14_One of My Favorite Professors Dr. Lee.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.14_One of My Favorite Professors Dr. Lee.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.15_Hunt-Broersma",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.15_Hunt-Broersma.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.15_Hunt-Broersma.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.16_The Deceptive Journey",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.16_The Deceptive Journey.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.16_The Deceptive Journey.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.17_The Flowers",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.17_The Flowers.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.17_The Flowers.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.18_An Organization Called Girl Scouts",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.18_An Organization Called Girl Scouts.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.18_An Organization Called Girl Scouts.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.19_Gabriel",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.19_Gabriel.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.19_Gabriel.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.20_ASL-American Sign Language",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.20_ASL-American Sign Language.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.20_ASL-American Sign Language.mp3",
+          "order": 9007199254740991
         }
       ]
     }

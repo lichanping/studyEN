@@ -6,12 +6,14 @@ const {
     buildShareUrl,
     filterArticles,
     buildProgressKey,
+    getNextArticleTitle,
+    shouldEnableContinuousPlay,
 } = require("../reading-articles/library.js");
 
-function testBuildAlbumTabsShouldExposeTwoAlbumsWithAbbr() {
+function testBuildAlbumTabsShouldExposeThreeAlbumsWithAbbr() {
     const tabs = buildAlbumTabs(ALBUM_CONFIG);
-    assert.strictEqual(tabs.length, 2);
-    assert.deepStrictEqual(tabs.map((item) => item.abbr), ["R50", "ZK"]);
+    assert.strictEqual(tabs.length, 3);
+    assert.deepStrictEqual(tabs.map((item) => item.abbr), ["R50", "ZK", "WC"]);
 }
 
 function testBuildArticleEntriesShouldKeepOnlyTxtAudioPairsAndSortByChapter() {
@@ -64,12 +66,31 @@ function testBuildProgressKeyShouldBeStable() {
     assert.strictEqual(buildProgressKey("mid50", "Chapter 2 A"), "mid50::Chapter 2 A");
 }
 
+function testGetNextArticleTitleShouldLoopWithinAlbum() {
+    const titles = [
+        { title: "A" },
+        { title: "B" },
+        { title: "C" },
+    ];
+
+    assert.strictEqual(getNextArticleTitle(titles, "A"), "B");
+    assert.strictEqual(getNextArticleTitle(titles, "C"), "A");
+}
+
+function testShouldEnableContinuousPlayShouldDependOnSearchQuery() {
+    assert.strictEqual(shouldEnableContinuousPlay(""), true);
+    assert.strictEqual(shouldEnableContinuousPlay("   "), true);
+    assert.strictEqual(shouldEnableContinuousPlay("chapter"), false);
+}
+
 function run() {
-    testBuildAlbumTabsShouldExposeTwoAlbumsWithAbbr();
+    testBuildAlbumTabsShouldExposeThreeAlbumsWithAbbr();
     testBuildArticleEntriesShouldKeepOnlyTxtAudioPairsAndSortByChapter();
     testBuildShareUrlShouldAttachAlbumAndArticle();
     testFilterArticlesShouldMatchTitleCaseInsensitive();
     testBuildProgressKeyShouldBeStable();
+    testGetNextArticleTitleShouldLoopWithinAlbum();
+    testShouldEnableContinuousPlayShouldDependOnSearchQuery();
     console.log("test-reading-article-library passed");
 }
 
