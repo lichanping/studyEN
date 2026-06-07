@@ -18,6 +18,7 @@ function testReadingArticlesFolderShouldContainEntryFiles() {
     assert.ok(html.includes('script.js?v=20260606-2'), "reading-articles page should use folder-local script");
     assert.ok(html.includes('style.css?v=20260606-6'), "reading-articles page should use folder-local style");
     assert.ok(html.includes("checkLoginStatus"), "reading-articles page should be protected by login status check");
+    assert.ok(!html.includes('id="reading-progress"'), "reading progress bar should be removed from reading page");
 }
 
 function run() {

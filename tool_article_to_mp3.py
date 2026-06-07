@@ -11,6 +11,9 @@ from tool_generate_xls import get_sub_folder_path
 class TextToSpeechConverter:
     NUMBERED_PARAGRAPH_PATTERN = re.compile(r"^\s*【\d+】\s*(.+?)\s*$")
     CJK_PATTERN = re.compile(r"[\u4e00-\u9fff]")
+    SECTION_STOP_PATTERN = re.compile(r"^\s*(主旨大意|文章大意|中心思想|长难句|重点词汇|词汇|答案|解析|参考译文|参考答案)\s*[:：]?")
+    HEADER_SKIP_PATTERN = re.compile(r"^\s*(训前准备原文|原文|阅读原文)\s*$")
+    CJK_PAREN_SEGMENT_PATTERN = re.compile(r"[（(]([^）)]*[\u4e00-\u9fff][^）)]*)[）)]")
 
     def __init__(self, voice_name=None, rate="-10%"):
         self.voice_name = voice_name or "Microsoft Server Speech Text to Speech Voice (en-US, EmmaNeural)"
@@ -29,11 +32,11 @@ class TextToSpeechConverter:
             return file.read().strip()  # Remove leading/trailing whitespace
 
     def extract_english_article(self, text_content):
-        """Extract only English article content.
+        """Extract article content for TTS.
 
         Rule 1: Prefer lines like "【1】...".
-        Rule 2: If no numbered lines exist, skip non-English headers, then
-        keep English lines until Chinese explanation starts.
+        Rule 2: For mixed bilingual texts, keep English content first, then
+        append Chinese explanations before summary/analysis sections.
         """
         lines = [line.strip() for line in text_content.splitlines() if line.strip()]
 
@@ -46,33 +49,75 @@ class TextToSpeechConverter:
         if numbered_lines:
             return "\n".join(numbered_lines)
 
-        def take_before_cjk(line):
-            match = self.CJK_PATTERN.search(line)
-            if not match:
-                return line.strip()
-            return line[:match.start()].strip()
-
-        fallback_lines = []
+        english_lines = []
+        chinese_lines = []
         started = False
+
         for line in lines:
+            if self.HEADER_SKIP_PATTERN.match(line):
+                continue
+            if self.SECTION_STOP_PATTERN.match(line):
+                break
+
             has_cjk = bool(self.CJK_PATTERN.search(line))
             has_latin = bool(re.search(r"[A-Za-z]", line))
 
-            if not started:
-                if not has_latin:
+            if has_latin and has_cjk:
+                glosses = [item.strip() for item in self.CJK_PAREN_SEGMENT_PATTERN.findall(line) if item.strip()]
+                line_without_glosses = self.CJK_PAREN_SEGMENT_PATTERN.sub("", line)
+                line_without_glosses = re.sub(r"[（(]\s*[）)]", "", line_without_glosses)
+
+                if re.search(r"[A-Za-z]", line_without_glosses) and not self.CJK_PATTERN.search(line_without_glosses):
+                    english_part = re.sub(r"\s+", " ", line_without_glosses).strip()
+                    if re.search(r"[A-Za-z]", english_part):
+                        english_lines.append(english_part)
+                        started = True
+                    if started:
+                        chinese_lines.extend(glosses)
                     continue
-                started = True
+
+                first_cjk = self.CJK_PATTERN.search(line)
+                suffix = line[first_cjk.start():] if first_cjk else ""
+                has_latin_after_cjk = bool(re.search(r"[A-Za-z]", suffix))
+
+                if has_latin_after_cjk:
+                    # Keep English sentence continuity when CJK only appears in inline glosses.
+                    english_part = self.CJK_PAREN_SEGMENT_PATTERN.sub("", line)
+                    english_part = re.sub(self.CJK_PATTERN, "", english_part)
+                    english_part = re.sub(r"\s+", " ", english_part).strip()
+                    english_part = english_part.replace("（）", "").replace("()", "")
+
+                    if re.search(r"[A-Za-z]", english_part):
+                        english_lines.append(english_part)
+                        started = True
+
+                    if started:
+                        chinese_lines.extend(glosses)
+                    continue
+
+                english_part = line[:first_cjk.start()].strip() if first_cjk else ""
+                chinese_part = suffix.strip()
+
+                if re.search(r"[A-Za-z]", english_part):
+                    english_lines.append(english_part)
+                    started = True
+                if started and self.CJK_PATTERN.search(chinese_part):
+                    chinese_lines.append(chinese_part)
+                continue
 
             if has_latin:
-                english_part = take_before_cjk(line)
-                if re.search(r"[A-Za-z]", english_part):
-                    fallback_lines.append(english_part)
-                    continue
+                english_lines.append(line)
+                started = True
+                continue
 
-            if started and has_cjk:
-                break
+            if has_cjk and started:
+                chinese_lines.append(line)
 
-        return "\n".join(fallback_lines).strip()
+        if not english_lines:
+            return ""
+        if not chinese_lines:
+            return "\n".join(english_lines).strip()
+        return "\n".join(english_lines + chinese_lines).strip()
 
     def normalize_tts_text(self, text):
         """Clean punctuation to reduce cases where '.' is read as 'dot'."""
