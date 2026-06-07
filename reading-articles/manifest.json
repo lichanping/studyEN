@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-06T10:48:55.376Z",
+  "generatedAt": "2026-06-07T04:12:30.949Z",
   "albums": [
     {
       "id": "mid50",
@@ -422,6 +422,444 @@
           "textPath": "user_data/!【5.0】中考阅读真题/8_Hydrogen-Powered Trains（氢动力火车）.txt",
           "audioPath": "user_data/!【5.0】中考阅读真题/audio/8_Hydrogen-Powered Trains（氢动力火车）.mp3",
           "order": 8
+        }
+      ]
+    },
+    {
+      "id": "wc",
+      "title": "高中中级完型填空",
+      "abbr": "WC",
+      "folder": "user_data/!高中中级完型填空",
+      "count": 20,
+      "articles": [
+        {
+          "album": "wc",
+          "title": "4.3.2.01_Chat Benches",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.01_Chat Benches.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.01_Chat Benches.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.02_Rani",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.02_Rani.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.02_Rani.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.03_A Chess Class",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.03_A Chess Class.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.03_A Chess Class.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.04_Warmth on a Cold Night",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.04_Warmth on a Cold Night.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.04_Warmth on a Cold Night.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.05_The Homeless Hero",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.05_The Homeless Hero.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.05_The Homeless Hero.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.06_An Encounter of Having a Personal Growth",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.06_An Encounter of Having a Personal Growth.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.06_An Encounter of Having a Personal Growth.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.07_A blessing From An Unknown Person",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.07_A blessing From An Unknown Person.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.07_A blessing From An Unknown Person.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.08_The greatest moment",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.08_The greatest moment.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.08_The greatest moment.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.09_Freddy",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.09_Freddy.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.09_Freddy.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.10_My Path to Growth",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.10_My Path to Growth.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.10_My Path to Growth.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.11_A Kind Person with Kind Deed",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.11_A Kind Person with Kind Deed.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.11_A Kind Person with Kind Deed.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.12_Self-confidence",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.12_Self-confidence.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.12_Self-confidence.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.13_Taking the Wrong Bus",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.13_Taking the Wrong Bus.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.13_Taking the Wrong Bus.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.14_One of My Favorite Professors Dr. Lee",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.14_One of My Favorite Professors Dr. Lee.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.14_One of My Favorite Professors Dr. Lee.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.15_Hunt-Broersma",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.15_Hunt-Broersma.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.15_Hunt-Broersma.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.16_The Deceptive Journey",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.16_The Deceptive Journey.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.16_The Deceptive Journey.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.17_The Flowers",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.17_The Flowers.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.17_The Flowers.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.18_An Organization Called Girl Scouts",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.18_An Organization Called Girl Scouts.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.18_An Organization Called Girl Scouts.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.19_Gabriel",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.19_Gabriel.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.19_Gabriel.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "wc",
+          "title": "4.3.2.20_ASL-American Sign Language",
+          "textPath": "user_data/!高中中级完型填空/4.3.2.20_ASL-American Sign Language.txt",
+          "audioPath": "user_data/!高中中级完型填空/audio/4.3.2.20_ASL-American Sign Language.mp3",
+          "order": 9007199254740991
+        }
+      ]
+    },
+    {
+      "id": "gy",
+      "title": "高中中级阅读",
+      "abbr": "GY",
+      "folder": "user_data/!高中中级阅读",
+      "count": 40,
+      "articles": [
+        {
+          "album": "gy",
+          "title": "3.2.01_Are You a Victim of Soft Drinks",
+          "textPath": "user_data/!高中中级阅读/3.2.01_Are You a Victim of Soft Drinks.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.01_Are You a Victim of Soft Drinks.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.02_Technology Changes Our Life",
+          "textPath": "user_data/!高中中级阅读/3.2.02_Technology Changes Our Life.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.02_Technology Changes Our Life.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.03_“We” Are the Same",
+          "textPath": "user_data/!高中中级阅读/3.2.03_“We” Are the Same.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.03_“We” Are the Same.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.04_Wash Your Car, and Brighten My Dream",
+          "textPath": "user_data/!高中中级阅读/3.2.04_Wash Your Car, and Brighten My Dream.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.04_Wash Your Car, and Brighten My Dream.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.05_People From Similar Cultures See the Same Things When Hearing Music",
+          "textPath": "user_data/!高中中级阅读/3.2.05_People From Similar Cultures See the Same Things When Hearing Music.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.05_People From Similar Cultures See the Same Things When Hearing Music.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.06_The Rise of the Intelligent Monitoring System",
+          "textPath": "user_data/!高中中级阅读/3.2.06_The Rise of the Intelligent Monitoring System.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.06_The Rise of the Intelligent Monitoring System.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.07_Adversity and Suffering Benefit Life",
+          "textPath": "user_data/!高中中级阅读/3.2.07_Adversity and Suffering Benefit Life.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.07_Adversity and Suffering Benefit Life.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.08_What Is the Zeigarnik Effect",
+          "textPath": "user_data/!高中中级阅读/3.2.08_What Is the Zeigarnik Effect.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.08_What Is the Zeigarnik Effect.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.09_Seize the Moment",
+          "textPath": "user_data/!高中中级阅读/3.2.09_Seize the Moment.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.09_Seize the Moment.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.10_The MetroCard New York",
+          "textPath": "user_data/!高中中级阅读/3.2.10_The MetroCard New York.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.10_The MetroCard New York.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.11_The Efforts of Making the Disabled Accessible to the Shore",
+          "textPath": "user_data/!高中中级阅读/3.2.11_The Efforts of Making the Disabled Accessible to the Shore.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.11_The Efforts of Making the Disabled Accessible to the Shore.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.12_Four Modern Trips to Europe",
+          "textPath": "user_data/!高中中级阅读/3.2.12_Four Modern Trips to Europe.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.12_Four Modern Trips to Europe.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.13_The New Secret Weapon for Preventing Wildfire",
+          "textPath": "user_data/!高中中级阅读/3.2.13_The New Secret Weapon for Preventing Wildfire.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.13_The New Secret Weapon for Preventing Wildfire.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.14_The Wonderful Spots are Waiting for Us",
+          "textPath": "user_data/!高中中级阅读/3.2.14_The Wonderful Spots are Waiting for Us.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.14_The Wonderful Spots are Waiting for Us.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.15_Read with Eyes Or Ears",
+          "textPath": "user_data/!高中中级阅读/3.2.15_Read with Eyes Or Ears.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.15_Read with Eyes Or Ears.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.16_The Portion of Food",
+          "textPath": "user_data/!高中中级阅读/3.2.16_The Portion of Food.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.16_The Portion of Food.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.17_The Facts About Lying",
+          "textPath": "user_data/!高中中级阅读/3.2.17_The Facts About Lying.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.17_The Facts About Lying.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.18_Aerobic Workouts Benefit People’s Mental and Physical Health",
+          "textPath": "user_data/!高中中级阅读/3.2.18_Aerobic Workouts Benefit People’s Mental and Physical Health.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.18_Aerobic Workouts Benefit People’s Mental and Physical Health.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.19_Passenger Pigeons",
+          "textPath": "user_data/!高中中级阅读/3.2.19_Passenger Pigeons.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.19_Passenger Pigeons.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.20_Taking Actions",
+          "textPath": "user_data/!高中中级阅读/3.2.20_Taking Actions.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.20_Taking Actions.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.21_Newly-emerged Theme Cafes in Paris",
+          "textPath": "user_data/!高中中级阅读/3.2.21_Newly-emerged Theme Cafes in Paris.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.21_Newly-emerged Theme Cafes in Paris.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.22_Is Your House Making You Fat",
+          "textPath": "user_data/!高中中级阅读/3.2.22_Is Your House Making You Fat.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.22_Is Your House Making You Fat.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.23_Is Questioning Authority Impolite",
+          "textPath": "user_data/!高中中级阅读/3.2.23_Is Questioning Authority Impolite.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.23_Is Questioning Authority Impolite.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.24_Davion and His Foster Parent",
+          "textPath": "user_data/!高中中级阅读/3.2.24_Davion and His Foster Parent.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.24_Davion and His Foster Parent.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.25_Is Recycling Really Cost-effective",
+          "textPath": "user_data/!高中中级阅读/3.2.25_Is Recycling Really Cost-effective.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.25_Is Recycling Really Cost-effective.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.26_Hamburg’s Fashion",
+          "textPath": "user_data/!高中中级阅读/3.2.26_Hamburg’s Fashion.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.26_Hamburg’s Fashion.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.27_An APP— Analyzing the Relation of Smoking, Body Health and Air Quality",
+          "textPath": "user_data/!高中中级阅读/3.2.27_An APP— Analyzing the Relation of Smoking, Body Health and Air Quality.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.27_An APP— Analyzing the Relation of Smoking, Body Health and Air Quality.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.28_The Evolution of Language",
+          "textPath": "user_data/!高中中级阅读/3.2.28_The Evolution of Language.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.28_The Evolution of Language.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.29_Wag Tails",
+          "textPath": "user_data/!高中中级阅读/3.2.29_Wag Tails.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.29_Wag Tails.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.30_Slide With Kids",
+          "textPath": "user_data/!高中中级阅读/3.2.30_Slide With Kids.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.30_Slide With Kids.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.31_AI Robots",
+          "textPath": "user_data/!高中中级阅读/3.2.31_AI Robots.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.31_AI Robots.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.32_Do Not Judge a Book by Its Cover",
+          "textPath": "user_data/!高中中级阅读/3.2.32_Do Not Judge a Book by Its Cover.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.32_Do Not Judge a Book by Its Cover.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.33_TV Steals Huamn Beings Time",
+          "textPath": "user_data/!高中中级阅读/3.2.33_TV Steals Huamn Beings Time.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.33_TV Steals Huamn Beings Time.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.34_The Internet Dating",
+          "textPath": "user_data/!高中中级阅读/3.2.34_The Internet Dating.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.34_The Internet Dating.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.35_The Story of Franklin Pierce Adams",
+          "textPath": "user_data/!高中中级阅读/3.2.35_The Story of Franklin Pierce Adams.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.35_The Story of Franklin Pierce Adams.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.36_Young People’s Career Expectations",
+          "textPath": "user_data/!高中中级阅读/3.2.36_Young People’s Career Expectations.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.36_Young People’s Career Expectations.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.37_Flying Vehicles Close to Reality",
+          "textPath": "user_data/!高中中级阅读/3.2.37_Flying Vehicles Close to Reality.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.37_Flying Vehicles Close to Reality.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.38_Self-distancing",
+          "textPath": "user_data/!高中中级阅读/3.2.38_Self-distancing.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.38_Self-distancing.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.39_The Struggle for Teaching Methods",
+          "textPath": "user_data/!高中中级阅读/3.2.39_The Struggle for Teaching Methods.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.39_The Struggle for Teaching Methods.mp3",
+          "order": 9007199254740991
+        },
+        {
+          "album": "gy",
+          "title": "3.2.40_Two Stupid Thieves",
+          "textPath": "user_data/!高中中级阅读/3.2.40_Two Stupid Thieves.txt",
+          "audioPath": "user_data/!高中中级阅读/audio/3.2.40_Two Stupid Thieves.mp3",
+          "order": 9007199254740991
         }
       ]
     }

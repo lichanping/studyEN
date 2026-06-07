@@ -22,7 +22,6 @@
         shareCurrent: document.getElementById("share-current"),
         shareExpiry: document.getElementById("share-expiry"),
         searchInput: document.getElementById("article-search"),
-        progress: document.getElementById("reading-progress"),
     };
 
     init().catch((error) => {
@@ -65,18 +64,8 @@
             state.searchQuery = els.searchInput.value.trim();
             renderList();
         });
-        els.progress.addEventListener("input", () => {
-            const key = getProgressKey();
-            window.localStorage.setItem(key, String(els.progress.value || "0"));
-        });
-
         if (els.articleAudio) {
-            els.articleAudio.addEventListener("loadedmetadata", () => {
-                const saved = window.localStorage.getItem(getProgressKey());
-                if (saved !== null) {
-                    els.progress.value = saved;
-                }
-            });
+            els.articleAudio.addEventListener("ended", handleAudioEnded);
         }
 
         state.tabs = tabs;
@@ -102,10 +91,6 @@
         const album = getActiveAlbum();
         const articles = album ? album.articles : [];
         return lib.filterArticles(articles, state.searchQuery);
-    }
-
-    function getProgressKey() {
-        return lib.buildProgressKey(state.activeAlbumId, state.activeArticleTitle || "");
     }
 
     function toRootAssetUrl(relativePath) {
@@ -148,7 +133,8 @@
         });
     }
 
-    async function setActiveArticle(title) {
+    async function setActiveArticle(title, options = {}) {
+        const shouldAutoPlay = Boolean(options.autoPlay);
         state.activeArticleTitle = title;
         renderList();
 
@@ -166,9 +152,28 @@
         }
 
         els.articleContent.textContent = await textRes.text();
-        const saved = window.localStorage.getItem(getProgressKey());
-        els.progress.value = saved !== null ? saved : "0";
         syncUrl(article.title);
+
+        if (shouldAutoPlay) {
+            try {
+                await els.articleAudio.play();
+            } catch (error) {
+                console.warn("auto play next article failed", error);
+            }
+        }
+    }
+
+    async function handleAudioEnded() {
+        if (!lib.shouldEnableContinuousPlay(state.searchQuery)) {
+            return;
+        }
+
+        const nextTitle = lib.getNextArticleTitle(getVisibleArticles(), state.activeArticleTitle);
+        if (!nextTitle || nextTitle === state.activeArticleTitle) {
+            return;
+        }
+
+        await setActiveArticle(nextTitle, { autoPlay: true });
     }
 
     function syncUrl(articleTitle) {
