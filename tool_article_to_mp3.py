@@ -13,6 +13,7 @@ class TextToSpeechConverter:
     CJK_PATTERN = re.compile(r"[\u4e00-\u9fff]")
     SECTION_STOP_PATTERN = re.compile(r"^\s*(主旨大意|文章大意|中心思想|长难句|重点词汇|词汇|答案|解析|参考译文|参考答案)\s*[:：]?")
     HEADER_SKIP_PATTERN = re.compile(r"^\s*(训前准备原文|原文|阅读原文)\s*$")
+    CJK_PAREN_SEGMENT_PATTERN = re.compile(r"[（(]([^）)]*[\u4e00-\u9fff][^）)]*)[）)]")
 
     def __init__(self, voice_name=None, rate="-10%"):
         self.voice_name = voice_name or "Microsoft Server Speech Text to Speech Voice (en-US, EmmaNeural)"
@@ -62,9 +63,40 @@ class TextToSpeechConverter:
             has_latin = bool(re.search(r"[A-Za-z]", line))
 
             if has_latin and has_cjk:
+                glosses = [item.strip() for item in self.CJK_PAREN_SEGMENT_PATTERN.findall(line) if item.strip()]
+                line_without_glosses = self.CJK_PAREN_SEGMENT_PATTERN.sub("", line)
+                line_without_glosses = re.sub(r"[（(]\s*[）)]", "", line_without_glosses)
+
+                if re.search(r"[A-Za-z]", line_without_glosses) and not self.CJK_PATTERN.search(line_without_glosses):
+                    english_part = re.sub(r"\s+", " ", line_without_glosses).strip()
+                    if re.search(r"[A-Za-z]", english_part):
+                        english_lines.append(english_part)
+                        started = True
+                    if started:
+                        chinese_lines.extend(glosses)
+                    continue
+
                 first_cjk = self.CJK_PATTERN.search(line)
+                suffix = line[first_cjk.start():] if first_cjk else ""
+                has_latin_after_cjk = bool(re.search(r"[A-Za-z]", suffix))
+
+                if has_latin_after_cjk:
+                    # Keep English sentence continuity when CJK only appears in inline glosses.
+                    english_part = self.CJK_PAREN_SEGMENT_PATTERN.sub("", line)
+                    english_part = re.sub(self.CJK_PATTERN, "", english_part)
+                    english_part = re.sub(r"\s+", " ", english_part).strip()
+                    english_part = english_part.replace("（）", "").replace("()", "")
+
+                    if re.search(r"[A-Za-z]", english_part):
+                        english_lines.append(english_part)
+                        started = True
+
+                    if started:
+                        chinese_lines.extend(glosses)
+                    continue
+
                 english_part = line[:first_cjk.start()].strip() if first_cjk else ""
-                chinese_part = line[first_cjk.start():].strip() if first_cjk else ""
+                chinese_part = suffix.strip()
 
                 if re.search(r"[A-Za-z]", english_part):
                     english_lines.append(english_part)

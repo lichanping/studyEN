@@ -49,3 +49,31 @@ Despite many public health campaigns, many people still drink them.
     assert "尽管有很多公共健康运动" in result
     assert "主旨大意" not in result
     assert "长难句" not in result
+
+
+def test_extract_english_article_keeps_sentence_after_inline_chinese_parenthetical():
+    converter = TextToSpeechConverter()
+    text = """Wag Tails
+Researchers in Italy examined responses to a range of stimuli（刺激物） with video cameras.
+"""
+
+    result = converter.extract_english_article(text)
+
+    assert "Researchers in Italy" in result
+    assert "stimuli with video cameras" in result
+    assert "with video cameras" in result
+    assert "刺激物" in result
+    assert "stimuli（" not in result
+
+
+def test_extract_english_article_handles_trailing_chinese_gloss_parenthetical():
+    converter = TextToSpeechConverter()
+    text = """Slide With Kids
+The most common injury was lower leg fractures （骨折）.
+"""
+
+    result = converter.extract_english_article(text)
+
+    assert "lower leg fractures" in result
+    assert "fractures （" not in result
+    assert "骨折" in result
