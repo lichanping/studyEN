@@ -22,12 +22,17 @@ assert(
     "LEGACY_STUDENT_NAMES 应统一在 commonFunctions.js 维护"
 );
 
+const legacyNamesMatch = commonFunctionsContent.match(/export const LEGACY_STUDENT_NAMES\s*=\s*Object\.freeze\(\[(.*?)\]\);/s);
+assert(legacyNamesMatch, "应能在 commonFunctions.js 中找到 LEGACY_STUDENT_NAMES 定义");
+const legacyNamesSection = legacyNamesMatch[1];
+
 assert(
-    commonFunctionsContent.includes("李敏维") &&
-    commonFunctionsContent.includes("季筱雯") &&
-    commonFunctionsContent.includes("施博睿") &&
-    commonFunctionsContent.includes("于熠凡"),
-    "commonFunctions.js 中的 legacy 名单应包含新增需过滤学员：季筱雯、施博睿、于熠凡"
+    legacyNamesSection.includes("李敏维") &&
+    legacyNamesSection.includes("季筱雯") &&
+    legacyNamesSection.includes("施博睿") &&
+    legacyNamesSection.includes("于熠凡") &&
+    legacyNamesSection.includes("陈怡睿"),
+    "commonFunctions.js 中的 legacy 名单应包含新增需过滤学员：季筱雯、施博睿、于熠凡、陈怡睿"
 );
 
 assert(
