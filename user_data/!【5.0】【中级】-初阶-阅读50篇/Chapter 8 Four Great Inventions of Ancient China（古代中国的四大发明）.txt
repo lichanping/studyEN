@@ -1,13 +1,39 @@
-训前准备原文
-
 【1】The Four Great Inventions of ancient China are important parts of Chinese history and culture.
-
-【2】Paper making:Long long ago，people wrote or drew on bamboos and silk. About the year of 105 AD paper was improved by Cai Lun. It was cheaper and lighter.
-
-【3】Printing techniques:Printing made it easy and quickly to copy books. Bi Sheng invented moveable type printing. People could print many books in a time.
-
-【4】Gunpowder:Gunpowder was first used for making fireworks. Later，it was used in wars. It changed the way people fought.
-
+【2】Paper making:Long long ago，people wrote or drew on bamboos and silk.About the year of 105 AD paper was improved by Cai Lun.It was cheaper and lighter.
+【3】Printing techniques:Printing made it easy and quickly to copy books.Bi Sheng invented moveable type printing.People could print many books in a time.
+【4】Gunpowder:Gunpowder was first used for making fireworks.Later，it was used in wars.It changed the way people fought.
 【5】The compass:The compass helped people find directions when they were sailing or travelling in cloudy or bad weather.
-
 中国古代四大发明是中国历史文化的重要组成部分。造纸术：很久以前，人们在竹简和丝绸上书写或绘画。大约在公元 105 年，蔡伦改进了造纸术。改进后的纸更便宜、更轻便。印刷术：印刷使书籍复制变得轻松快捷。毕昇发明了活字印刷术。人们一次能够印刷大量书籍。火药：火药最初用于制作烟花。后来，它被应用于战争。它改变了人们作战的方式。指南针：当人们在多云或恶劣天气下航行或旅行时，指南针帮助他们辨别方向。
+
+第一段段落大意：
+四大发明是中国历史和文化的重要组成部分。
+
+段落短语：
+important parts（重要部分）
+
+第二段段落大意：
+蔡伦改进造纸术，使纸张更轻便廉价。
+
+段落短语：
+improved by（被…改进）
+
+第三段段落大意：
+毕昇发明活字印刷术，加速书籍传播。
+
+段落短语：
+invented moveable type printing（发明活字印刷术）
+
+第四段段落大意：
+火药最初用于烟花，后用于战争改变战斗方式。
+
+段落短语：
+used for（用于…）
+
+第四段段落大意：
+火药最初用于烟花，后用于战争改变战斗方式。
+
+段落短语：
+used for（用于…）
+
+文章主旨：
+介绍中国古代四大发明（造纸、印刷、火药、指南针）的起源与影响，强调其对人类文明发展的重大贡献。

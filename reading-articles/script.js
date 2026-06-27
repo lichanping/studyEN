@@ -16,6 +16,7 @@
         tabs: document.getElementById("album-tabs"),
         albumTitle: document.getElementById("album-title"),
         list: document.getElementById("article-list"),
+        articlePicker: document.getElementById("article-picker"),
         articleTitle: document.getElementById("article-title"),
         articleContent: document.getElementById("article-content"),
         articleAudio: document.getElementById("article-audio"),
@@ -63,6 +64,11 @@
         els.searchInput.addEventListener("input", () => {
             state.searchQuery = els.searchInput.value.trim();
             renderList();
+        });
+        els.articlePicker.addEventListener("change", () => {
+            if (els.articlePicker.value) {
+                setActiveArticle(els.articlePicker.value);
+            }
         });
         if (els.articleAudio) {
             els.articleAudio.addEventListener("ended", handleAudioEnded);
@@ -123,8 +129,15 @@
         const articles = getVisibleArticles();
         els.albumTitle.textContent = album ? `${album.title}（${album.count}篇）` : "专辑";
         els.list.innerHTML = "";
+        els.articlePicker.innerHTML = "";
 
         articles.forEach((article, index) => {
+            const option = document.createElement("option");
+            option.value = article.title;
+            option.textContent = `${index + 1}. ${article.title}`;
+            option.selected = article.title === state.activeArticleTitle;
+            els.articlePicker.appendChild(option);
+
             const li = document.createElement("li");
             li.className = `article-item${article.title === state.activeArticleTitle ? " active" : ""}`;
             li.textContent = `${index + 1}. ${article.title}`;

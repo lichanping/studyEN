@@ -6,6 +6,12 @@ const ALBUM_CONFIG = [
         folder: "user_data/!【5.0】【中级】-中阶-阅读50篇",
     },
     {
+        id: "early50",
+        abbr: "CJ",
+        title: "初阶阅读50篇",
+        folder: "user_data/!【5.0】【中级】-初阶-阅读50篇",
+    },
+    {
         id: "zk",
         abbr: "ZK",
         title: "中考阅读真题",

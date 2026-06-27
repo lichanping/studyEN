@@ -1,5 +1,14 @@
-训前准备原文
-
-【1】Hello，my name is Li Hua. I'm a Chinese girl. I'm twelve. My English name is Lily. I live in Wuhan. There are four people in my family. They are my parents，my brother and I.My brother Li Ming is three years older than me.He's a middle school student，I am in No.1 Primary School. There are four buildings in our school. Our classroom is Building No.3. The building has four floors. Our classroom is on the third floor. We study Chinese，Maths，English，Art，Science，PE，Computer Studies and Social Science at school. I like Computer Studies best. I'm good at playing basketball. My hobbies are playing computer games and swimming.
-
+【1】Hello，my name is Li Hua.I'm a Chinese girl.I'm twelve.My English name is Lily.I live in Wuhan.There are four people in my family.They are my parents，my brother and I.My brother Li Ming is three years older than me.He's a middle school student，I am in No.1 Primary School.There are four buildings in our school.Our classroom is Building No.3.The building has four floors.Our classroom is on the third floor.We study Chinese，Maths，English，Art，Science，PE，Computer Studies and Social Science at school.I like Computer Studies best.I'm good at playing basketball.My hobbies are playing computer games and swimming.
 你好，我叫李华。我是一个中国女孩。我十二岁了。我的英文名叫莉莉。我住在武汉。我家有四口人。他们是我的父母、哥哥和我。我哥哥李明比我大三岁，他是一名中学生，我在第一小学上学。我们学校有四栋楼。我们的教室在 3 号楼。这栋楼有四层。我们的教室在三楼。我们在学校学习语文、数学、英语、美术、科学、体育、计算机课程和社会科学。我最喜欢计算机课程。我擅长打篮球。我的爱好是玩电脑游戏和游泳。
+
+第一段段落大意：
+李华是武汉五年级学生，家庭成员四人，哥哥读中学。李华学校有四栋楼，教室在三楼，课程丰富，她最喜欢计算机课。
+
+段落短语：
+live in（居住在…）
+three years older than（比…大三岁）
+on the third floor（在三楼）
+be good at（擅长…）
+
+文章主旨：
+介绍李华的家庭、学校及兴趣爱好，展现小学生多元化的校园生活与学习状态。
