@@ -10,10 +10,15 @@ const {
     shouldEnableContinuousPlay,
 } = require("../reading-articles/library.js");
 
-function testBuildAlbumTabsShouldExposeFourAlbumsWithAbbr() {
+function testBuildAlbumTabsShouldExposeConfiguredAlbumsWithAbbr() {
     const tabs = buildAlbumTabs(ALBUM_CONFIG);
-    assert.strictEqual(tabs.length, 4);
-    assert.deepStrictEqual(tabs.map((item) => item.abbr), ["R50", "ZK", "WC", "GY"]);
+    assert.strictEqual(tabs.length, 5);
+    assert.deepStrictEqual(tabs.map((item) => item.abbr), ["R50", "CJ", "ZK", "WC", "GY"]);
+
+    const earlyAlbum = tabs.find((item) => item.id === "early50");
+    assert.ok(earlyAlbum, "初阶阅读50篇 album should be exposed");
+    assert.strictEqual(earlyAlbum.title, "初阶阅读50篇");
+    assert.strictEqual(earlyAlbum.folder, "user_data/!【5.0】【中级】-初阶-阅读50篇");
 }
 
 function testBuildArticleEntriesShouldKeepOnlyTxtAudioPairsAndSortByChapter() {
@@ -84,7 +89,7 @@ function testShouldEnableContinuousPlayShouldDependOnSearchQuery() {
 }
 
 function run() {
-    testBuildAlbumTabsShouldExposeFourAlbumsWithAbbr();
+    testBuildAlbumTabsShouldExposeConfiguredAlbumsWithAbbr();
     testBuildArticleEntriesShouldKeepOnlyTxtAudioPairsAndSortByChapter();
     testBuildShareUrlShouldAttachAlbumAndArticle();
     testFilterArticlesShouldMatchTitleCaseInsensitive();

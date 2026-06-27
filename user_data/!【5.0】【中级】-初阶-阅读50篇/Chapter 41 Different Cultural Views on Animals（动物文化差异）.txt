@@ -1,6 +1,28 @@
-训前准备原文
-
-As we know，animals are our friends. However，the English and Chinese culture share different ideas about animals. What comes to your mind when you think about dogs in Chinese？ You might say"cute，lovely". You might say huge dogs are scary. However，in English"dog" can have different meanings. For example，"lucky dog"means"You are very lucky.""Top dog"means you are excellent or good at something.
-"Cats" shows cleverness and bravery in both cartoons and old sayings in Chinese. But in English，old sayings like"The cat shuts its eyes when stealing cream."and"A gloved cat catches no mice."mainly have bad meanings.
-Chinese people think dragons are noble and a dragon has six paws. They can both swim in deep water and fly high in the sky. Western people think dragons are evil.
+【1】As we know，animals are our friends.However，the English and Chinese culture share different ideas about animals.What comes to your mind when you think about dogs in Chinese？You might say"cute，lovely".You might say huge dogs are scary.However，in English"dog" can have different meanings.For example，"lucky dog"means"You are very lucky.""Top dog"means you are excellent or good at something.
+【2】"Cats" shows cleverness and bravery in both cartoons and old sayings in Chinese.But in English，old sayings like"The cat shuts its eyes when stealing cream."and"A gloved cat catches no mice."mainly have bad meanings.
+【3】Chinese people think dragons are noble and a dragon has six paws.They can both swim in deep water and fly high in the sky.Western people think dragons are evil.
 正如我们所知,动物是我们的朋友。然而，英文文化和中文文化对动物有着不同的看法。当你想到中文里的 “狗” 时，脑海中会浮现什么？你可能会说 “可爱、讨人喜欢”。你可能会说大狗很吓人。然而，在英语中 “dog”（狗）可能有不同的含义。例如，“lucky dog”（幸运儿）意思是 “你非常幸运”。“Top dog” 意思是你很优秀或擅长某事 。在中国，“猫” 在漫画和古谚中都体现出聪明和勇敢。但在英语中，像 “猫偷吃奶油时会闭上眼睛” 和 “戴手套的猫抓不到老鼠” 这样的古谚，主要带有贬义。中国人认为龙是高贵的，且龙有六只爪子。它们既能在深水中畅游，又能在高空中翱翔。西方人认为龙是邪恶的。
+
+第一段段落大意为：
+中西方文化中对“狗”的不同理解和象征意义。
+
+段落短语为：
+think about（想到）
+have different meanings（有不同的含义）
+
+第二段段落大意为：
+中英文中“猫”的褒贬含义差异。
+
+段落短语为：
+shows cleverness（展现聪明）
+have bad meanings（有负面含义）
+
+第三段段落大意为：
+中西方对“龙”的不同认知（神圣与邪恶）。
+
+段落短语为：
+think dragons are noble（认为龙是尊贵的）
+can swim and fly（能游泳和飞翔）
+
+文章主旨:
+通过对比狗、猫、龙在中西方文化中的象征意义，揭示了文化差异对动物形象的影响。
