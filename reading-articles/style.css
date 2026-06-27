@@ -124,11 +124,32 @@ h1 {
     padding: 14px;
 }
 
+.article-list-panel {
+    height: calc(100vh - 210px);
+    min-height: 520px;
+    display: flex;
+    flex-direction: column;
+}
+
+.article-picker {
+    display: none;
+    width: 100%;
+    margin-top: 10px;
+    border: 1px solid var(--line);
+    background: #f7f3eb;
+    border-radius: 12px;
+    padding: 12px;
+    color: var(--ink);
+    font: inherit;
+    font-weight: 600;
+}
+
 .article-list {
     list-style: none;
     margin: 10px 0 0;
     padding: 0;
-    max-height: 58vh;
+    max-height: none;
+    flex: 1;
     overflow: auto;
 }
 
@@ -201,8 +222,17 @@ h1 {
         grid-template-columns: 1fr;
     }
 
+    .article-list-panel {
+        height: auto;
+        min-height: 0;
+    }
+
+    .article-picker {
+        display: block;
+    }
+
     .article-list {
-        max-height: 34vh;
+        max-height: 42vh;
     }
 
     .article-content {

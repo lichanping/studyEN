@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-07T04:12:30.949Z",
+  "generatedAt": "2026-06-27T10:42:46.742Z",
   "albums": [
     {
       "id": "mid50",
@@ -356,6 +356,365 @@
           "title": "Chapter 50 Future Life 2035（2035 年的未来生活）",
           "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 50 Future Life 2035（2035 年的未来生活）.txt",
           "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 50 Future Life 2035（2035 年的未来生活）.mp3",
+          "order": 50
+        }
+      ]
+    },
+    {
+      "id": "early50",
+      "title": "初阶阅读50篇",
+      "abbr": "CJ",
+      "folder": "user_data/!【5.0】【中级】-初阶-阅读50篇",
+      "count": 50,
+      "articles": [
+        {
+          "album": "early50",
+          "title": "Chapter 1 Mr Going﹣to﹣do（ 要去做先生）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 1 Mr Going﹣to﹣do（ 要去做先生）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 1 Mr Going﹣to﹣do（ 要去做先生）.mp3",
+          "order": 1
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 2 The Honest Heir（诚实继承者）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 2 The Honest Heir（诚实继承者）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 2 The Honest Heir（诚实继承者）.mp3",
+          "order": 2
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 3 Sam’s Trouble（萨姆的烦恼）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 3 Sam’s Trouble（萨姆的烦恼）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 3 Sam’s Trouble（萨姆的烦恼）.mp3",
+          "order": 3
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 4 Beijing’s Famous Places（北京的名胜）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 4 Beijing’s Famous Places（北京的名胜）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 4 Beijing’s Famous Places（北京的名胜）.mp3",
+          "order": 4
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 5 Mike’s Family（迈克一家）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 5 Mike’s Family（迈克一家）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 5 Mike’s Family（迈克一家）.mp3",
+          "order": 5
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 6 Macao- A Special Place（澳门：特别之地）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 6 Macao- A Special Place（澳门：特别之地）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 6 Macao- A Special Place（澳门：特别之地）.mp3",
+          "order": 6
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 7 The Greedy Woman and the Golden Swan（贪婪的女人与金天鹅）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 7 The Greedy Woman and the Golden Swan（贪婪的女人与金天鹅）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 7 The Greedy Woman and the Golden Swan（贪婪的女人与金天鹅）.mp3",
+          "order": 7
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 8 Four Great Inventions of Ancient China（古代中国的四大发明）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 8 Four Great Inventions of Ancient China（古代中国的四大发明）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 8 Four Great Inventions of Ancient China（古代中国的四大发明）.mp3",
+          "order": 8
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 9 My Family’s Healthy Diet（我家的健康饮食）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 9 My Family’s Healthy Diet（我家的健康饮食）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 9 My Family’s Healthy Diet（我家的健康饮食）.mp3",
+          "order": 9
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 10 Lost and Found Notices（失物招领启事）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 10 Lost and Found Notices（失物招领启事）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 10 Lost and Found Notices（失物招领启事）.mp3",
+          "order": 10
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 11 A nature park（一个自然公园）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 11 A nature park（一个自然公园）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 11 A nature park（一个自然公园）.mp3",
+          "order": 11
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 12 I'm In China- Bridging Cultures Through Hands-On Experiences（《我在中国》：通过亲身体验架起文化桥梁）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 12 I'm In China- Bridging Cultures Through Hands-On Experiences（《我在中国》：通过亲身体验架起文化桥梁）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 12 I'm In China- Bridging Cultures Through Hands-On Experiences（《我在中国》：通过亲身体验架起文化桥梁）.mp3",
+          "order": 12
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 13 Li Hua’s School Life（李华的校园生活）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 13 Li Hua’s School Life（李华的校园生活）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 13 Li Hua’s School Life（李华的校园生活）.mp3",
+          "order": 13
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 14 A Changed Zoo Plan（改变的去动物园计划）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 14 A Changed Zoo Plan（改变的去动物园计划）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 14 A Changed Zoo Plan（改变的去动物园计划）.mp3",
+          "order": 14
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 15 Bruce and His Friends（布鲁斯与朋友们）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 15 Bruce and His Friends（布鲁斯与朋友们）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 15 Bruce and His Friends（布鲁斯与朋友们）.mp3",
+          "order": 15
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 16 Quan Hongchan- A Diving Star（全红婵：跳水之星）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 16 Quan Hongchan- A Diving Star（全红婵：跳水之星）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 16 Quan Hongchan- A Diving Star（全红婵：跳水之星）.mp3",
+          "order": 16
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 17 Mike’s Family and Friends（迈克的家庭与朋友）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 17 Mike’s Family and Friends（迈克的家庭与朋友）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 17 Mike’s Family and Friends（迈克的家庭与朋友）.mp3",
+          "order": 17
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 18 Mike’s Favourite Day（迈克最喜欢的一天）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 18 Mike’s Favourite Day（迈克最喜欢的一天）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 18 Mike’s Favourite Day（迈克最喜欢的一天）.mp3",
+          "order": 18
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 19 Chinese Traditional Festivals（中国传统节日）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 19 Chinese Traditional Festivals（中国传统节日）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 19 Chinese Traditional Festivals（中国传统节日）.mp3",
+          "order": 19
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 20 Weather and Seasons in the UK（英国的天气与季节）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 20 Weather and Seasons in the UK（英国的天气与季节）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 20 Weather and Seasons in the UK（英国的天气与季节）.mp3",
+          "order": 20
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 21 Peter’s Lateness- A Story of Habits and Solutions（彼得的迟到：习惯与解决之道）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 21 Peter’s Lateness- A Story of Habits and Solutions（彼得的迟到：习惯与解决之道）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 21 Peter’s Lateness- A Story of Habits and Solutions（彼得的迟到：习惯与解决之道）.mp3",
+          "order": 21
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 22 The Fox and the Rooster（狐狸与公鸡）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 22 The Fox and the Rooster（狐狸与公鸡）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 22 The Fox and the Rooster（狐狸与公鸡）.mp3",
+          "order": 22
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 23 Wang Fang’s Family（王芳的家人）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 23 Wang Fang’s Family（王芳的家人）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 23 Wang Fang’s Family（王芳的家人）.mp3",
+          "order": 23
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 24 The Lantern Festival（元宵节）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 24 The Lantern Festival（元宵节）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 24 The Lantern Festival（元宵节）.mp3",
+          "order": 24
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 25 The Spring Festival（春节）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 25 The Spring Festival（春节）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 25 The Spring Festival（春节）.mp3",
+          "order": 25
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 26 A Lesson in the Bar（酒吧里的一课）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 26 A Lesson in the Bar（酒吧里的一课）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 26 A Lesson in the Bar（酒吧里的一课）.mp3",
+          "order": 26
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 27 Linda’s Busy Sunday（琳达忙碌的周日）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 27 Linda’s Busy Sunday（琳达忙碌的周日）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 27 Linda’s Busy Sunday（琳达忙碌的周日）.mp3",
+          "order": 27
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 28 Mary and Sarah’s School Life（玛丽和莎拉的校园生活）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 28 Mary and Sarah’s School Life（玛丽和莎拉的校园生活）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 28 Mary and Sarah’s School Life（玛丽和莎拉的校园生活）.mp3",
+          "order": 28
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 29 The Snake（蛇）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 29 The Snake（蛇）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 29 The Snake（蛇）.mp3",
+          "order": 29
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 30 Jim’s Introduction（吉姆的自我介绍）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 30 Jim’s Introduction（吉姆的自我介绍）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 30 Jim’s Introduction（吉姆的自我介绍）.mp3",
+          "order": 30
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 31 Sue’s Home and Family（苏的家与家人）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 31 Sue’s Home and Family（苏的家与家人）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 31 Sue’s Home and Family（苏的家与家人）.mp3",
+          "order": 31
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 32 My English Teacher Sandy（我的英语老师桑迪）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 32 My English Teacher Sandy（我的英语老师桑迪）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 32 My English Teacher Sandy（我的英语老师桑迪）.mp3",
+          "order": 32
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 33 Jacket’s Pen Pal Letter（杰克的笔友信）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 33 Jacket’s Pen Pal Letter（杰克的笔友信）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 33 Jacket’s Pen Pal Letter（杰克的笔友信）.mp3",
+          "order": 33
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 34 Wang Yan’s Weekend Plan（王燕的周末计划）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 34 Wang Yan’s Weekend Plan（王燕的周末计划）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 34 Wang Yan’s Weekend Plan（王燕的周末计划）.mp3",
+          "order": 34
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 35 John’s School Life（约翰的校园生活）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 35 John’s School Life（约翰的校园生活）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 35 John’s School Life（约翰的校园生活）.mp3",
+          "order": 35
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 36 Amy and Lisa’s Friendship（艾米和丽莎的友谊）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 36 Amy and Lisa’s Friendship（艾米和丽莎的友谊）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 36 Amy and Lisa’s Friendship（艾米和丽莎的友谊）.mp3",
+          "order": 36
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 37 My Living Room（我的客厅）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 37 My Living Room（我的客厅）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 37 My Living Room（我的客厅）.mp3",
+          "order": 37
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 38 Chen Jie’s Sunday Plan（陈洁的周日计划）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 38 Chen Jie’s Sunday Plan（陈洁的周日计划）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 38 Chen Jie’s Sunday Plan（陈洁的周日计划）.mp3",
+          "order": 38
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 39 Mr Green’s Car Story（格林先生的车的故事）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 39 Mr Green’s Car Story（格林先生的车的故事）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 39 Mr Green’s Car Story（格林先生的车的故事）.mp3",
+          "order": 39
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 40 The Noise Kingdom（噪音王国）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 40 The Noise Kingdom（噪音王国）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 40 The Noise Kingdom（噪音王国）.mp3",
+          "order": 40
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 41 Different Cultural Views on Animals（动物文化差异）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 41 Different Cultural Views on Animals（动物文化差异）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 41 Different Cultural Views on Animals（动物文化差异）.mp3",
+          "order": 41
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 42 The Double Ninth Festival（重阳节）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 42 The Double Ninth Festival（重阳节）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 42 The Double Ninth Festival（重阳节）.mp3",
+          "order": 42
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 43 Laura’s Pen Pal Letter（劳拉的笔友信）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 43 Laura’s Pen Pal Letter（劳拉的笔友信）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 43 Laura’s Pen Pal Letter（劳拉的笔友信）.mp3",
+          "order": 43
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 44 Different Jobs（不同的职业）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 44 Different Jobs（不同的职业）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 44 Different Jobs（不同的职业）.mp3",
+          "order": 44
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 45 Amy’s School Life（艾米的校园生活）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 45 Amy’s School Life（艾米的校园生活）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 45 Amy’s School Life（艾米的校园生活）.mp3",
+          "order": 45
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 46 The Problem of Dirty Water（污水问题）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 46 The Problem of Dirty Water（污水问题）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 46 The Problem of Dirty Water（污水问题）.mp3",
+          "order": 46
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 47 Mike’s Village（迈克的村庄）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 47 Mike’s Village（迈克的村庄）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 47 Mike’s Village（迈克的村庄）.mp3",
+          "order": 47
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 48 Chen Jie’s School and Friends（陈洁的学校与朋友）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 48 Chen Jie’s School and Friends（陈洁的学校与朋友）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 48 Chen Jie’s School and Friends（陈洁的学校与朋友）.mp3",
+          "order": 48
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 49 Mid-Autumn Festival Celebration（中秋节庆祝）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 49 Mid-Autumn Festival Celebration（中秋节庆祝）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 49 Mid-Autumn Festival Celebration（中秋节庆祝）.mp3",
+          "order": 49
+        },
+        {
+          "album": "early50",
+          "title": "Chapter 50 Amy’s Happy Family（艾米的幸福家庭）",
+          "textPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/Chapter 50 Amy’s Happy Family（艾米的幸福家庭）.txt",
+          "audioPath": "user_data/!【5.0】【中级】-初阶-阅读50篇/audio/Chapter 50 Amy’s Happy Family（艾米的幸福家庭）.mp3",
           "order": 50
         }
       ]
