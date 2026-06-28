@@ -1590,9 +1590,18 @@ sourceId: 上课记录唯一标识（用于去重）</span>
 
     function removeExtraEntry(dateValue, extraId) {
         if (!Array.isArray(extraEntriesState[dateValue])) return;
+        const removedEntry = extraEntriesState[dateValue].find(function(e) { return e.id === extraId; });
         extraEntriesState[dateValue] = extraEntriesState[dateValue].filter(function(e) { return e.id !== extraId; });
         if (extraEntriesState[dateValue].length === 0) {
             delete extraEntriesState[dateValue];
+        }
+        if (removedEntry && window.ScheduleCourseMatch?.removeCustomStudentIfUnused) {
+            const nextCustomStudents = window.ScheduleCourseMatch.removeCustomStudentIfUnused(
+                loadCustomStudents(),
+                removedEntry.student,
+                extraEntriesState
+            );
+            localStorage.setItem(CUSTOM_STUDENTS_STORAGE_KEY, JSON.stringify(nextCustomStudents));
         }
         // Also clean up any time/lesson/cancellation overrides for this extra entry
         const prefix = dateValue + "::" + extraId;
@@ -1626,10 +1635,10 @@ sourceId: 上课记录唯一标识（用于去重）</span>
         const trimmed = String(name || "").trim();
         if (!trimmed) return;
         const list = loadCustomStudents();
-        if (!list.includes(trimmed)) {
-            list.push(trimmed);
-            localStorage.setItem(CUSTOM_STUDENTS_STORAGE_KEY, JSON.stringify(list));
-        }
+        const nextList = window.ScheduleCourseMatch?.prioritizeCustomStudent
+            ? window.ScheduleCourseMatch.prioritizeCustomStudent(list, trimmed)
+            : [trimmed].concat(list.filter(function (item) { return String(item || "").trim() !== trimmed; }));
+        localStorage.setItem(CUSTOM_STUDENTS_STORAGE_KEY, JSON.stringify(nextList));
     }
 
     function getLessonOverrideKey(entry, dateValue) {
@@ -2983,6 +2992,9 @@ sourceId: 上课记录唯一标识（用于去重）</span>
         for (const entry of entries || []) {
             const displayName = String(entry?.student || "").trim();
             if (!displayName) continue;
+
+            const course = String(entry?.course || "").trim();
+            if (course.includes("体验")) continue;
 
             const queryName = normalizeStudentName(displayName);
             const durationMinutes = Number(entry?.durationMinutes);

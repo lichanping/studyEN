@@ -28,6 +28,22 @@ function testNormalizeBoardRecord() {
     });
 }
 
+function testNormalizeBoardRecordShouldTreatTrialAsOneHour() {
+    const row = {
+        scheduleTime: Date.parse("2026-06-28T11:30:00+08:00"),
+        type: "TRIAL",
+        student: { name: "悦慧" }
+    };
+
+    const actual = normalizeBoardRecord(row);
+    assert.deepStrictEqual(actual, {
+        student: "悦慧",
+        date: "2026-06-28",
+        durationMinutes: 60,
+        matchState: "scheduled"
+    });
+}
+
 function testBuildCourseMatchKey() {
     const key = buildCourseMatchKey({
         student: " 陈怡睿 ",
@@ -436,6 +452,7 @@ function testBuildSalaryRowsFromCompletedRecordsShouldNotExcludeWhenNoTrainerNam
 
 function run() {
     testNormalizeBoardRecord();
+    testNormalizeBoardRecordShouldTreatTrialAsOneHour();
     testBuildCourseMatchKey();
     testHasScheduledCourse();
     testHasScheduledCourseWithAliasName();
