@@ -31,6 +31,7 @@ export function navigateToReadClass() {
 
 export const LEGACY_STUDENT_NAMES = Object.freeze(["李敏维", "季筱雯", "施博睿", "于熠凡", "陈怡睿"]);
 const LEGACY_STUDENT_NAME_SET = new Set(LEGACY_STUDENT_NAMES);
+const LOGIN_VALIDITY_MS = 30 * 24 * 60 * 60 * 1000;
 
 export function filterLegacyStudents(list) {
     if (!Array.isArray(list)) return [];
@@ -38,17 +39,15 @@ export function filterLegacyStudents(list) {
 }
 
 export function checkLoginStatus() {
-    const currentDate = new Date().toDateString(); // Get today's date
-
-    // Check if the user is logged in and if the login date is today
     const storedLoginDate = localStorage.getItem('loginDate');
+    const storedLoginTime = Number(storedLoginDate) || Date.parse(storedLoginDate || '');
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 
-    if (isLoggedIn && storedLoginDate === currentDate) {
-        // If logged in and the login date is today, allow the user to stay on the page
+    if (isLoggedIn && Number.isFinite(storedLoginTime) && Date.now() - storedLoginTime <= LOGIN_VALIDITY_MS) {
+        // If logged in and the login is still valid, allow the user to stay on the page
         // No action needed, user is allowed to stay on the page
     } else {
-        // If not logged in or the login date is not today, redirect to login.html
+        // If not logged in or the login has expired, redirect to login.html
         window.location.href = 'login.html';
     }
 }
@@ -62,14 +61,12 @@ export function validateLogin() {
     const validUsername = "jx";
     const validPassword = "jx";
 
-    const currentDate = new Date().toDateString(); // Get today's date
-
-    // Check if user is already logged in and if login is valid for today
     const storedLoginDate = localStorage.getItem('loginDate');
+    const storedLoginTime = Number(storedLoginDate) || Date.parse(storedLoginDate || '');
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 
-    if (isLoggedIn && storedLoginDate === currentDate) {
-        // If already logged in for today, skip login process
+    if (isLoggedIn && Number.isFinite(storedLoginTime) && Date.now() - storedLoginTime <= LOGIN_VALIDITY_MS) {
+        // If already logged in and still valid, skip login process
         window.location.href = 'index.html';
         return;
     }
@@ -78,7 +75,7 @@ export function validateLogin() {
     if (username === validUsername && password === validPassword) {
         // Store login state and date if credentials are correct
         localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('loginDate', currentDate);
+        localStorage.setItem('loginDate', String(Date.now()));
         window.location.href = 'index.html';
     } else {
         document.getElementById('error-message').style.display = 'block';

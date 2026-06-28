@@ -32,6 +32,7 @@
 
     function parseBoardDurationMinutes(type, fallbackMinutes) {
         var rawType = String(type || "").trim();
+        if (/TRIAL/i.test(rawType)) return 60;
         if (/MINUTE_30/i.test(rawType)) return 30;
         if (/MINUTE_60/i.test(rawType)) return 60;
         var fromType = rawType.match(/MINUTE_(\d+)/i);
@@ -481,6 +482,36 @@
         return getCourseMatchState(index, targetCourse) !== "none";
     }
 
+    function prioritizeCustomStudent(existingStudents, studentName) {
+        var trimmed = String(studentName || "").trim();
+        var list = Array.isArray(existingStudents) ? existingStudents : [];
+        if (!trimmed) return list.slice();
+
+        var withoutCurrent = list.filter(function (name) {
+            return String(name || "").trim() !== trimmed;
+        });
+        return [trimmed].concat(withoutCurrent);
+    }
+
+    function removeCustomStudentIfUnused(existingStudents, studentName, extraEntriesByDate) {
+        var trimmed = String(studentName || "").trim();
+        var list = Array.isArray(existingStudents) ? existingStudents : [];
+        if (!trimmed) return list.slice();
+
+        var state = extraEntriesByDate && typeof extraEntriesByDate === "object" ? extraEntriesByDate : {};
+        var stillUsed = Object.keys(state).some(function (dateKey) {
+            var entries = Array.isArray(state[dateKey]) ? state[dateKey] : [];
+            return entries.some(function (entry) {
+                return String(entry && entry.student || "").trim() === trimmed;
+            });
+        });
+
+        if (stillUsed) return list.slice();
+        return list.filter(function (name) {
+            return String(name || "").trim() !== trimmed;
+        });
+    }
+
     var api = {
         normalizeBoardRecord: normalizeBoardRecord,
         buildCourseMatchKey: buildCourseMatchKey,
@@ -491,7 +522,9 @@
         resolveCompletedQueryPlan: resolveCompletedQueryPlan,
         inferSalaryTypeFromCourse: inferSalaryTypeFromCourse,
         normalizeCompletedRecordForSalary: normalizeCompletedRecordForSalary,
-        buildSalaryRowsFromCompletedRecords: buildSalaryRowsFromCompletedRecords
+        buildSalaryRowsFromCompletedRecords: buildSalaryRowsFromCompletedRecords,
+        prioritizeCustomStudent: prioritizeCustomStudent,
+        removeCustomStudentIfUnused: removeCustomStudentIfUnused
     };
 
     globalScope.ScheduleCourseMatch = api;
