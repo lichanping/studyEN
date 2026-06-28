@@ -143,6 +143,51 @@ bash ./scripts/rollback_sync.sh --target HEAD~1 --yes --push
 - 当 txt 内包含中英混排内容时，脚本会优先提取英文正文后再生成音频。
 - 若目录下没有生成音频，先检查 txt 是否包含可提取的英文正文。
 
+### 阅读专辑 TXT + MP3 固化流程
+
+用于从 LXLL 课程资料生成完整阅读专辑。TXT 抓取脚本使用完整训前准备接口 `CustomerQueryCourseBookPrepareByCourseBookId`，会保存英文原文、中文译文、段落大意、短语/语言点和文章主旨；不要使用只返回原文译文的 article 接口。
+
+1. 从已登录的 Chrome 页面获取参数：
+   - `courseId`、`studentId`、`courseOrderId`：通常在当前 URL query 中。
+   - `LXLL_TOKEN_C`：Chrome DevTools Console 中读取 `localStorage.getItem("x-course-learn")`。
+   - `LXLL_USER_ID`：Chrome DevTools Console 中读取 `JSON.parse(localStorage.getItem("userProfile")).userId`。
+2. 生成完整 TXT：
+
+```bash
+LXLL_TOKEN_C="<x-course-learn>" LXLL_USER_ID="<userProfile.userId>" \
+  node scripts/fetch_course_prepare_articles.js \
+    --course-id 676022309355589 \
+    --student-id 474313 \
+    --course-order-id 153532734190083 \
+    --output-folder "!【5.0】【中级】-初阶-阅读50篇"
+```
+
+3. 生成 MP3 到同目录 `audio/`：
+
+```bash
+bash scripts/generate_article_audio.sh "!【5.0】【中级】-初阶-阅读50篇"
+```
+
+4. 更新阅读页 manifest：
+
+```bash
+npm run build:reading-manifest
+```
+
+5. 快速校验：
+
+```bash
+npm run test:reading-articles
+npm run test:reading-articles-regression
+npm run test:reading-article-tooling-docs
+```
+
+脚本帮助：
+
+```bash
+node scripts/fetch_course_prepare_articles.js --help
+```
+
 ### 唯一的 Python 调用入口
 
 ```python
