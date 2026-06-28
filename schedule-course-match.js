@@ -32,6 +32,7 @@
 
     function parseBoardDurationMinutes(type, fallbackMinutes) {
         var rawType = String(type || "").trim();
+        if (/TRIAL/i.test(rawType)) return 60;
         if (/MINUTE_30/i.test(rawType)) return 30;
         if (/MINUTE_60/i.test(rawType)) return 60;
         var fromType = rawType.match(/MINUTE_(\d+)/i);

@@ -3,6 +3,7 @@
  * TDD：测试核心逻辑，不依赖浏览器 DOM 或网络
  */
 
+const assert = require("assert");
 const { normalizeStudentName } = require("../student-name-alias.js");
 
 // ============ Mock 函数 ============
@@ -28,6 +29,9 @@ function collectQuotaNeeds(entries) {
     for (const entry of entries || []) {
         const displayName = String(entry?.student || "").trim();
         if (!displayName) continue;
+
+        const course = String(entry?.course || "").trim();
+        if (course.includes("体验")) continue;
 
         const queryName = normalizeStudentName(displayName);
         const durationMinutes = Number(entry?.durationMinutes);
@@ -73,6 +77,14 @@ function getRequiredFields(requirement) {
 }
 
 // ============ 测试用例 ============
+
+console.log("\n========== 测试 0: 体验课不参与课时余额检查 ==========");
+const trialNeeds = collectQuotaNeeds([
+    { student: "悦慧", course: "体验", durationMinutes: 60 },
+    { student: "邸睿", course: "单词", durationMinutes: 30 }
+]);
+assert.strictEqual(trialNeeds.has("悦慧"), false, "体验课学生不应进入课时余额检查");
+assert.strictEqual(trialNeeds.has("邸睿"), true, "非体验课学生仍应进入课时余额检查");
 
 console.log("\n========== 测试 1: 邸睿 60分钟阅读 + 30分钟单词 ==========");
 const test1Entries = [

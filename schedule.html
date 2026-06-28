@@ -2993,6 +2993,9 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             const displayName = String(entry?.student || "").trim();
             if (!displayName) continue;
 
+            const course = String(entry?.course || "").trim();
+            if (course.includes("体验")) continue;
+
             const queryName = normalizeStudentName(displayName);
             const durationMinutes = Number(entry?.durationMinutes);
             if (!Number.isFinite(durationMinutes) || durationMinutes <= 0) continue;
