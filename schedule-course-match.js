@@ -481,6 +481,17 @@
         return getCourseMatchState(index, targetCourse) !== "none";
     }
 
+    function prioritizeCustomStudent(existingStudents, studentName) {
+        var trimmed = String(studentName || "").trim();
+        var list = Array.isArray(existingStudents) ? existingStudents : [];
+        if (!trimmed) return list.slice();
+
+        var withoutCurrent = list.filter(function (name) {
+            return String(name || "").trim() !== trimmed;
+        });
+        return [trimmed].concat(withoutCurrent);
+    }
+
     var api = {
         normalizeBoardRecord: normalizeBoardRecord,
         buildCourseMatchKey: buildCourseMatchKey,
@@ -491,7 +502,8 @@
         resolveCompletedQueryPlan: resolveCompletedQueryPlan,
         inferSalaryTypeFromCourse: inferSalaryTypeFromCourse,
         normalizeCompletedRecordForSalary: normalizeCompletedRecordForSalary,
-        buildSalaryRowsFromCompletedRecords: buildSalaryRowsFromCompletedRecords
+        buildSalaryRowsFromCompletedRecords: buildSalaryRowsFromCompletedRecords,
+        prioritizeCustomStudent: prioritizeCustomStudent
     };
 
     globalScope.ScheduleCourseMatch = api;

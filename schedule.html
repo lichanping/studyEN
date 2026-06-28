@@ -1626,10 +1626,10 @@ sourceId: 上课记录唯一标识（用于去重）</span>
         const trimmed = String(name || "").trim();
         if (!trimmed) return;
         const list = loadCustomStudents();
-        if (!list.includes(trimmed)) {
-            list.push(trimmed);
-            localStorage.setItem(CUSTOM_STUDENTS_STORAGE_KEY, JSON.stringify(list));
-        }
+        const nextList = window.ScheduleCourseMatch?.prioritizeCustomStudent
+            ? window.ScheduleCourseMatch.prioritizeCustomStudent(list, trimmed)
+            : [trimmed].concat(list.filter(function (item) { return String(item || "").trim() !== trimmed; }));
+        localStorage.setItem(CUSTOM_STUDENTS_STORAGE_KEY, JSON.stringify(nextList));
     }
 
     function getLessonOverrideKey(entry, dateValue) {
