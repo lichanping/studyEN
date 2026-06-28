@@ -1590,9 +1590,18 @@ sourceId: 上课记录唯一标识（用于去重）</span>
 
     function removeExtraEntry(dateValue, extraId) {
         if (!Array.isArray(extraEntriesState[dateValue])) return;
+        const removedEntry = extraEntriesState[dateValue].find(function(e) { return e.id === extraId; });
         extraEntriesState[dateValue] = extraEntriesState[dateValue].filter(function(e) { return e.id !== extraId; });
         if (extraEntriesState[dateValue].length === 0) {
             delete extraEntriesState[dateValue];
+        }
+        if (removedEntry && window.ScheduleCourseMatch?.removeCustomStudentIfUnused) {
+            const nextCustomStudents = window.ScheduleCourseMatch.removeCustomStudentIfUnused(
+                loadCustomStudents(),
+                removedEntry.student,
+                extraEntriesState
+            );
+            localStorage.setItem(CUSTOM_STUDENTS_STORAGE_KEY, JSON.stringify(nextCustomStudents));
         }
         // Also clean up any time/lesson/cancellation overrides for this extra entry
         const prefix = dateValue + "::" + extraId;

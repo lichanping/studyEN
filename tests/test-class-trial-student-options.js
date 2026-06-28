@@ -1,7 +1,7 @@
 const assert = require("assert");
 const fs = require("fs");
 const path = require("path");
-const { prioritizeCustomStudent } = require("../schedule-course-match.js");
+const { prioritizeCustomStudent, removeCustomStudentIfUnused } = require("../schedule-course-match.js");
 
 function readWorkspaceFile(relativePath) {
     return fs.readFileSync(path.join(__dirname, "..", relativePath), "utf8");
@@ -29,6 +29,24 @@ function testScheduleCustomStudentShouldMoveToFront() {
     );
 }
 
+function testScheduleCustomStudentShouldBeRemovedWhenNoExtraEntryUsesIt() {
+    assert.deepStrictEqual(
+        removeCustomStudentIfUnused(["悦慧", "旧学生"], "悦慧", {
+            "2026-06-28": [{ student: "其他学生" }]
+        }),
+        ["旧学生"],
+        "删除临时添加的最后一条体验课后，应从 custom-students-v1 移除该学生"
+    );
+
+    assert.deepStrictEqual(
+        removeCustomStudentIfUnused(["悦慧", "旧学生"], "悦慧", {
+            "2026-06-28": [{ student: "悦慧" }]
+        }),
+        ["悦慧", "旧学生"],
+        "如果同名学生仍有其它临时课，应保留在 custom-students-v1"
+    );
+}
+
 function testSchedulePageShouldUseSharedPrioritizer() {
     const html = readWorkspaceFile("schedule.html");
     assert.ok(
@@ -40,6 +58,7 @@ function testSchedulePageShouldUseSharedPrioritizer() {
 function run() {
     testTrialPageShouldNotHardCodeTemporaryStudent();
     testScheduleCustomStudentShouldMoveToFront();
+    testScheduleCustomStudentShouldBeRemovedWhenNoExtraEntryUsesIt();
     testSchedulePageShouldUseSharedPrioritizer();
     console.log("test-class-trial-student-options passed");
 }

@@ -492,6 +492,25 @@
         return [trimmed].concat(withoutCurrent);
     }
 
+    function removeCustomStudentIfUnused(existingStudents, studentName, extraEntriesByDate) {
+        var trimmed = String(studentName || "").trim();
+        var list = Array.isArray(existingStudents) ? existingStudents : [];
+        if (!trimmed) return list.slice();
+
+        var state = extraEntriesByDate && typeof extraEntriesByDate === "object" ? extraEntriesByDate : {};
+        var stillUsed = Object.keys(state).some(function (dateKey) {
+            var entries = Array.isArray(state[dateKey]) ? state[dateKey] : [];
+            return entries.some(function (entry) {
+                return String(entry && entry.student || "").trim() === trimmed;
+            });
+        });
+
+        if (stillUsed) return list.slice();
+        return list.filter(function (name) {
+            return String(name || "").trim() !== trimmed;
+        });
+    }
+
     var api = {
         normalizeBoardRecord: normalizeBoardRecord,
         buildCourseMatchKey: buildCourseMatchKey,
@@ -503,7 +522,8 @@
         inferSalaryTypeFromCourse: inferSalaryTypeFromCourse,
         normalizeCompletedRecordForSalary: normalizeCompletedRecordForSalary,
         buildSalaryRowsFromCompletedRecords: buildSalaryRowsFromCompletedRecords,
-        prioritizeCustomStudent: prioritizeCustomStudent
+        prioritizeCustomStudent: prioritizeCustomStudent,
+        removeCustomStudentIfUnused: removeCustomStudentIfUnused
     };
 
     globalScope.ScheduleCourseMatch = api;
