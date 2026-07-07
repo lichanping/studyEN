@@ -1211,6 +1211,8 @@ sourceId: 上课记录唯一标识（用于去重）</span>
     const EXTRA_ENTRIES_STORAGE_KEY = "schedule-extra-entries-v1";
     const SCHEDULE_CONFIG_OVERRIDE_KEY = "schedule-config-override-v1";
     const CUSTOM_STUDENTS_STORAGE_KEY = "custom-students-v1";
+    const CURRENT_PLATFORM_STORAGE_KEY = window.APP_MEETING_CONFIG?.CURRENT_PLATFORM_STORAGE_KEY || "current-platform-v1";
+    const DEFAULT_PLATFORM_ID = window.APP_MEETING_CONFIG?.defaultPlatformId || "lixiaolaila";
     const BOARD_DEFAULT_X_UA = "ct=2&v=5.0.96";
     let cancellationState = {};
     let timeOverrideState = {};
@@ -1261,6 +1263,34 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             console.warn("读取排课覆盖配置失败，使用内置配置:", error);
         }
         return baseConfig;
+    }
+
+    function normalizePlatformId(raw) {
+        if (window.APP_MEETING_CONFIG?.normalizePlatformId) {
+            return window.APP_MEETING_CONFIG.normalizePlatformId(raw);
+        }
+        const value = String(raw || "").trim().toLowerCase();
+        return value || DEFAULT_PLATFORM_ID;
+    }
+
+    function getCurrentPlatformId() {
+        try {
+            return normalizePlatformId(localStorage.getItem(CURRENT_PLATFORM_STORAGE_KEY));
+        } catch (_) {
+            return DEFAULT_PLATFORM_ID;
+        }
+    }
+
+    function resolveEntryPlatform(entry) {
+        return normalizePlatformId(entry?.platform || DEFAULT_PLATFORM_ID);
+    }
+
+    function getMeetingTagForEntry(entry) {
+        const platformId = resolveEntryPlatform(entry);
+        if (window.APP_MEETING_CONFIG?.getTencentMeetingTagByPlatform) {
+            return window.APP_MEETING_CONFIG.getTencentMeetingTagByPlatform(platformId);
+        }
+        return window.APP_MEETING_CONFIG?.tencentMeetingTag || "#腾讯会议：957-2306-5683";
     }
 
     function toHoursText(minutes) {
@@ -1846,7 +1876,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             "🔔 重要提醒：如需取消或调整上课时间，请至少提前4小时告知学员服务中心负责人，否则系统将无法更改，仍会消耗课时。\n" +
             "🗣️ 上课小贴士：请准时进入会议室，准备好摄像头和一杯水🍵。\n" +
             "💬 请您看到消息后回复确认👌。\n\n" +
-            "📞 " + window.APP_MEETING_CONFIG.tencentMeetingTag;
+            "📞 " + getMeetingTagForEntry(entry);
     }
 
     function getMondayOfWeek(dateValue) {
@@ -3930,6 +3960,16 @@ sourceId: 上课记录唯一标识（用于去重）</span>
     const generateScheduleSalaryButton = document.getElementById("generateScheduleSalaryButton");
     generateScheduleSalaryButton?.addEventListener("click", async () => {
         try {
+            const currentPlatformId = getCurrentPlatformId();
+            if (currentPlatformId !== "lixiaolaila") {
+                const summaryEl = document.getElementById("scheduleSalarySummary");
+                if (summaryEl) {
+                    summaryEl.textContent = "工资统计口径：当前平台暂不支持工资统计（仅支持李校来啦平台工资统计）。";
+                }
+                window.showToast?.("当前平台暂不支持工资统计", 4200);
+                return;
+            }
+
             const periodType = (salaryPeriodType?.value || "month").trim();
             const monthValue = (salaryMonthPicker?.value || getCurrentMonthValue()).trim();
             const yearValue = String(salaryYearPicker?.value || getCurrentYearValue()).trim();
@@ -4003,7 +4043,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
 
     function buildAntiForgettingNoticeMessage(clock) {
         return "【抗遗忘温馨提醒-" + clock + "】\n" +
-            "👍 " + window.APP_MEETING_CONFIG.tencentMeetingTag + "\n" +
+            "👍 " + (window.APP_MEETING_CONFIG?.getCurrentTencentMeetingTag?.() || window.APP_MEETING_CONFIG.tencentMeetingTag) + "\n" +
             "⏰ 请准时参加会议，如有特殊情况无法参加，请提前告知！\n" +
             "🔔 若未按约定时间参加复习，请自主复习并打卡至学习群📱\n" +
             "🔒 仅在当天有收到提醒通知才需入会。\n" +

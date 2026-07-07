@@ -62,6 +62,7 @@ window.addEventListener("load", setInitialDateTime);
 window.addEventListener('load', updateUserNameOptions);
 window.addEventListener("load", updateLabel);
 window.addEventListener('load', initReviewWordFirstBlurAutoSync);
+window.addEventListener("load", initPlatformSelector);
 // Define user data
 const teacherData = {
     "liTeacher": {
@@ -127,6 +128,36 @@ const teacherData = {
 
 const CUSTOM_STUDENTS_STORAGE_KEY = "custom-students-v1";
 const SCHEDULE_CONFIG_OVERRIDE_KEY = "schedule-config-override-v1";
+const CURRENT_PLATFORM_STORAGE_KEY = window.APP_MEETING_CONFIG?.CURRENT_PLATFORM_STORAGE_KEY || "current-platform-v1";
+const DEFAULT_PLATFORM_ID = window.APP_MEETING_CONFIG?.defaultPlatformId || "lixiaolaila";
+
+function normalizePlatformId(raw) {
+    if (window.APP_MEETING_CONFIG?.normalizePlatformId) {
+        return window.APP_MEETING_CONFIG.normalizePlatformId(raw);
+    }
+    const value = String(raw || "").trim().toLowerCase();
+    return value || DEFAULT_PLATFORM_ID;
+}
+
+function getCurrentPlatformId() {
+    try {
+        return normalizePlatformId(localStorage.getItem(CURRENT_PLATFORM_STORAGE_KEY));
+    } catch (_) {
+        return DEFAULT_PLATFORM_ID;
+    }
+}
+
+function initPlatformSelector() {
+    const select = document.getElementById("platformSelect");
+    if (!select) return;
+
+    select.value = getCurrentPlatformId();
+    select.addEventListener("change", () => {
+        const next = normalizePlatformId(select.value);
+        localStorage.setItem(CURRENT_PLATFORM_STORAGE_KEY, next);
+        updateUserNameOptions();
+    });
+}
 
 function loadCustomStudents() {
     try {
@@ -147,8 +178,11 @@ function loadScheduleOverrideEntries() {
 }
 
 function loadScheduleOverrideStudents() {
+    const platformId = getCurrentPlatformId();
     const names = new Set();
     loadScheduleOverrideEntries().forEach((entry) => {
+        const entryPlatform = normalizePlatformId(entry?.platform || DEFAULT_PLATFORM_ID);
+        if (entryPlatform !== platformId) return;
         const name = String(entry?.student || "").trim();
         if (name) names.add(name);
     });
@@ -156,9 +190,19 @@ function loadScheduleOverrideStudents() {
 }
 
 function getMergedStudentNames(selectedTeacher) {
-    const teacherUsers = filterLegacyStudents(Object.keys(teacherData[selectedTeacher]?.users || {}));
+    const platformId = getCurrentPlatformId();
+    const teacherUsers = platformId === DEFAULT_PLATFORM_ID
+        ? filterLegacyStudents(Object.keys(teacherData[selectedTeacher]?.users || {}))
+        : [];
     const scheduleStudents = filterLegacyStudents(loadScheduleOverrideStudents());
-    const customStudents = filterLegacyStudents(loadCustomStudents());
+    const customStudents = filterLegacyStudents(loadCustomStudents().map((item) => {
+        if (typeof item === "string") {
+            return platformId === DEFAULT_PLATFORM_ID ? item : "";
+        }
+        if (!item || typeof item !== "object") return "";
+        const itemPlatform = normalizePlatformId(item.platform || DEFAULT_PLATFORM_ID);
+        return itemPlatform === platformId ? String(item.name || "") : "";
+    }).filter(Boolean));
     const merged = [];
     const seen = new Set();
 
@@ -347,7 +391,7 @@ export function handleScheduleNotificationClick() {
 请准时进入会议室，准备好摄像头和一杯水🍵，呵护嗓子。
 💬 请您看到消息后回复确认👌。
 
-📞 ${window.APP_MEETING_CONFIG.tencentMeetingTag}`;
+📞 ${(window.APP_MEETING_CONFIG?.getCurrentTencentMeetingTag?.() || window.APP_MEETING_CONFIG.tencentMeetingTag)}`;
     }
     copyToClipboard(notificationMessage);
     showLongText(`${notificationMessage}`);
