@@ -26,6 +26,12 @@
     <div class="toolbar">
         <label for="keywordInput">关键词:</label>
         <input id="keywordInput" type="text" placeholder="按学生名筛选条目">
+        <label for="platformFilter">平台:</label>
+        <select id="platformFilter">
+            <option value="all">全部</option>
+            <option value="lixiaolaila">李校来啦</option>
+            <option value="baifendii">百分缔</option>
+        </select>
         <button id="resetToBuiltinButton" title="清除本地覆盖，恢复 schedule.html 内置配置">恢复内置配置</button>
         <button id="exportOverrideButton" title="导出本地覆盖 JSON">导出本地覆盖</button>
     </div>
@@ -47,6 +53,12 @@
                 <option value="单词">单词</option>
                 <option value="阅读">阅读</option>
                 <option value="体验">体验</option>
+            </select>
+
+            <label for="platformSelect">平台</label>
+            <select id="platformSelect">
+                <option value="lixiaolaila">李校来啦</option>
+                <option value="baifendii">百分缔</option>
             </select>
 
             <label for="durationSelect">时长(分钟)</label>
@@ -90,6 +102,7 @@
         <thead>
         <tr>
             <th>学生</th>
+            <th>平台</th>
             <th>课程</th>
             <th>时长</th>
             <th>星期</th>

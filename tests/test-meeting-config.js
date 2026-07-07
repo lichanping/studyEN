@@ -4,6 +4,7 @@ const path = require("path");
 
 const ROOT = path.resolve(__dirname, "..");
 const OLD_MEETING_ID = "762-3777-6304";
+const BAIFENDI_MEETING_ID = "684-1587-8369";
 
 const filesToCheck = [
     "meeting-config.js",
@@ -21,12 +22,16 @@ function read(relativePath) {
 function testUsesCentralMeetingConfig() {
     const configContent = read("meeting-config.js");
     assert.ok(
-        configContent.includes('const MEETING_ID = "957-2306-5683";'),
-        "meeting-config.js 必须包含新的会议号配置"
+        configContent.includes('lixiaolaila: "957-2306-5683"'),
+        "meeting-config.js 必须包含李校来啦会议号配置"
     );
     assert.ok(
-        configContent.includes("const TENCENT_MEETING_TAG = `#腾讯会议：${MEETING_ID}`;"),
-        "meeting-config.js 必须生成腾讯会议标签"
+        configContent.includes(`baifendii: "${BAIFENDI_MEETING_ID}"`),
+        "meeting-config.js 必须包含百分缔会议号配置"
+    );
+    assert.ok(
+        configContent.includes("getTencentMeetingTagByPlatform"),
+        "meeting-config.js 必须提供按平台读取会议号标签的方法"
     );
 
     const implementationFiles = filesToCheck.filter((file) => file !== "meeting-config.js");
@@ -35,6 +40,10 @@ function testUsesCentralMeetingConfig() {
         assert.ok(
             !content.includes(OLD_MEETING_ID),
             `${file} 仍包含旧会议号 ${OLD_MEETING_ID}`
+        );
+        assert.ok(
+            !content.includes(BAIFENDI_MEETING_ID),
+            `${file} 不应直接硬编码百分缔会议号 ${BAIFENDI_MEETING_ID}`
         );
         assert.ok(
             content.includes("APP_MEETING_CONFIG"),

@@ -1,6 +1,7 @@
 const SCHEDULE_CONFIG_URL = "./schedule.html";
 const SCHEDULE_CONFIG_OVERRIDE_KEY = "schedule-config-override-v1";
 const CUSTOM_STUDENTS_STORAGE_KEY = "custom-students-v1";
+const DEFAULT_PLATFORM_ID = "lixiaolaila";
 const WEEK_DAYS = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
 
 const keywordInput = document.getElementById("keywordInput");
@@ -11,6 +12,8 @@ const entriesTableBody = document.getElementById("entriesTableBody");
 const entryForm = document.getElementById("entryForm");
 const entryIdInput = document.getElementById("entryId");
 const formTitle = document.getElementById("formTitle");
+const platformFilter = document.getElementById("platformFilter");
+const platformSelect = document.getElementById("platformSelect");
 const studentInput = document.getElementById("studentInput");
 const courseSelect = document.getElementById("courseSelect");
 const durationSelect = document.getElementById("durationSelect");
@@ -19,6 +22,14 @@ const timeInput = document.getElementById("timeInput");
 
 let entriesState = [];
 let baseEntriesCount = 0;
+
+function normalizePlatformId(raw) {
+    if (window.APP_MEETING_CONFIG?.normalizePlatformId) {
+        return window.APP_MEETING_CONFIG.normalizePlatformId(raw);
+    }
+    const value = String(raw || "").trim().toLowerCase();
+    return value || DEFAULT_PLATFORM_ID;
+}
 
 function generateId() {
     return Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8);
@@ -53,6 +64,7 @@ function normalizeEntry(entry) {
     const normalized = {
         id: String(entry.id || generateId()),
         student: String(entry.student || "").trim(),
+        platform: normalizePlatformId(entry.platform || DEFAULT_PLATFORM_ID),
         course: String(entry.course || "单词").trim() || "单词",
         durationMinutes: Number(entry.durationMinutes) === 30 ? 30 : 60,
         days,
@@ -106,18 +118,28 @@ function loadCustomStudents() {
     }
 }
 
-function ensureStudentRetained(name) {
+function ensureStudentRetained(name, platformId) {
     const trimmed = String(name || "").trim();
     if (!trimmed) return;
-    const list = loadCustomStudents().filter((item) => String(item || "").trim() !== trimmed);
+    const normalizedPlatform = normalizePlatformId(platformId || DEFAULT_PLATFORM_ID);
+    const list = loadCustomStudents().map((item) => {
+        if (typeof item === "string") {
+            return { name: item, platform: DEFAULT_PLATFORM_ID };
+        }
+        return {
+            name: String(item?.name || "").trim(),
+            platform: normalizePlatformId(item?.platform || DEFAULT_PLATFORM_ID)
+        };
+    }).filter((item) => item.name && !(item.name === trimmed && item.platform === normalizedPlatform));
     // 新增/编辑过的学生置顶，便于体验课页优先选择
-    list.unshift(trimmed);
+    list.unshift({ name: trimmed, platform: normalizedPlatform });
     localStorage.setItem(CUSTOM_STUDENTS_STORAGE_KEY, JSON.stringify(list));
 }
 
 function clearForm() {
     entryIdInput.value = "";
     entryForm.reset();
+    platformSelect.value = DEFAULT_PLATFORM_ID;
     courseSelect.value = "单词";
     durationSelect.value = "30";
     periodSelect.value = "晚上";
@@ -130,6 +152,7 @@ function stripForStorage(entry) {
     return {
         id: normalized.id,
         student: normalized.student,
+        platform: normalized.platform,
         course: normalized.course,
         durationMinutes: normalized.durationMinutes,
         days: normalized.days,
@@ -153,21 +176,27 @@ function renderMeta() {
 
 function renderTable() {
     const keyword = keywordInput.value.trim();
+    const platformKeyword = platformFilter?.value || "all";
     let list = entriesState;
     if (keyword) {
         list = list.filter((item) => item.student.includes(keyword));
     }
+    if (platformKeyword !== "all") {
+        list = list.filter((item) => normalizePlatformId(item.platform) === normalizePlatformId(platformKeyword));
+    }
 
     if (!list.length) {
-        entriesTableBody.innerHTML = "<tr><td colspan=\"6\">暂无条目</td></tr>";
+        entriesTableBody.innerHTML = "<tr><td colspan=\"7\">暂无条目</td></tr>";
         return;
     }
 
     entriesTableBody.innerHTML = list.map((item) => {
         const daysText = item.days.length ? item.days.join("、") : "未设置";
         const timeText = item.time ? `${item.period} ${item.time}` : item.period;
+        const platformText = item.platform === "baifendii" ? "百分缔" : "李校来啦";
         return `<tr>
             <td>${item.student}</td>
+            <td>${platformText}</td>
             <td>${item.course}</td>
             <td>${item.durationMinutes}</td>
             <td>${daysText}</td>
@@ -175,7 +204,7 @@ function renderTable() {
             <td>
                 <button data-action="edit" data-id="${item.id}">编辑</button>
                 <button data-action="delete" data-id="${item.id}">删条目</button>
-                <button data-action="delete-student" data-name="${item.student}">删该生全部(保留学生名)</button>
+                <button data-action="delete-student" data-name="${item.student}" data-platform="${item.platform}">删该生本平台条目(保留学生名)</button>
             </td>
         </tr>`;
     }).join("");
@@ -189,6 +218,7 @@ function renderAll() {
 function fillForm(item) {
     entryIdInput.value = item.id;
     studentInput.value = item.student;
+    platformSelect.value = normalizePlatformId(item.platform || DEFAULT_PLATFORM_ID);
     courseSelect.value = item.course;
     durationSelect.value = String(item.durationMinutes);
     periodSelect.value = item.period;
@@ -221,9 +251,10 @@ function handleTableAction(event) {
 
     if (action === "delete-student") {
         const name = button.dataset.name || "";
+        const platform = normalizePlatformId(button.dataset.platform || DEFAULT_PLATFORM_ID);
         if (!name) return;
-        if (!window.confirm(`确认删除 ${name} 的全部排课条目？`)) return;
-        entriesState = entriesState.filter((item) => item.student !== name);
+        if (!window.confirm(`确认删除 ${name} 在当前平台的全部排课条目？`)) return;
+        entriesState = entriesState.filter((item) => !(item.student === name && normalizePlatformId(item.platform) === platform));
         persistEntries();
         clearForm();
         renderAll();
@@ -247,6 +278,7 @@ function handleSubmit(event) {
     const payload = normalizeEntry({
         id: entryIdInput.value || generateId(),
         student,
+        platform: platformSelect.value,
         course: courseSelect.value,
         durationMinutes: Number(durationSelect.value),
         days,
@@ -256,11 +288,11 @@ function handleSubmit(event) {
 
     const idx = entriesState.findIndex((item) => item.id === payload.id);
     if (idx >= 0) {
-        ensureStudentRetained(payload.student);
+        ensureStudentRetained(payload.student, payload.platform);
         payload._legacyKey = entriesState[idx]._legacyKey || payload._legacyKey;
         entriesState[idx] = payload;
     } else {
-        ensureStudentRetained(payload.student);
+        ensureStudentRetained(payload.student, payload.platform);
         payload._legacyKey = "";
         // 新增条目放到最前，便于近期维护
         entriesState.unshift(payload);
@@ -314,6 +346,7 @@ function bindNav() {
 
 function bindEvents() {
     keywordInput.addEventListener("input", renderTable);
+    platformFilter?.addEventListener("change", renderTable);
     entryForm.addEventListener("submit", handleSubmit);
     entriesTableBody.addEventListener("click", handleTableAction);
     document.getElementById("clearFormButton").addEventListener("click", clearForm);

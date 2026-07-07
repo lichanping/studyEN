@@ -344,9 +344,11 @@ export function handleOpeningSpeechClick() {
     const userName = document.getElementById("userName").value;
     const teacherNameElement = document.getElementById("teacherName");
     const teacherName = teacherNameElement.options[teacherNameElement.selectedIndex].text;
+    const currentPlatformId = window.APP_MEETING_CONFIG?.getCurrentPlatformId?.() || "lixiaolaila";
+    const platformDisplayName = currentPlatformId === "baifendii" ? "百分缔" : "李校来啦";
 
     const openingSpeechMessage = `${userName}同学，你那边能听到我说话吗?从现在开始需要你保持摄像头的开启，这样能我更好地关注到你的状态，跟你多互动。(已经打开可以不说)<br><br>
-下面我来做一个自我介绍，我是【李校来啦】${teacherName}，以后我就是你的词汇/阅读完型/语法的专属陪练，我会陪着你一起训练和复习，那么接下来我们就开启英语学习之旅吧!`;
+下面我来做一个自我介绍，我是【${platformDisplayName}】${teacherName}，以后我就是你的词汇/阅读完型/语法的专属陪练，我会陪着你一起训练和复习，那么接下来我们就开启英语学习之旅吧!`;
 
     copyToClipboard(openingSpeechMessage);
     showAlert(`${openingSpeechMessage}`);
@@ -407,7 +409,7 @@ export function handleManagementGroupTemplateClick() {
     if (timeDifference > 0 && timeDifference <= 30) {
         outputMessage = `【抗遗忘提醒-${hour}:${minute}】<br><br>⏰我们的抗遗忘复习课还有 **${timeDifference}** 分钟开始了，请做好准备，及时进入会议室哦🔥`;
     } else {
-        outputMessage = `【抗遗忘温馨提醒-${hour}:${minute}】<br><br>👍 ${window.APP_MEETING_CONFIG.tencentMeetingTag}<br><br>⏰ 请准时参加会议，如有特殊情况无法参加，请提前告知！<br><br>🔔 若未按约定时间参加复习，请自主复习并打卡至学习群📱<br><br>🔒 仅在当天有收到提醒通知才需入会。<br><br>📢 请在抗遗忘时及时反馈是否需要取消下次安排的正课，以便妥善安排教学计划，老师为你骄傲🌹`;
+        outputMessage = `【抗遗忘温馨提醒-${hour}:${minute}】<br><br>👍 ${(window.APP_MEETING_CONFIG?.getCurrentTencentMeetingTag?.() || window.APP_MEETING_CONFIG.tencentMeetingTag)}<br><br>⏰ 请准时参加会议，如有特殊情况无法参加，请提前告知！<br><br>🔔 若未按约定时间参加复习，请自主复习并打卡至学习群📱<br><br>🔒 仅在当天有收到提醒通知才需入会。<br><br>📢 请在抗遗忘时及时反馈是否需要取消下次安排的正课，以便妥善安排教学计划，老师为你骄傲🌹`;
     }
 
     copyToClipboard(outputMessage);
