@@ -40,6 +40,10 @@ function getCurrentPlatformId() {
     }
 }
 
+function getPlatformDisplayName(platformId) {
+    return normalizePlatformId(platformId) === "baifendii" ? "百分缔" : "李校来啦";
+}
+
 function initPlatformSelector() {
     const select = document.getElementById("platformSelect");
     if (!select) return;
@@ -274,10 +278,11 @@ export function handleUnderstandSituationClick() {
 
 export function handleAntiForgettingSpeechClick() {
     const userName = document.getElementById("userName").value;
+    const platformDisplayName = getPlatformDisplayName(getCurrentPlatformId());
     const studyTime = document.getElementById("studyTime").value || 40;
     const newWord = parseInt(document.getElementById("newWord").value) || 30;
     const forgetWord = parseInt(document.getElementById("forgetWord").value) || 0;
-    let message = `好的，那我们今天的体验之旅就到此结束啦。<br>${userName}今天的表现非常棒哦！<br>在${studyTime}分钟内就记住了${newWord - forgetWord}个单词，专注且高效，为你点赞！<br>希望你喜欢李校来啦这个平台，也<span style="color:red; font-weight:bold;">对我今天的陪伴服务感到满意</span>，相信你在持续使用这个产品的过程中，还能得到更大的提升！<br>加油！<br>接下来我们会有连续三天的抗遗忘复习，我也会陪伴你完成，${userName}什么时间方便来进行抗遗忘呢。<br>期待下次的见面哦，拜拜！<br>`;
+    let message = `好的，那我们今天的体验之旅就到此结束啦。<br>${userName}今天的表现非常棒哦！<br>在${studyTime}分钟内就记住了${newWord - forgetWord}个单词，专注且高效，为你点赞！<br>希望你喜欢${platformDisplayName}这个平台，也<span style="color:red; font-weight:bold;">对我今天的陪伴服务感到满意</span>，相信你在持续使用这个产品的过程中，还能得到更大的提升！<br>加油！<br>接下来我们会有连续三天的抗遗忘复习，我也会陪伴你完成，${userName}什么时间方便来进行抗遗忘呢。<br>期待下次的见面哦，拜拜！<br>`;
     copyToClipboard(message);
     showAlert(`${message}`);
 }

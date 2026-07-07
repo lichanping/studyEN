@@ -31,4 +31,9 @@ assert(
     'classTrial.js 应按当前平台过滤排课学生'
 );
 
+assert(
+    !trialJs.includes('希望你喜欢李校来啦这个平台'),
+    'classTrial.js 抗遗忘话术不应硬编码平台名'
+);
+
 console.log('test-read-trial-platform-ui passed');
