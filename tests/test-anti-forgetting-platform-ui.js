@@ -15,8 +15,8 @@ assert(
 );
 
 assert(
-    content.includes('platform') && content.includes('option') && content.includes('textContent'),
-    'anti-forgetting.html 学员选项应带平台信息，避免 dirty data'
+    content.includes('platformSelect') && content.includes('addStudent('),
+    'anti-forgetting.html 应通过平台筛选器过滤学员，避免 dirty data'
 );
 
 console.log('test-anti-forgetting-platform-ui passed');

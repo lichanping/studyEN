@@ -525,8 +525,7 @@
         sorted.forEach((name) => {
             const opt = document.createElement('option');
             opt.value = name;
-            const itemPlatform = students.get(name) || platformId;
-            opt.textContent = `${name}（${getPlatformDisplayName(itemPlatform)}）`;
+            opt.textContent = name;
             userNameSelect.appendChild(opt);
         });
 
