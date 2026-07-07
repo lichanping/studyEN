@@ -29,6 +29,7 @@ const setInitialDateTime = () => {
 window.addEventListener("load", setInitialDateTime);
 window.addEventListener('load', updateUserNameOptions2);
 window.addEventListener("load", updateLabel2);
+window.addEventListener("load", initPlatformSelector);
 
 const teacherData = {
     "liTeacher": {
@@ -85,6 +86,35 @@ const teacherData = {
 
 const CUSTOM_STUDENTS_STORAGE_KEY = "custom-students-v1";
 const SCHEDULE_CONFIG_OVERRIDE_KEY = "schedule-config-override-v1";
+const CURRENT_PLATFORM_STORAGE_KEY = window.APP_MEETING_CONFIG?.CURRENT_PLATFORM_STORAGE_KEY || "current-platform-v1";
+const DEFAULT_PLATFORM_ID = window.APP_MEETING_CONFIG?.defaultPlatformId || "lixiaolaila";
+
+function normalizePlatformId(raw) {
+    if (window.APP_MEETING_CONFIG?.normalizePlatformId) {
+        return window.APP_MEETING_CONFIG.normalizePlatformId(raw);
+    }
+    const value = String(raw || "").trim().toLowerCase();
+    return value || DEFAULT_PLATFORM_ID;
+}
+
+function getCurrentPlatformId() {
+    try {
+        return normalizePlatformId(localStorage.getItem(CURRENT_PLATFORM_STORAGE_KEY));
+    } catch (_) {
+        return DEFAULT_PLATFORM_ID;
+    }
+}
+
+function initPlatformSelector() {
+    const select = document.getElementById("platformSelect");
+    if (!select) return;
+    select.value = getCurrentPlatformId();
+    select.addEventListener("change", () => {
+        const next = normalizePlatformId(select.value);
+        localStorage.setItem(CURRENT_PLATFORM_STORAGE_KEY, next);
+        updateUserNameOptions2();
+    });
+}
 
 function loadCustomStudents() {
     try {
@@ -98,11 +128,14 @@ function loadCustomStudents() {
 
 function loadScheduleOverrideStudents() {
     try {
+        const platformId = getCurrentPlatformId();
         const raw = localStorage.getItem(SCHEDULE_CONFIG_OVERRIDE_KEY);
         const parsed = raw ? JSON.parse(raw) : null;
         const entries = Array.isArray(parsed?.entries) ? parsed.entries : [];
         const names = new Set();
         entries.forEach((entry) => {
+            const entryPlatform = normalizePlatformId(entry?.platform || DEFAULT_PLATFORM_ID);
+            if (entryPlatform !== platformId) return;
             const name = String(entry?.student || "").trim();
             if (name) names.add(name);
         });
@@ -115,13 +148,25 @@ function loadScheduleOverrideStudents() {
 export function updateUserNameOptions2() {
     const userNameSelect = document.getElementById("userName");
     const selectedTeacher = document.getElementById("teacherName").value;
+    const platformId = getCurrentPlatformId();
     const previousValue = userNameSelect.value;
     userNameSelect.innerHTML = "";
-    const teacherUserNames = filterLegacyStudents(Object.keys(teacherData[selectedTeacher].users));
+    const teacherUserNames = platformId === DEFAULT_PLATFORM_ID
+        ? filterLegacyStudents(Object.keys(teacherData[selectedTeacher].users))
+        : [];
+
+    const customStudentNames = loadCustomStudents().map((item) => {
+        if (typeof item === "string") {
+            return platformId === DEFAULT_PLATFORM_ID ? item : "";
+        }
+        if (!item || typeof item !== "object") return "";
+        const itemPlatform = normalizePlatformId(item.platform || DEFAULT_PLATFORM_ID);
+        return itemPlatform === platformId ? String(item.name || "") : "";
+    }).filter(Boolean);
 
     const mergedNames = [];
     const seen = new Set();
-    [teacherUserNames, filterLegacyStudents(loadScheduleOverrideStudents()), filterLegacyStudents(loadCustomStudents())].forEach((list) => {
+    [teacherUserNames, filterLegacyStudents(loadScheduleOverrideStudents()), filterLegacyStudents(customStudentNames)].forEach((list) => {
         list.forEach((name) => {
             const trimmed = String(name || "").trim();
             if (!trimmed || seen.has(trimmed)) return;
@@ -226,9 +271,9 @@ export function handleScheduleNotificationClick() {
 
     let notificationMessage;
     if (timeDifference > 0 && timeDifference <= 30) {
-        notificationMessage = `【${thisDateTime}】<br><br>⏰我们的在线课程还有 **${timeDifference}** 分钟开始了，请做好准备，及时进入会议室哦🔥<br><br>👍${window.APP_MEETING_CONFIG.tencentMeetingTag}`;
+        notificationMessage = `【${thisDateTime}】<br><br>⏰我们的在线课程还有 **${timeDifference}** 分钟开始了，请做好准备，及时进入会议室哦🔥<br><br>👍${(window.APP_MEETING_CONFIG?.getCurrentTencentMeetingTag?.() || window.APP_MEETING_CONFIG.tencentMeetingTag)}`;
     } else {
-        notificationMessage = `【${thisDateTime}】<br><br>亲爱的 ⭐ ${userName} 用户您好! 我们的英语《${courseLabel}》学习时间安排在${formattedDateTime}。<br><br>⏰请学员及家长准时进入会议室上课，并确保摄像头🎥开启。感谢您的配合！<br><br>👍${window.APP_MEETING_CONFIG.tencentMeetingTag}`;
+        notificationMessage = `【${thisDateTime}】<br><br>亲爱的 ⭐ ${userName} 用户您好! 我们的英语《${courseLabel}》学习时间安排在${formattedDateTime}。<br><br>⏰请学员及家长准时进入会议室上课，并确保摄像头🎥开启。感谢您的配合！<br><br>👍${(window.APP_MEETING_CONFIG?.getCurrentTencentMeetingTag?.() || window.APP_MEETING_CONFIG.tencentMeetingTag)}`;
     }
 
     copyToClipboard(notificationMessage);

@@ -21,4 +21,14 @@ assert(
     '工资导出列表应包含课程名称列，便于核对课型识别'
 );
 
+assert(
+    scheduleContent.includes('CURRENT_PLATFORM_STORAGE_KEY') || scheduleContent.includes('current-platform-v1'),
+    'schedule.html 应读取当前平台，用于工资统计平台开关'
+);
+
+assert(
+    scheduleContent.includes('暂不支持工资统计') || scheduleContent.includes('仅支持李校来啦平台工资统计'),
+    'schedule.html 应对非李校平台给出工资统计不可用提示'
+);
+
 console.log('test-schedule-salary-ui passed');

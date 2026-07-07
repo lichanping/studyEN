@@ -1053,6 +1053,11 @@
 
             <span class="controls-break" aria-hidden="true"></span>
             <button id="viewTotalHoursButton" type="button">查看课时数</button>
+            <label for="platformSelect">平台：</label>
+            <select id="platformSelect">
+                <option value="lixiaolaila">李校来啦</option>
+                <option value="baifendii">百分缔</option>
+            </select>
             <button id="setupLxLoginButton" type="button">设置登录信息</button>
             <button id="antiForgettingNotifyButton" class="important-primary-btn" type="button">抗遗忘通知</button>
             <label for="antiForgettingStartTime">提醒时间：</label>
@@ -1211,6 +1216,8 @@ sourceId: 上课记录唯一标识（用于去重）</span>
     const EXTRA_ENTRIES_STORAGE_KEY = "schedule-extra-entries-v1";
     const SCHEDULE_CONFIG_OVERRIDE_KEY = "schedule-config-override-v1";
     const CUSTOM_STUDENTS_STORAGE_KEY = "custom-students-v1";
+    const CURRENT_PLATFORM_STORAGE_KEY = window.APP_MEETING_CONFIG?.CURRENT_PLATFORM_STORAGE_KEY || "current-platform-v1";
+    const DEFAULT_PLATFORM_ID = window.APP_MEETING_CONFIG?.defaultPlatformId || "lixiaolaila";
     const BOARD_DEFAULT_X_UA = "ct=2&v=5.0.96";
     let cancellationState = {};
     let timeOverrideState = {};
@@ -1261,6 +1268,39 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             console.warn("读取排课覆盖配置失败，使用内置配置:", error);
         }
         return baseConfig;
+    }
+
+    function normalizePlatformId(raw) {
+        if (window.APP_MEETING_CONFIG?.normalizePlatformId) {
+            return window.APP_MEETING_CONFIG.normalizePlatformId(raw);
+        }
+        const value = String(raw || "").trim().toLowerCase();
+        return value || DEFAULT_PLATFORM_ID;
+    }
+
+    function getCurrentPlatformId() {
+        try {
+            return normalizePlatformId(localStorage.getItem(CURRENT_PLATFORM_STORAGE_KEY));
+        } catch (_) {
+            return DEFAULT_PLATFORM_ID;
+        }
+    }
+
+    function resolveEntryPlatform(entry) {
+        return normalizePlatformId(entry?.platform || DEFAULT_PLATFORM_ID);
+    }
+
+    function getPlatformDisplayName(platformId) {
+        const normalized = normalizePlatformId(platformId);
+        return normalized === "baifendii" ? "百分缔" : "李校来啦";
+    }
+
+    function getMeetingTagForEntry(entry) {
+        const platformId = resolveEntryPlatform(entry);
+        if (window.APP_MEETING_CONFIG?.getTencentMeetingTagByPlatform) {
+            return window.APP_MEETING_CONFIG.getTencentMeetingTagByPlatform(platformId);
+        }
+        return window.APP_MEETING_CONFIG?.tencentMeetingTag || "#腾讯会议：957-2306-5683";
     }
 
     function toHoursText(minutes) {
@@ -1568,7 +1608,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
         window.dispatchEvent(new Event("schedule-updated"));
     }
 
-    function addExtraEntry(dateValue, studentName, course, durationMinutes, period) {
+    function addExtraEntry(dateValue, studentName, course, durationMinutes, period, platformId) {
         if (!extraEntriesState[dateValue]) {
             extraEntriesState[dateValue] = [];
         }
@@ -1576,6 +1616,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
         const newEntry = {
             id: extraId,
             student: studentName,
+            platform: normalizePlatformId(platformId || getCurrentPlatformId()),
             course: course,
             durationMinutes: durationMinutes,
             period: period || "晚上",
@@ -1846,7 +1887,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             "🔔 重要提醒：如需取消或调整上课时间，请至少提前4小时告知学员服务中心负责人，否则系统将无法更改，仍会消耗课时。\n" +
             "🗣️ 上课小贴士：请准时进入会议室，准备好摄像头和一杯水🍵。\n" +
             "💬 请您看到消息后回复确认👌。\n\n" +
-            "📞 " + window.APP_MEETING_CONFIG.tencentMeetingTag;
+            "📞 " + getMeetingTagForEntry(entry);
     }
 
     function getMondayOfWeek(dateValue) {
@@ -1964,6 +2005,18 @@ sourceId: 上课记录唯一标识（用于去重）</span>
         var durationSelect = document.createElement("select");
         durationSelect.innerHTML = '<option value="30">0.5小时</option><option value="60">1小时</option>';
 
+        var platformSelect = document.createElement("select");
+        [
+            { value: "lixiaolaila", label: "李校来啦" },
+            { value: "baifendii", label: "百分缔" }
+        ].forEach(function (item) {
+            var opt = document.createElement("option");
+            opt.value = item.value;
+            opt.textContent = item.label;
+            platformSelect.appendChild(opt);
+        });
+        platformSelect.value = getCurrentPlatformId();
+
         var addBtn = document.createElement("button");
         addBtn.type = "button";
         addBtn.textContent = "确认添加";
@@ -1978,7 +2031,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
                 student = studentSelect.value;
             }
             if (!student) { showToast("请选择学生"); return; }
-            addExtraEntry(dateValue, student, courseSelect.value, Number(durationSelect.value), "晚上");
+            addExtraEntry(dateValue, student, courseSelect.value, Number(durationSelect.value), "晚上", platformSelect.value);
             form.remove();
             onChange();
         });
@@ -1988,7 +2041,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
         cancelBtn.textContent = "取消";
         cancelBtn.addEventListener("click", function() { form.remove(); });
 
-        form.append(studentSelect, customNameInput, courseSelect, durationSelect, addBtn, cancelBtn);
+        form.append(studentSelect, customNameInput, courseSelect, durationSelect, platformSelect, addBtn, cancelBtn);
         titleEl.insertAdjacentElement("afterend", form);
     }
 
@@ -2050,6 +2103,10 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             const student = document.createElement("span");
             student.className = "student";
             student.textContent = item.student;
+
+            const platform = document.createElement("span");
+            platform.className = "extra-tag";
+            platform.textContent = getPlatformDisplayName(resolveEntryPlatform(item));
 
             const course = document.createElement("select");
             course.className = "inline-course-select course";
@@ -2157,7 +2214,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
                 actionGroup.appendChild(deleteBtn);
             }
 
-            mainGroup.append(time, timeInput, student, course, duration, endTimeSpan, status);
+            mainGroup.append(time, timeInput, student, platform, course, duration, endTimeSpan, status);
             if (item._isExtra) {
                 const extraTag = document.createElement("span");
                 extraTag.className = "extra-tag";
@@ -2993,6 +3050,9 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             const displayName = String(entry?.student || "").trim();
             if (!displayName) continue;
 
+            const platformId = normalizePlatformId(entry?.platform || DEFAULT_PLATFORM_ID);
+            if (platformId !== "lixiaolaila") continue;
+
             const course = String(entry?.course || "").trim();
             if (course.includes("体验")) continue;
 
@@ -3795,7 +3855,29 @@ sourceId: 上课记录唯一标识（用于去重）</span>
 
     let hasAutoQuotaChecked = false;
 
-    async function runScheduleQuotaCheck() {
+    async function runScheduleQuotaCheck(options = {}) {
+        const isSilent = Boolean(options?.silent);
+        const currentPlatformId = getCurrentPlatformId();
+        if (currentPlatformId !== "lixiaolaila") {
+            const metaEl = document.getElementById("quotaCheckMeta");
+            const container = document.getElementById("quotaCheckResults");
+            const topAbnormalBlock = document.getElementById("topAbnormalQuotaBlock");
+            const topAbnormalResults = document.getElementById("topAbnormalQuotaResults");
+            if (metaEl) {
+                metaEl.textContent = "当前平台暂不支持查看课时数（仅支持李校来啦平台）。";
+            }
+            if (container) {
+                container.className = "empty";
+                container.textContent = "当前平台暂不支持查看课时数。";
+            }
+            if (topAbnormalBlock) topAbnormalBlock.style.display = "none";
+            if (topAbnormalResults) topAbnormalResults.innerHTML = "";
+            if (!isSilent) {
+                window.showToast?.("当前平台暂不支持查看课时数", 4200);
+            }
+            return;
+        }
+
         try {
             const datePicker = document.getElementById("datePicker");
             const baseDate = String(datePicker?.value || "").trim() || dateToYmd(new Date());
@@ -3809,7 +3891,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
 
     const viewTotalHoursButton = document.getElementById("viewTotalHoursButton");
     viewTotalHoursButton?.addEventListener("click", async () => {
-        await runScheduleQuotaCheck();
+        await runScheduleQuotaCheck({ silent: false });
         await refreshBoardScheduleMatches();
     });
 
@@ -3930,6 +4012,16 @@ sourceId: 上课记录唯一标识（用于去重）</span>
     const generateScheduleSalaryButton = document.getElementById("generateScheduleSalaryButton");
     generateScheduleSalaryButton?.addEventListener("click", async () => {
         try {
+            const currentPlatformId = getCurrentPlatformId();
+            if (currentPlatformId !== "lixiaolaila") {
+                const summaryEl = document.getElementById("scheduleSalarySummary");
+                if (summaryEl) {
+                    summaryEl.textContent = "工资统计口径：当前平台暂不支持工资统计（仅支持李校来啦平台工资统计）。";
+                }
+                window.showToast?.("当前平台暂不支持工资统计", 4200);
+                return;
+            }
+
             const periodType = (salaryPeriodType?.value || "month").trim();
             const monthValue = (salaryMonthPicker?.value || getCurrentMonthValue()).trim();
             const yearValue = String(salaryYearPicker?.value || getCurrentYearValue()).trim();
@@ -3986,9 +4078,19 @@ sourceId: 上课记录唯一标识（用于去重）</span>
         console.error("自动补录昨天失败:", error);
     }
 
+    const platformSelect = document.getElementById("platformSelect");
+    if (platformSelect) {
+        platformSelect.value = getCurrentPlatformId();
+        platformSelect.addEventListener("change", () => {
+            const next = normalizePlatformId(platformSelect.value);
+            localStorage.setItem(CURRENT_PLATFORM_STORAGE_KEY, next);
+            runScheduleQuotaCheck({ silent: true });
+        });
+    }
+
     if (!hasAutoQuotaChecked) {
         hasAutoQuotaChecked = true;
-        runScheduleQuotaCheck();
+        runScheduleQuotaCheck({ silent: true });
     }
 
     refreshScheduleSalarySummary();
@@ -4003,7 +4105,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
 
     function buildAntiForgettingNoticeMessage(clock) {
         return "【抗遗忘温馨提醒-" + clock + "】\n" +
-            "👍 " + window.APP_MEETING_CONFIG.tencentMeetingTag + "\n" +
+            "👍 " + (window.APP_MEETING_CONFIG?.getCurrentTencentMeetingTag?.() || window.APP_MEETING_CONFIG.tencentMeetingTag) + "\n" +
             "⏰ 请准时参加会议，如有特殊情况无法参加，请提前告知！\n" +
             "🔔 若未按约定时间参加复习，请自主复习并打卡至学习群📱\n" +
             "🔒 仅在当天有收到提醒通知才需入会。\n" +

@@ -21,14 +21,50 @@ window.addEventListener("load", setInitialDateTime);
 
 const SCHEDULE_CONFIG_OVERRIDE_KEY = "schedule-config-override-v1";
 const CUSTOM_STUDENTS_STORAGE_KEY = "custom-students-v1";
+const CURRENT_PLATFORM_STORAGE_KEY = window.APP_MEETING_CONFIG?.CURRENT_PLATFORM_STORAGE_KEY || "current-platform-v1";
+const DEFAULT_PLATFORM_ID = window.APP_MEETING_CONFIG?.defaultPlatformId || "lixiaolaila";
+
+function normalizePlatformId(raw) {
+    if (window.APP_MEETING_CONFIG?.normalizePlatformId) {
+        return window.APP_MEETING_CONFIG.normalizePlatformId(raw);
+    }
+    const value = String(raw || "").trim().toLowerCase();
+    return value || DEFAULT_PLATFORM_ID;
+}
+
+function getCurrentPlatformId() {
+    try {
+        return normalizePlatformId(localStorage.getItem(CURRENT_PLATFORM_STORAGE_KEY));
+    } catch (_) {
+        return DEFAULT_PLATFORM_ID;
+    }
+}
+
+function getPlatformDisplayName(platformId) {
+    return normalizePlatformId(platformId) === "baifendii" ? "百分缔" : "李校来啦";
+}
+
+function initPlatformSelector() {
+    const select = document.getElementById("platformSelect");
+    if (!select) return;
+    select.value = getCurrentPlatformId();
+    select.addEventListener("change", () => {
+        const next = normalizePlatformId(select.value);
+        localStorage.setItem(CURRENT_PLATFORM_STORAGE_KEY, next);
+        updateTrialUserOptions();
+    });
+}
 
 function loadScheduleOverrideStudents() {
     try {
+        const platformId = getCurrentPlatformId();
         const raw = localStorage.getItem(SCHEDULE_CONFIG_OVERRIDE_KEY);
         const parsed = raw ? JSON.parse(raw) : null;
         const entries = Array.isArray(parsed?.entries) ? parsed.entries : [];
         const names = new Set();
         entries.forEach((entry) => {
+            const entryPlatform = normalizePlatformId(entry?.platform || DEFAULT_PLATFORM_ID);
+            if (entryPlatform !== platformId) return;
             const name = String(entry?.student || "").trim();
             if (name) names.add(name);
         });
@@ -51,6 +87,7 @@ function loadCustomStudents() {
 function updateTrialUserOptions() {
     const userNameSelect = document.getElementById("userName");
     if (!userNameSelect) return;
+    const platformId = getCurrentPlatformId();
 
     const previousValue = userNameSelect.value;
     const originalOptions = Array.from(userNameSelect.options).map((opt) => ({
@@ -58,17 +95,30 @@ function updateTrialUserOptions() {
         text: String(opt.textContent || "").trim()
     })).filter((item) => item.value);
 
+    const filteredCustomStudents = loadCustomStudents().map((item) => {
+        if (typeof item === "string") {
+            return platformId === DEFAULT_PLATFORM_ID ? item : "";
+        }
+        if (!item || typeof item !== "object") return "";
+        const itemPlatform = normalizePlatformId(item.platform || DEFAULT_PLATFORM_ID);
+        return itemPlatform === platformId ? String(item.name || "") : "";
+    }).filter(Boolean);
+
+    const filteredOriginalOptions = platformId === DEFAULT_PLATFORM_ID
+        ? originalOptions
+        : [];
+
     // MVP: 新增/最近维护的学生优先展示在最顶部（custom-students-v1 在管理页会 move-to-front）
     const priorityStudents = [];
     const seenPriority = new Set();
-    [...filterLegacyStudents(loadCustomStudents()), ...filterLegacyStudents(loadScheduleOverrideStudents())].forEach((name) => {
+    [...filterLegacyStudents(filteredCustomStudents), ...filterLegacyStudents(loadScheduleOverrideStudents())].forEach((name) => {
         const trimmed = String(name || "").trim();
         if (!trimmed || seenPriority.has(trimmed)) return;
         seenPriority.add(trimmed);
         priorityStudents.push(trimmed);
     });
 
-    const originalTextByValue = new Map(originalOptions.map((item) => [item.value, item.text || item.value]));
+    const originalTextByValue = new Map(filteredOriginalOptions.map((item) => [item.value, item.text || item.value]));
     userNameSelect.innerHTML = "";
 
     const appended = new Set();
@@ -81,7 +131,7 @@ function updateTrialUserOptions() {
         appended.add(name);
     });
 
-    originalOptions.forEach((item) => {
+    filteredOriginalOptions.forEach((item) => {
         if (!item.value || appended.has(item.value)) return;
         const option = document.createElement("option");
         option.value = item.value;
@@ -97,6 +147,7 @@ function updateTrialUserOptions() {
 
 // Attach the function to the "load" event of the window
 window.addEventListener("load", updateTrialUserOptions);
+window.addEventListener("load", initPlatformSelector);
 
 // JavaScript code for the button click functions
 export function handleScheduleNotificationClick() {
@@ -106,7 +157,7 @@ export function handleScheduleNotificationClick() {
     const classDateTime = document.getElementById("classDateTime").value;
 
     // Create the notification message with the dynamic date and time
-    const notificationMessage = `【体验课-${formatDateTime(classDateTime)}】<br><br>亲爱的 ${userName} 用户您好!<br><br>我们为您安排的语言体验课程即将到来，请提前做好时间安排。以下是您的会议室链接：<br><br>${window.APP_MEETING_CONFIG.tencentMeetingTag}<br><br>🔔 温馨提醒：<br><br>- 请提前下载并安装【腾讯会议】应用，方便顺利进入课堂。 <br><br>- 电脑🖥️、笔记本💻、平板📱都可使用。<br><br>- 请提前检查 摄像头 和 音频设备，确保它们正常工作。台式电脑用户请务必佩戴耳机和音响。<br><br>我们期待与您一起开启这段精彩的语言学习体验之旅！`;
+    const notificationMessage = `【体验课-${formatDateTime(classDateTime)}】<br><br>亲爱的 ${userName} 用户您好!<br><br>我们为您安排的语言体验课程即将到来，请提前做好时间安排。以下是您的会议室链接：<br><br>${(window.APP_MEETING_CONFIG?.getCurrentTencentMeetingTag?.() || window.APP_MEETING_CONFIG.tencentMeetingTag)}<br><br>🔔 温馨提醒：<br><br>- 请提前下载并安装【腾讯会议】应用，方便顺利进入课堂。 <br><br>- 电脑🖥️、笔记本💻、平板📱都可使用。<br><br>- 请提前检查 摄像头 和 音频设备，确保它们正常工作。台式电脑用户请务必佩戴耳机和音响。<br><br>我们期待与您一起开启这段精彩的语言学习体验之旅！`;
 
     copyToClipboard(notificationMessage);
     showLongText(`${notificationMessage}`);
@@ -127,7 +178,7 @@ export function handlePreMeetingReminderClick() {
 - 体验服务家长要全程陪伴，但切勿打扰孩子，保持环境安静；
 - 因为全程阅读单词，会口渴，给孩子准备一杯温水🚰🚰️哦~感谢配合~<br>
 上课地址如下：
-${window.APP_MEETING_CONFIG.tencentMeetingTag}`;
+${(window.APP_MEETING_CONFIG?.getCurrentTencentMeetingTag?.() || window.APP_MEETING_CONFIG.tencentMeetingTag)}`;
 
     copyToClipboard(reminderMessage);
     showLongText(`${reminderMessage}`);
@@ -227,10 +278,11 @@ export function handleUnderstandSituationClick() {
 
 export function handleAntiForgettingSpeechClick() {
     const userName = document.getElementById("userName").value;
+    const platformDisplayName = getPlatformDisplayName(getCurrentPlatformId());
     const studyTime = document.getElementById("studyTime").value || 40;
     const newWord = parseInt(document.getElementById("newWord").value) || 30;
     const forgetWord = parseInt(document.getElementById("forgetWord").value) || 0;
-    let message = `好的，那我们今天的体验之旅就到此结束啦。<br>${userName}今天的表现非常棒哦！<br>在${studyTime}分钟内就记住了${newWord - forgetWord}个单词，专注且高效，为你点赞！<br>希望你喜欢李校来啦这个平台，也<span style="color:red; font-weight:bold;">对我今天的陪伴服务感到满意</span>，相信你在持续使用这个产品的过程中，还能得到更大的提升！<br>加油！<br>接下来我们会有连续三天的抗遗忘复习，我也会陪伴你完成，${userName}什么时间方便来进行抗遗忘呢。<br>期待下次的见面哦，拜拜！<br>`;
+    let message = `好的，那我们今天的体验之旅就到此结束啦。<br>${userName}今天的表现非常棒哦！<br>在${studyTime}分钟内就记住了${newWord - forgetWord}个单词，专注且高效，为你点赞！<br>希望你喜欢${platformDisplayName}这个平台，也<span style="color:red; font-weight:bold;">对我今天的陪伴服务感到满意</span>，相信你在持续使用这个产品的过程中，还能得到更大的提升！<br>加油！<br>接下来我们会有连续三天的抗遗忘复习，我也会陪伴你完成，${userName}什么时间方便来进行抗遗忘呢。<br>期待下次的见面哦，拜拜！<br>`;
     copyToClipboard(message);
     showAlert(`${message}`);
 }

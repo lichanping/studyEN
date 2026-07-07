@@ -289,6 +289,11 @@
         <div class="row">
             <label for="userName">学员：</label>
             <select id="userName"></select>
+            <label for="platformSelect">平台：</label>
+            <select id="platformSelect">
+                <option value="lixiaolaila">李校来啦</option>
+                <option value="baifendii">百分缔</option>
+            </select>
             <label for="reviewTime">复习时间：</label>
             <input type="datetime-local" id="reviewTime">
             <button id="noReviewTodayButton" type="button">今日无复习</button>
@@ -376,6 +381,28 @@
     const SCHEDULE_CONFIG_OVERRIDE_KEY = 'schedule-config-override-v1';
     const CUSTOM_STUDENTS_STORAGE_KEY = 'custom-students-v1';
     const EXTRA_ENTRIES_STORAGE_KEY = 'schedule-extra-entries-v1';
+    const CURRENT_PLATFORM_STORAGE_KEY = window.APP_MEETING_CONFIG?.CURRENT_PLATFORM_STORAGE_KEY || 'current-platform-v1';
+    const DEFAULT_PLATFORM_ID = window.APP_MEETING_CONFIG?.defaultPlatformId || 'lixiaolaila';
+
+    function normalizePlatformId(raw) {
+        if (window.APP_MEETING_CONFIG?.normalizePlatformId) {
+            return window.APP_MEETING_CONFIG.normalizePlatformId(raw);
+        }
+        const value = String(raw || '').trim().toLowerCase();
+        return value || DEFAULT_PLATFORM_ID;
+    }
+
+    function getCurrentPlatformId() {
+        try {
+            return normalizePlatformId(localStorage.getItem(CURRENT_PLATFORM_STORAGE_KEY));
+        } catch (_) {
+            return DEFAULT_PLATFORM_ID;
+        }
+    }
+
+    function getPlatformDisplayName(platformId) {
+        return normalizePlatformId(platformId) === 'baifendii' ? '百分缔' : '李校来啦';
+    }
 
     function normalizeStudentName(value) {
         const trimmed = String(value || '').trim();
@@ -418,15 +445,25 @@
 
     async function loadStudentOptions() {
         const userNameSelect = document.getElementById('userName');
-        const students = new Set();
+        const platformId = getCurrentPlatformId();
+        const students = new Map();
+
+        function addStudent(name, candidatePlatform) {
+            const trimmed = String(name || '').trim();
+            if (!trimmed) return;
+            const normalizedPlatform = normalizePlatformId(candidatePlatform || DEFAULT_PLATFORM_ID);
+            if (normalizedPlatform !== platformId) return;
+            if (!students.has(trimmed)) {
+                students.set(trimmed, normalizedPlatform);
+            }
+        }
 
         try {
             const overrideRaw = localStorage.getItem(SCHEDULE_CONFIG_OVERRIDE_KEY);
             const overrideConfig = overrideRaw ? JSON.parse(overrideRaw) : null;
             if (overrideConfig && Array.isArray(overrideConfig.entries)) {
                 (overrideConfig.entries || []).forEach((entry) => {
-                    const name = String(entry?.student || '').trim();
-                    if (name) students.add(name);
+                    addStudent(entry?.student, entry?.platform);
                 });
             }
         } catch (_) {
@@ -436,9 +473,12 @@
         try {
             const customRaw = localStorage.getItem(CUSTOM_STUDENTS_STORAGE_KEY);
             const customStudents = customRaw ? JSON.parse(customRaw) : [];
-            (Array.isArray(customStudents) ? customStudents : []).forEach((name) => {
-                const trimmed = String(name || '').trim();
-                if (trimmed) students.add(trimmed);
+            (Array.isArray(customStudents) ? customStudents : []).forEach((item) => {
+                if (typeof item === 'string') {
+                    addStudent(item, DEFAULT_PLATFORM_ID);
+                    return;
+                }
+                addStudent(item?.name, item?.platform);
             });
         } catch (_) {
             // fallback below
@@ -450,8 +490,7 @@
             const extraState = extraRaw ? JSON.parse(extraRaw) : {};
             Object.values(extraState || {}).forEach((rows) => {
                 (Array.isArray(rows) ? rows : []).forEach((entry) => {
-                    const name = String(entry?.student || '').trim();
-                    if (name) students.add(name);
+                    addStudent(entry?.student, entry?.platform);
                 });
             });
         } catch (_) {
@@ -466,7 +505,7 @@
                 const configText = doc.getElementById('schedule-config')?.textContent || '{}';
                 const config = JSON.parse(configText);
                 (config.entries || []).forEach((entry) => {
-                    if (entry && entry.student) students.add(String(entry.student).trim());
+                    addStudent(entry?.student, entry?.platform);
                 });
             }
         } catch (_) {
@@ -477,11 +516,11 @@
             const key = localStorage.key(i) || '';
             if (key.endsWith('_classStatistics')) {
                 const name = key.replace(/_classStatistics$/, '').trim();
-                if (name) students.add(name);
+                addStudent(name, DEFAULT_PLATFORM_ID);
             }
         }
 
-        const sorted = commonFunctions.filterLegacyStudents(Array.from(students)).sort((a, b) => a.localeCompare(b, 'zh-CN'));
+        const sorted = commonFunctions.filterLegacyStudents(Array.from(students.keys())).sort((a, b) => a.localeCompare(b, 'zh-CN'));
         userNameSelect.innerHTML = '';
         sorted.forEach((name) => {
             const opt = document.createElement('option');
@@ -496,6 +535,17 @@
             opt.textContent = '同学';
             userNameSelect.appendChild(opt);
         }
+    }
+
+    const antiForgettingPlatformSelect = document.getElementById('platformSelect');
+    if (antiForgettingPlatformSelect) {
+        antiForgettingPlatformSelect.value = getCurrentPlatformId();
+        antiForgettingPlatformSelect.addEventListener('change', async () => {
+            const next = normalizePlatformId(antiForgettingPlatformSelect.value);
+            localStorage.setItem(CURRENT_PLATFORM_STORAGE_KEY, next);
+            await loadStudentOptions();
+            clearFormFields();
+        });
     }
 
     function setDefaultReviewTime() {
