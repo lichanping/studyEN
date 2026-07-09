@@ -5,6 +5,7 @@ const path = require("path");
 const ROOT = path.resolve(__dirname, "..");
 const OLD_MEETING_ID = "762-3777-6304";
 const BAIFENDI_MEETING_ID = "684-1587-8369";
+const MAISUIYINGYU_MEETING_ID = "569-8084-0547";
 
 const filesToCheck = [
     "meeting-config.js",
@@ -22,12 +23,16 @@ function read(relativePath) {
 function testUsesCentralMeetingConfig() {
     const configContent = read("meeting-config.js");
     assert.ok(
-        configContent.includes('lixiaolaila: "957-2306-5683"'),
+        configContent.includes('id: "lixiaolaila"') && configContent.includes('meetingId: "957-2306-5683"'),
         "meeting-config.js 必须包含李校来啦会议号配置"
     );
     assert.ok(
-        configContent.includes(`baifendii: "${BAIFENDI_MEETING_ID}"`),
+        configContent.includes('id: "baifendii"') && configContent.includes(`meetingId: "${BAIFENDI_MEETING_ID}"`),
         "meeting-config.js 必须包含百分缔会议号配置"
+    );
+    assert.ok(
+        configContent.includes('id: "maisuiyingyu"') && configContent.includes(`meetingId: "${MAISUIYINGYU_MEETING_ID}"`),
+        "meeting-config.js 必须包含麦穗英语会议号配置"
     );
     assert.ok(
         configContent.includes("getTencentMeetingTagByPlatform"),
