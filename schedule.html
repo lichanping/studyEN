@@ -1057,6 +1057,7 @@
             <select id="platformSelect">
                 <option value="lixiaolaila">李校来啦</option>
                 <option value="baifendii">百分缔</option>
+                <option value="maisuiyingyu">麦穗英语</option>
             </select>
             <button id="setupLxLoginButton" type="button">设置登录信息</button>
             <button id="antiForgettingNotifyButton" class="important-primary-btn" type="button">抗遗忘通知</button>
@@ -1291,8 +1292,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
     }
 
     function getPlatformDisplayName(platformId) {
-        const normalized = normalizePlatformId(platformId);
-        return normalized === "baifendii" ? "百分缔" : "李校来啦";
+        return window.APP_MEETING_CONFIG?.getPlatformDisplayName?.(platformId) || "李校来啦";
     }
 
     function getMeetingTagForEntry(entry) {
@@ -2006,15 +2006,9 @@ sourceId: 上课记录唯一标识（用于去重）</span>
         durationSelect.innerHTML = '<option value="30">0.5小时</option><option value="60">1小时</option>';
 
         var platformSelect = document.createElement("select");
-        [
-            { value: "lixiaolaila", label: "李校来啦" },
-            { value: "baifendii", label: "百分缔" }
-        ].forEach(function (item) {
-            var opt = document.createElement("option");
-            opt.value = item.value;
-            opt.textContent = item.label;
-            platformSelect.appendChild(opt);
-        });
+        if (window.APP_MEETING_CONFIG?.populatePlatformSelect) {
+            window.APP_MEETING_CONFIG.populatePlatformSelect(platformSelect, { selectedValue: getCurrentPlatformId() });
+        }
         platformSelect.value = getCurrentPlatformId();
 
         var addBtn = document.createElement("button");
@@ -4080,6 +4074,9 @@ sourceId: 上课记录唯一标识（用于去重）</span>
 
     const platformSelect = document.getElementById("platformSelect");
     if (platformSelect) {
+        if (window.APP_MEETING_CONFIG?.populatePlatformSelect) {
+            window.APP_MEETING_CONFIG.populatePlatformSelect(platformSelect, { selectedValue: getCurrentPlatformId() });
+        }
         platformSelect.value = getCurrentPlatformId();
         platformSelect.addEventListener("change", () => {
             const next = normalizePlatformId(platformSelect.value);

@@ -293,6 +293,7 @@
             <select id="platformSelect">
                 <option value="lixiaolaila">李校来啦</option>
                 <option value="baifendii">百分缔</option>
+                <option value="maisuiyingyu">麦穗英语</option>
             </select>
             <label for="reviewTime">复习时间：</label>
             <input type="datetime-local" id="reviewTime">
@@ -401,7 +402,7 @@
     }
 
     function getPlatformDisplayName(platformId) {
-        return normalizePlatformId(platformId) === 'baifendii' ? '百分缔' : '李校来啦';
+        return window.APP_MEETING_CONFIG?.getPlatformDisplayName?.(platformId) || '李校来啦';
     }
 
     function normalizeStudentName(value) {
@@ -539,6 +540,9 @@
 
     const antiForgettingPlatformSelect = document.getElementById('platformSelect');
     if (antiForgettingPlatformSelect) {
+        if (window.APP_MEETING_CONFIG?.populatePlatformSelect) {
+            window.APP_MEETING_CONFIG.populatePlatformSelect(antiForgettingPlatformSelect, { selectedValue: getCurrentPlatformId() });
+        }
         antiForgettingPlatformSelect.value = getCurrentPlatformId();
         antiForgettingPlatformSelect.addEventListener('change', async () => {
             const next = normalizePlatformId(antiForgettingPlatformSelect.value);

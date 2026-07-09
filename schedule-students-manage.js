@@ -31,6 +31,15 @@ function normalizePlatformId(raw) {
     return value || DEFAULT_PLATFORM_ID;
 }
 
+if (window.APP_MEETING_CONFIG?.populatePlatformSelect) {
+    window.APP_MEETING_CONFIG.populatePlatformSelect(platformFilter, { includeAllOption: true, selectedValue: platformFilter?.value || "all" });
+    window.APP_MEETING_CONFIG.populatePlatformSelect(platformSelect, { selectedValue: DEFAULT_PLATFORM_ID });
+}
+
+function getPlatformDisplayName(platformId) {
+    return window.APP_MEETING_CONFIG?.getPlatformDisplayName?.(platformId) || "李校来啦";
+}
+
 function generateId() {
     return Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8);
 }
@@ -193,7 +202,7 @@ function renderTable() {
     entriesTableBody.innerHTML = list.map((item) => {
         const daysText = item.days.length ? item.days.join("、") : "未设置";
         const timeText = item.time ? `${item.period} ${item.time}` : item.period;
-        const platformText = item.platform === "baifendii" ? "百分缔" : "李校来啦";
+        const platformText = getPlatformDisplayName(item.platform);
         return `<tr>
             <td>${item.student}</td>
             <td>${platformText}</td>
