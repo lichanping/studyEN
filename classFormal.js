@@ -150,7 +150,9 @@ function getCurrentPlatformId() {
 function initPlatformSelector() {
     const select = document.getElementById("platformSelect");
     if (!select) return;
-
+    if (window.APP_MEETING_CONFIG?.populatePlatformSelect) {
+        window.APP_MEETING_CONFIG.populatePlatformSelect(select, { selectedValue: getCurrentPlatformId() });
+    }
     select.value = getCurrentPlatformId();
     select.addEventListener("change", () => {
         const next = normalizePlatformId(select.value);

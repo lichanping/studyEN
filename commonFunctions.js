@@ -345,7 +345,7 @@ export function handleOpeningSpeechClick() {
     const teacherNameElement = document.getElementById("teacherName");
     const teacherName = teacherNameElement.options[teacherNameElement.selectedIndex].text;
     const currentPlatformId = window.APP_MEETING_CONFIG?.getCurrentPlatformId?.() || "lixiaolaila";
-    const platformDisplayName = currentPlatformId === "baifendii" ? "百分缔" : "李校来啦";
+    const platformDisplayName = window.APP_MEETING_CONFIG?.getPlatformDisplayName?.(currentPlatformId) || "李校来啦";
 
     const openingSpeechMessage = `${userName}同学，你那边能听到我说话吗?从现在开始需要你保持摄像头的开启，这样能我更好地关注到你的状态，跟你多互动。(已经打开可以不说)<br><br>
 下面我来做一个自我介绍，我是【${platformDisplayName}】${teacherName}，以后我就是你的词汇/阅读完型/语法的专属陪练，我会陪着你一起训练和复习，那么接下来我们就开启英语学习之旅吧!`;

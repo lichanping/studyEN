@@ -41,12 +41,15 @@ function getCurrentPlatformId() {
 }
 
 function getPlatformDisplayName(platformId) {
-    return normalizePlatformId(platformId) === "baifendii" ? "百分缔" : "李校来啦";
+    return window.APP_MEETING_CONFIG?.getPlatformDisplayName?.(platformId) || "李校来啦";
 }
 
 function initPlatformSelector() {
     const select = document.getElementById("platformSelect");
     if (!select) return;
+    if (window.APP_MEETING_CONFIG?.populatePlatformSelect) {
+        window.APP_MEETING_CONFIG.populatePlatformSelect(select, { selectedValue: getCurrentPlatformId() });
+    }
     select.value = getCurrentPlatformId();
     select.addEventListener("change", () => {
         const next = normalizePlatformId(select.value);
