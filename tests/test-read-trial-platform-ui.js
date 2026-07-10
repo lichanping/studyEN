@@ -50,8 +50,8 @@ assert(
 );
 
 assert(
-    trialHtml.includes('commonFunctions.selfReviewClick'),
-    '体验课页的课后复习方式按钮也应复用 commonFunctions.selfReviewClick，避免文案分叉'
+    trialHtml.includes('script.selfReviewClick'),
+    '体验课页的课后复习方式按钮应使用体验课独立 selfReviewClick 文案'
 );
 
 assert(
@@ -65,8 +65,8 @@ assert(
 );
 
 assert(
-    !trialJs.includes('体验课】3次抗遗忘复习'),
-    '体验课页不应继续保留单独的旧版课后复习文案'
+    trialJs.includes('3天抗遗忘复习'),
+    '体验课课后复习文案应包含3天抗遗忘复习规则'
 );
 
 console.log('test-read-trial-platform-ui passed');
