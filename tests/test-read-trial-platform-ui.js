@@ -12,6 +12,7 @@ const trialHtml = read('class-trial.html');
 const commonFunctions = read('commonFunctions.js');
 const readJs = read('classRead.js');
 const trialJs = read('classTrial.js');
+const expectedSelfReviewMessage = '📚 今日作业布置（必做）<br><br>1. 笔头作业：打印【每日单词表】，看中文版写英文，看英文版写中文；对照批改后拍照发群打卡。建议每天练1遍，落实会拼会写。<br><br>2. 口头作业：新学单词大声朗读2遍，录音或视频发群打卡。<br><br>⏰ 截止：今晚22:20前<br>📌 复习规则：坚持21天抗遗忘复习，做到看到英文会读、知道中文；当天遗忘的单词及时加入生词本巩固。<br>☀️ 继续加油，坚持会更有收获。';
 
 assert(
     readHtml.includes('id="platformSelect"'),
@@ -54,15 +55,8 @@ assert(
 );
 
 assert(
-    commonFunctions.includes('📚 课后复习安排') &&
-    commonFunctions.includes('1. 今日笔头作业（必做）') &&
-    commonFunctions.includes('2. 今日口头作业') &&
-    commonFunctions.includes('打印【每日单词表】') &&
-    commonFunctions.includes('新学单词大声朗读2遍') &&
-    commonFunctions.includes('坚持21天抗遗忘复习') &&
-    commonFunctions.includes('两项作业都要完成') &&
-    commonFunctions.includes('截止：今晚22:20前'),
-    'commonFunctions.selfReviewClick 应提供统一且精简的课后复习文案，并将21天抗遗忘复习放到最后作为规则'
+    commonFunctions.includes(expectedSelfReviewMessage),
+    'commonFunctions.selfReviewClick 应与确认后的作业布置文案完全一致，包含空白行'
 );
 
 assert(
