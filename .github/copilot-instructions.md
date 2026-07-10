@@ -49,6 +49,8 @@ These instructions apply to all coding tasks in this repository.
   - what test was added/updated first,
   - what implementation was changed after the failing test,
   - which tests were run and their result.
+- After every code change, always provide exactly one concise recommended commit message for the user to use when committing.
+- That commit message should be the shortest good option, not a list of alternatives.
 
 ## Exception Policy
 
