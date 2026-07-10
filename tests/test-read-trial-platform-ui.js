@@ -65,8 +65,8 @@ assert(
 );
 
 assert(
-    trialJs.includes('3天抗遗忘复习'),
-    '体验课课后复习文案应包含3天抗遗忘复习规则'
+    trialJs.includes('【体验课】3次抗遗忘复习') && trialJs.includes('生词本') && trialJs.includes('会拼会写'),
+    '体验课课后复习文案应恢复为历史独立文案（3次抗遗忘复习）'
 );
 
 console.log('test-read-trial-platform-ui passed');
