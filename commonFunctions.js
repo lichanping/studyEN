@@ -1563,7 +1563,7 @@ export function displayToast(message) {
 }
 
 export function selfReviewClick() {
-    const feedbackMessage = `📚 今日作业布置（必做）<br><br>1. 笔头作业：打印【每日单词表】，看中文版写英文，看英文版写中文；对照批改后拍照发群打卡。建议每天练1遍，落实会拼会写。<br><br>2. 口头作业：新学单词大声朗读2遍，录音或视频发群打卡。<br><br>⏰ 截止：今晚22:20前<br>📌 复习规则：坚持21天抗遗忘复习，做到看到英文会读、知道中文；当天遗忘的单词及时加入生词本巩固。<br>☀️ 继续加油，坚持会更有收获。`
+    const feedbackMessage = `📚 今日作业布置（必做）<br>1. 笔头作业：打印【每日单词表】，看中文版写英文，看英文版写中文；对照批改后拍照发群打卡。建议每天练1遍，落实会拼会写。<br>2. 口头作业：新学单词大声朗读2遍，录音或视频发群打卡。<br><br>⏰ 截止：今晚22:20前<br>📌 复习规则：坚持21天抗遗忘复习，做到看到英文会读、知道中文；当天遗忘的单词及时加入生词本巩固。<br>☀️ 继续加油，坚持会更有收获。`
     copyToClipboard(feedbackMessage);
     showLongText(`${feedbackMessage}`);
 }
