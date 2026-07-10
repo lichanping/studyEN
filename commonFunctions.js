@@ -1006,7 +1006,7 @@ export function getRandomFeedback() {
 }
 
 export function copyToClipboard(text) {
-    const filteredText = text.replace(/<br><br>/g, '\n').replace(/<br>/g, '\n');
+    const filteredText = text.replace(/<br><br>/g, '\n\n').replace(/<br>/g, '\n');
     const textarea = document.createElement('textarea');
     textarea.value = filteredText;
     document.body.appendChild(textarea);
