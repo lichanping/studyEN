@@ -60,6 +60,11 @@ assert(
 );
 
 assert(
+    commonFunctions.includes("text.replace(/<br><br>/g, '\\n\\n').replace(/<br>/g, '\\n')"),
+    'copyToClipboard 应保留 <br><br> 对应的空白行，避免截止时间前的空行丢失'
+);
+
+assert(
     !trialJs.includes('体验课】3次抗遗忘复习'),
     '体验课页不应继续保留单独的旧版课后复习文案'
 );
