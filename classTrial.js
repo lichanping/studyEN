@@ -1,4 +1,4 @@
-import {copyToClipboard, getRandomMotto, showAlert, showLongText, storeClassStatistics, validateBeforeClassFeedbackSubmit, filterLegacyStudents} from './commonFunctions.js'
+import {copyToClipboard, getRandomMotto, showAlert, showLongText, storeClassStatistics, validateBeforeClassFeedbackSubmit, filterLegacyStudents, resolveClassFeedbackDurationHours} from './commonFunctions.js'
 // Attach the function when the page loads
 // window.addEventListener("load", copyToClipboard);
 const setInitialDateTime = () => {
@@ -20,6 +20,7 @@ const setInitialDateTime = () => {
 window.addEventListener("load", setInitialDateTime);
 
 const SCHEDULE_CONFIG_OVERRIDE_KEY = "schedule-config-override-v1";
+const EXTRA_ENTRIES_STORAGE_KEY = "schedule-extra-entries-v1";
 const CUSTOM_STUDENTS_STORAGE_KEY = "custom-students-v1";
 const CURRENT_PLATFORM_STORAGE_KEY = window.APP_MEETING_CONFIG?.CURRENT_PLATFORM_STORAGE_KEY || "current-platform-v1";
 const DEFAULT_PLATFORM_ID = window.APP_MEETING_CONFIG?.defaultPlatformId || "lixiaolaila";
@@ -44,6 +45,16 @@ function getPlatformDisplayName(platformId) {
     return window.APP_MEETING_CONFIG?.getPlatformDisplayName?.(platformId) || "李校来啦";
 }
 
+function getDefaultTrialDurationHours(platformId) {
+    return normalizePlatformId(platformId) === "maisuiyingyu" ? "0.5" : "1";
+}
+
+function syncTrialDurationDefaultByPlatform() {
+    const durationSelect = document.getElementById("classDuration");
+    if (!durationSelect) return;
+    durationSelect.value = getDefaultTrialDurationHours(getCurrentPlatformId());
+}
+
 function initPlatformSelector() {
     const select = document.getElementById("platformSelect");
     if (!select) return;
@@ -54,6 +65,7 @@ function initPlatformSelector() {
     select.addEventListener("change", () => {
         const next = normalizePlatformId(select.value);
         localStorage.setItem(CURRENT_PLATFORM_STORAGE_KEY, next);
+        syncTrialDurationDefaultByPlatform();
         updateTrialUserOptions();
     });
 }
@@ -70,6 +82,29 @@ function loadScheduleOverrideStudents() {
             if (entryPlatform !== platformId) return;
             const name = String(entry?.student || "").trim();
             if (name) names.add(name);
+        });
+        return [...names];
+    } catch (_) {
+        return [];
+    }
+}
+
+function loadScheduleExtraTrialStudents() {
+    try {
+        const platformId = getCurrentPlatformId();
+        const raw = localStorage.getItem(EXTRA_ENTRIES_STORAGE_KEY);
+        const parsed = raw ? JSON.parse(raw) : {};
+        const names = new Set();
+        Object.values(parsed && typeof parsed === "object" ? parsed : {}).forEach((entries) => {
+            if (!Array.isArray(entries)) return;
+            entries.forEach((entry) => {
+                const entryPlatform = normalizePlatformId(entry?.platform || DEFAULT_PLATFORM_ID);
+                if (entryPlatform !== platformId) return;
+                const course = String(entry?.course || "体验").trim();
+                if (course !== "体验") return;
+                const name = String(entry?.student || "").trim();
+                if (name) names.add(name);
+            });
         });
         return [...names];
     } catch (_) {
@@ -114,7 +149,11 @@ function updateTrialUserOptions() {
     // MVP: 新增/最近维护的学生优先展示在最顶部（custom-students-v1 在管理页会 move-to-front）
     const priorityStudents = [];
     const seenPriority = new Set();
-    [...filterLegacyStudents(filteredCustomStudents), ...filterLegacyStudents(loadScheduleOverrideStudents())].forEach((name) => {
+    [
+        ...filterLegacyStudents(filteredCustomStudents),
+        ...filterLegacyStudents(loadScheduleOverrideStudents()),
+        ...filterLegacyStudents(loadScheduleExtraTrialStudents())
+    ].forEach((name) => {
         const trimmed = String(name || "").trim();
         if (!trimmed || seenPriority.has(trimmed)) return;
         seenPriority.add(trimmed);
@@ -151,6 +190,7 @@ function updateTrialUserOptions() {
 // Attach the function to the "load" event of the window
 window.addEventListener("load", updateTrialUserOptions);
 window.addEventListener("load", initPlatformSelector);
+window.addEventListener("load", syncTrialDurationDefaultByPlatform);
 
 // JavaScript code for the button click functions
 export function handleScheduleNotificationClick() {
@@ -251,8 +291,8 @@ ${getRandomMotto()}`;
 
     if (classDateTime) {
         const classDate = new Date(classDateTime).toISOString().split('T')[0];
-        // 体验课固定1小时，单价40元
-        storeClassStatistics(userName, classDate, newWord, 0, 1, "体验课");
+        const classDurationHours = await resolveClassFeedbackDurationHours("体验课");
+        storeClassStatistics(userName, classDate, newWord, 0, classDurationHours, "体验课");
     } else {
         alert("请选择有效的课程时间");
     }

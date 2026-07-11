@@ -55,11 +55,23 @@ function testSchedulePageShouldUseSharedPrioritizer() {
     );
 }
 
+function testTrialPageShouldLoadTemporaryTrialStudentsByPlatform() {
+    const js = readWorkspaceFile("classTrial.js");
+    assert.ok(
+        js.includes('EXTRA_ENTRIES_STORAGE_KEY = "schedule-extra-entries-v1"')
+            && js.includes("loadScheduleExtraTrialStudents")
+            && js.includes('entry?.course || "体验"')
+            && js.includes("entryPlatform !== platformId"),
+        "体验课页应读取 schedule 临时排课中的当前平台体验课学生，避免百分缔临时体验课学生下拉为空"
+    );
+}
+
 function run() {
     testTrialPageShouldNotHardCodeTemporaryStudent();
     testScheduleCustomStudentShouldMoveToFront();
     testScheduleCustomStudentShouldBeRemovedWhenNoExtraEntryUsesIt();
     testSchedulePageShouldUseSharedPrioritizer();
+    testTrialPageShouldLoadTemporaryTrialStudentsByPlatform();
     console.log("test-class-trial-student-options passed");
 }
 

@@ -5,6 +5,7 @@
 
 const assert = require("assert");
 const { normalizeStudentName } = require("../student-name-alias.js");
+const LEGACY_STUDENT_NAMES = new Set(["李敏维", "季筱雯", "施博睿", "于熠凡", "陈怡睿"]);
 
 // ============ Mock 函数 ============
 
@@ -29,6 +30,7 @@ function collectQuotaNeeds(entries) {
     for (const entry of entries || []) {
         const displayName = String(entry?.student || "").trim();
         if (!displayName) continue;
+        if (LEGACY_STUDENT_NAMES.has(displayName)) continue;
 
         const course = String(entry?.course || "").trim();
         if (course.includes("体验")) continue;
@@ -148,54 +150,20 @@ const isAnomalous_1D =
     (test1Req.requiredAccompanyHours > 0 && (accompany_1D === null || accompany_1D < test1Req.requiredAccompanyHours));
 console.log(`60分钟 0 < 需求 ${formatQuotaNeed(test1Req.requiredQuota60)} => 异常: ${isAnomalous_1D} ✓`);
 
-// ============ 测试 2: 只有 30分钟课程 ==========
-console.log("\n========== 测试 2: 陈怡睿 只有 30分钟单词课 ==========");
+// ============ 测试 2: legacy 学生不参与课时余额检查 ============
+console.log("\n========== 测试 2: legacy 学生不参与课时余额检查 ==========");
 const test2Entries = [
     { student: "陈怡睿", course: "单词", durationMinutes: 30 }
 ];
 const test2Needs = collectQuotaNeeds(test2Entries);
-const test2Req = test2Needs.get("陈怡睿");
-console.log("需求:", {
-    quota30: test2Req.requiredQuota30,
-    quota60: test2Req.requiredQuota60,
-    maxDurationMinutes: test2Req.maxDurationMinutes,
-    requiredAccompanyHours: test2Req.requiredAccompanyHours
-});
+assert.strictEqual(test2Needs.has("陈怡睿"), false, "legacy 学生陈怡睿不应进入课时余额检查");
 
-console.log("\n场景 A：陈怡睿陪练剩余 0.5 小时（充足，max=0.5）");
-const apiResponse_2A = { quota30: "1", quota60: "0", quotaAccompany: "0.5" };
-const quota30_2A = toQuotaNumber(apiResponse_2A.quota30);
-const quota60_2A = toQuotaNumber(apiResponse_2A.quota60);
-const accompany_2A = toQuotaNumber(apiResponse_2A.quotaAccompany);
-const isAnomalous_2A = 
-    (test2Req.requiredQuota30 > 0 && (quota30_2A === null || quota30_2A < test2Req.requiredQuota30)) ||
-    (test2Req.requiredQuota60 > 0 && (quota60_2A === null || quota60_2A < test2Req.requiredQuota60)) ||
-    (test2Req.requiredAccompanyHours > 0 && (accompany_2A === null || accompany_2A < test2Req.requiredAccompanyHours));
-console.log(`陪练 0.5 >= 需求 ${formatQuotaNeed(test2Req.requiredAccompanyHours)} => 异常: ${isAnomalous_2A} ✓`);
-
-// ============ 测试 3: 只有 60分钟课程 ==========
-console.log("\n========== 测试 3: 季筱雯 只有 60分钟单词课 ==========");
+// ============ 测试 3: legacy 60分钟学生不参与课时余额检查 ============
+console.log("\n========== 测试 3: legacy 60分钟学生不参与课时余额检查 ==========");
 const test3Entries = [
     { student: "季筱雯", course: "单词", durationMinutes: 60 }
 ];
 const test3Needs = collectQuotaNeeds(test3Entries);
-const test3Req = test3Needs.get("季筱雯");
-console.log("需求:", {
-    quota30: test3Req.requiredQuota30,
-    quota60: test3Req.requiredQuota60,
-    maxDurationMinutes: test3Req.maxDurationMinutes,
-    requiredAccompanyHours: test3Req.requiredAccompanyHours
-});
-
-console.log("\n场景 A：季筱雯陪练剩余 1.0 小时（充足，max=1.0）");
-const apiResponse_3A = { quota30: "0", quota60: "1", quotaAccompany: "1.0" };
-const quota30_3A = toQuotaNumber(apiResponse_3A.quota30);
-const quota60_3A = toQuotaNumber(apiResponse_3A.quota60);
-const accompany_3A = toQuotaNumber(apiResponse_3A.quotaAccompany);
-const isAnomalous_3A = 
-    (test3Req.requiredQuota30 > 0 && (quota30_3A === null || quota30_3A < test3Req.requiredQuota30)) ||
-    (test3Req.requiredQuota60 > 0 && (quota60_3A === null || quota60_3A < test3Req.requiredQuota60)) ||
-    (test3Req.requiredAccompanyHours > 0 && (accompany_3A === null || accompany_3A < test3Req.requiredAccompanyHours));
-console.log(`陪练 1.0 >= 需求 ${formatQuotaNeed(test3Req.requiredAccompanyHours)} => 异常: ${isAnomalous_3A} ✓`);
+assert.strictEqual(test3Needs.has("季筱雯"), false, "legacy 学生季筱雯不应进入课时余额检查");
 
 console.log("\n========== 所有测试完成 ==========\n");

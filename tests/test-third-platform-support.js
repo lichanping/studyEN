@@ -38,6 +38,13 @@ function run() {
         "anti-forgetting.html"
     ].forEach(assertSupportsMaisuiyingyu);
 
+    const scheduleManageHtml = read("schedule-students-manage.html");
+    assert(
+        scheduleManageHtml.indexOf('src="meeting-config.js"') >= 0
+            && scheduleManageHtml.indexOf('src="meeting-config.js"') < scheduleManageHtml.indexOf('src="schedule-students-manage.js"'),
+        "schedule-students-manage.html 应在页面脚本前加载平台配置，确保列表展示所选平台名"
+    );
+
     const trialJs = read("classTrial.js");
     assert(
         !trialJs.includes('? "百分缔" : "李校来啦"'),

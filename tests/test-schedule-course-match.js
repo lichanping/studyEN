@@ -28,7 +28,24 @@ function testNormalizeBoardRecord() {
     });
 }
 
-function testNormalizeBoardRecordShouldTreatTrialAsOneHour() {
+function testNormalizeBoardRecordShouldUseExplicitTrialDuration() {
+    const row = {
+        scheduleTime: Date.parse("2026-06-28T11:30:00+08:00"),
+        type: "TRIAL",
+        durationMinutes: 30,
+        student: { name: "悦慧" }
+    };
+
+    const actual = normalizeBoardRecord(row);
+    assert.deepStrictEqual(actual, {
+        student: "悦慧",
+        date: "2026-06-28",
+        durationMinutes: 30,
+        matchState: "scheduled"
+    });
+}
+
+function testNormalizeBoardRecordShouldFallbackMissingTrialDurationToOneHour() {
     const row = {
         scheduleTime: Date.parse("2026-06-28T11:30:00+08:00"),
         type: "TRIAL",
@@ -233,6 +250,41 @@ function testNormalizeCompletedRecordForSalaryShouldParseTrialTrainingDurationTe
     assert.strictEqual(actual.date, "2026-02-03");
     assert.strictEqual(actual.salaryType, "体验课");
     assert.strictEqual(actual.durationHours, 1);
+    assert.strictEqual(actual.fee, 40);
+}
+
+function testNormalizeCompletedRecordForSalaryShouldUseExplicitHalfHourTrialDuration() {
+    const row = {
+        id: 3006,
+        scheduleTime: "2026-07-11 16:00",
+        type: "体验训练",
+        category: "体验课",
+        trainingTime: "30分钟",
+        studentName: "闫奕洁"
+    };
+
+    const actual = normalizeCompletedRecordForSalary(row);
+    assert.ok(actual, "half-hour trial row should be normalized");
+    assert.strictEqual(actual.salaryType, "体验课");
+    assert.strictEqual(actual.durationHours, 0.5);
+    assert.strictEqual(actual.rate, 40);
+    assert.strictEqual(actual.fee, 20);
+}
+
+function testNormalizeCompletedRecordForSalaryShouldFallbackMissingTrialDurationToOneHour() {
+    const row = {
+        id: 3007,
+        scheduleTime: "2026-07-11 16:00",
+        type: "体验训练",
+        category: "体验课",
+        studentName: "闫奕洁"
+    };
+
+    const actual = normalizeCompletedRecordForSalary(row);
+    assert.ok(actual, "legacy trial row without duration should still be kept");
+    assert.strictEqual(actual.salaryType, "体验课");
+    assert.strictEqual(actual.durationHours, 1);
+    assert.strictEqual(actual.rate, 40);
     assert.strictEqual(actual.fee, 40);
 }
 
@@ -452,7 +504,8 @@ function testBuildSalaryRowsFromCompletedRecordsShouldNotExcludeWhenNoTrainerNam
 
 function run() {
     testNormalizeBoardRecord();
-    testNormalizeBoardRecordShouldTreatTrialAsOneHour();
+    testNormalizeBoardRecordShouldUseExplicitTrialDuration();
+    testNormalizeBoardRecordShouldFallbackMissingTrialDurationToOneHour();
     testBuildCourseMatchKey();
     testHasScheduledCourse();
     testHasScheduledCourseWithAliasName();
@@ -464,6 +517,8 @@ function run() {
     testNormalizeCompletedRecordForSalary();
     testNormalizeCompletedRecordForSalaryShouldDetectTrialFromCategory();
     testNormalizeCompletedRecordForSalaryShouldParseTrialTrainingDurationText();
+    testNormalizeCompletedRecordForSalaryShouldUseExplicitHalfHourTrialDuration();
+    testNormalizeCompletedRecordForSalaryShouldFallbackMissingTrialDurationToOneHour();
     testNormalizeCompletedRecordForSalaryShouldParseTrialFromStartEndTimeFields();
     testNormalizeCompletedRecordForSalaryShouldClampTrialToOneHour();
     testNormalizeCompletedRecordForSalaryShouldParseTextDurationField();

@@ -726,6 +726,22 @@ function escapeCsvCell(value) {
     return text;
 }
 
+function getTrialSalaryHourlyRate(platformId) {
+    const trialRateByPlatform = {
+        maisuiyingyu: 20,
+        baifendii: 30,
+        lixiaolaila: 40
+    };
+    return trialRateByPlatform[normalizePlatformId(platformId)] || trialRateByPlatform[DEFAULT_PLATFORM_ID];
+}
+
+function getSalaryHourlyRate(type, platformId) {
+    if (type === "词汇课") return 50;
+    if (type === "阅读完型语法课") return 55;
+    if (type === "体验课") return getTrialSalaryHourlyRate(platformId);
+    return 50;
+}
+
 export function generateSalaryReport() {
     const teacherName = document.getElementById("teacherName").value;
     const teacherDisplayName = document.getElementById("teacherName").options[document.getElementById("teacherName").selectedIndex].text;
@@ -781,6 +797,7 @@ export function generateSalaryReport() {
                 }
 
                 const type = stats.type || "词汇课";
+                const recordPlatform = normalizePlatformId(stats.platform || DEFAULT_PLATFORM_ID);
 
                 // 将记录添加到数组中
                 allRecords.push({
@@ -788,8 +805,8 @@ export function generateSalaryReport() {
                     date,
                     type,
                     duration,
-                    hourlyRate: type === "词汇课" ? 50 :
-                        type === "阅读完型语法课" ? 55 : 40
+                    platform: recordPlatform,
+                    hourlyRate: getSalaryHourlyRate(type, recordPlatform)
                 });
             }
         });
@@ -839,7 +856,9 @@ export function generateSalaryReport() {
     // 计算各类课程工资
     const salaryVocab = totalHoursVocab * 50;    // 词汇课工资
     const salaryReading = totalHoursReading * 55; // 阅读课工资
-    const salaryTrial = totalHoursTrial * 40;     // 体验课工资
+    const salaryTrial = allRecords
+        .filter((record) => record.type === "体验课")
+        .reduce((sum, record) => sum + record.duration * record.hourlyRate, 0);
     totalSalaryAll = salaryVocab + salaryReading + salaryTrial;  // 计算总工资
 
     if (totalHoursVocab > 0) {
@@ -852,7 +871,7 @@ export function generateSalaryReport() {
     }
     if (totalHoursTrial > 0) {
         reportContent += `体验课总课时: ${totalHoursTrial} 小时\n`;
-        reportContent += `体验课工资（40元/时）: ${salaryTrial} 元\n`;
+        reportContent += `体验课工资（按平台单价）: ${salaryTrial} 元\n`;
     }
     reportContent += `\n工资总计: ${totalSalaryAll} 元\n`;
 
@@ -873,7 +892,7 @@ export function generateSalaryReport() {
     csvRows.push(["课程类型", "总课时", "时薪(元)", "工资(元)"]);
     if (totalHoursVocab > 0) csvRows.push(["词汇课", totalHoursVocab, 50, salaryVocab]);
     if (totalHoursReading > 0) csvRows.push(["阅读完型语法课", totalHoursReading, 55, salaryReading]);
-    if (totalHoursTrial > 0) csvRows.push(["体验课", totalHoursTrial, 40, salaryTrial]);
+    if (totalHoursTrial > 0) csvRows.push(["体验课", totalHoursTrial, "按平台单价", salaryTrial]);
     csvRows.push(["工资总计", "", "", Number(totalSalaryAll.toFixed(2))]);
 
     const csvContent = "\uFEFF" + csvRows.map((row) => row.map(escapeCsvCell).join(",")).join("\n");

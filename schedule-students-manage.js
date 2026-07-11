@@ -1,3 +1,5 @@
+import { filterLegacyStudents } from './commonFunctions.js';
+
 const SCHEDULE_CONFIG_URL = "./schedule.html";
 const SCHEDULE_CONFIG_OVERRIDE_KEY = "schedule-config-override-v1";
 const CUSTOM_STUDENTS_STORAGE_KEY = "custom-students-v1";
@@ -171,8 +173,13 @@ function stripForStorage(entry) {
     };
 }
 
+function filterLegacyEntries(entries) {
+    const allowedStudents = new Set(filterLegacyStudents(entries.map((entry) => entry.student)));
+    return entries.filter((entry) => allowedStudents.has(entry.student));
+}
+
 function persistEntries() {
-    const sanitized = entriesState.map(stripForStorage);
+    const sanitized = filterLegacyEntries(entriesState).map(stripForStorage);
     saveOverride(sanitized);
 }
 
@@ -186,7 +193,7 @@ function renderMeta() {
 function renderTable() {
     const keyword = keywordInput.value.trim();
     const platformKeyword = platformFilter?.value || "all";
-    let list = entriesState;
+    let list = filterLegacyEntries(entriesState);
     if (keyword) {
         list = list.filter((item) => item.student.includes(keyword));
     }
@@ -328,9 +335,10 @@ function exportOverride() {
 async function init() {
     try {
         const baseEntries = (await loadBaseConfig()).map(normalizeEntry);
-        baseEntriesCount = baseEntries.length;
+        const filteredBaseEntries = filterLegacyEntries(baseEntries);
+        baseEntriesCount = filteredBaseEntries.length;
         const override = loadOverrideConfig();
-        entriesState = (override?.entries || baseEntries).map(normalizeEntry);
+        entriesState = filterLegacyEntries((override?.entries || filteredBaseEntries).map(normalizeEntry));
         renderAll();
     } catch (error) {
         console.error(error);
