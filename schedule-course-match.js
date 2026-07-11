@@ -161,10 +161,16 @@
         "体验课": 40
     };
 
+    var PLATFORM_TRIAL_RATE_MAP = {
+        maisuiyingyu: 20,
+        lixiaolaila: 40,
+        baifendii: 30
+    };
+
     function inferSalaryTypeFromCourse(courseText) {
         var text = String(courseText || "").trim();
         if (!text) return "词汇课";
-        if (text.indexOf("体验") !== -1) return "体验课";
+        if (text.indexOf("体验") !== -1 || text.indexOf("试课") !== -1 || text.indexOf("试听") !== -1) return "体验课";
         if (text.indexOf("阅读") !== -1 || text.indexOf("完型") !== -1 || text.indexOf("语法") !== -1) {
             return "阅读完型语法课";
         }
@@ -175,10 +181,14 @@
         var hints = [
             fallbackCourseName,
             row && row.category,
+            row && row.courseCategory,
+            row && row.courseCategoryName,
             row && row.type,
             row && row.materialName,
             row && row.material && row.material.name,
-            row && row.course && row.course.name
+            row && row.course && row.course.name,
+            row && row.course && row.course.category && row.course.category.name,
+            row && row.sourceType && row.sourceType.name
         ].map(function (value) {
             return String(value || "").trim();
         }).filter(Boolean);
@@ -233,6 +243,9 @@
         var byType = parseBoardDurationMinutes(row.type, null);
         if (byType) return byType;
 
+        var byCourseTypeName = parseDurationMinutesFromText(row.courseType && row.courseType.name);
+        if (byCourseTypeName) return byCourseTypeName;
+
         var minuteCandidates = [
             row.durationMinutes,
             row.duration,
@@ -275,6 +288,7 @@
             row && row.materialName,
             row && row.material && row.material.name,
             row && row.course && row.course.name,
+            row && row.courseType && row.courseType.name,
             row && row.type
         ];
 
@@ -287,6 +301,7 @@
 
     function extractCompletedStudentName(row) {
         var values = [
+            row && row.user && row.user.name,
             row && row.student && row.student.name,
             row && row.userName,
             row && row.studentName,
@@ -298,6 +313,18 @@
             if (text) return text;
         }
         return "";
+    }
+
+    function normalizePlatformIdForSalary(platformId) {
+        return String(platformId || "lixiaolaila").trim().toLowerCase() || "lixiaolaila";
+    }
+
+    function getSalaryRate(salaryType, platformId) {
+        if (salaryType === "体验课") {
+            var platform = normalizePlatformIdForSalary(platformId);
+            return PLATFORM_TRIAL_RATE_MAP[platform] || SALARY_RATE_MAP[salaryType];
+        }
+        return SALARY_RATE_MAP[salaryType] || 50;
     }
 
     function normalizeCompletedRecordForSalary(row) {
@@ -325,7 +352,7 @@
 
         if (!studentName || !date || !durationMinutes) return null;
 
-        var rate = SALARY_RATE_MAP[salaryType] || 50;
+        var rate = getSalaryRate(salaryType, row.platform);
         var durationHours = Number((durationMinutes / 60).toFixed(2));
         var fee = Number((durationHours * rate).toFixed(2));
         var sourceId = extractCompletedSourceId(row);
