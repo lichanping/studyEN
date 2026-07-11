@@ -271,6 +271,93 @@ function testNormalizeCompletedRecordForSalaryShouldUseExplicitHalfHourTrialDura
     assert.strictEqual(actual.fee, 20);
 }
 
+function testNormalizeCompletedRecordForSalaryShouldUseMaisuiHalfHourTrialRate() {
+    const row = {
+        id: 3008,
+        platform: "maisuiyingyu",
+        date: "2026-07-11",
+        type: "体验训练",
+        category: "体验课",
+        courseType: { name: "30分钟" },
+        user: { name: "试课学员" },
+        course: { name: "体验课" }
+    };
+
+    const actual = normalizeCompletedRecordForSalary(row);
+    assert.ok(actual, "Maisui half-hour trial row should be normalized");
+    assert.strictEqual(actual.salaryType, "体验课");
+    assert.strictEqual(actual.durationHours, 0.5);
+    assert.strictEqual(actual.rate, 20);
+    assert.strictEqual(actual.fee, 10);
+}
+
+function testNormalizeCompletedRecordForSalaryShouldUseMaisuiFormalRate() {
+    const row = {
+        id: 3009,
+        platform: "maisuiyingyu",
+        date: "2026-07-11",
+        courseType: { name: "60分钟" },
+        user: { name: "正式学员" },
+        course: { name: "K1：小学考纲词库（新）" }
+    };
+
+    const actual = normalizeCompletedRecordForSalary(row);
+    assert.ok(actual, "Maisui one-hour formal row should be normalized");
+    assert.strictEqual(actual.salaryType, "词汇课");
+    assert.strictEqual(actual.durationHours, 1);
+    assert.strictEqual(actual.rate, 50);
+    assert.strictEqual(actual.fee, 50);
+}
+
+function testNormalizeCompletedRecordForSalaryShouldNotUseMaisuiStudentNameAsTrialType() {
+    const row = {
+        id: 3010,
+        platform: "maisuiyingyu",
+        date: "2026-07-11",
+        courseType: { name: "30分钟" },
+        user: { name: "试课学员" },
+        course: {
+            name: "K1：小学考纲词库（新）",
+            category: { value: 1, name: "单词速记" }
+        },
+        sourceType: { value: 1, name: "单词识记" }
+    };
+
+    const actual = normalizeCompletedRecordForSalary(row);
+    assert.ok(actual, "Maisui vocab record with trial-like student name should be normalized");
+    assert.strictEqual(actual.salaryType, "词汇课");
+    assert.strictEqual(actual.durationHours, 0.5);
+    assert.strictEqual(actual.rate, 50);
+    assert.strictEqual(actual.fee, 25);
+}
+
+function testNormalizeCompletedRecordForSalaryShouldParseMaisuiLearnUnionRecord() {
+    const row = {
+        id: 132303,
+        platform: "maisuiyingyu",
+        course: {
+            name: "K1：小学考纲词库（新）",
+            category: { value: 1, name: "单词速记" }
+        },
+        courseType: { value: 1, name: "30分钟" },
+        sourceType: { value: 1, name: "单词识记" },
+        user: { name: "试课学员" },
+        startTime: "2026-07-09 15:48",
+        endTime: "2026-07-09 15:51",
+        status: { value: 2, name: "学习完成" }
+    };
+
+    const actual = normalizeCompletedRecordForSalary(row);
+    assert.ok(actual, "Maisui learn-union row should be normalized");
+    assert.strictEqual(actual.date, "2026-07-09");
+    assert.strictEqual(actual.studentName, "试课学员");
+    assert.strictEqual(actual.courseName, "K1：小学考纲词库（新）");
+    assert.strictEqual(actual.salaryType, "词汇课");
+    assert.strictEqual(actual.durationHours, 0.5);
+    assert.strictEqual(actual.rate, 50);
+    assert.strictEqual(actual.fee, 25);
+}
+
 function testNormalizeCompletedRecordForSalaryShouldFallbackMissingTrialDurationToOneHour() {
     const row = {
         id: 3007,
@@ -518,6 +605,10 @@ function run() {
     testNormalizeCompletedRecordForSalaryShouldDetectTrialFromCategory();
     testNormalizeCompletedRecordForSalaryShouldParseTrialTrainingDurationText();
     testNormalizeCompletedRecordForSalaryShouldUseExplicitHalfHourTrialDuration();
+    testNormalizeCompletedRecordForSalaryShouldUseMaisuiHalfHourTrialRate();
+    testNormalizeCompletedRecordForSalaryShouldUseMaisuiFormalRate();
+    testNormalizeCompletedRecordForSalaryShouldNotUseMaisuiStudentNameAsTrialType();
+    testNormalizeCompletedRecordForSalaryShouldParseMaisuiLearnUnionRecord();
     testNormalizeCompletedRecordForSalaryShouldFallbackMissingTrialDurationToOneHour();
     testNormalizeCompletedRecordForSalaryShouldParseTrialFromStartEndTimeFields();
     testNormalizeCompletedRecordForSalaryShouldClampTrialToOneHour();

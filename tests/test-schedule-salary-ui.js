@@ -27,8 +27,29 @@ assert(
 );
 
 assert(
-    scheduleContent.includes('暂不支持工资统计') || scheduleContent.includes('仅支持李校来啦平台工资统计'),
-    'schedule.html 应对非李校平台给出工资统计不可用提示'
+    scheduleContent.includes('configureMaisuiCredentials')
+        && scheduleContent.includes('loginMaisuiApp')
+        && scheduleContent.includes('maisui-access-token'),
+    'schedule.html 应支持麦穗英语登录并保存独立 token'
+);
+
+assert(
+    scheduleContent.includes('fetchMaisuiCompletedRecordsForSalary')
+        && scheduleContent.includes('https://ms.aiyingsi.com/api/teacher/learn-union/list-page')
+        && scheduleContent.includes('timeRange[0]')
+        && scheduleContent.includes('timeRange[1]')
+        && scheduleContent.includes('authorization'),
+    'schedule.html 麦穗工资统计应使用麦穗 token 按月份 timeRange 拉取销课记录列表'
+);
+
+assert(
+    !scheduleContent.includes('https://ms.aiyingsi.com/api/teacher/user-appointment/list'),
+    'schedule.html 麦穗工资统计不应使用预约列表，应使用销课记录 learn-union/list-page'
+);
+
+assert(
+    scheduleContent.includes('baifendii') && scheduleContent.includes('暂不支持工资统计'),
+    'schedule.html 百分缔平台仍应提示本期暂不支持实际课次工资统计'
 );
 
 console.log('test-schedule-salary-ui passed');
