@@ -3039,10 +3039,12 @@ sourceId: 上课记录唯一标识（用于去重）</span>
 
     function collectQuotaNeeds(entries) {
         const needsMap = new Map();
+        const allowedStudents = new Set(commonFunctions.filterLegacyStudents((entries || []).map((entry) => entry?.student)));
 
         for (const entry of entries || []) {
             const displayName = String(entry?.student || "").trim();
             if (!displayName) continue;
+            if (!allowedStudents.has(displayName)) continue;
 
             const platformId = normalizePlatformId(entry?.platform || DEFAULT_PLATFORM_ID);
             if (platformId !== "lixiaolaila") continue;
