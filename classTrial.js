@@ -1,4 +1,4 @@
-import {copyToClipboard, getRandomMotto, showAlert, showLongText, storeClassStatistics, validateBeforeClassFeedbackSubmit, filterLegacyStudents} from './commonFunctions.js'
+import {copyToClipboard, getRandomMotto, showAlert, showLongText, storeClassStatistics, validateBeforeClassFeedbackSubmit, filterLegacyStudents, resolveClassFeedbackDurationHours} from './commonFunctions.js'
 // Attach the function when the page loads
 // window.addEventListener("load", copyToClipboard);
 const setInitialDateTime = () => {
@@ -44,6 +44,16 @@ function getPlatformDisplayName(platformId) {
     return window.APP_MEETING_CONFIG?.getPlatformDisplayName?.(platformId) || "李校来啦";
 }
 
+function getDefaultTrialDurationHours(platformId) {
+    return normalizePlatformId(platformId) === "maisuiyingyu" ? "0.5" : "1";
+}
+
+function syncTrialDurationDefaultByPlatform() {
+    const durationSelect = document.getElementById("classDuration");
+    if (!durationSelect) return;
+    durationSelect.value = getDefaultTrialDurationHours(getCurrentPlatformId());
+}
+
 function initPlatformSelector() {
     const select = document.getElementById("platformSelect");
     if (!select) return;
@@ -54,6 +64,7 @@ function initPlatformSelector() {
     select.addEventListener("change", () => {
         const next = normalizePlatformId(select.value);
         localStorage.setItem(CURRENT_PLATFORM_STORAGE_KEY, next);
+        syncTrialDurationDefaultByPlatform();
         updateTrialUserOptions();
     });
 }
@@ -151,6 +162,7 @@ function updateTrialUserOptions() {
 // Attach the function to the "load" event of the window
 window.addEventListener("load", updateTrialUserOptions);
 window.addEventListener("load", initPlatformSelector);
+window.addEventListener("load", syncTrialDurationDefaultByPlatform);
 
 // JavaScript code for the button click functions
 export function handleScheduleNotificationClick() {
@@ -251,8 +263,8 @@ ${getRandomMotto()}`;
 
     if (classDateTime) {
         const classDate = new Date(classDateTime).toISOString().split('T')[0];
-        // 体验课固定1小时，单价40元
-        storeClassStatistics(userName, classDate, newWord, 0, 1, "体验课");
+        const classDurationHours = await resolveClassFeedbackDurationHours("体验课");
+        storeClassStatistics(userName, classDate, newWord, 0, classDurationHours, "体验课");
     } else {
         alert("请选择有效的课程时间");
     }

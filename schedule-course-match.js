@@ -32,7 +32,7 @@
 
     function parseBoardDurationMinutes(type, fallbackMinutes) {
         var rawType = String(type || "").trim();
-        if (/TRIAL/i.test(rawType)) return 60;
+        if (/TRIAL/i.test(rawType)) return normalizeDurationMinutes(fallbackMinutes) || 60;
         if (/MINUTE_30/i.test(rawType)) return 30;
         if (/MINUTE_60/i.test(rawType)) return 60;
         var fromType = rawType.match(/MINUTE_(\d+)/i);
@@ -319,7 +319,6 @@
 
         var salaryType = inferSalaryTypeFromCompletedRecord(row, courseName);
 
-        // Trial classes are always fixed at 1 hour; do not drop them for missing duration
         if (!durationMinutes && salaryType === "体验课") {
             durationMinutes = 60;
         }
@@ -327,7 +326,7 @@
         if (!studentName || !date || !durationMinutes) return null;
 
         var rate = SALARY_RATE_MAP[salaryType] || 50;
-        var durationHours = salaryType === "体验课" ? 1 : Number((durationMinutes / 60).toFixed(2));
+        var durationHours = Number((durationMinutes / 60).toFixed(2));
         var fee = Number((durationHours * rate).toFixed(2));
         var sourceId = extractCompletedSourceId(row);
 
