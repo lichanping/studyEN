@@ -25,6 +25,13 @@ assert(
 );
 
 assert(
+    trialHtml.includes('id="classDuration"')
+        && trialHtml.includes('value="0.5"')
+        && trialHtml.includes('value="1"'),
+    'class-trial.html 提交课堂反馈前应支持输入体验课时长（0.5/1小时）'
+);
+
+assert(
     readJs.includes('getCurrentPlatformId') && readJs.includes('entry?.platform'),
     'classRead.js 应按当前平台过滤排课学生'
 );
@@ -68,5 +75,40 @@ assert(
     trialJs.includes('【体验课】3次抗遗忘复习') && trialJs.includes('生词本') && trialJs.includes('会拼会写'),
     '体验课课后复习文案应恢复为历史独立文案（3次抗遗忘复习）'
 );
+
+    assert(
+        commonFunctions.includes('resolveSubmittedDurationMinutes')
+            && commonFunctions.includes('uniqueCourseDurations')
+            && !commonFunctions.includes('classDurationEl ? classDurationEl.value : "1"'),
+        '体验课课堂反馈无时长控件时，应按当天排课时长推断，不能固定按 1 小时提交'
+    );
+
+    assert(
+        commonFunctions.includes('getCurrentSchedulePlatformId')
+            && commonFunctions.includes('entryBelongsToCurrentPlatform'),
+        '课堂反馈排课校验应按当前平台过滤排课条目，避免多平台同名学生互相影响'
+    );
+
+    assert(
+        !trialJs.includes('storeClassStatistics(userName, classDate, newWord, 0, 1, "体验课")'),
+        '体验课课堂反馈写统计时不应固定按 1 小时，应使用排课推断课时'
+    );
+
+    assert(
+        trialJs.includes('classDuration')
+            && trialJs.includes('syncTrialDurationDefaultByPlatform'),
+        '体验课页面应按当前平台初始化可编辑课时时长，麦穗默认半小时，其他平台默认一小时'
+    );
+
+    assert(
+        !commonFunctions.includes('| 1小时\\n'),
+        '体验课报告不应固定显示 1 小时，应显示实际统计课时'
+    );
+
+    assert(
+        commonFunctions.includes('platform:')
+            && commonFunctions.includes('getCurrentSchedulePlatformId()'),
+        '课堂反馈统计记录应保存当前平台，用于 index.html 按平台计算工资'
+    );
 
 console.log('test-read-trial-platform-ui passed');

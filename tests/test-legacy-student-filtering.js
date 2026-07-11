@@ -11,6 +11,8 @@ const classReadContent = readWorkspaceFile("classRead.js");
 const classTrialContent = readWorkspaceFile("classTrial.js");
 const antiForgettingContent = readWorkspaceFile("anti-forgetting.html");
 const commonFunctionsContent = readWorkspaceFile("commonFunctions.js");
+const scheduleStudentsManageContent = readWorkspaceFile("schedule-students-manage.js");
+const scheduleContent = readWorkspaceFile("schedule.html");
 
 assert(
     !classFormalContent.includes('"施博睿": {'),
@@ -58,6 +60,17 @@ assert(
 assert(
     antiForgettingContent.includes("commonFunctions.filterLegacyStudents(") && !antiForgettingContent.includes("function filterLegacyStudents("),
     "anti-forgetting.html 应复用 commonFunctions.filterLegacyStudents，而不是本地重复定义"
+);
+
+assert(
+    scheduleStudentsManageContent.includes("filterLegacyStudents(") && !scheduleStudentsManageContent.includes("function filterLegacyStudents("),
+    "schedule-students-manage.js 默认学生管理列表应复用 commonFunctions.filterLegacyStudents，过滤陈怡睿、季筱雯等 legacy 学员"
+);
+
+assert(
+    scheduleContent.includes("commonFunctions.filterLegacyStudents(")
+        && scheduleContent.includes("collectQuotaNeeds"),
+    "schedule.html 课时余额异常检查应复用 commonFunctions.filterLegacyStudents，避免陈怡睿、季筱雯进入异常学生"
 );
 
 console.log("test-legacy-student-filtering passed");

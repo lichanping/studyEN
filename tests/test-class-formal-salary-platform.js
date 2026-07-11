@@ -25,4 +25,19 @@ assert(
     'index/classFormal 不应复用 schedule 页的工资禁用提示'
 );
 
+assert(
+    content.includes('function getTrialSalaryHourlyRate')
+        && content.includes('maisuiyingyu: 20')
+        && content.includes('baifendii: 30')
+        && content.includes('lixiaolaila: 40'),
+    'index/classFormal 工资统计应按平台计算体验课单价：麦穗半小时10元、百分缔1小时30元、李校1小时40元'
+);
+
+assert(
+    content.includes('stats.platform')
+        && content.includes('recordPlatform')
+        && content.includes('getSalaryHourlyRate(type, recordPlatform)'),
+    'index/classFormal 工资统计应读取课堂统计记录的平台字段，并按记录平台计算单价'
+);
+
 console.log('test-class-formal-salary-platform passed');

@@ -1597,7 +1597,7 @@ export function generateTrialReport() {
 
     trialEntries.sort((a, b) => a.date - b.date).forEach(entry => {
         const formattedDate = `${String(entry.date.getMonth() + 1).padStart(2, '0')}-${String(entry.date.getDate()).padStart(2, '0')} (${entry.date.toLocaleString('zh-CN', {weekday: 'short'})})`;
-        reportContent += `${formattedDate} | ${entry.newWord.toString().padEnd(4)} | 1小时\n`;
+        reportContent += `${formattedDate} | ${entry.newWord.toString().padEnd(4)} | ${entry.duration}小时\n`;
     });
 
     // 生成下载文件
@@ -1618,6 +1618,7 @@ export function storeClassStatistics(userName, date, newWord, reviewWordCount, d
             newWord: newWord,
             reviewWordCount: reviewWordCount,
             duration: duration,
+            platform: getCurrentSchedulePlatformId(),
             type: type
         };
 
@@ -1704,6 +1705,28 @@ const EXTRA_ENTRIES_STORAGE_KEY = "schedule-extra-entries-v1";
 const SCHEDULE_CONFIG_OVERRIDE_KEY = "schedule-config-override-v1";
 let cachedScheduleEntries = null;
 
+function getCurrentSchedulePlatformId() {
+    if (window.APP_MEETING_CONFIG?.getCurrentPlatformId) {
+        return window.APP_MEETING_CONFIG.getCurrentPlatformId();
+    }
+    try {
+        return localStorage.getItem("current-platform-v1") || "lixiaolaila";
+    } catch (_) {
+        return "lixiaolaila";
+    }
+}
+
+function normalizeSchedulePlatformId(value) {
+    if (window.APP_MEETING_CONFIG?.normalizePlatformId) {
+        return window.APP_MEETING_CONFIG.normalizePlatformId(value);
+    }
+    return String(value || "lixiaolaila").trim().toLowerCase() || "lixiaolaila";
+}
+
+function entryBelongsToCurrentPlatform(entry, currentPlatformId) {
+    return normalizeSchedulePlatformId(entry?.platform || "lixiaolaila") === normalizeSchedulePlatformId(currentPlatformId);
+}
+
 function getDateValueFromDateTime(dateTimeValue) {
     if (!dateTimeValue) return "";
     return String(dateTimeValue).split("T")[0] || "";
@@ -1780,6 +1803,58 @@ function normalizeSubmittedCourseType(courseType) {
     return String(courseType || "").trim();
 }
 
+export function resolveSubmittedDurationMinutes(classDurationValue, courseEntries, fallbackMinutes = 60) {
+    const explicitHours = Number(classDurationValue);
+    if (Number.isFinite(explicitHours) && explicitHours > 0) {
+        return Math.round(explicitHours * 60);
+    }
+
+    const uniqueCourseDurations = toUniqueList((Array.isArray(courseEntries) ? courseEntries : [])
+        .map((entry) => Number(entry.durationMinutes))
+        .filter((durationMinutes) => Number.isFinite(durationMinutes) && durationMinutes > 0));
+    if (uniqueCourseDurations.length === 1) {
+        return uniqueCourseDurations[0];
+    }
+
+    return Number(fallbackMinutes) || 60;
+}
+
+export async function resolveClassFeedbackDurationHours(courseType = "词汇课") {
+    const classDateTimeEl = document.getElementById("classDateTime");
+    const classDateTime = classDateTimeEl ? classDateTimeEl.value : "";
+    const userNameEl = document.getElementById("userName");
+    const userName = userNameEl ? userNameEl.value : "";
+    const classDurationEl = document.getElementById("classDuration");
+    const classDurationValue = classDurationEl ? classDurationEl.value : "";
+
+    if (!classDateTime || !userName) {
+        return resolveSubmittedDurationMinutes(classDurationValue, [], 60) / 60;
+    }
+
+    try {
+        const submittedCourse = normalizeSubmittedCourseType(courseType);
+        const currentPlatformId = getCurrentSchedulePlatformId();
+        const dateValue = getDateValueFromDateTime(classDateTime);
+        const weekDay = getDayFromDateValue(dateValue);
+        const allEntries = await loadScheduleEntries();
+        const lessonOverrideState = parseStorageObject(LESSON_OVERRIDE_STORAGE_KEY);
+        const cancellationState = parseStorageObject(CANCELLATION_STORAGE_KEY);
+        const extraResolved = loadExtraEntriesForDate(dateValue)
+            .map((entry) => resolveEntryByOverride(entry, dateValue, lessonOverrideState));
+        const dayEntries = allEntries
+            .filter((entry) => Array.isArray(entry.days) && entry.days.includes(weekDay))
+            .map((entry) => resolveEntryByOverride(entry, dateValue, lessonOverrideState))
+            .concat(extraResolved)
+            .filter((entry) => entryBelongsToCurrentPlatform(entry, currentPlatformId))
+            .filter((entry) => !isCancelledEntry(entry, dateValue, cancellationState));
+        const courseEntries = dayEntries.filter((entry) => entry.student === userName && entry.course === submittedCourse);
+        return resolveSubmittedDurationMinutes(classDurationValue, courseEntries, 60) / 60;
+    } catch (error) {
+        console.warn("解析课堂反馈课时时长失败，将使用默认课时:", error);
+        return resolveSubmittedDurationMinutes(classDurationValue, [], 60) / 60;
+    }
+}
+
 function loadExtraEntriesForDate(dateValue) {
     const state = parseStorageObject(EXTRA_ENTRIES_STORAGE_KEY);
     return Array.isArray(state[dateValue]) ? state[dateValue] : [];
@@ -1818,6 +1893,7 @@ function autoAddExtraEntryIfNeeded(dateValue, studentName, course, durationMinut
         filtered.push({
             id: extraId,
             student: studentName,
+            platform: getCurrentSchedulePlatformId(),
             course: course,
             durationMinutes: Number(durationMinutes),
             period: "晚上",
@@ -1920,14 +1996,14 @@ export async function validateBeforeClassFeedbackSubmit(courseType = "词汇课"
     const submittedCourse = normalizeSubmittedCourseType(courseType);
     
     const classDurationEl = document.getElementById("classDuration");
-    const classDurationValue = classDurationEl ? classDurationEl.value : "1";
-    const submittedDurationMinutes = Math.round(parseFloat(classDurationValue || "1") * 60);
+    const classDurationValue = classDurationEl ? classDurationEl.value : "";
     
     const dateValue = getDateValueFromDateTime(classDateTime);
     const weekDay = getDayFromDateValue(dateValue);
 
     try {
         const allEntries = await loadScheduleEntries();
+        const currentPlatformId = getCurrentSchedulePlatformId();
         const cancellationState = parseStorageObject(CANCELLATION_STORAGE_KEY);
         const lessonOverrideState = parseStorageObject(LESSON_OVERRIDE_STORAGE_KEY);
 
@@ -1939,9 +2015,11 @@ export async function validateBeforeClassFeedbackSubmit(courseType = "词汇课"
             .filter((entry) => Array.isArray(entry.days) && entry.days.includes(weekDay))
             .map((entry) => resolveEntryByOverride(entry, dateValue, lessonOverrideState))
             .concat(extraResolved);
+        const platformDayEntriesAll = dayEntriesAll.filter((entry) => entryBelongsToCurrentPlatform(entry, currentPlatformId));
 
-        const studentEntriesAll = dayEntriesAll.filter((entry) => entry.student === userName);
+        const studentEntriesAll = platformDayEntriesAll.filter((entry) => entry.student === userName);
         const courseEntriesAll = studentEntriesAll.filter((entry) => entry.course === submittedCourse);
+        const submittedDurationMinutes = resolveSubmittedDurationMinutes(classDurationValue, courseEntriesAll, 60);
         const matchedEntriesAll = courseEntriesAll.filter((entry) => Number(entry.durationMinutes) === submittedDurationMinutes);
 
         // 检查是否标记了请假
@@ -1960,7 +2038,7 @@ export async function validateBeforeClassFeedbackSubmit(courseType = "词汇课"
             return false;
         }
 
-        const dayEntries = dayEntriesAll.filter((entry) => !isCancelledEntry(entry, dateValue, cancellationState));
+        const dayEntries = platformDayEntriesAll.filter((entry) => !isCancelledEntry(entry, dateValue, cancellationState));
 
         const studentEntries = dayEntries.filter((entry) => entry.student === userName);
         const courseEntries = studentEntries.filter((entry) => entry.course === submittedCourse);
