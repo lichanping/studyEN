@@ -198,6 +198,94 @@ export async function configureLxCredentials() {
     }
 }
 
+export async function loginMaisuiApp() {
+    let phone = localStorage.getItem('maisui_phone');
+    let password = localStorage.getItem('maisui_pw');
+
+    if (!phone || !password) {
+        const inputPhone = prompt('请输入麦穗英语手机号（用于登录麦穗接口）:', phone || '');
+        const normalizedPhone = String(inputPhone || '').trim();
+        if (!normalizedPhone) {
+            alert('未填写手机号，已取消登录。');
+            return null;
+        }
+
+        const inputPassword = prompt('请输入麦穗英语登录密码（仅保存在本机 localStorage）:');
+        const normalizedPassword = String(inputPassword || '').trim();
+        if (!normalizedPassword) {
+            alert('未填写密码，已取消登录。');
+            return null;
+        }
+
+        localStorage.setItem('maisui_phone', normalizedPhone);
+        localStorage.setItem('maisui_pw', normalizedPassword);
+        phone = normalizedPhone;
+        password = normalizedPassword;
+    }
+
+    try {
+        const params = new URLSearchParams({
+            code: '',
+            mobile: phone,
+            password,
+            placeholderInput: '',
+            _: Math.random().toString(36).slice(2)
+        });
+        const resp = await fetch('https://ms.aiyingsi.com/api/teacher/auth?' + params.toString(), {
+            method: 'GET',
+            headers: { 'accept': '*/*' }
+        });
+
+        if (!resp.ok) throw new Error('麦穗登录失败: ' + resp.status);
+        const data = await resp.json();
+        if (Number(data?.error || 0) !== 0) throw new Error(data?.message || '麦穗登录失败');
+        const token = data?.data?.accessToken;
+        if (!token) throw new Error('麦穗登录失败: 未获取到 token');
+
+        localStorage.setItem('maisui-access-token', token);
+        localStorage.setItem('maisui-token-type', String(data?.data?.tokenType || 'bearer'));
+        localStorage.setItem('maisui-token-expires-in', String(data?.data?.expiresIn || ''));
+        localStorage.setItem('maisui-token-updated-at', String(Date.now()));
+        alert('麦穗登录成功');
+        return data;
+    } catch (e) {
+        console.error('麦穗登录错误:', e);
+        localStorage.removeItem('maisui_phone');
+        localStorage.removeItem('maisui_pw');
+        localStorage.removeItem('maisui-access-token');
+        alert('麦穗登录失败，请检查账号与密码');
+        throw e;
+    }
+}
+
+export async function configureMaisuiCredentials() {
+    const currentPhone = localStorage.getItem('maisui_phone') || '';
+    const inputPhone = prompt('请输入麦穗英语手机号（将保存到本机）:', currentPhone);
+    const normalizedPhone = String(inputPhone || '').trim();
+    if (!normalizedPhone) {
+        alert('未填写手机号，已取消。');
+        return false;
+    }
+
+    const inputPassword = prompt('请输入麦穗英语登录密码（将保存到本机）:');
+    const normalizedPassword = String(inputPassword || '').trim();
+    if (!normalizedPassword) {
+        alert('未填写密码，已取消。');
+        return false;
+    }
+
+    localStorage.setItem('maisui_phone', normalizedPhone);
+    localStorage.setItem('maisui_pw', normalizedPassword);
+    localStorage.removeItem('maisui-access-token');
+
+    try {
+        await loginMaisuiApp();
+        return true;
+    } catch (_) {
+        return false;
+    }
+}
+
 export async function viewTotalHoursClick() {
     let token = localStorage.getItem('x-token-c');
     if (!token) {
