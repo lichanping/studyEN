@@ -20,6 +20,7 @@ const setInitialDateTime = () => {
 window.addEventListener("load", setInitialDateTime);
 
 const SCHEDULE_CONFIG_OVERRIDE_KEY = "schedule-config-override-v1";
+const EXTRA_ENTRIES_STORAGE_KEY = "schedule-extra-entries-v1";
 const CUSTOM_STUDENTS_STORAGE_KEY = "custom-students-v1";
 const CURRENT_PLATFORM_STORAGE_KEY = window.APP_MEETING_CONFIG?.CURRENT_PLATFORM_STORAGE_KEY || "current-platform-v1";
 const DEFAULT_PLATFORM_ID = window.APP_MEETING_CONFIG?.defaultPlatformId || "lixiaolaila";
@@ -88,6 +89,29 @@ function loadScheduleOverrideStudents() {
     }
 }
 
+function loadScheduleExtraTrialStudents() {
+    try {
+        const platformId = getCurrentPlatformId();
+        const raw = localStorage.getItem(EXTRA_ENTRIES_STORAGE_KEY);
+        const parsed = raw ? JSON.parse(raw) : {};
+        const names = new Set();
+        Object.values(parsed && typeof parsed === "object" ? parsed : {}).forEach((entries) => {
+            if (!Array.isArray(entries)) return;
+            entries.forEach((entry) => {
+                const entryPlatform = normalizePlatformId(entry?.platform || DEFAULT_PLATFORM_ID);
+                if (entryPlatform !== platformId) return;
+                const course = String(entry?.course || "体验").trim();
+                if (course !== "体验") return;
+                const name = String(entry?.student || "").trim();
+                if (name) names.add(name);
+            });
+        });
+        return [...names];
+    } catch (_) {
+        return [];
+    }
+}
+
 function loadCustomStudents() {
     try {
         const raw = localStorage.getItem(CUSTOM_STUDENTS_STORAGE_KEY);
@@ -125,7 +149,11 @@ function updateTrialUserOptions() {
     // MVP: 新增/最近维护的学生优先展示在最顶部（custom-students-v1 在管理页会 move-to-front）
     const priorityStudents = [];
     const seenPriority = new Set();
-    [...filterLegacyStudents(filteredCustomStudents), ...filterLegacyStudents(loadScheduleOverrideStudents())].forEach((name) => {
+    [
+        ...filterLegacyStudents(filteredCustomStudents),
+        ...filterLegacyStudents(loadScheduleOverrideStudents()),
+        ...filterLegacyStudents(loadScheduleExtraTrialStudents())
+    ].forEach((name) => {
         const trimmed = String(name || "").trim();
         if (!trimmed || seenPriority.has(trimmed)) return;
         seenPriority.add(trimmed);
