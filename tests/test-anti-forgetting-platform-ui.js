@@ -19,4 +19,24 @@ assert(
     'anti-forgetting.html 应通过平台筛选器过滤学员，避免 dirty data'
 );
 
+assert(
+    content.includes('id="wordAudioSpellingEnabled"'),
+    'anti-forgetting.html 应提供 MP3 包含拼写开关'
+);
+
+assert(
+    content.includes('MP3包含拼写'),
+    'anti-forgetting.html 应展示 MP3 包含拼写开关文案'
+);
+
+assert(
+    content.includes('id="wordAudioSpellingSpeedPreset"'),
+    'anti-forgetting.html 应提供 spelling 快中慢跳档'
+);
+
+assert(
+    content.includes('option value="slow"') && content.includes('option value="medium"') && content.includes('option value="fast"'),
+    'anti-forgetting.html 应提供 slow/medium/fast 三档 spelling 速度选项'
+);
+
 console.log('test-anti-forgetting-platform-ui passed');

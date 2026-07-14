@@ -363,6 +363,19 @@
             </label>
             <textarea id="pronounceWords"></textarea>
             <div id="generatePronounceWordsMP3Status" style="font-size:12px;margin-top:4px;color:#aaa;"></div>
+            <label for="wordAudioSpellingEnabled" style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:12px;color:var(--muted-text);">
+                <input id="wordAudioSpellingEnabled" type="checkbox">
+                <span>MP3包含拼写（同时作用于以上两个 MP3）</span>
+            </label>
+            <label for="wordAudioSpellingSpeedPreset" style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:12px;color:var(--muted-text);">
+                <span>Spelling 速度</span>
+                <select id="wordAudioSpellingSpeedPreset">
+                    <option value="slow">慢</option>
+                    <option value="medium" selected>中</option>
+                    <option value="fast">快</option>
+                </select>
+            </label>
+            <div style="font-size:12px;color:#aaa;margin-top:4px;">开启后示例：book book b-o-o-k book 书本</div>
         </div>
         <div class="field">
             <label for="keyLanguagePoints">重点语言点</label>
@@ -377,7 +390,7 @@
 </div>
 
 <script type="module">
-    import * as commonFunctions from './commonFunctions.js?v=20260428-1';
+    import * as commonFunctions from './commonFunctions.js?v=20260714-1';
 
     const SCHEDULE_CONFIG_OVERRIDE_KEY = 'schedule-config-override-v1';
     const CUSTOM_STUDENTS_STORAGE_KEY = 'custom-students-v1';
