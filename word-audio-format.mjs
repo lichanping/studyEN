@@ -5,7 +5,7 @@ function normalizeWordAudioText(value) {
 export const WORD_AUDIO_SPELLING_SPEED_PRESETS = Object.freeze({
     slow: Object.freeze({ rate: "+0%", pauseFrames: 3 }),
     medium: Object.freeze({ rate: "+20%", pauseFrames: 2 }),
-    fast: Object.freeze({ rate: "+30%", pauseFrames: 1 })
+    fast: Object.freeze({ rate: "+60%", pauseFrames: 0 })
 });
 
 export const WORD_AUDIO_RATES = Object.freeze({

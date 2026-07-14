@@ -118,9 +118,9 @@ async function testSpellingSpeedPresetShouldControlPayloadRateAndPause() {
     assert.strictEqual(payload.spellingSpeedPreset, "fast", "payload 应透传 spellingSpeedPreset");
     assert.strictEqual(normalizeWordAudioSpellingSpeedPreset("unknown"), "medium", "非法 preset 应回退到 medium");
     assert.strictEqual(getWordAudioRateForSegment(segments[2], "slow"), "+0%", "slow 档应保守一点");
-    assert.strictEqual(getWordAudioRateForSegment(segments[2], "fast"), "+30%", "fast 档应明显更快");
+    assert.strictEqual(getWordAudioRateForSegment(segments[2], "fast"), "+60%", "fast 档应明显更快");
     assert.strictEqual(getWordAudioPauseFramesAfterSegment(segments[2], segments[3], "slow"), 3, "slow 档字母停顿应更长");
-    assert.strictEqual(getWordAudioPauseFramesAfterSegment(segments[2], segments[3], "fast"), 1, "fast 档字母停顿应更短");
+    assert.strictEqual(getWordAudioPauseFramesAfterSegment(segments[2], segments[3], "fast"), 0, "fast 档字母间不应再额外停顿");
 }
 
 function testAudioRequestShouldReferenceSpellingFlagAcrossClientAndServer() {
