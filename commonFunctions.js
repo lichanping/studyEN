@@ -1,3 +1,5 @@
+import { buildWordAudioRequestPayload } from './word-audio-format.mjs';
+
 // JavaScript code for the button click functions
 export function navigateToTiyanClass() {
     window.location.href = "class-trial.html";
@@ -1424,13 +1426,21 @@ function createSilenceBlob() {
 }
 
 // 单词 TTS 请求（带重试）
-async function fetchWordAudio(word) {
+function isWordAudioSpellingEnabled() {
+    return document.getElementById('wordAudioSpellingEnabled')?.checked === true;
+}
+
+function getWordAudioSpellingSpeedPreset() {
+    return document.getElementById('wordAudioSpellingSpeedPreset')?.value || 'medium';
+}
+
+async function fetchWordAudio(word, spellingEnabled, spellingSpeedPreset) {
     for (let attempt = 0; attempt < 3; attempt++) {
         try {
             const resp = await fetch('/.netlify/functions/generate-forget-words-audio', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(word)
+                body: JSON.stringify(buildWordAudioRequestPayload(word, spellingEnabled, spellingSpeedPreset))
             });
             if (!resp.ok) throw new Error('server error');
             return await resp.blob();
@@ -1462,6 +1472,8 @@ async function generateWordsMP3({ textareaId, btnId, statusId, fileLabel, emptyM
 
     const btn = document.getElementById(btnId);
     const statusEl = document.getElementById(statusId);
+    const spellingEnabled = isWordAudioSpellingEnabled();
+    const spellingSpeedPreset = getWordAudioSpellingSpeedPreset();
     const originalText = btn.textContent;
     btn.disabled = true;
     if (statusEl) statusEl.textContent = '';
@@ -1477,7 +1489,7 @@ async function generateWordsMP3({ textareaId, btnId, statusId, fileLabel, emptyM
         let done = 0;
         async function runBatch(startIdx) {
             for (let i = startIdx; i < wordPairs.length; i += CONCURRENCY) {
-                results[i] = await fetchWordAudio(wordPairs[i]);
+                results[i] = await fetchWordAudio(wordPairs[i], spellingEnabled, spellingSpeedPreset);
                 done++;
                 btn.textContent = `生成中…(${done}/${wordPairs.length})`;
             }
@@ -2237,7 +2249,7 @@ function applyTtsPrefixToWordPairs(wordPairs) {
         const normalizedWord = normalizeTtsWord(english);
         if (!targetWords.has(normalizedWord)) return pair;
         if (english.startsWith(config.prefix)) return pair;
-        return { ...pair, english: `${config.prefix}${english}` };
+        return { ...pair, english: `${config.prefix}${english}`, spellingWord: english };
     });
 }
 
