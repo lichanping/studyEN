@@ -2,6 +2,8 @@ function normalizeWordAudioText(value) {
     return String(value || "").trim();
 }
 
+export const WORD_AUDIO_SPELLING_LETTER_ASSET_DIR = "static/sounds/spelling-letters";
+
 export const WORD_AUDIO_SPELLING_SPEED_PRESETS = Object.freeze({
     slow: Object.freeze({ rate: "+0%", pauseFrames: 3 }),
     medium: Object.freeze({ rate: "+20%", pauseFrames: 2 }),
@@ -31,11 +33,30 @@ export function spellOutWordForTts(word) {
     .flatMap((token) => Array.from(token.toUpperCase()));
 }
 
-export function buildWordAudioRequestPayload(wordPair, spellingEnabled = false, spellingSpeedPreset = "medium") {
+export function getWordAudioLetterAssetPath(letter) {
+    const normalizedLetter = String(letter || "").trim().toUpperCase();
+    return normalizedLetter ? `${WORD_AUDIO_SPELLING_LETTER_ASSET_DIR}/${normalizedLetter}.mp3` : "";
+}
+
+function buildNormalizedWordAudioWordPair(wordPair) {
     return {
         english: normalizeWordAudioText(wordPair?.english),
         chinese: normalizeWordAudioText(wordPair?.chinese),
         spellingWord: normalizeWordAudioText(wordPair?.spellingWord || wordPair?.english),
+    };
+}
+
+export function buildWordAudioRequestPayload(wordPair, spellingEnabled = false, spellingSpeedPreset = "medium") {
+    return {
+        ...buildNormalizedWordAudioWordPair(wordPair),
+        spellingEnabled: Boolean(spellingEnabled),
+        spellingSpeedPreset: normalizeWordAudioSpellingSpeedPreset(spellingSpeedPreset)
+    };
+}
+
+export function buildWordAudioBatchRequestPayload(wordPairs, spellingEnabled = false, spellingSpeedPreset = "medium") {
+    return {
+        wordPairs: Array.isArray(wordPairs) ? wordPairs.map(buildNormalizedWordAudioWordPair).filter((wordPair) => wordPair.english) : [],
         spellingEnabled: Boolean(spellingEnabled),
         spellingSpeedPreset: normalizeWordAudioSpellingSpeedPreset(spellingSpeedPreset)
     };
@@ -57,7 +78,12 @@ export function buildWordAudioSegments({ english, chinese, spellingWord, spellin
         const spellingLetters = spellOutWordForTts(normalizedSpellingWord);
         if (spellingLetters.length > 0) {
             spellingLetters.forEach((letter) => {
-                segments.push({ kind: "spelling", lang: "en", text: letter });
+                segments.push({
+                    kind: "spelling",
+                    lang: "en",
+                    letter,
+                    assetPath: getWordAudioLetterAssetPath(letter),
+                });
             });
             segments.push({ kind: "english", lang: "en", text: normalizedEnglish });
         }
@@ -71,20 +97,19 @@ export function buildWordAudioSegments({ english, chinese, spellingWord, spellin
 }
 
 export function getWordAudioRateForSegment(segment, spellingSpeedPreset = "medium") {
-    if (segment?.kind === "spelling") {
-        return WORD_AUDIO_SPELLING_SPEED_PRESETS[normalizeWordAudioSpellingSpeedPreset(spellingSpeedPreset)].rate;
-    }
+    if (segment?.kind === "spelling") return null;
     if (segment?.lang === "zh") return WORD_AUDIO_RATES.chinese;
     return WORD_AUDIO_RATES.english;
 }
 
 export function getWordAudioVoiceForSegment(segment) {
-    if (segment?.kind === "spelling") return "zh-CN-XiaoxiaoNeural";
+    if (segment?.kind === "spelling") return null;
     if (segment?.lang === "zh") return "zh-CN-XiaoxiaoNeural";
     return "en-US-EmmaNeural";
 }
 
 export function getWordAudioTextForSegment(segment) {
+    if (segment?.kind === "spelling") return "";
     return String(segment?.text || "");
 }
 
