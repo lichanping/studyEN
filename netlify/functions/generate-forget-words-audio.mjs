@@ -55,7 +55,8 @@ async function loadLocalAsset(assetPath, requestUrl) {
         throw new Error("Missing assetPath for spelling segment");
     }
 
-    const assetUrl = new URL(assetPath, requestUrl).toString();
+    const normalizedAssetPath = assetPath.startsWith("/") ? assetPath : `/${assetPath}`;
+    const assetUrl = new URL(normalizedAssetPath, requestUrl).toString();
 
     if (!LETTER_AUDIO_CACHE.has(assetUrl)) {
         LETTER_AUDIO_CACHE.set(assetUrl, (async () => {

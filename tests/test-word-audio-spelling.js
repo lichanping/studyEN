@@ -166,8 +166,8 @@ function testAudioRequestShouldReferenceSpellingFlagAcrossClientAndServer() {
     );
 
     assert(
-        functionContent.includes("new URL(assetPath") && functionContent.includes("fetch(assetUrl)"),
-        "generate-forget-words-audio.mjs 应通过站点静态资源 URL 读取字母音频资产，避免 preview 环境读不到本地文件"
+        functionContent.includes("assetPath.startsWith(\"/\")") && functionContent.includes("new URL(normalizedAssetPath, requestUrl)") && functionContent.includes("fetch(assetUrl)"),
+        "generate-forget-words-audio.mjs 应将字母音频资产固定解析到站点根路径，避免错误落到 /.netlify/functions/static"
     );
 }
 
