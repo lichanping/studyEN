@@ -166,8 +166,8 @@ function testAudioRequestShouldReferenceSpellingFlagAcrossClientAndServer() {
     );
 
     assert(
-        functionContent.includes("assetPath"),
-        "generate-forget-words-audio.mjs 应支持读取本地字母音频资产"
+        functionContent.includes("new URL(assetPath") && functionContent.includes("fetch(assetUrl)"),
+        "generate-forget-words-audio.mjs 应通过站点静态资源 URL 读取字母音频资产，避免 preview 环境读不到本地文件"
     );
 }
 

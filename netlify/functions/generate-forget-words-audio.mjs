@@ -1,7 +1,4 @@
 import { Buffer } from "node:buffer";
-import { readFile } from "node:fs/promises";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { EdgeTTS } from "@andresaya/edge-tts";
 import { buildWordAudioSegments, getWordAudioPauseFramesAfterSegment, getWordAudioRateForSegment, getWordAudioTextForSegment, getWordAudioVoiceForSegment, normalizeWordAudioSpellingSpeedPreset } from "../../word-audio-format.mjs";
 
@@ -23,8 +20,6 @@ function createSilenceBuffer(frameCount) {
 
 const SILENCE_BUFFER_CACHE = new Map();
 const LETTER_AUDIO_CACHE = new Map();
-const FUNCTION_DIR = path.dirname(fileURLToPath(import.meta.url));
-const REPO_ROOT_DIR = path.resolve(FUNCTION_DIR, "../..");
 const WORD_AUDIO_GAP_FRAMES = 13;
 
 function getSilenceBuffer(frameCount) {
@@ -55,25 +50,34 @@ async function synthesize(text, voice, rate, retries = 2) {
     }
 }
 
-async function loadLocalAsset(assetPath) {
+async function loadLocalAsset(assetPath, requestUrl) {
     if (!assetPath) {
         throw new Error("Missing assetPath for spelling segment");
     }
 
-    if (!LETTER_AUDIO_CACHE.has(assetPath)) {
-        LETTER_AUDIO_CACHE.set(assetPath, readFile(path.resolve(REPO_ROOT_DIR, assetPath)));
+    const assetUrl = new URL(assetPath, requestUrl).toString();
+
+    if (!LETTER_AUDIO_CACHE.has(assetUrl)) {
+        LETTER_AUDIO_CACHE.set(assetUrl, (async () => {
+            const response = await fetch(assetUrl);
+            if (!response.ok) {
+                throw new Error(`Failed to load spelling asset: ${assetUrl} (${response.status})`);
+            }
+            const arrayBuffer = await response.arrayBuffer();
+            return Buffer.from(arrayBuffer);
+        })());
     }
 
-    return LETTER_AUDIO_CACHE.get(assetPath);
+    return LETTER_AUDIO_CACHE.get(assetUrl);
 }
 
-async function buildSingleWordAudioBuffer(wordPair, normalizedSpellingSpeedPreset) {
+async function buildSingleWordAudioBuffer(wordPair, normalizedSpellingSpeedPreset, requestUrl) {
     const segments = buildWordAudioSegments(wordPair);
     const audioCache = new Map();
     const audioBuffers = await Promise.all(
         segments.map(async (segment) => {
             if (segment.kind === "spelling") {
-                return loadLocalAsset(segment.assetPath);
+                return loadLocalAsset(segment.assetPath, requestUrl);
             }
 
             const voice = getWordAudioVoiceForSegment(segment);
@@ -145,7 +149,7 @@ export default async (req) => {
                 .map((wordPair) => buildSingleWordAudioBuffer({
                     ...wordPair,
                     spellingEnabled: Boolean(spellingEnabled),
-                }, normalizedSpellingSpeedPreset))
+                }, normalizedSpellingSpeedPreset, req.url))
         );
 
         const wordAudioBuffers = [getSilenceBuffer(WORD_AUDIO_GAP_FRAMES)];
