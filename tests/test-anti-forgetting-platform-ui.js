@@ -39,4 +39,9 @@ assert(
     'anti-forgetting.html 应提供 slow/medium/fast 三档 spelling 速度选项'
 );
 
+assert(
+    content.includes('option value="medium" selected'),
+    'anti-forgetting.html 应默认选中 medium spelling 档位'
+);
+
 console.log('test-anti-forgetting-platform-ui passed');

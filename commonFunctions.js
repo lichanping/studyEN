@@ -1,4 +1,4 @@
-import { buildWordAudioRequestPayload } from './word-audio-format.mjs';
+import { buildWordAudioBatchRequestPayload } from './word-audio-format.mjs';
 
 // JavaScript code for the button click functions
 export function navigateToTiyanClass() {
@@ -1434,13 +1434,13 @@ function getWordAudioSpellingSpeedPreset() {
     return document.getElementById('wordAudioSpellingSpeedPreset')?.value || 'medium';
 }
 
-async function fetchWordAudio(word, spellingEnabled, spellingSpeedPreset) {
+async function fetchWordAudioBatch(wordPairs, spellingEnabled, spellingSpeedPreset) {
     for (let attempt = 0; attempt < 3; attempt++) {
         try {
             const resp = await fetch('/.netlify/functions/generate-forget-words-audio', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(buildWordAudioRequestPayload(word, spellingEnabled, spellingSpeedPreset))
+                body: JSON.stringify(buildWordAudioBatchRequestPayload(wordPairs, spellingEnabled, spellingSpeedPreset))
             });
             if (!resp.ok) throw new Error('server error');
             return await resp.blob();
@@ -1480,30 +1480,8 @@ async function generateWordsMP3({ textareaId, btnId, statusId, fileLabel, emptyM
 
     const startTime = Date.now();
     try {
-        const silenceBlob = createSilenceBlob();
         btn.textContent = `生成中…(${wordPairs.length}词)`;
-
-        // 限制并发数为 5
-        const CONCURRENCY = 5;
-        const results = new Array(wordPairs.length);
-        let done = 0;
-        async function runBatch(startIdx) {
-            for (let i = startIdx; i < wordPairs.length; i += CONCURRENCY) {
-                results[i] = await fetchWordAudio(wordPairs[i], spellingEnabled, spellingSpeedPreset);
-                done++;
-                btn.textContent = `生成中…(${done}/${wordPairs.length})`;
-            }
-        }
-        await Promise.all(Array.from({length: CONCURRENCY}, (_, k) => runBatch(k)));
-
-        // 拼接所有音频（开头加静音防首词被吃，词间加静音）
-        const audioBlobs = [silenceBlob];
-        results.forEach((blob, i) => {
-            audioBlobs.push(blob);
-            if (i < results.length - 1) audioBlobs.push(silenceBlob);
-        });
-
-        const combined = new Blob(audioBlobs, { type: 'audio/mpeg' });
+        const combined = await fetchWordAudioBatch(wordPairs, spellingEnabled, spellingSpeedPreset);
         const userName = document.getElementById('userName').value || '学生';
         const now = new Date();
         const today = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;

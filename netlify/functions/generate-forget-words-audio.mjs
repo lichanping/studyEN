@@ -19,6 +19,8 @@ function createSilenceBuffer(frameCount) {
 }
 
 const SILENCE_BUFFER_CACHE = new Map();
+const LETTER_AUDIO_CACHE = new Map();
+const WORD_AUDIO_GAP_FRAMES = 13;
 
 function getSilenceBuffer(frameCount) {
     if (!SILENCE_BUFFER_CACHE.has(frameCount)) {
@@ -48,6 +50,64 @@ async function synthesize(text, voice, rate, retries = 2) {
     }
 }
 
+async function loadLocalAsset(assetPath, requestUrl) {
+    if (!assetPath) {
+        throw new Error("Missing assetPath for spelling segment");
+    }
+
+    const normalizedAssetPath = assetPath.startsWith("/") ? assetPath : `/${assetPath}`;
+    const assetUrl = new URL(normalizedAssetPath, requestUrl).toString();
+
+    if (!LETTER_AUDIO_CACHE.has(assetUrl)) {
+        LETTER_AUDIO_CACHE.set(assetUrl, (async () => {
+            const response = await fetch(assetUrl);
+            if (!response.ok) {
+                throw new Error(`Failed to load spelling asset: ${assetUrl} (${response.status})`);
+            }
+            const arrayBuffer = await response.arrayBuffer();
+            return Buffer.from(arrayBuffer);
+        })());
+    }
+
+    return LETTER_AUDIO_CACHE.get(assetUrl);
+}
+
+async function buildSingleWordAudioBuffer(wordPair, normalizedSpellingSpeedPreset, requestUrl) {
+    const segments = buildWordAudioSegments(wordPair);
+    const audioCache = new Map();
+    const audioBuffers = await Promise.all(
+        segments.map(async (segment) => {
+            if (segment.kind === "spelling") {
+                return loadLocalAsset(segment.assetPath, requestUrl);
+            }
+
+            const voice = getWordAudioVoiceForSegment(segment);
+            const rate = getWordAudioRateForSegment(segment, normalizedSpellingSpeedPreset);
+            const ttsText = getWordAudioTextForSegment(segment);
+            const cacheKey = `${segment.kind}:${segment.lang}:${ttsText}:${rate}`;
+            if (!audioCache.has(cacheKey)) {
+                audioCache.set(cacheKey, synthesize(ttsText, voice, rate));
+            }
+            return audioCache.get(cacheKey);
+        })
+    );
+
+    const chunks = [];
+    audioBuffers.forEach((buffer, index) => {
+        chunks.push(buffer);
+        if (index < audioBuffers.length - 1) {
+            const pauseFrames = getWordAudioPauseFramesAfterSegment(
+                segments[index],
+                segments[index + 1],
+                normalizedSpellingSpeedPreset
+            );
+            chunks.push(getSilenceBuffer(pauseFrames));
+        }
+    });
+
+    return Buffer.concat(chunks);
+}
+
 export default async (req) => {
     if (req.method === "OPTIONS") {
         return new Response("", { status: 204, headers: corsHeaders() });
@@ -71,7 +131,11 @@ export default async (req) => {
     }
 
     const { english, chinese, spellingEnabled, spellingWord, spellingSpeedPreset } = body;
-    if (!english) {
+    const requestWordPairs = Array.isArray(body?.wordPairs) && body.wordPairs.length > 0
+        ? body.wordPairs
+        : [{ english, chinese, spellingWord }];
+
+    if (!requestWordPairs.some((wordPair) => String(wordPair?.english || "").trim())) {
         return new Response(JSON.stringify({ error: "english is required" }), {
             status: 400,
             headers: { "Content-Type": "application/json", ...corsHeaders() },
@@ -80,35 +144,23 @@ export default async (req) => {
 
     try {
         const normalizedSpellingSpeedPreset = normalizeWordAudioSpellingSpeedPreset(spellingSpeedPreset);
-        const segments = buildWordAudioSegments({ english, chinese, spellingEnabled, spellingWord });
-        const audioCache = new Map();
-        const audioBuffers = await Promise.all(
-            segments.map(async (segment) => {
-                const voice = getWordAudioVoiceForSegment(segment);
-                const rate = getWordAudioRateForSegment(segment, normalizedSpellingSpeedPreset);
-                const ttsText = getWordAudioTextForSegment(segment);
-                const cacheKey = `${segment.kind}:${segment.lang}:${ttsText}:${rate}`;
-                if (!audioCache.has(cacheKey)) {
-                    audioCache.set(cacheKey, synthesize(ttsText, voice, rate));
-                }
-                return audioCache.get(cacheKey);
-            })
+        const singleWordBuffers = await Promise.all(
+            requestWordPairs
+                .filter((wordPair) => String(wordPair?.english || "").trim())
+                .map((wordPair) => buildSingleWordAudioBuffer({
+                    ...wordPair,
+                    spellingEnabled: Boolean(spellingEnabled),
+                }, normalizedSpellingSpeedPreset, req.url))
         );
 
-        const chunks = [];
-        audioBuffers.forEach((buffer, index) => {
-            chunks.push(buffer);
-            if (index < audioBuffers.length - 1) {
-                const pauseFrames = getWordAudioPauseFramesAfterSegment(
-                    segments[index],
-                    segments[index + 1],
-                    normalizedSpellingSpeedPreset
-                );
-                chunks.push(getSilenceBuffer(pauseFrames));
+        const wordAudioBuffers = [getSilenceBuffer(WORD_AUDIO_GAP_FRAMES)];
+        singleWordBuffers.forEach((buffer, index) => {
+            wordAudioBuffers.push(buffer);
+            if (index < singleWordBuffers.length - 1) {
+                wordAudioBuffers.push(getSilenceBuffer(WORD_AUDIO_GAP_FRAMES));
             }
         });
-
-        const combined = Buffer.concat(chunks);
+        const combined = Buffer.concat(wordAudioBuffers);
 
         return new Response(combined, {
             status: 200,
