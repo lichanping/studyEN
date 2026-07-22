@@ -178,6 +178,12 @@ function testResolveBoardQueryPlan() {
         useProxy: false
     });
 
+    const rtc = resolveBoardQueryPlan("rtc.lxll.com");
+    assert.deepStrictEqual(rtc, {
+        url: "https://apiv2.lxll.com/customer/training/board",
+        useProxy: false
+    });
+
     const render = resolveBoardQueryPlan("studyen-static.onrender.com");
     assert.deepStrictEqual(render, {
         url: "https://apiv2.lxll.com/customer/training/board",
@@ -200,6 +206,12 @@ function testResolveCompletedQueryPlan() {
 
     const prod = resolveCompletedQueryPlan("h5.lxll.com");
     assert.deepStrictEqual(prod, {
+        url: "https://apiv2.lxll.com/customer/training/orders?pageNumber=1&pageSize=50&status=COMPLETED",
+        useProxy: false
+    });
+
+    const rtc = resolveCompletedQueryPlan("rtc.lxll.com");
+    assert.deepStrictEqual(rtc, {
         url: "https://apiv2.lxll.com/customer/training/orders?pageNumber=1&pageSize=50&status=COMPLETED",
         useProxy: false
     });
