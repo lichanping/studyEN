@@ -127,7 +127,7 @@
 
     function resolveBoardQueryPlan(hostname) {
         var host = String(hostname || "").trim().toLowerCase();
-        var shouldDirectFetch = host === "h5.lxll.com" || /\.onrender\.com$/.test(host);
+        var shouldDirectFetch = host === "h5.lxll.com" || host === "rtc.lxll.com" || /\.onrender\.com$/.test(host);
         if (shouldDirectFetch) {
             return {
                 url: "https://apiv2.lxll.com/customer/training/board",
@@ -142,7 +142,7 @@
 
     function resolveCompletedQueryPlan(hostname) {
         var host = String(hostname || "").trim().toLowerCase();
-        var shouldDirectFetch = host === "h5.lxll.com" || /\.onrender\.com$/.test(host);
+        var shouldDirectFetch = host === "h5.lxll.com" || host === "rtc.lxll.com" || /\.onrender\.com$/.test(host);
         if (shouldDirectFetch) {
             return {
                 url: "https://apiv2.lxll.com/customer/training/orders?pageNumber=1&pageSize=50&status=COMPLETED",
