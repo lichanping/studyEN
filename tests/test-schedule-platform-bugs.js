@@ -90,4 +90,10 @@ assert(
     '初次进入页面的自动课时/异常检查应默认只走李校 token；缺少李校 token 时才触发李校手机号密码框'
 );
 
+assert(
+    !checkQuotaFromScheduleBody.includes('https://h5.lxll.com')
+        && checkQuotaFromScheduleBody.includes('window.location.origin'),
+    'schedule.html 课时查询不应再写死 h5 来源头，应基于当前页面 origin 构造请求头'
+);
+
 console.log('test-schedule-platform-bugs passed');
