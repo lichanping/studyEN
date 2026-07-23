@@ -1,4 +1,5 @@
 const assert = require("assert");
+const { execFileSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 const { pathToFileURL } = require("url");
@@ -143,6 +144,25 @@ function testMockLetterAudioFilesShouldExistForAllTwentySixLetters() {
     });
 }
 
+function testMockLetterAudioFilesShouldMatchEdgeTtsMp3Encoding() {
+    const lettersDir = path.resolve(__dirname, "../static/sounds/spelling-letters");
+    const expectedFiles = Array.from({ length: 26 }, (_, index) => `${String.fromCharCode(65 + index)}.mp3`);
+
+    expectedFiles.forEach((fileName) => {
+        const filePath = path.join(lettersDir, fileName);
+        const metadata = execFileSync("afinfo", [filePath], { encoding: "utf8" });
+
+        assert(
+            metadata.includes("Data format:     1 ch,  24000 Hz"),
+            `${fileName} 应编码为 24kHz 单声道，避免破坏与 Edge TTS 的 MP3 拼接`
+        );
+        assert(
+            metadata.includes("bit rate: 48000 bits per second"),
+            `${fileName} 应编码为 48kbps，避免与 Edge TTS 的 MP3 帧参数不一致`
+        );
+    });
+}
+
 function testAudioRequestShouldReferenceSpellingFlagAcrossClientAndServer() {
     const commonFunctionsContent = fs.readFileSync(path.resolve(__dirname, "../commonFunctions.js"), "utf8");
     const functionContent = fs.readFileSync(
@@ -180,6 +200,7 @@ async function run() {
     await testSpellingBoundariesShouldUseShorterPauseThanNormalSegments();
     await testSpellingSpeedPresetShouldControlPayloadRateAndPause();
     testMockLetterAudioFilesShouldExistForAllTwentySixLetters();
+    testMockLetterAudioFilesShouldMatchEdgeTtsMp3Encoding();
     testAudioRequestShouldReferenceSpellingFlagAcrossClientAndServer();
     console.log("test-word-audio-spelling passed");
 }
