@@ -1,4 +1,4 @@
-import {copyToClipboard, getRandomMotto, showAlert, showLongText, storeClassStatistics, validateBeforeClassFeedbackSubmit, filterLegacyStudents, resolveClassFeedbackDurationHours} from './commonFunctions.js'
+import {copyToClipboard, getRandomMotto, showAlert, showLongText, storeClassStatistics, validateBeforeClassFeedbackSubmit, filterLegacyStudents, resolveClassFeedbackDurationHours, formatLocalDateYmd} from './commonFunctions.js'
 // Attach the function when the page loads
 // window.addEventListener("load", copyToClipboard);
 const setInitialDateTime = () => {
@@ -290,7 +290,7 @@ ${getRandomMotto()}`;
     showLongText(`${feedbackMessage}`);
 
     if (classDateTime) {
-        const classDate = new Date(classDateTime).toISOString().split('T')[0];
+        const classDate = formatLocalDateYmd(classDateTime);
         const classDurationHours = await resolveClassFeedbackDurationHours("体验课");
         storeClassStatistics(userName, classDate, newWord, 0, classDurationHours, "体验课");
     } else {

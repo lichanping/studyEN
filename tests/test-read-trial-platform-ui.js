@@ -60,6 +60,23 @@ assert(
 );
 
 assert(
+    commonFunctions.includes('export function formatLocalDateYmd')
+        && commonFunctions.includes('export function parseLocalDateYmd')
+        && classFormalContent.includes('formatLocalDateYmd(classDateTime)')
+        && classFormalContent.includes('formatLocalDateYmd(reviewDate)')
+        && readJs.includes('formatLocalDateYmd(classDateTime)')
+        && readJs.includes('formatLocalDateYmd(reviewDate)')
+        && trialJs.includes('formatLocalDateYmd(classDateTime)')
+        && !classFormalContent.includes('new Date(lastReviewDate)')
+        && !readJs.includes('new Date(lastReviewDate)')
+        && !classFormalContent.includes('const studyDate = new Date(dateStr);')
+        && !classFormalContent.includes("toISOString().split('T')[0]")
+        && !readJs.includes("toISOString().split('T')[0]")
+        && !trialJs.includes("toISOString().split('T')[0]"),
+    '正式课/阅读课/体验课相关日期应统一使用本地 YYYY-MM-DD 解析与格式化，不能再混用 UTC 截断或 new Date(YYYY-MM-DD)'
+);
+
+assert(
     readHtml.includes('commonFunctions.selfReviewClick'),
     '阅读课页的课后复习方式按钮应复用 commonFunctions.selfReviewClick'
 );

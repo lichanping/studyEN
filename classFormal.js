@@ -10,7 +10,9 @@ import {
     loginApp,
     displayToast,
     validateBeforeClassFeedbackSubmit,
-    filterLegacyStudents
+    filterLegacyStudents,
+    formatLocalDateYmd,
+    parseLocalDateYmd
 } from './commonFunctions.js'
 
 let hasAutoSyncedNewWordFromReviewWord = false;
@@ -145,6 +147,14 @@ function getCurrentPlatformId() {
     } catch (_) {
         return DEFAULT_PLATFORM_ID;
     }
+}
+
+function parseStoredDateToLocalDate(dateStr) {
+    return parseLocalDateYmd(dateStr) || new Date(NaN);
+}
+
+function compareStoredDate(leftDate, rightDate) {
+    return parseStoredDateToLocalDate(leftDate) - parseStoredDateToLocalDate(rightDate);
 }
 
 function initPlatformSelector() {
@@ -302,7 +312,8 @@ export function updateLabel() {
         const today = new Date();
         const tomorrow = new Date(today);
         tomorrow.setDate(today.getDate() + 1);
-        const isExpired = new Date(lastReviewDate) <= tomorrow;
+        const parsedLastReviewDate = parseStoredDateToLocalDate(lastReviewDate);
+        const isExpired = !Number.isNaN(parsedLastReviewDate.getTime()) && parsedLastReviewDate <= tomorrow;
         reviewDateLabel.textContent = `末次复习: ${lastReviewDate}`;
         reviewDateLabel.style.color = isExpired ? 'red' : 'green';
     } else {
@@ -328,7 +339,8 @@ function showTodayReviewDates(userName) {
         const matchedStudyDates = [];
 
         Object.keys(classStats).forEach(dateStr => {
-            const studyDate = new Date(dateStr);
+            const studyDate = parseStoredDateToLocalDate(dateStr);
+            if (Number.isNaN(studyDate.getTime())) return;
             studyDate.setHours(0, 0, 0, 0);
 
             reviewOffsets.forEach(offset => {
@@ -494,7 +506,7 @@ export async function handleClassFeedbackClick() {
     // 获取课程日期
     const classDateTime = document.getElementById("classDateTime").value;
     if (classDateTime) {
-        const classDate = new Date(classDateTime).toISOString().split('T')[0];
+        const classDate = formatLocalDateYmd(classDateTime);
         const classDuration = parseFloat(document.getElementById("classDuration").value);
         storeClassStatistics(userName, classDate, newWord, reviewWordCount, classDuration, "词汇课");
 
@@ -505,7 +517,7 @@ export async function handleClassFeedbackClick() {
         const reviewDate = new Date(classDateTime);
         reviewDate.setDate(reviewDate.getDate() + 21);
         // 将复习日期格式化为 YYYY-MM-DD 格式
-        const formattedReviewDate = reviewDate.toISOString().split('T')[0];
+        const formattedReviewDate = formatLocalDateYmd(reviewDate);
         // 获取 localStorage 中现有的末次复习日期
         const existingReviewDate = localStorage.getItem(`${userName}_末次复习`);
 
@@ -599,7 +611,7 @@ export async function generateReport() {
         if (!isVocabClass) return;
 
         const date = stats.date || key;
-        const recordDate = new Date(date);
+        const recordDate = parseStoredDateToLocalDate(date);
         recordDate.setHours(0, 0, 0, 0);
 
         if (recordDate > startDate && recordDate <= today) {
@@ -794,7 +806,7 @@ export function generateSalaryReport() {
                 date = stats.date;
             }
 
-            const recordDate = new Date(date);
+            const recordDate = parseStoredDateToLocalDate(date);
             const recordYear = recordDate.getFullYear();
             const recordMonth = recordDate.getMonth() + 1;
 
@@ -823,7 +835,7 @@ export function generateSalaryReport() {
     });
 
     // 按日期排序所有记录
-    allRecords.sort((a, b) => new Date(a.date) - new Date(b.date));
+    allRecords.sort((a, b) => compareStoredDate(a.date, b.date));
 
     // 生成报表内容
     reportContent += "学生姓名 | 日期       | 课程类型 | 课时 | 课时费\n";
