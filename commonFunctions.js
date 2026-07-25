@@ -95,9 +95,13 @@ export function handleReviewLateReminderClick() {
 }
 
 export function handleGroupGreetingClick() {
+    const userName = document.getElementById("userName").value;
     const teacherNameElement = document.getElementById("teacherName");
     const teacherName = teacherNameElement.options[teacherNameElement.selectedIndex].text;
-    const greetingMessage = `亲爱的家长朋友，您们好！我是${teacherName}，很⾼兴您们加⼊英语快速提升集训营🎉🎉🎉，开启一段快乐、高效的"英语提升之旅"!"<br><br>        在此过程中，我会全程陪伴孩⼦进行学新和复习，也会根据学生状态调整上课节奏🐧🕙，从短暂记忆到永久记忆，从被动接收到主动参与，逐渐提高学生的英语能力。💪💪<br><br>        让我们一起努力，⻅证孩子的学习提升和蜕变吧！😉😉😉`;
+    const currentPlatformId = window.APP_MEETING_CONFIG?.getCurrentPlatformId?.() || "lixiaolaila";
+    const greetingMessage = currentPlatformId === "baifendii"
+        ? `${userName}同学家长您好!<br><br>我是${teacherName}:将担任孩子的英语学习教练，负责孩子在百分缔英语学习、复习过程的引导、陪伴、监督与指导，我会及时在群内发送学员学习报告，请您关注！<br><br>温馨提示：<br>1.请提前给孩子准备一个网络信号好、安静的环境，以确保良好的学习体验。<br>2.课中孩子大量跟读，提前准备一杯温开水<br><br>这是我的个人介绍，期望接下来一起帮助孩子英语学习进步!`
+        : `亲爱的家长朋友，您们好！我是${teacherName}，很⾼兴您们加⼊英语快速提升集训营🎉🎉🎉，开启一段快乐、高效的"英语提升之旅"!"<br><br>        在此过程中，我会全程陪伴孩⼦进行学新和复习，也会根据学生状态调整上课节奏🐧🕙，从短暂记忆到永久记忆，从被动接收到主动参与，逐渐提高学生的英语能力。💪💪<br><br>        让我们一起努力，⻅证孩子的学习提升和蜕变吧！😉😉😉`;
 
     copyToClipboard(greetingMessage);
     showLongText(`${greetingMessage}`);
