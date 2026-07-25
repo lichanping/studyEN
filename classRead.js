@@ -7,7 +7,9 @@ import {
     storeClassStatistics,
     storeNewLearnedWords,
     validateBeforeClassFeedbackSubmit,
-    filterLegacyStudents
+    filterLegacyStudents,
+    formatLocalDateYmd,
+    parseLocalDateYmd
 } from './commonFunctions.js'
 
 const setInitialDateTime = () => {
@@ -250,7 +252,8 @@ export function updateLabel2() {
         const today = new Date();
         const tomorrow = new Date(today);
         tomorrow.setDate(today.getDate() + 1);
-        const isExpired = new Date(lastReviewDate) <= tomorrow;
+        const parsedLastReviewDate = parseLocalDateYmd(lastReviewDate);
+        const isExpired = parsedLastReviewDate instanceof Date && !Number.isNaN(parsedLastReviewDate.getTime()) && parsedLastReviewDate <= tomorrow;
         reviewDateLabel.textContent = `末次复习: ${lastReviewDate}`;
         reviewDateLabel.style.color = isExpired ? 'red' : 'green';
     } else {
@@ -325,7 +328,7 @@ export async function handleReadClassFeedbackClick() {
     // 在生成反馈前，存储课程数据
     const classDateTime = document.getElementById("classDateTime").value;
     if (classDateTime) {
-        const classDate = new Date(classDateTime).toISOString().split('T')[0];
+        const classDate = formatLocalDateYmd(classDateTime);
         const classDuration = parseFloat(document.getElementById("classDuration").value);
 
         storeClassStatistics(
@@ -341,7 +344,7 @@ export async function handleReadClassFeedbackClick() {
         const reviewDate = new Date(classDateTime);
         reviewDate.setDate(reviewDate.getDate() + 21);
         // 将复习日期格式化为 YYYY-MM-DD 格式
-        const formattedReviewDate = reviewDate.toISOString().split('T')[0];
+        const formattedReviewDate = formatLocalDateYmd(reviewDate);
         // 获取 localStorage 中现有的末次复习日期
         const existingReviewDate = localStorage.getItem(`${userName}_末次复习`);
 

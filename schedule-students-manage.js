@@ -147,6 +147,32 @@ function ensureStudentRetained(name, platformId) {
     localStorage.setItem(CUSTOM_STUDENTS_STORAGE_KEY, JSON.stringify(list));
 }
 
+function removeRetainedStudentIfUnused(name, platformId, excludedEntryId = "") {
+    const trimmed = String(name || "").trim();
+    if (!trimmed) return;
+    const normalizedPlatform = normalizePlatformId(platformId || DEFAULT_PLATFORM_ID);
+    const isStillUsed = entriesState.some((entry) => {
+        if (excludedEntryId && entry.id === excludedEntryId) return false;
+        return entry.student === trimmed && normalizePlatformId(entry.platform) === normalizedPlatform;
+    });
+    if (isStillUsed) return;
+
+    const nextList = loadCustomStudents().map((item) => {
+        if (typeof item === "string") {
+            return { name: item, platform: DEFAULT_PLATFORM_ID };
+        }
+        return {
+            name: String(item?.name || "").trim(),
+            platform: normalizePlatformId(item?.platform || DEFAULT_PLATFORM_ID)
+        };
+    }).filter((item) => {
+        if (!item.name) return false;
+        return !(item.name === trimmed && item.platform === normalizedPlatform);
+    });
+
+    localStorage.setItem(CUSTOM_STUDENTS_STORAGE_KEY, JSON.stringify(nextList));
+}
+
 function clearForm() {
     entryIdInput.value = "";
     entryForm.reset();
@@ -304,9 +330,14 @@ function handleSubmit(event) {
 
     const idx = entriesState.findIndex((item) => item.id === payload.id);
     if (idx >= 0) {
+        const previousStudent = String(entriesState[idx]?.student || "").trim();
+        const previousPlatform = normalizePlatformId(entriesState[idx]?.platform || DEFAULT_PLATFORM_ID);
         ensureStudentRetained(payload.student, payload.platform);
         payload._legacyKey = entriesState[idx]._legacyKey || payload._legacyKey;
         entriesState[idx] = payload;
+        if (previousStudent !== payload.student || previousPlatform !== payload.platform) {
+            removeRetainedStudentIfUnused(previousStudent, previousPlatform, payload.id);
+        }
     } else {
         ensureStudentRetained(payload.student, payload.platform);
         payload._legacyKey = "";

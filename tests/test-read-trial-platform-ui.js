@@ -7,6 +7,7 @@ function read(fileName) {
 }
 
 const formalHtml = read('index.html');
+const classFormalContent = read('classFormal.js');
 const readHtml = read('class-read.html');
 const trialHtml = read('class-trial.html');
 const commonFunctions = read('commonFunctions.js');
@@ -49,6 +50,30 @@ assert(
 assert(
     formalHtml.includes('commonFunctions.selfReviewClick'),
     '正式课页的课后复习方式按钮应复用 commonFunctions.selfReviewClick'
+);
+
+assert(
+    classFormalContent.includes('const currentPlatformId = getCurrentPlatformId();')
+        && classFormalContent.includes('const shouldConfirmNewWordReplacement = currentPlatformId === DEFAULT_PLATFORM_ID && newWordCountFromText !== newWord;')
+        && !classFormalContent.includes('if (newWordCountFromText !== newWord) {'),
+    'classFormal.js 正式课新学词数自动替换提示应仅在李校平台触发，百分缔和麦穗应保留手动输入数量'
+);
+
+assert(
+    commonFunctions.includes('export function formatLocalDateYmd')
+        && commonFunctions.includes('export function parseLocalDateYmd')
+        && classFormalContent.includes('formatLocalDateYmd(classDateTime)')
+        && classFormalContent.includes('formatLocalDateYmd(reviewDate)')
+        && readJs.includes('formatLocalDateYmd(classDateTime)')
+        && readJs.includes('formatLocalDateYmd(reviewDate)')
+        && trialJs.includes('formatLocalDateYmd(classDateTime)')
+        && !classFormalContent.includes('new Date(lastReviewDate)')
+        && !readJs.includes('new Date(lastReviewDate)')
+        && !classFormalContent.includes('const studyDate = new Date(dateStr);')
+        && !classFormalContent.includes("toISOString().split('T')[0]")
+        && !readJs.includes("toISOString().split('T')[0]")
+        && !trialJs.includes("toISOString().split('T')[0]"),
+    '正式课/阅读课/体验课相关日期应统一使用本地 YYYY-MM-DD 解析与格式化，不能再混用 UTC 截断或 new Date(YYYY-MM-DD)'
 );
 
 assert(
