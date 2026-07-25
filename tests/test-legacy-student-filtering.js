@@ -68,6 +68,13 @@ assert(
 );
 
 assert(
+    scheduleStudentsManageContent.includes("removeRetainedStudentIfUnused")
+        && scheduleStudentsManageContent.includes("ensureStudentRetained(payload.student, payload.platform);")
+        && scheduleStudentsManageContent.includes("removeRetainedStudentIfUnused(previousStudent, previousPlatform, payload.id);"),
+    "schedule-students-manage.js 编辑学生改名时应清理同平台旧保留名，避免 index 页面同时出现旧名和新名"
+);
+
+assert(
     scheduleContent.includes("commonFunctions.filterLegacyStudents(")
         && scheduleContent.includes("collectQuotaNeeds"),
     "schedule.html 课时余额异常检查应复用 commonFunctions.filterLegacyStudents，避免陈怡睿、季筱雯进入异常学生"

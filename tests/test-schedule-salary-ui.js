@@ -27,6 +27,21 @@ assert(
 );
 
 assert(
+    scheduleContent.includes('id="generateScheduleSalaryButton"')
+        && !scheduleContent.includes('id="verifySalaryStorageButton"')
+        && !scheduleContent.includes('id="backfillDailySnapshotButton"'),
+    'schedule.html 工资区应只保留“按实际上课生成工资统计”按钮，不应暴露本地账本或手工补录按钮'
+);
+
+assert(
+    !scheduleContent.includes('schedule-salary-ledger-v1')
+        && !scheduleContent.includes('autoBackfillYesterdayIfMissing')
+        && !scheduleContent.includes('collectActualRowsForDate(')
+        && !scheduleContent.includes('upsertDailySalarySnapshot('),
+    'schedule.html 工资统计不应再包含本地账本或补录逻辑，必须完全基于接口已完成上课记录'
+);
+
+assert(
     scheduleContent.includes('configureMaisuiCredentials')
         && scheduleContent.includes('loginMaisuiApp')
         && scheduleContent.includes('maisui-access-token'),
@@ -40,6 +55,11 @@ assert(
         && scheduleContent.includes('timeRange[1]')
         && scheduleContent.includes('authorization'),
     'schedule.html 麦穗工资统计应使用麦穗 token 按月份 timeRange 拉取销课记录列表'
+);
+
+assert(
+    !scheduleContent.includes('const rate = SALARY_RATE_MAP[type] || 50;'),
+    'schedule.html 工资汇总行不应将麦穗体验课时薪写死为 40 元/时'
 );
 
 assert(
