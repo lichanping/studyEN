@@ -735,8 +735,16 @@ function getTrialSalaryHourlyRate(platformId) {
     return trialRateByPlatform[normalizePlatformId(platformId)] || trialRateByPlatform[DEFAULT_PLATFORM_ID];
 }
 
+function getVocabSalaryHourlyRate(platformId) {
+    const vocabRateByPlatform = {
+        baifendii: 48,
+        lixiaolaila: 50
+    };
+    return vocabRateByPlatform[normalizePlatformId(platformId)] || vocabRateByPlatform[DEFAULT_PLATFORM_ID];
+}
+
 function getSalaryHourlyRate(type, platformId) {
-    if (type === "词汇课") return 50;
+    if (type === "词汇课") return getVocabSalaryHourlyRate(platformId);
     if (type === "阅读完型语法课") return 55;
     if (type === "体验课") return getTrialSalaryHourlyRate(platformId);
     return 50;
@@ -854,7 +862,9 @@ export function generateSalaryReport() {
     reportContent += "\n========== 总计 ==========\n";
 
     // 计算各类课程工资
-    const salaryVocab = totalHoursVocab * 50;    // 词汇课工资
+    const salaryVocab = allRecords
+        .filter((record) => record.type === "词汇课")
+        .reduce((sum, record) => sum + record.duration * record.hourlyRate, 0);
     const salaryReading = totalHoursReading * 55; // 阅读课工资
     const salaryTrial = allRecords
         .filter((record) => record.type === "体验课")
@@ -863,7 +873,7 @@ export function generateSalaryReport() {
 
     if (totalHoursVocab > 0) {
         reportContent += `词汇课总课时: ${totalHoursVocab} 小时\n`;
-        reportContent += `词汇课工资（50元/时）: ${salaryVocab} 元\n`;
+        reportContent += `词汇课工资（按平台单价）: ${salaryVocab} 元\n`;
     }
     if (totalHoursReading > 0) {
         reportContent += `阅读课总课时: ${totalHoursReading} 小时\n`;
@@ -890,7 +900,7 @@ export function generateSalaryReport() {
 
     csvRows.push([]);
     csvRows.push(["课程类型", "总课时", "时薪(元)", "工资(元)"]);
-    if (totalHoursVocab > 0) csvRows.push(["词汇课", totalHoursVocab, 50, salaryVocab]);
+    if (totalHoursVocab > 0) csvRows.push(["词汇课", totalHoursVocab, "按平台单价", salaryVocab]);
     if (totalHoursReading > 0) csvRows.push(["阅读完型语法课", totalHoursReading, 55, salaryReading]);
     if (totalHoursTrial > 0) csvRows.push(["体验课", totalHoursTrial, "按平台单价", salaryTrial]);
     csvRows.push(["工资总计", "", "", Number(totalSalaryAll.toFixed(2))]);

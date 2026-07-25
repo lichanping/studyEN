@@ -34,6 +34,25 @@ assert(
 );
 
 assert(
+    content.includes('function getVocabSalaryHourlyRate')
+        && content.includes('baifendii: 48')
+        && content.includes('lixiaolaila: 50'),
+    'index/classFormal 工资统计应按平台计算单词课单价：百分缔48元/时、李校50元/时'
+);
+
+assert(
+    !content.includes('if (type === "词汇课") return 50;'),
+    'index/classFormal 工资统计不应将所有单词课统一按 50 元/时计算'
+);
+
+assert(
+    !content.includes('const salaryVocab = totalHoursVocab * 50;')
+        && content.includes('filter((record) => record.type === "词汇课")')
+        && content.includes('record.duration * record.hourlyRate'),
+    'index/classFormal 单词课工资汇总应按记录平台单价逐条累加，不能统一按 50 元/时'
+);
+
+assert(
     content.includes('stats.platform')
         && content.includes('recordPlatform')
         && content.includes('getSalaryHourlyRate(type, recordPlatform)'),
