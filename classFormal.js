@@ -436,8 +436,10 @@ export async function handleClassFeedbackClick() {
         const parsedNum = parseInt(num, 10);
         return sum + (isNaN(parsedNum) ? 0 : parsedNum);
     }, 0) : 0;
+    const currentPlatformId = getCurrentPlatformId();
+    const shouldConfirmNewWordReplacement = currentPlatformId === DEFAULT_PLATFORM_ID && newWordCountFromText !== newWord;
 
-    if (newWordCountFromText !== newWord) {
+    if (shouldConfirmNewWordReplacement) {
         const confirmReplace = confirm(`新学单词实际数量为 ${newWordCountFromText}，与手动输入的 ${newWord} 不同。是否要自动替换？`);
         if (confirmReplace) {
             newWordInput.value = newWordCountFromText;
