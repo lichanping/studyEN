@@ -1437,6 +1437,11 @@ sourceId: 上课记录唯一标识（用于去重）</span>
 
     function getCourseScheduleState(entry, dateValue) {
         const state = boardScheduleMatchState;
+        const platformId = resolveEntryPlatform(entry);
+
+        if (platformId !== "lixiaolaila") {
+            return { text: "不检查", className: "state-unavailable" };
+        }
 
         if (state.status === "ready" && state.index && window.ScheduleCourseMatch && typeof window.ScheduleCourseMatch.hasScheduledCourse === "function") {
             const target = buildLocalCourseMatchTarget(entry, dateValue);
@@ -3024,6 +3029,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
                     student: String(entry?.student || "").trim(),
                     course: String(window.resolveCourse?.(entry, dateValue) || entry?.course || "").trim(),
                     durationMinutes,
+                    platform: resolveEntryPlatform(entry),
                     dateValue
                 });
             });
@@ -3038,6 +3044,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
                     student: String(entry?.student || "").trim(),
                     course: String(window.resolveCourse?.(entry, dateValue) || entry?.course || "").trim(),
                     durationMinutes,
+                    platform: resolveEntryPlatform(entry),
                     dateValue
                 });
             });
