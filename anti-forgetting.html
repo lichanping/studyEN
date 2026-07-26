@@ -360,7 +360,8 @@
         </div>
         <div class="field">
             <label for="pronounceWords">发音不标准的词
-                <button id="generatePronounceWordsMP3Button" type="button" style="margin-left:8px;font-size:12px;padding:2px 8px;border-radius:5px;cursor:pointer;">生成发音纠正MP3</button>
+                <button id="generatePronounceWordsMP3Button" type="button" style="margin-left:8px;font-size:12px;padding:2px 8px;border-radius:5px;cursor:pointer;">纠音MP3</button>
+                <button id="copyPronounceWordsTaskButton" type="button" style="margin-left:8px;font-size:12px;padding:2px 8px;border-radius:5px;cursor:pointer;">发音任务</button>
             </label>
             <textarea id="pronounceWords"></textarea>
             <div id="generatePronounceWordsMP3Status" style="font-size:12px;margin-top:4px;color:#aaa;"></div>
@@ -1015,6 +1016,25 @@
             : '📊 复习计划核对结果（点击展开）';
     }
 
+    function copyPronounceWordsTask() {
+        const raw = document.getElementById('pronounceWords')?.value || '';
+        const studentName = String(document.getElementById('userName')?.value || '').trim();
+        const lines = raw
+            .split('\n')
+            .map((line) => line.trim())
+            .filter(Boolean);
+
+        if (lines.length === 0) {
+            window.alert('请先填写发音不标准的词');
+            return;
+        }
+
+        const formattedLines = lines.map((line) => `- ${line}`);
+        const message = `📢 【九宫格复习中发音打卡任务】\n结合「智能记忆灯塔」系统，以下单词需要重点强化发音，请${studentName ? `${studentName}` : ""}大声朗读 2 遍，并录音或拍视频发群打卡：\n${formattedLines.join('\n')}`;
+        commonFunctions.copyToClipboard(message);
+        commonFunctions.showLongText(message, { useHtml: false });
+    }
+
     // 计算实际复习偏移（用于多排场景）
     function calculateActualOffset(trainingDate, reviewDate) {
         const training = parseDate(trainingDate);
@@ -1358,6 +1378,7 @@
     document.getElementById('newFeedbackButton').addEventListener('click', commonFunctions.handleNewVersionFeedbackClick);
     document.getElementById('generateForgetWordsMP3Button').addEventListener('click', commonFunctions.generateForgetWordsMP3);
     document.getElementById('generatePronounceWordsMP3Button').addEventListener('click', commonFunctions.generatePronounceWordsMP3);
+    document.getElementById('copyPronounceWordsTaskButton').addEventListener('click', copyPronounceWordsTask);
 
     commonFunctions.addRightClickPasteEvent(document.getElementById('forgetWords'));
     commonFunctions.addRightClickPasteEvent(document.getElementById('pronounceWords'));

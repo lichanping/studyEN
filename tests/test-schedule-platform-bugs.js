@@ -31,6 +31,8 @@ function getFunctionBody(source, functionName) {
 const configureLoginBody = getFunctionBody(content, 'configureLoginCredentialsForCurrentPlatform');
 const runScheduleQuotaCheckBody = getFunctionBody(content, 'runScheduleQuotaCheck');
 const checkQuotaFromScheduleBody = getFunctionBody(content, 'checkQuotaFromSchedule');
+const getCourseScheduleStateBody = getFunctionBody(content, 'getCourseScheduleState');
+const getQuotaScopeByDateBody = getFunctionBody(content, 'getQuotaScopeByDate');
 const configureLxBody = getFunctionBody(commonFunctionsContent, 'configureLxCredentials');
 const configureMaisuiBody = getFunctionBody(commonFunctionsContent, 'configureMaisuiCredentials');
 
@@ -94,6 +96,21 @@ assert(
     !checkQuotaFromScheduleBody.includes('https://h5.lxll.com')
         && checkQuotaFromScheduleBody.includes('window.location.origin'),
     'schedule.html 课时查询不应再写死 h5 来源头，应基于当前页面 origin 构造请求头'
+);
+
+assert(
+    content.includes('platformId !== "lixiaolaila"')
+        && getCourseScheduleStateBody.includes('platformId !== "lixiaolaila"')
+        && getCourseScheduleStateBody.includes('return { text: "不检查"')
+        && getCourseScheduleStateBody.indexOf('return { text: "不检查"') < getCourseScheduleStateBody.indexOf('return { text: "未排课", className: "state-unscheduled" }'),
+    'schedule.html 非李校平台不应展示“未排课”标签，排课状态应跳过检查'
+);
+
+assert(
+    getQuotaScopeByDateBody.includes('platform: resolveEntryPlatform(entry)')
+        && getQuotaScopeByDateBody.match(/mergedEntries\.push\(\{[\s\S]*platform: resolveEntryPlatform\(entry\)/)
+        && !getQuotaScopeByDateBody.includes('student: String(entry?.student || "").trim(),\n                    course: String(window.resolveCourse?.(entry, dateValue) || entry?.course || "").trim(),\n                    durationMinutes,\n                    dateValue'),
+    'schedule.html 构建课时检查范围时应保留每条排课的平台字段，避免百分缔/麦穗学员被按默认李校平台参与异常学生检查'
 );
 
 console.log('test-schedule-platform-bugs passed');
