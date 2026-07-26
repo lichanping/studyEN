@@ -30,6 +30,22 @@ assert(
 );
 
 assert(
+    commonFunctions.includes('extractBfdWordListFromImage')
+        && commonFunctions.includes('preprocessWordTableRegion')
+        && commonFunctions.includes('WORD_TABLE_NOISE_KEYWORDS')
+        && commonFunctions.includes('词汇课单词表')
+        && commonFunctions.includes('抗遗忘复习计划'),
+    'commonFunctions.js 应针对 BFD 单词表图片做预处理与噪音过滤，避免把表头、手机号、抗遗忘计划误识别进新学单词'
+);
+
+assert(
+    commonFunctions.includes('structuredText = await extractBfdWordListFromImage')
+        && commonFunctions.includes('fallbackText = normalizeRecognizedWordTableText')
+        && commonFunctions.includes('structuredText || fallbackText'),
+    '图片导入应优先走 BFD 词表结构化提取，失败后再回退到普通 OCR 文本清洗'
+);
+
+assert(
     formalHtml.includes('commonFunctions.setupNewLearnedWordsImageImport')
         && formalHtml.includes('importWordsImageButton')
         && formalHtml.includes('newLearnedWordsImageInput'),

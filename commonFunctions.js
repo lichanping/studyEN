@@ -1764,6 +1764,25 @@ export function addRightClickPasteEvent(element) {
 }
 
 let tesseractLoadPromise = null;
+const WORD_TABLE_NOISE_KEYWORDS = Object.freeze([
+    '词汇课单词表',
+    '学生姓名',
+    '学生手机号',
+    '打印时间',
+    '英语单词',
+    '中文解释',
+    '抗遗忘复习计划',
+    '第 1 页',
+    '共 1 页'
+]);
+const WORD_TABLE_COLUMN_REGIONS = Object.freeze([
+    { language: 'eng', type: 'english', region: { x: 0.02, y: 0.145, width: 0.15, height: 0.61 } },
+    { language: 'chi_sim', type: 'meaning', region: { x: 0.17, y: 0.145, width: 0.15, height: 0.61 } },
+    { language: 'eng', type: 'english', region: { x: 0.35, y: 0.145, width: 0.15, height: 0.61 } },
+    { language: 'chi_sim', type: 'meaning', region: { x: 0.50, y: 0.145, width: 0.15, height: 0.61 } },
+    { language: 'eng', type: 'english', region: { x: 0.68, y: 0.145, width: 0.15, height: 0.61 } },
+    { language: 'chi_sim', type: 'meaning', region: { x: 0.83, y: 0.145, width: 0.15, height: 0.61 } }
+]);
 
 function setWordImageImportStatus(statusElement, message) {
     if (statusElement) {
@@ -1771,13 +1790,111 @@ function setWordImageImportStatus(statusElement, message) {
     }
 }
 
+function containsWordTableNoise(line) {
+    return WORD_TABLE_NOISE_KEYWORDS.some((keyword) => line.includes(keyword));
+}
+
+function normalizeOcrLine(line) {
+    return String(line || '')
+        .replace(/\r/g, '')
+        .replace(/[|｜\[\]【】]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
 function normalizeRecognizedWordTableText(text) {
     return String(text || '')
         .replace(/\r/g, '')
         .split('\n')
-        .map(line => line.replace(/[|｜]/g, ' ').replace(/\s+/g, ' ').trim())
-        .filter(line => line && /[A-Za-z\u4e00-\u9fff]/.test(line))
+        .map((line) => normalizeOcrLine(line))
+        .filter((line) => line && /[A-Za-z\u4e00-\u9fff]/.test(line) && !containsWordTableNoise(line))
         .join('\n');
+}
+
+function extractOcrLines(text, type) {
+    return String(text || '')
+        .split('\n')
+        .map((line) => normalizeOcrLine(line))
+        .filter((line) => {
+            if (!line || containsWordTableNoise(line)) return false;
+            if (type === 'english') return /[A-Za-z]/.test(line);
+            if (type === 'meaning') return /[\u4e00-\u9fff]/.test(line);
+            return /[A-Za-z\u4e00-\u9fff]/.test(line);
+        });
+}
+
+function loadImageFromFile(file) {
+    return new Promise((resolve, reject) => {
+        const objectUrl = URL.createObjectURL(file);
+        const image = new Image();
+        image.onload = () => {
+            URL.revokeObjectURL(objectUrl);
+            resolve(image);
+        };
+        image.onerror = () => {
+            URL.revokeObjectURL(objectUrl);
+            reject(new Error('读取图片失败，请重新选择文件'));
+        };
+        image.src = objectUrl;
+    });
+}
+
+function preprocessWordTableRegion(image, region) {
+    const sourceWidth = image.naturalWidth || image.width;
+    const sourceHeight = image.naturalHeight || image.height;
+    const sx = Math.max(0, Math.floor(sourceWidth * region.x));
+    const sy = Math.max(0, Math.floor(sourceHeight * region.y));
+    const sw = Math.max(1, Math.floor(sourceWidth * region.width));
+    const sh = Math.max(1, Math.floor(sourceHeight * region.height));
+    const scale = 2;
+    const canvas = document.createElement('canvas');
+    canvas.width = sw * scale;
+    canvas.height = sh * scale;
+
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(image, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const pixels = imageData.data;
+    for (let index = 0; index < pixels.length; index += 4) {
+        const luminance = (pixels[index] * 0.299) + (pixels[index + 1] * 0.587) + (pixels[index + 2] * 0.114);
+        const value = luminance > 180 ? 255 : 0;
+        pixels[index] = value;
+        pixels[index + 1] = value;
+        pixels[index + 2] = value;
+    }
+    ctx.putImageData(imageData, 0, 0);
+    return canvas;
+}
+
+async function extractBfdWordListFromImage(file, Tesseract, statusElement) {
+    const image = await loadImageFromFile(file);
+    const columns = [];
+
+    for (let index = 0; index < WORD_TABLE_COLUMN_REGIONS.length; index += 1) {
+        const columnConfig = WORD_TABLE_COLUMN_REGIONS[index];
+        setWordImageImportStatus(statusElement, `正在识别单词表第 ${index + 1}/${WORD_TABLE_COLUMN_REGIONS.length} 列...`);
+        const preprocessedWordTableRegion = preprocessWordTableRegion(image, columnConfig.region);
+        const result = await Tesseract.recognize(preprocessedWordTableRegion, columnConfig.language);
+        columns.push({
+            ...columnConfig,
+            lines: extractOcrLines(result?.data?.text || '', columnConfig.type)
+        });
+    }
+
+    const pairs = [];
+    for (let index = 0; index < columns.length; index += 2) {
+        const englishLines = columns[index]?.lines || [];
+        const meaningLines = columns[index + 1]?.lines || [];
+        const pairCount = Math.min(englishLines.length, meaningLines.length);
+        for (let pairIndex = 0; pairIndex < pairCount; pairIndex += 1) {
+            pairs.push(`${englishLines[pairIndex]}\n${meaningLines[pairIndex]}`);
+        }
+    }
+
+    return pairs.join('\n');
 }
 
 async function ensureTesseractLoaded() {
@@ -1818,15 +1935,22 @@ export function setupNewLearnedWordsImageImport({ triggerButton, input, targetTe
 
         try {
             const Tesseract = await ensureTesseractLoaded();
-            const result = await Tesseract.recognize(file, 'eng+chi_sim', {
-                logger: ({ status, progress }) => {
-                    if (!statusElement) return;
-                    const percent = Number.isFinite(progress) ? ` ${Math.round(progress * 100)}%` : '';
-                    setWordImageImportStatus(statusElement, `${status || '正在识别'}${percent}`);
-                }
-            });
+            const structuredText = await extractBfdWordListFromImage(file, Tesseract, statusElement);
+            let fallbackText = '';
 
-            const normalizedText = normalizeRecognizedWordTableText(result?.data?.text || '');
+            if (!structuredText) {
+                const result = await Tesseract.recognize(file, 'eng+chi_sim', {
+                    logger: ({ status, progress }) => {
+                        if (!statusElement) return;
+                        const percent = Number.isFinite(progress) ? ` ${Math.round(progress * 100)}%` : '';
+                        setWordImageImportStatus(statusElement, `${status || '正在识别'}${percent}`);
+                    }
+                });
+
+                fallbackText = normalizeRecognizedWordTableText(result?.data?.text || '');
+            }
+
+            const normalizedText = structuredText || fallbackText;
             if (!normalizedText) {
                 throw new Error('未识别到可用文字，请换更清晰的图片后重试');
             }
