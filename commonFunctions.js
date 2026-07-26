@@ -1763,6 +1763,93 @@ export function addRightClickPasteEvent(element) {
     });
 }
 
+let tesseractLoadPromise = null;
+
+function setWordImageImportStatus(statusElement, message) {
+    if (statusElement) {
+        statusElement.textContent = message || '';
+    }
+}
+
+function normalizeRecognizedWordTableText(text) {
+    return String(text || '')
+        .replace(/\r/g, '')
+        .split('\n')
+        .map(line => line.replace(/[|｜]/g, ' ').replace(/\s+/g, ' ').trim())
+        .filter(line => line && /[A-Za-z\u4e00-\u9fff]/.test(line))
+        .join('\n');
+}
+
+async function ensureTesseractLoaded() {
+    if (window.Tesseract) return window.Tesseract;
+    if (tesseractLoadPromise) return tesseractLoadPromise;
+
+    tesseractLoadPromise = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+        script.async = true;
+        script.onload = () => {
+            if (window.Tesseract) {
+                resolve(window.Tesseract);
+                return;
+            }
+
+            reject(new Error('Tesseract 加载完成，但未找到 window.Tesseract'));
+        };
+        script.onerror = () => reject(new Error('加载 OCR 识别库失败，请检查网络后重试'));
+        document.head.appendChild(script);
+    });
+
+    return tesseractLoadPromise;
+}
+
+export function setupNewLearnedWordsImageImport({ triggerButton, input, targetTextarea, statusElement } = {}) {
+    if (!triggerButton || !input || !targetTextarea) return;
+
+    triggerButton.addEventListener('click', () => {
+        input.click();
+    });
+
+    input.addEventListener('change', async () => {
+        const file = input.files && input.files[0];
+        if (!file) return;
+
+        setWordImageImportStatus(statusElement, '正在识别图片，请稍候...');
+
+        try {
+            const Tesseract = await ensureTesseractLoaded();
+            const result = await Tesseract.recognize(file, 'eng+chi_sim', {
+                logger: ({ status, progress }) => {
+                    if (!statusElement) return;
+                    const percent = Number.isFinite(progress) ? ` ${Math.round(progress * 100)}%` : '';
+                    setWordImageImportStatus(statusElement, `${status || '正在识别'}${percent}`);
+                }
+            });
+
+            const normalizedText = normalizeRecognizedWordTableText(result?.data?.text || '');
+            if (!normalizedText) {
+                throw new Error('未识别到可用文字，请换更清晰的图片后重试');
+            }
+
+            targetTextarea.value = targetTextarea.value.trim()
+                ? `${targetTextarea.value.trim()}\n${normalizedText}`
+                : normalizedText;
+            targetTextarea.dispatchEvent(new Event('input', { bubbles: true }));
+
+            const importedLineCount = countNonEmptyLines(normalizedText);
+            setWordImageImportStatus(statusElement, `识别完成，已导入 ${importedLineCount} 行，可继续手动修正。`);
+            showLongText(`识别完成，已导入 ${importedLineCount} 行新学单词。`, { useHtml: false });
+        } catch (error) {
+            console.error('识别单词表图片失败:', error);
+            const errorMessage = error instanceof Error ? error.message : '识别失败，请稍后重试';
+            setWordImageImportStatus(statusElement, errorMessage);
+            alert(errorMessage);
+        } finally {
+            input.value = '';
+        }
+    });
+}
+
 export async function handleNewVersionFeedbackClick() {
 
     const reviewInputs = Array.from(document.querySelectorAll('.antiForgettingReviewWord'));

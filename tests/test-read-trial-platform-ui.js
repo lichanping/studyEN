@@ -54,9 +54,10 @@ assert(
 
 assert(
     classFormalContent.includes('const currentPlatformId = getCurrentPlatformId();')
-        && classFormalContent.includes('const shouldConfirmNewWordReplacement = currentPlatformId === DEFAULT_PLATFORM_ID && newWordCountFromText !== newWord;')
+        && classFormalContent.includes('const shouldConfirmNewWordReplacement = newWordCountFromText > 0')
+        && classFormalContent.includes("currentPlatformId === 'baifendii'")
         && !classFormalContent.includes('if (newWordCountFromText !== newWord) {'),
-    'classFormal.js 正式课新学词数自动替换提示应仅在李校平台触发，百分缔和麦穗应保留手动输入数量'
+    'classFormal.js 正式课新学词数自动替换提示应在李校平台照旧触发，并在百分缔已填写新学单词时也触发；麦穗仍保留手动输入数量'
 );
 
 assert(
