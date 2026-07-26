@@ -1029,7 +1029,8 @@
             return;
         }
 
-        const message = `📢 【九宫格复习中发音打卡任务】\n结合「智能记忆灯塔」系统，以下单词需强化发音，请${studentName ? `${studentName}` : ""}大声朗读2遍，录音或视频发群打卡：\n${lines.join('\n')}`;
+        const formattedLines = lines.map((line) => `- ${line}`);
+        const message = `📢 【九宫格复习中发音打卡任务】\n结合「智能记忆灯塔」系统，以下单词需要重点强化发音，请${studentName ? `${studentName}` : ""}大声朗读 2 遍，并录音或拍视频发群打卡：\n${formattedLines.join('\n')}`;
         commonFunctions.copyToClipboard(message);
         commonFunctions.showLongText(message, { useHtml: false });
     }
