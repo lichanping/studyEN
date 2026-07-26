@@ -59,12 +59,6 @@ const initReviewWordFirstBlurAutoSync = () => {
     });
 };
 
-// Attach the function to the "load" event of the window
-window.addEventListener("load", setInitialDateTime);
-window.addEventListener('load', updateUserNameOptions);
-window.addEventListener("load", updateLabel);
-window.addEventListener('load', initReviewWordFirstBlurAutoSync);
-window.addEventListener("load", initPlatformSelector);
 // Define user data
 const teacherData = {
     "liTeacher": {
@@ -141,12 +135,20 @@ function normalizePlatformId(raw) {
     return value || DEFAULT_PLATFORM_ID;
 }
 
-function getCurrentPlatformId() {
+function getStoredPlatformId() {
     try {
         return normalizePlatformId(localStorage.getItem(CURRENT_PLATFORM_STORAGE_KEY));
     } catch (_) {
         return DEFAULT_PLATFORM_ID;
     }
+}
+
+function getCurrentPlatformId() {
+    const currentSelectValue = document.getElementById("platformSelect")?.value;
+    if (currentSelectValue) {
+        return normalizePlatformId(currentSelectValue);
+    }
+    return getStoredPlatformId();
 }
 
 function parseStoredDateToLocalDate(dateStr) {
@@ -160,10 +162,13 @@ function compareStoredDate(leftDate, rightDate) {
 function initPlatformSelector() {
     const select = document.getElementById("platformSelect");
     if (!select) return;
+    // Seed the initial platform from localStorage, then treat the live select value as the runtime source of truth.
+    const storedPlatformId = getStoredPlatformId();
     if (window.APP_MEETING_CONFIG?.populatePlatformSelect) {
-        window.APP_MEETING_CONFIG.populatePlatformSelect(select, { selectedValue: getCurrentPlatformId() });
+        window.APP_MEETING_CONFIG.populatePlatformSelect(select, { selectedValue: storedPlatformId });
     }
-    select.value = getCurrentPlatformId();
+    select.value = storedPlatformId;
+    localStorage.setItem(CURRENT_PLATFORM_STORAGE_KEY, normalizePlatformId(select.value));
     select.addEventListener("change", () => {
         const next = normalizePlatformId(select.value);
         localStorage.setItem(CURRENT_PLATFORM_STORAGE_KEY, next);
@@ -326,6 +331,11 @@ export function updateLabel() {
     let totalHoursLabel = document.getElementById('totalHours');
     totalHoursLabel.value = totalHours;
 }
+
+initPlatformSelector();
+setInitialDateTime();
+updateUserNameOptions();
+initReviewWordFirstBlurAutoSync();
 
 function showTodayReviewDates(userName) {
     try {

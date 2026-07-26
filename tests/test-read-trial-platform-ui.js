@@ -13,6 +13,7 @@ const trialHtml = read('class-trial.html');
 const commonFunctions = read('commonFunctions.js');
 const readJs = read('classRead.js');
 const trialJs = read('classTrial.js');
+const meetingConfig = read('meeting-config.js');
 const expectedSelfReviewMessage = '📚 今日作业布置（必做）<br>1. 笔头作业：打印【每日单词表】，看中文版写英文，看英文版写中文；对照批改后拍照发群打卡。建议每天练1遍，落实会拼会写。<br>2. 口头作业：新学单词大声朗读2遍，录音或视频发群打卡。<br><br>⏰ 截止：今晚22:20前<br>📌 复习规则：坚持21天抗遗忘复习，做到看到英文会读、知道中文；当天遗忘的单词及时加入生词本巩固。<br>☀️ 继续加油，坚持会更有收获。';
 
 assert(
@@ -50,6 +51,21 @@ assert(
 assert(
     formalHtml.includes('commonFunctions.selfReviewClick'),
     '正式课页的课后复习方式按钮应复用 commonFunctions.selfReviewClick'
+);
+
+assert(
+    classFormalContent.includes('initPlatformSelector();')
+        && classFormalContent.includes('updateUserNameOptions();')
+        && classFormalContent.includes('setInitialDateTime();'),
+    'classFormal.js 页面加载时应初始化平台选择器、学员列表与默认上课时间，避免页面显示的平台与提交/排课校验读取的平台脱节'
+);
+
+assert(
+    classFormalContent.includes('platformSelect")?.value')
+        && readJs.includes('platformSelect")?.value')
+        && trialJs.includes('platformSelect")?.value')
+        && meetingConfig.includes('platformSelect")?.value'),
+    '正式课/阅读课/体验课及全局平台配置读取当前平台时，应优先使用页面上当前 platformSelect 的值，避免视觉平台与 localStorage 脱节'
 );
 
 assert(
