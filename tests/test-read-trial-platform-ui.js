@@ -13,7 +13,28 @@ const trialHtml = read('class-trial.html');
 const commonFunctions = read('commonFunctions.js');
 const readJs = read('classRead.js');
 const trialJs = read('classTrial.js');
+const meetingConfig = read('meeting-config.js');
 const expectedSelfReviewMessage = '📚 今日作业布置（必做）<br>1. 笔头作业：打印【每日单词表】，看中文版写英文，看英文版写中文；对照批改后拍照发群打卡。建议每天练1遍，落实会拼会写。<br>2. 口头作业：新学单词大声朗读2遍，录音或视频发群打卡。<br><br>⏰ 截止：今晚22:20前<br>📌 复习规则：坚持21天抗遗忘复习，做到看到英文会读、知道中文；当天遗忘的单词及时加入生词本巩固。<br>☀️ 继续加油，坚持会更有收获。';
+
+function assertSelectWinsAtRuntime(fileContent, label) {
+    assert(
+        fileContent.includes('const currentSelectValue = document.getElementById("platformSelect")?.value;')
+            && fileContent.includes('if (currentSelectValue) {')
+            && fileContent.includes('return normalizePlatformId(currentSelectValue);')
+            && fileContent.includes('return getStoredPlatformId();'),
+        `${label} 运行时读取当前平台时，应优先使用页面上的 platformSelect，仅在取不到时才回退到 localStorage`
+    );
+}
+
+function assertStoredPlatformSeedsInitialSelect(fileContent, label) {
+    assert(
+        fileContent.includes('const storedPlatformId = getStoredPlatformId();')
+            && fileContent.includes('populatePlatformSelect(select, { selectedValue: storedPlatformId })')
+            && fileContent.includes('select.value = storedPlatformId;')
+            && fileContent.includes('localStorage.setItem(CURRENT_PLATFORM_STORAGE_KEY, normalizePlatformId(select.value));'),
+        `${label} 初始化平台下拉框时，应先使用 localStorage 中的 current-platform-v1 渲染初始值，再与当前 select 收敛`
+    );
+}
 
 assert(
     readHtml.includes('id="platformSelect"'),
@@ -51,6 +72,29 @@ assert(
     formalHtml.includes('commonFunctions.selfReviewClick'),
     '正式课页的课后复习方式按钮应复用 commonFunctions.selfReviewClick'
 );
+
+assert(
+    classFormalContent.includes('initPlatformSelector();')
+        && classFormalContent.includes('updateUserNameOptions();')
+        && classFormalContent.includes('setInitialDateTime();'),
+    'classFormal.js 页面加载时应初始化平台选择器、学员列表与默认上课时间，避免页面显示的平台与提交/排课校验读取的平台脱节'
+);
+
+assertSelectWinsAtRuntime(classFormalContent, 'classFormal.js');
+assertSelectWinsAtRuntime(readJs, 'classRead.js');
+assertSelectWinsAtRuntime(trialJs, 'classTrial.js');
+
+assert(
+    meetingConfig.includes('const currentSelectValue = global.document?.getElementById("platformSelect")?.value;')
+        && meetingConfig.includes('if (currentSelectValue) {')
+        && meetingConfig.includes('return normalizePlatformId(currentSelectValue);')
+        && meetingConfig.includes('return getStoredPlatformId();'),
+    'meeting-config.js 运行时读取当前平台时，应优先使用页面上的 platformSelect，仅在取不到时才回退到 localStorage'
+);
+
+assertStoredPlatformSeedsInitialSelect(classFormalContent, 'classFormal.js');
+assertStoredPlatformSeedsInitialSelect(readJs, 'classRead.js');
+assertStoredPlatformSeedsInitialSelect(trialJs, 'classTrial.js');
 
 assert(
     classFormalContent.includes('const currentPlatformId = getCurrentPlatformId();')
