@@ -73,13 +73,21 @@
         return DEFAULT_PLATFORM_ID;
     }
 
-    function getCurrentPlatformId() {
+    function getStoredPlatformId() {
         try {
             const value = global.localStorage?.getItem(CURRENT_PLATFORM_STORAGE_KEY);
             return normalizePlatformId(value);
         } catch (_) {
             return DEFAULT_PLATFORM_ID;
         }
+    }
+
+    function getCurrentPlatformId() {
+        const currentSelectValue = global.document?.getElementById("platformSelect")?.value;
+        if (currentSelectValue) {
+            return normalizePlatformId(currentSelectValue);
+        }
+        return getStoredPlatformId();
     }
 
     function getMeetingIdByPlatform(platformId) {
