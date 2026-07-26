@@ -10,9 +10,11 @@
 <body>
 <div class="login-container">
     <h2>Login</h2>
-    <input type="text" id="username" placeholder="Username" required>
-    <input type="password" id="password" placeholder="Password" required>
-    <button id="login">Login</button>
+    <form id="loginForm">
+        <input type="text" id="username" placeholder="Username" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <button id="login" type="submit">Login</button>
+    </form>
     <p id="error-message" style="color: red; display: none;">Invalid credentials</p>
 </div>
 
@@ -20,7 +22,14 @@
 <script type="module">
     import * as commonFunctions from './commonFunctions.js';
 
-    document.getElementById("login").addEventListener("click", commonFunctions.validateLogin);
+    document.getElementById("loginForm").addEventListener("submit", (event) => {
+        event.preventDefault();
+        commonFunctions.validateLogin();
+    });
+    document.getElementById("login").addEventListener("click", (event) => {
+        event.preventDefault();
+        commonFunctions.validateLogin();
+    });
 </script>
 
 </body>
