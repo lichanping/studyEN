@@ -46,11 +46,13 @@ assert(
 
 assert(
     content.includes('id="copyPronounceWordsTaskButton"')
+        && content.includes('>纠音MP3</button>')
+        && content.includes('>发音任务</button>')
         && content.includes('📢 【九宫格复习中发音打卡任务】')
         && content.includes("const studentName = String(document.getElementById('userName')?.value || '').trim();")
         && content.includes('结合「智能记忆灯塔」系统，以下单词需强化发音，请${studentName ? `${studentName}` : ""}大声朗读2遍，录音或视频发群打卡：')
         && content.includes('document.getElementById(\'copyPronounceWordsTaskButton\').addEventListener(\'click\', copyPronounceWordsTask);'),
-    'anti-forgetting.html 应提供发音打卡任务按钮，并输出固定模板文案'
+    'anti-forgetting.html 应提供发音打卡任务按钮，并使用更短按钮文案保证两个按钮可同行显示'
 );
 
 console.log('test-anti-forgetting-platform-ui passed');
