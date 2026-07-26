@@ -1775,13 +1775,30 @@ const WORD_TABLE_NOISE_KEYWORDS = Object.freeze([
     '第 1 页',
     '共 1 页'
 ]);
-const WORD_TABLE_COLUMN_REGIONS = Object.freeze([
-    { language: 'eng', type: 'english', region: { x: 0.02, y: 0.145, width: 0.15, height: 0.61 } },
-    { language: 'chi_sim', type: 'meaning', region: { x: 0.17, y: 0.145, width: 0.15, height: 0.61 } },
-    { language: 'eng', type: 'english', region: { x: 0.35, y: 0.145, width: 0.15, height: 0.61 } },
-    { language: 'chi_sim', type: 'meaning', region: { x: 0.50, y: 0.145, width: 0.15, height: 0.61 } },
-    { language: 'eng', type: 'english', region: { x: 0.68, y: 0.145, width: 0.15, height: 0.61 } },
-    { language: 'chi_sim', type: 'meaning', region: { x: 0.83, y: 0.145, width: 0.15, height: 0.61 } }
+
+function buildWordTableCellGroup({ englishX, meaningX, topY, rowCount }) {
+    const rowHeight = 0.052;
+    const cellWidth = 0.145;
+    const cellHeight = 0.048;
+    const englishCells = [];
+    const meaningCells = [];
+
+    for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
+        const y = topY + (rowIndex * rowHeight);
+        englishCells.push({ x: englishX, y, width: cellWidth, height: cellHeight });
+        meaningCells.push({ x: meaningX, y, width: cellWidth, height: cellHeight });
+    }
+
+    return { englishCells, meaningCells };
+}
+
+const WORD_TABLE_CELL_REGIONS = Object.freeze([
+    buildWordTableCellGroup({ englishX: 0.025, meaningX: 0.180, topY: 0.205, rowCount: 5 }),
+    buildWordTableCellGroup({ englishX: 0.345, meaningX: 0.500, topY: 0.205, rowCount: 5 }),
+    buildWordTableCellGroup({ englishX: 0.675, meaningX: 0.830, topY: 0.205, rowCount: 5 }),
+    buildWordTableCellGroup({ englishX: 0.025, meaningX: 0.180, topY: 0.540, rowCount: 5 }),
+    buildWordTableCellGroup({ englishX: 0.345, meaningX: 0.500, topY: 0.540, rowCount: 5 }),
+    buildWordTableCellGroup({ englishX: 0.675, meaningX: 0.830, topY: 0.540, rowCount: 5 })
 ]);
 
 function setWordImageImportStatus(statusElement, message) {
@@ -1869,28 +1886,70 @@ function preprocessWordTableRegion(image, region) {
     return canvas;
 }
 
-async function extractBfdWordListFromImage(file, Tesseract, statusElement) {
-    const image = await loadImageFromFile(file);
-    const columns = [];
+function stitchCellCanvases(cellCanvases) {
+    const gap = 12;
+    const width = Math.max(...cellCanvases.map((canvas) => canvas.width));
+    const height = cellCanvases.reduce((sum, canvas) => sum + canvas.height, 0) + (gap * Math.max(0, cellCanvases.length - 1));
+    const mergedCanvas = document.createElement('canvas');
+    mergedCanvas.width = width;
+    mergedCanvas.height = height;
 
-    for (let index = 0; index < WORD_TABLE_COLUMN_REGIONS.length; index += 1) {
-        const columnConfig = WORD_TABLE_COLUMN_REGIONS[index];
-        setWordImageImportStatus(statusElement, `正在识别单词表第 ${index + 1}/${WORD_TABLE_COLUMN_REGIONS.length} 列...`);
-        const preprocessedWordTableRegion = preprocessWordTableRegion(image, columnConfig.region);
-        const result = await Tesseract.recognize(preprocessedWordTableRegion, columnConfig.language);
-        columns.push({
-            ...columnConfig,
-            lines: extractOcrLines(result?.data?.text || '', columnConfig.type)
-        });
+    const ctx = mergedCanvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, width, height);
+
+    let offsetY = 0;
+    for (const canvas of cellCanvases) {
+        ctx.drawImage(canvas, 0, offsetY);
+        offsetY += canvas.height + gap;
     }
 
+    return mergedCanvas;
+}
+
+async function recognizeSingleWordTableCell(image, region, Tesseract, language, type) {
+    const preprocessedWordTableRegion = preprocessWordTableRegion(image, region);
+    const result = await Tesseract.recognize(preprocessedWordTableRegion, language);
+    const lines = extractOcrLines(result?.data?.text || '', type);
+    return lines[0] || '';
+}
+
+async function extractWordTableCellLines(image, cells, Tesseract, language, type) {
+    const preprocessedCells = cells.map((cell) => preprocessWordTableRegion(image, cell));
+    const mergedCanvas = stitchCellCanvases(preprocessedCells);
+    const mergedResult = await Tesseract.recognize(mergedCanvas, language);
+    const mergedLines = extractOcrLines(mergedResult?.data?.text || '', type);
+
+    if (mergedLines.length === cells.length) {
+        return mergedLines;
+    }
+
+    const lines = [];
+    for (const cell of cells) {
+        const text = await recognizeSingleWordTableCell(image, cell, Tesseract, language, type);
+        if (text) {
+            lines.push(text);
+        }
+    }
+    return lines;
+}
+
+async function extractBfdWordListFromImage(file, Tesseract, statusElement) {
+    const image = await loadImageFromFile(file);
+
     const pairs = [];
-    for (let index = 0; index < columns.length; index += 2) {
-        const englishLines = columns[index]?.lines || [];
-        const meaningLines = columns[index + 1]?.lines || [];
+    let groupIndex = 0;
+    for (const cellGroup of WORD_TABLE_CELL_REGIONS) {
+        groupIndex += 1;
+        setWordImageImportStatus(statusElement, `正在识别单词表第 ${groupIndex}/${WORD_TABLE_CELL_REGIONS.length} 组...`);
+        const englishLines = await extractWordTableCellLines(image, cellGroup.englishCells, Tesseract, 'eng', 'english');
+        const meaningLines = await extractWordTableCellLines(image, cellGroup.meaningCells, Tesseract, 'chi_sim', 'meaning');
         const pairCount = Math.min(englishLines.length, meaningLines.length);
         for (let pairIndex = 0; pairIndex < pairCount; pairIndex += 1) {
-            pairs.push(`${englishLines[pairIndex]}\n${meaningLines[pairIndex]}`);
+            const englishText = englishLines[pairIndex];
+            const meaningText = meaningLines[pairIndex];
+            if (!englishText || !meaningText) continue;
+            pairs.push(`${englishText}\n${meaningText}`);
         }
     }
 
