@@ -44,4 +44,12 @@ assert(
     'anti-forgetting.html 应默认选中 medium spelling 档位'
 );
 
+assert(
+    content.includes('id="copyPronounceWordsTaskButton"')
+        && content.includes('📢 【九宫格复习中发音打卡任务】')
+        && content.includes('结合「智能记忆灯塔」系统，以下单词需强化发音，请大声朗读2遍，录音或视频发群打卡：')
+        && content.includes('document.getElementById(\'copyPronounceWordsTaskButton\').addEventListener(\'click\', copyPronounceWordsTask);'),
+    'anti-forgetting.html 应提供发音打卡任务按钮，并输出固定模板文案'
+);
+
 console.log('test-anti-forgetting-platform-ui passed');
