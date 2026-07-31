@@ -107,6 +107,8 @@ async function testSpellingSpeedPresetShouldControlPayloadRateAndPause() {
         buildWordAudioBatchRequestPayload,
         getWordAudioPauseFramesAfterSegment,
         normalizeWordAudioSpellingSpeedPreset,
+        splitWordAudioBatches,
+        WORD_AUDIO_BATCH_SIZE,
     } = await loadWordAudioFormatModule();
     const segments = buildWordAudioSegments({ english: "book", chinese: "书本", spellingEnabled: true });
     const payload = buildWordAudioRequestPayload({ english: "book", chinese: "书本" }, true, "fast");
@@ -128,6 +130,17 @@ async function testSpellingSpeedPresetShouldControlPayloadRateAndPause() {
     assert.strictEqual(normalizeWordAudioSpellingSpeedPreset("unknown"), "medium", "非法 preset 应回退到 medium");
     assert.strictEqual(getWordAudioPauseFramesAfterSegment(segments[2], segments[3], "slow"), 3, "slow 档字母停顿应更长");
     assert.strictEqual(getWordAudioPauseFramesAfterSegment(segments[2], segments[3], "fast"), 0, "fast 档字母间不应再额外停顿");
+
+    const manyWordPairs = Array.from({ length: WORD_AUDIO_BATCH_SIZE + 5 }, (_, index) => ({
+        english: `word-${index + 1}`,
+        chinese: `释义${index + 1}`,
+    }));
+    const batches = splitWordAudioBatches(manyWordPairs);
+    assert.deepStrictEqual(
+        batches.map((batch) => batch.length),
+        [WORD_AUDIO_BATCH_SIZE, 5],
+        "超过单批上限时应自动拆分为多批，而不是要求手动删词"
+    );
 }
 
 function testMockLetterAudioFilesShouldExistForAllTwentySixLetters() {
@@ -178,6 +191,11 @@ function testAudioRequestShouldReferenceSpellingFlagAcrossClientAndServer() {
     assert(
         commonFunctionsContent.includes("buildWordAudioBatchRequestPayload") && commonFunctionsContent.includes("wordPairs"),
         "commonFunctions.js 应一次性提交整份词表，避免按词逐个调用函数"
+    );
+
+    assert(
+        commonFunctionsContent.includes("splitWordAudioBatches") && !commonFunctionsContent.includes("单词数量过多（最多30个），请减少后重试"),
+        "commonFunctions.js 超过 30 词时应自动分批，而不是直接提示用户手动删词"
     );
 
     assert(
