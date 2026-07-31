@@ -3,6 +3,7 @@ function normalizeWordAudioText(value) {
 }
 
 export const WORD_AUDIO_SPELLING_LETTER_ASSET_DIR = "static/sounds/spelling-letters";
+export const WORD_AUDIO_BATCH_SIZE = 30;
 
 export const WORD_AUDIO_SPELLING_SPEED_PRESETS = Object.freeze({
     slow: Object.freeze({ rate: "+0%", pauseFrames: 3 }),
@@ -60,6 +61,23 @@ export function buildWordAudioBatchRequestPayload(wordPairs, spellingEnabled = f
         spellingEnabled: Boolean(spellingEnabled),
         spellingSpeedPreset: normalizeWordAudioSpellingSpeedPreset(spellingSpeedPreset)
     };
+}
+
+export function splitWordAudioBatches(wordPairs, maxBatchSize = WORD_AUDIO_BATCH_SIZE) {
+    const normalizedWordPairs = Array.isArray(wordPairs)
+        ? wordPairs.map(buildNormalizedWordAudioWordPair).filter((wordPair) => wordPair.english)
+        : [];
+    const normalizedBatchSize = Number.isInteger(maxBatchSize) && maxBatchSize > 0
+        ? maxBatchSize
+        : WORD_AUDIO_BATCH_SIZE;
+
+    if (normalizedWordPairs.length === 0) return [];
+
+    const batches = [];
+    for (let index = 0; index < normalizedWordPairs.length; index += normalizedBatchSize) {
+        batches.push(normalizedWordPairs.slice(index, index + normalizedBatchSize));
+    }
+    return batches;
 }
 
 export function buildWordAudioSegments({ english, chinese, spellingWord, spellingEnabled = false }) {

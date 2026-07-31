@@ -1,4 +1,4 @@
-import { buildWordAudioBatchRequestPayload } from './word-audio-format.mjs';
+import { buildWordAudioBatchRequestPayload, splitWordAudioBatches, WORD_AUDIO_BATCH_SIZE } from './word-audio-format.mjs';
 
 // JavaScript code for the button click functions
 export function navigateToTiyanClass() {
@@ -1491,10 +1491,7 @@ async function generateWordsMP3({ textareaId, btnId, statusId, fileLabel, emptyM
         return;
     }
 
-    if (wordPairs.length > 30) {
-        displayToast('单词数量过多（最多30个），请减少后重试');
-        return;
-    }
+    const batches = splitWordAudioBatches(wordPairs, WORD_AUDIO_BATCH_SIZE);
 
     const btn = document.getElementById(btnId);
     const statusEl = document.getElementById(statusId);
@@ -1506,8 +1503,25 @@ async function generateWordsMP3({ textareaId, btnId, statusId, fileLabel, emptyM
 
     const startTime = Date.now();
     try {
-        btn.textContent = `生成中…(${wordPairs.length}词)`;
-        const combined = await fetchWordAudioBatch(wordPairs, spellingEnabled, spellingSpeedPreset);
+        if (batches.length > 1) {
+            displayToast(`单词较多，已自动分 ${batches.length} 批生成`);
+        }
+
+        const batchBlobs = [];
+        let processedWordCount = 0;
+        for (let batchIndex = 0; batchIndex < batches.length; batchIndex++) {
+            const batchWordPairs = batches[batchIndex];
+            processedWordCount += batchWordPairs.length;
+            btn.textContent = batches.length === 1
+                ? `生成中…(${wordPairs.length}词)`
+                : `生成中…(${batchIndex + 1}/${batches.length}批 ${processedWordCount}/${wordPairs.length}词)`;
+            if (statusEl && batches.length > 1) {
+                statusEl.textContent = `自动分批生成中：第 ${batchIndex + 1}/${batches.length} 批`;
+            }
+            batchBlobs.push(await fetchWordAudioBatch(batchWordPairs, spellingEnabled, spellingSpeedPreset));
+        }
+
+        const combined = new Blob(batchBlobs, { type: 'audio/mpeg' });
         const userName = document.getElementById('userName').value || '学生';
         const now = new Date();
         const today = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
@@ -1520,7 +1534,11 @@ async function generateWordsMP3({ textareaId, btnId, statusId, fileLabel, emptyM
         URL.revokeObjectURL(link.href);
 
         const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-        if (statusEl) statusEl.textContent = `✅ ${wordPairs.length}词，耗时${elapsed}s`;
+        if (statusEl) {
+            statusEl.textContent = batches.length === 1
+                ? `✅ ${wordPairs.length}词，耗时${elapsed}s`
+                : `✅ ${wordPairs.length}词，已自动分${batches.length}批，耗时${elapsed}s`;
+        }
     } catch (err) {
         console.error(`生成${fileLabel}MP3失败:`, err);
         if (statusEl) statusEl.textContent = '❌ 网络错误，请重试';
