@@ -44,6 +44,30 @@ assert(
     'anti-forgetting.html 应默认选中 medium spelling 档位'
 );
 
+const reviewWordInputs = content.match(/class="antiForgettingReviewWord mini-input"/g) || [];
+assert.strictEqual(
+    reviewWordInputs.length,
+    7,
+    'anti-forgetting.html 应预置最多 7 个复习词数输入框'
+);
+
+assert(
+    Array.from({ length: 7 }, (_, index) => `aria-label="复习词数${index + 1}"`).every(label => content.includes(label)),
+    'anti-forgetting.html 复习词数输入框应从 1 到 7 连续标注'
+);
+
+assert(
+    Array.from({ length: 3 }, (_, index) => `aria-label="复习词数${index + 5}" hidden`).every(label => content.includes(label)),
+    'anti-forgetting.html 第 5-7 个复习词数输入框应默认隐藏，避免页面常驻拥挤'
+);
+
+assert(
+    content.includes('id="addReviewWordInputButton"')
+        && content.includes('aria-label="增加复习词数输入框"')
+        && content.includes('addReviewWordInputButton'),
+    'anti-forgetting.html 应提供按需展开复习词数输入框的按钮'
+);
+
 assert(
     content.includes('id="copyPronounceWordsTaskButton"')
         && content.includes('>纠音MP3</button>')

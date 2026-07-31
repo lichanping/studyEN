@@ -322,6 +322,10 @@
             <input type="text" class="antiForgettingReviewWord mini-input" aria-label="复习词数2" value="">
             <input type="text" class="antiForgettingReviewWord mini-input" aria-label="复习词数3" value="">
             <input type="text" class="antiForgettingReviewWord mini-input" aria-label="复习词数4" value="">
+            <input type="text" class="antiForgettingReviewWord mini-input" aria-label="复习词数5" hidden value="">
+            <input type="text" class="antiForgettingReviewWord mini-input" aria-label="复习词数6" hidden value="">
+            <input type="text" class="antiForgettingReviewWord mini-input" aria-label="复习词数7" hidden value="">
+            <button id="addReviewWordInputButton" type="button" aria-label="增加复习词数输入框" title="增加复习词数输入框">+</button>
             <label for="antiForgettingForgetWord">遗忘：</label>
             <input type="text" id="antiForgettingForgetWord" class="mini-input" value="0">
         </div>
@@ -602,11 +606,38 @@
     // ── 切换学员：自动清空表单 ──
     function clearFormFields() {
         document.querySelectorAll('.antiForgettingReviewWord').forEach(el => { el.value = ''; });
+        resetReviewWordInputs();
         document.getElementById('antiForgettingForgetWord').value = '0';
         document.getElementById('forgetWords').value = '';
         document.getElementById('pronounceWords').value = '';
         document.getElementById('keyLanguagePoints').value = '';
         document.getElementById('practiceArea').value = '';
+    }
+
+    function getReviewWordInputs() {
+        return Array.from(document.querySelectorAll('.antiForgettingReviewWord'));
+    }
+
+    function updateAddReviewWordInputButton() {
+        const button = document.getElementById('addReviewWordInputButton');
+        if (!button) return;
+        button.hidden = !getReviewWordInputs().some(input => input.hidden);
+    }
+
+    function resetReviewWordInputs() {
+        getReviewWordInputs().forEach((input, index) => {
+            input.hidden = index >= 4;
+        });
+        updateAddReviewWordInputButton();
+    }
+
+    function showNextReviewWordInput() {
+        const nextHiddenInput = getReviewWordInputs().find(input => input.hidden);
+        if (nextHiddenInput) {
+            nextHiddenInput.hidden = false;
+            nextHiddenInput.focus();
+        }
+        updateAddReviewWordInputButton();
     }
 
     document.getElementById('userName').addEventListener('change', clearFormFields);
@@ -1379,6 +1410,7 @@
     document.getElementById('generateForgetWordsMP3Button').addEventListener('click', commonFunctions.generateForgetWordsMP3);
     document.getElementById('generatePronounceWordsMP3Button').addEventListener('click', commonFunctions.generatePronounceWordsMP3);
     document.getElementById('copyPronounceWordsTaskButton').addEventListener('click', copyPronounceWordsTask);
+    document.getElementById('addReviewWordInputButton').addEventListener('click', showNextReviewWordInput);
 
     commonFunctions.addRightClickPasteEvent(document.getElementById('forgetWords'));
     commonFunctions.addRightClickPasteEvent(document.getElementById('pronounceWords'));
@@ -1387,6 +1419,7 @@
     commonFunctions.initTtsPrefixMaintenanceUI();
 
     setDefaultReviewTime();
+    resetReviewWordInputs();
     setReviewScheduleExpanded(false);
     loadStudentOptions();
 </script>
