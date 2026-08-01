@@ -38,10 +38,14 @@
             --course-text: #3f5f82;
             --cancelled-bg: #a0a0a0;
             --cancelled-border: #888;
+            --disabled-bg: #d6d1c8;
+            --disabled-border: #b8b0a2;
             --status-ok-bg: #dbe6dc;
             --status-ok-text: #3f6b4a;
             --status-cancel-bg: #b0b0b0;
             --status-cancel-text: #3a3a3a;
+            --status-disabled-bg: #ddd6ca;
+            --status-disabled-text: #6f6250;
             --action-cancel-text: #8f5627;
             --action-cancel-border: #d3a777;
             --action-cancel-bg: #efe4d4;
@@ -96,10 +100,14 @@
                 --course-text: #9ec0e8;
                 --cancelled-bg: #282828;
                 --cancelled-border: #444;
+                --disabled-bg: #35322d;
+                --disabled-border: #504b42;
                 --status-ok-bg: #2f4737;
                 --status-ok-text: #b8e2c2;
                 --status-cancel-bg: #4a4a4a;
                 --status-cancel-text: #a0a0a0;
+                --status-disabled-bg: #454039;
+                --status-disabled-text: #d2c7b7;
                 --action-cancel-text: #f0bd8d;
                 --action-cancel-border: #9f7443;
                 --action-cancel-bg: #433326;
@@ -475,6 +483,18 @@
             color: var(--status-cancel-text);
         }
 
+        .status-tag.disabled {
+            background: var(--status-disabled-bg);
+            color: var(--status-disabled-text);
+        }
+
+        .class-item.disabled-entry {
+            background: var(--disabled-bg);
+            border-color: var(--disabled-border);
+            opacity: 0.55;
+            filter: saturate(0.25);
+        }
+
         .action-group {
             margin-left: 0;
             margin-right: auto;
@@ -567,6 +587,12 @@
             border-color: #c4ccd7;
         }
 
+        .schedule-state-label.state-disabled {
+            color: #6f6250;
+            background: #ece4d7;
+            border-color: #cdbda8;
+        }
+
         .schedule-state-label.state-loading {
             color: #35557c;
             background: #e3edf9;
@@ -596,6 +622,12 @@
                 color: #c5cdd8;
                 background: #353b44;
                 border-color: #535e6e;
+            }
+
+            .schedule-state-label.state-disabled {
+                color: #ded2c1;
+                background: #454039;
+                border-color: #665e52;
             }
 
             .schedule-state-label.state-loading {
@@ -719,6 +751,16 @@
             border: 1px solid var(--cancelled-border);
             opacity: 0.42;
             filter: saturate(0.2);
+        }
+
+        .mini-item.disabled-entry {
+            color: var(--status-disabled-text);
+            background: var(--disabled-bg);
+            border-radius: 6px;
+            padding: 8px;
+            border: 1px solid var(--disabled-border);
+            opacity: 0.58;
+            filter: saturate(0.25);
         }
 
         .mini-status {
@@ -1234,24 +1276,26 @@ sourceId: 上课记录唯一标识（用于去重）</span>
         const raw = document.getElementById("schedule-config").textContent;
         const baseConfig = JSON.parse(raw);
 
-        const ensureLegacyEntryKeys = function(entries) {
+        const normalizeScheduleEntries = function(entries) {
             if (!Array.isArray(entries)) return [];
             return entries.map(function(entry) {
-                if (entry && entry._legacyKey) return entry;
                 const composite = [
-                    entry.student,
-                    entry.course,
-                    entry.durationMinutes,
-                    entry.period || "",
-                    entry.time || "",
-                    (entry.days || []).join("|")
+                    entry?.student,
+                    entry?.course,
+                    entry?.durationMinutes,
+                    entry?.period || "",
+                    entry?.time || "",
+                    (entry?.days || []).join("|")
                 ].join("__");
                 return {
                     ...entry,
-                    _legacyKey: composite
+                    disabled: Boolean(entry?.disabled),
+                    _legacyKey: entry?._legacyKey || composite
                 };
             });
         };
+
+        const normalizedBaseEntries = normalizeScheduleEntries(baseConfig.entries);
 
         try {
             const overrideRaw = localStorage.getItem(SCHEDULE_CONFIG_OVERRIDE_KEY);
@@ -1260,13 +1304,16 @@ sourceId: 上课记录唯一标识（用于去重）</span>
                 return {
                     ...baseConfig,
                     ...overrideConfig,
-                    entries: ensureLegacyEntryKeys(overrideConfig.entries)
+                    entries: normalizeScheduleEntries(overrideConfig.entries)
                 };
             }
         } catch (error) {
             console.warn("读取排课覆盖配置失败，使用内置配置:", error);
         }
-        return baseConfig;
+        return {
+            ...baseConfig,
+            entries: normalizedBaseEntries
+        };
     }
 
     function normalizePlatformId(raw) {
@@ -1333,6 +1380,17 @@ sourceId: 上课记录唯一标识（用于去重）</span>
 
     function formatTime(entry) {
         return entry.time ? entry.time : entry.period;
+    }
+
+    function getDisplayTimeText(entry, dateValue) {
+        const effectiveClock = getEffectiveClock(entry, dateValue);
+        if (getOverrideClock(entry, dateValue)) return effectiveClock;
+        if (normalizeClockInput(entry?.time || "")) return effectiveClock;
+        return entry?.period || "";
+    }
+
+    function isEntryDisabled(entry) {
+        return Boolean(entry?.disabled);
     }
 
     function getEntryId(entry) {
@@ -1438,6 +1496,10 @@ sourceId: 上课记录唯一标识（用于去重）</span>
     function getCourseScheduleState(entry, dateValue) {
         const state = boardScheduleMatchState;
         const platformId = resolveEntryPlatform(entry);
+
+        if (isEntryDisabled(entry)) {
+            return { text: "已停排", className: "state-disabled" };
+        }
 
         if (platformId !== "lixiaolaila") {
             return { text: "不检查", className: "state-unavailable" };
@@ -1939,6 +2001,9 @@ sourceId: 上课记录唯一标识（用于去重）</span>
 
     function sortEntriesByTime(entries, dateValue) {
         return [...entries].sort((a, b) => {
+            const disabledA = isEntryDisabled(a) ? 1 : 0;
+            const disabledB = isEntryDisabled(b) ? 1 : 0;
+            if (disabledA !== disabledB) return disabledA - disabledB;
             // Cancelled entries go to the bottom
             const cancelledA = isCancelled(a, dateValue) ? 1 : 0;
             const cancelledB = isCancelled(b, dateValue) ? 1 : 0;
@@ -2063,11 +2128,12 @@ sourceId: 上课记录唯一标识（用于去重）</span>
         list.innerHTML = "";
         sortedEntries.forEach((item) => {
             const cancelled = isCancelled(item, dateValue);
+            const disabled = isEntryDisabled(item);
             const currentCourse = resolveCourse(item, dateValue);
             const currentDurationMinutes = resolveDurationMinutes(item, dateValue);
 
             const row = document.createElement("div");
-            row.className = "class-item" + (cancelled ? " cancelled" : "");
+            row.className = "class-item" + (cancelled ? " cancelled" : "") + (disabled ? " disabled-entry" : "");
 
             const mainGroup = document.createElement("div");
             mainGroup.className = "class-main";
@@ -2083,6 +2149,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             const fallbackClock = getDefaultClockByPeriod(item.period);
             const clockValue = getOverrideClock(item, dateValue) || normalizeClockInput(item.time) || fallbackClock;
             timeInput.value = clockValue;
+            timeInput.disabled = disabled;
             timeInput.addEventListener("change", () => {
                 const normalized = normalizeClockInput(timeInput.value);
                 if (!normalized || !isValidClock(normalized)) {
@@ -2115,6 +2182,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
                 course.appendChild(option);
             });
             course.value = currentCourse;
+            course.disabled = disabled;
             course.addEventListener("change", () => {
                 setLessonOverride(item, dateValue, { course: course.value, durationMinutes: Number(duration.value) });
                 onChange();
@@ -2126,6 +2194,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
                 '<option value="30">0.5小时</option>' +
                 '<option value="60">1小时</option>';
             duration.value = String(currentDurationMinutes);
+            duration.disabled = disabled;
             duration.addEventListener("change", () => {
                 setLessonOverride(item, dateValue, { course: course.value, durationMinutes: Number(duration.value) });
                 updateEndTime();
@@ -2138,7 +2207,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             function updateEndTime() {
                 const startClock = normalizeClockInput(timeInput.value || "");
                 const durMin = Number(duration.value) || currentDurationMinutes;
-                if (!cancelled && startClock && isValidClock(startClock)) {
+                if (!cancelled && !disabled && startClock && isValidClock(startClock)) {
                     endTimeSpan.textContent = "→ " + computeEndClock(startClock, durMin);
                     endTimeSpan.style.display = "";
                 } else {
@@ -2149,14 +2218,26 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             updateEndTime();
 
             const status = document.createElement("span");
-            status.className = "status-tag" + (cancelled ? " cancelled" : "");
-            status.textContent = cancelled ? "已请假" : "正常";
+            if (disabled) {
+                status.className = "status-tag disabled";
+                status.textContent = "已停排";
+            } else {
+                status.className = "status-tag" + (cancelled ? " cancelled" : "");
+                status.textContent = cancelled ? "已请假" : "正常";
+            }
 
             const button = document.createElement("button");
             button.type = "button";
-            button.className = "action-btn " + (cancelled ? "restore" : "cancel");
-            button.textContent = cancelled ? "恢复上课" : "标记请假";
+            if (disabled) {
+                button.className = "action-btn restore";
+                button.textContent = "已停排";
+                button.disabled = true;
+            } else {
+                button.className = "action-btn " + (cancelled ? "restore" : "cancel");
+                button.textContent = cancelled ? "恢复上课" : "标记请假";
+            }
             button.addEventListener("click", () => {
+                if (disabled) return;
                 toggleCancellation(item, dateValue);
                 onChange();
             });
@@ -2166,7 +2247,9 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             remindButton.className = "action-btn request";
             remindButton.textContent = "申请排课";
             remindButton.title = "复制排课申请文案";
+            remindButton.disabled = disabled;
             remindButton.addEventListener("click", async () => {
+                if (disabled) return;
                 const appointmentMessage = buildAppointmentMessage(item, dateValue);
                 const copied = await copyTextToClipboard(appointmentMessage);
                 showCopiedContentToast(copied, appointmentMessage, "已复制排课申请：");
@@ -2177,7 +2260,9 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             notifyButton.className = "action-btn notice";
             notifyButton.textContent = "发送通知";
             notifyButton.title = "复制排课通知文案";
+            notifyButton.disabled = disabled;
             notifyButton.addEventListener("click", async () => {
+                if (disabled) return;
                 const pickedClock = normalizeClockInput(timeInput.value || "");
                 if (!pickedClock || !isValidClock(pickedClock)) {
                     showToast("时间格式无效，请使用 HH:mm");
@@ -2192,8 +2277,13 @@ sourceId: 上课记录唯一标识（用于去重）</span>
 
             const courseScheduleState = getCourseScheduleState(item, dateValue);
             const scheduleStateLabel = document.createElement("span");
-            scheduleStateLabel.className = "schedule-state-label " + courseScheduleState.className;
-            scheduleStateLabel.textContent = courseScheduleState.text;
+            if (disabled) {
+                scheduleStateLabel.className = "schedule-state-label state-disabled";
+                scheduleStateLabel.textContent = "已停排";
+            } else {
+                scheduleStateLabel.className = "schedule-state-label " + courseScheduleState.className;
+                scheduleStateLabel.textContent = courseScheduleState.text;
+            }
 
             const actionGroup = document.createElement("div");
             actionGroup.className = "action-group";
@@ -2238,17 +2328,19 @@ sourceId: 上课记录唯一标识（用于去重）</span>
         const tomorrowEntries = [...(dayMap[tomorrowDay] || []), ...getExtraEntriesForDate(tomorrowDate)];
 
         const todayMinutes = todayEntries
-            .filter((item) => !isCancelled(item, baseDate))
+            .filter((item) => !isCancelled(item, baseDate) && !isEntryDisabled(item))
             .reduce((sum, item) => sum + resolveDurationMinutes(item, baseDate), 0);
-        const todayCancelledCount = todayEntries.filter((item) => isCancelled(item, baseDate)).length;
+        const todayCancelledCount = todayEntries.filter((item) => isCancelled(item, baseDate) && !isEntryDisabled(item)).length;
+        const todayDisabledCount = todayEntries.filter((item) => isEntryDisabled(item)).length;
 
         const tomorrowMinutes = tomorrowEntries
-            .filter((item) => !isCancelled(item, tomorrowDate))
+            .filter((item) => !isCancelled(item, tomorrowDate) && !isEntryDisabled(item))
             .reduce((sum, item) => sum + resolveDurationMinutes(item, tomorrowDate), 0);
-        const tomorrowCancelledCount = tomorrowEntries.filter((item) => isCancelled(item, tomorrowDate)).length;
+        const tomorrowCancelledCount = tomorrowEntries.filter((item) => isCancelled(item, tomorrowDate) && !isEntryDisabled(item)).length;
+        const tomorrowDisabledCount = tomorrowEntries.filter((item) => isEntryDisabled(item)).length;
 
         selectedDayText.textContent = "今天对应：" + todayDay;
-        dailyTotal.textContent = "今天应上：" + toHoursText(todayMinutes) + "（请假" + todayCancelledCount + "节）";
+        dailyTotal.textContent = "今天应上：" + toHoursText(todayMinutes) + "（请假" + todayCancelledCount + "节，停排" + todayDisabledCount + "条）";
 
         const onChangeCallback = () => {
             renderToday(dayMap, baseDate);
@@ -2275,6 +2367,9 @@ sourceId: 上课记录唯一标识（用于去重）</span>
         let tomorrowTitleText = "明天（" + getDateLabel(tomorrowDate) + " · " + tomorrowDay + " · 应上" + toHoursText(tomorrowMinutes) + "）";
         if (tomorrowCancelledCount > 0) {
             tomorrowTitleText += " · 请假" + tomorrowCancelledCount + "节";
+        }
+        if (tomorrowDisabledCount > 0) {
+            tomorrowTitleText += " · 停排" + tomorrowDisabledCount + "条";
         }
         tomorrowColumnTitle.appendChild(document.createTextNode(tomorrowTitleText));
         const tomorrowAddBtn = document.createElement("button");
@@ -2303,26 +2398,32 @@ sourceId: 上课记录唯一标识（用于去重）</span>
 
         let weekMinutes = 0;
         let weekCancelledCount = 0;
+        let weekDisabledCount = 0;
         weekGrid.innerHTML = WEEK_DAYS.map((day) => {
             const dayIndex = WEEK_DAYS.indexOf(day);
             const dayDate = addDays(weekStart, dayIndex);
             const isToday = (dayDate === todayYmd);
             const items = [...(dayMap[day] || []), ...getExtraEntriesForDate(dayDate)];
             const dayMinutes = items
-                .filter((item) => !isCancelled(item, dayDate))
+                .filter((item) => !isCancelled(item, dayDate) && !isEntryDisabled(item))
                 .reduce((sum, item) => sum + resolveDurationMinutes(item, dayDate), 0);
-            const dayCancelledCount = items.filter((item) => isCancelled(item, dayDate)).length;
+            const dayCancelledCount = items.filter((item) => isCancelled(item, dayDate) && !isEntryDisabled(item)).length;
+            const dayDisabledCount = items.filter((item) => isEntryDisabled(item)).length;
             weekCancelledCount += dayCancelledCount;
+            weekDisabledCount += dayDisabledCount;
             weekMinutes += dayMinutes;
-            const rows = items.length
-                ? items.map((it) => {
+            const sortedItems = sortEntriesByTime(items, dayDate);
+            const rows = sortedItems.length
+                ? sortedItems.map((it) => {
                     const cancelled = isCancelled(it, dayDate);
+                    const disabled = isEntryDisabled(it);
                     const rowCourse = resolveCourse(it, dayDate);
                     const rowDuration = resolveDurationMinutes(it, dayDate);
-                    return '<div class="mini-item' + (cancelled ? ' cancelled' : '') + '">' +
-                        '<strong>' + formatTime(it) + '</strong><br>' +
+                    const rowStatus = disabled ? '已停排' : (cancelled ? '已请假' : '正常');
+                    return '<div class="mini-item' + (cancelled ? ' cancelled' : '') + (disabled ? ' disabled-entry' : '') + '">' +
+                        '<strong>' + getDisplayTimeText(it, dayDate) + '</strong><br>' +
                         it.student + ' · ' + rowCourse + ' · ' + toHoursText(rowDuration) +
-                        '<br><span class="mini-status">' + (cancelled ? '已请假' : '正常') + '</span>' +
+                        '<br><span class="mini-status">' + rowStatus + '</span>' +
                         '</div>';
                 }).join("")
                 : '<div class="empty">无排课</div>';
@@ -2330,12 +2431,12 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             const dayHeaderDate = dayDate.slice(5);
             return '<article class="day-card' + (isToday ? ' today-highlight' : '') + '">' +
                 '<h3>' + day + ' ' + dayHeaderDate + '</h3>' +
-                '<div class="day-meta">日期：' + dayDate + ' · 应上：' + toHoursText(dayMinutes) + ' · 请假' + dayCancelledCount + '节</div>' +
+                '<div class="day-meta">日期：' + dayDate + ' · 应上：' + toHoursText(dayMinutes) + ' · 请假' + dayCancelledCount + '节 · 停排' + dayDisabledCount + '条</div>' +
                 rows +
                 '</article>';
         }).join("");
 
-        weeklyTotal.textContent = "本周应上总课时：" + toHoursText(weekMinutes) + "（请假" + weekCancelledCount + "节）";
+        weeklyTotal.textContent = "本周应上总课时：" + toHoursText(weekMinutes) + "（请假" + weekCancelledCount + "节，停排" + weekDisabledCount + "条）";
     }
 
     function init() {
@@ -3020,6 +3121,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             recurringEntries.forEach((entry) => {
                 const days = Array.isArray(entry?.days) ? entry.days : [];
                 if (!dayName || !days.includes(dayName)) return;
+                if (isEntryDisabled(entry)) return;
 
                 const durationMinutes = Number(window.resolveDurationMinutes?.(entry, dateValue) ?? entry?.durationMinutes);
                 if (!Number.isFinite(durationMinutes) || durationMinutes <= 0) return;
