@@ -93,8 +93,9 @@ assert(
     renderDayEntriesBody.includes('disabled-entry')
         && renderDayEntriesBody.includes('已停排')
         && renderDayEntriesBody.includes('button.disabled = true')
-        && renderDayEntriesBody.includes('scheduleStateLabel.textContent = "已停排"'),
-    'schedule.html 今日/明日列表应灰显 disabled 条目，并禁用排课操作按钮'
+        && renderDayEntriesBody.includes('status.textContent = "已停排"')
+        && renderDayEntriesBody.includes('scheduleStateLabel.textContent = courseScheduleState.text'),
+    'schedule.html 今日/明日列表应灰显 disabled 条目，主状态显示已停排，且右侧匹配标签继续显示真实查询结果'
 );
 
 assert(

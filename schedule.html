@@ -1497,10 +1497,6 @@ sourceId: 上课记录唯一标识（用于去重）</span>
         const state = boardScheduleMatchState;
         const platformId = resolveEntryPlatform(entry);
 
-        if (isEntryDisabled(entry)) {
-            return { text: "已停排", className: "state-disabled" };
-        }
-
         if (platformId !== "lixiaolaila") {
             return { text: "不检查", className: "state-unavailable" };
         }
@@ -2277,13 +2273,8 @@ sourceId: 上课记录唯一标识（用于去重）</span>
 
             const courseScheduleState = getCourseScheduleState(item, dateValue);
             const scheduleStateLabel = document.createElement("span");
-            if (disabled) {
-                scheduleStateLabel.className = "schedule-state-label state-disabled";
-                scheduleStateLabel.textContent = "已停排";
-            } else {
-                scheduleStateLabel.className = "schedule-state-label " + courseScheduleState.className;
-                scheduleStateLabel.textContent = courseScheduleState.text;
-            }
+            scheduleStateLabel.className = "schedule-state-label " + courseScheduleState.className;
+            scheduleStateLabel.textContent = courseScheduleState.text;
 
             const actionGroup = document.createElement("div");
             actionGroup.className = "action-group";
