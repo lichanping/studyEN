@@ -56,6 +56,7 @@ These instructions apply to all coding tasks in this repository.
 - If there is no existing test file, create one using the project's current test style.
 - For Python code, prefer `pytest` style tests unless the target area already uses another framework.
 - For schedule or quota logic changes, run `npm run test:quota` before and after implementation, and report both results.
+- For any MCP-driven UI verification, always launch and inspect the page in an external Chrome browser via Chrome DevTools MCP. Do not use VS Code embedded pages for UI acceptance checks, because the viewport is too small for reliable review.
 
 ## Delivery Expectations
 

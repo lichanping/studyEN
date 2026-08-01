@@ -81,6 +81,7 @@ function normalizeEntry(entry) {
         days,
         period: String(entry.period || "晚上").trim() || "晚上",
         time: String(entry.time || "").trim(),
+        disabled: Boolean(entry.disabled),
         _legacyKey: String(entry._legacyKey || "")
     };
 
@@ -195,6 +196,7 @@ function stripForStorage(entry) {
         days: normalized.days,
         period: normalized.period,
         time: normalized.time,
+        disabled: normalized.disabled,
         _legacyKey: normalized._legacyKey
     };
 }
@@ -228,7 +230,7 @@ function renderTable() {
     }
 
     if (!list.length) {
-        entriesTableBody.innerHTML = "<tr><td colspan=\"7\">暂无条目</td></tr>";
+        entriesTableBody.innerHTML = "<tr><td colspan=\"8\">暂无条目</td></tr>";
         return;
     }
 
@@ -236,14 +238,18 @@ function renderTable() {
         const daysText = item.days.length ? item.days.join("、") : "未设置";
         const timeText = item.time ? `${item.period} ${item.time}` : item.period;
         const platformText = getPlatformDisplayName(item.platform);
-        return `<tr>
+        const statusText = item.disabled ? "已停排" : "正常";
+        const toggleText = item.disabled ? "启用" : "停排";
+        return `<tr class="${item.disabled ? "entry-disabled" : ""}">
             <td>${item.student}</td>
             <td>${platformText}</td>
             <td>${item.course}</td>
             <td>${item.durationMinutes}</td>
             <td>${daysText}</td>
             <td>${timeText}</td>
+            <td><span class="entry-status ${item.disabled ? "disabled" : "active"}">${statusText}</span></td>
             <td>
+                <button data-action="toggle-disabled" data-id="${item.id}">${toggleText}</button>
                 <button data-action="edit" data-id="${item.id}">编辑</button>
                 <button data-action="delete" data-id="${item.id}">删条目</button>
                 <button data-action="delete-student" data-name="${item.student}" data-platform="${item.platform}">删该生本平台条目(保留学生名)</button>
@@ -274,6 +280,16 @@ function handleTableAction(event) {
     if (!button) return;
 
     const action = button.dataset.action;
+    if (action === "toggle-disabled") {
+        const id = button.dataset.id;
+        const target = entriesState.find((item) => item.id === id);
+        if (!target) return;
+        target.disabled = !target.disabled;
+        persistEntries();
+        renderAll();
+        return;
+    }
+
     if (action === "edit") {
         const id = button.dataset.id;
         const target = entriesState.find((item) => item.id === id);
