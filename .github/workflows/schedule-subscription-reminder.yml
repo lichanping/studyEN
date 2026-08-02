@@ -3,6 +3,7 @@ name: Schedule Subscription Reminder
 on:
   schedule:
     - cron: '*/10 * * * *'
+  pull_request:
   workflow_dispatch:
 
 jobs:

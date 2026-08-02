@@ -229,10 +229,11 @@ async function testGithubActionShouldOwnHourlyChecker() {
 
     assert(
         workflow.includes("cron: '*/10 * * * *'")
+            && workflow.includes('pull_request:')
             && workflow.includes('node scripts/check_schedule_subscriptions.mjs')
             && workflow.includes('NETLIFY_AUTH_TOKEN')
             && workflow.includes('FX_ALERT_SMTP_PASS'),
-        'GitHub Actions should run the schedule subscription checker every 10 minutes with Netlify and SMTP secrets'
+        'GitHub Actions should run the schedule subscription checker in PR validation and every 10 minutes with Netlify and SMTP secrets'
     );
 
     const oldNetlifyCheckerPath = path.join(__dirname, '..', 'netlify', 'functions', 'schedule-subscription-check.mjs');
