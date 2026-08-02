@@ -1,4 +1,4 @@
-import { runSubscriptionChecks } from "../../scripts/check_schedule_subscriptions.mjs";
+import { runSubscriptionChecks } from "./schedule-subscription-checker-shared.mjs";
 import { createStore } from "./schedule-subscription.mjs";
 
 export const config = {

@@ -515,15 +515,18 @@ async function testNetlifySubscriptionFunctionShouldNotRequireRootBrowserModule(
     const source = fs.readFileSync(functionPath, 'utf8');
     const checkerPath = path.join(__dirname, '..', 'scripts', 'check_schedule_subscriptions.mjs');
     const checkerSource = fs.readFileSync(checkerPath, 'utf8');
+    const scheduledFunctionPath = path.join(__dirname, '..', 'netlify', 'functions', 'schedule-subscription-check.mjs');
+    const scheduledFunctionSource = fs.readFileSync(scheduledFunctionPath, 'utf8');
 
     assert(
         !source.includes('schedule-course-match.js'),
         'Netlify bundled subscription function should not require root browser modules that are missing from the Lambda package'
     );
     assert(
-        !checkerSource.includes('../schedule-course-match.js')
-            && checkerSource.includes('schedule-course-match-shared.cjs'),
-        'The checker used by Netlify functions should depend on a bundle-safe shared matcher instead of the root browser module'
+        source.includes('./schedule-subscription-checker-shared.mjs')
+            && scheduledFunctionSource.includes('./schedule-subscription-checker-shared.mjs')
+            && checkerSource.includes('../netlify/functions/schedule-subscription-checker-shared.mjs'),
+        'Subscription functions should import a checker shared module from netlify/functions, and the script entry should only wrap that shared module'
     );
 }
 

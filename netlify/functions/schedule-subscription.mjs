@@ -1,5 +1,5 @@
 import { getStore } from "@netlify/blobs";
-import { runSubscriptionChecks } from "../../scripts/check_schedule_subscriptions.mjs";
+import { runSubscriptionChecks } from "./schedule-subscription-checker-shared.mjs";
 
 export const ACTIVE_SUBSCRIPTIONS_KEY = "active-subscriptions";
 export const SUBSCRIPTION_STORE_NAME = "schedule-subscriptions";
