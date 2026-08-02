@@ -137,6 +137,24 @@ export async function removeSubscription({ store, payload }) {
     };
 }
 
+export async function getSubscriptionStatus({ store, payload }) {
+    const ids = Array.isArray(payload?.ids)
+        ? payload.ids.map((item) => sanitizeText(item, 128)).filter(Boolean)
+        : [];
+    const current = await readSubscriptions(store);
+    const activeIdSet = new Set(current.map((item) => sanitizeText(item?.id, 128)).filter(Boolean));
+    const activeIds = ids.filter((id) => activeIdSet.has(id));
+    const statusById = {};
+    ids.forEach((id) => {
+        statusById[id] = activeIdSet.has(id) ? "active" : "inactive";
+    });
+    return {
+        ok: true,
+        activeIds,
+        statusById
+    };
+}
+
 export function createStore() {
     return getStore(SUBSCRIPTION_STORE_NAME);
 }
@@ -163,6 +181,14 @@ export default async (req) => {
     try {
         if (action === "unsubscribe") {
             const result = await removeSubscription({
+                store,
+                payload: body
+            });
+            return jsonResponse(result, 200);
+        }
+
+        if (action === "status") {
+            const result = await getSubscriptionStatus({
                 store,
                 payload: body
             });

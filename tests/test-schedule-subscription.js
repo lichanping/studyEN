@@ -167,6 +167,105 @@ async function testCheckerShouldSendEmailAndRescheduleWhenStillUnscheduled() {
     assert.strictEqual(sentMessages[0].subscription.id, '邸睿__2026-08-02__60');
 }
 
+async function testCheckerShouldExpireAfterMaxNotifications() {
+    const mod = await loadModule('scripts/check_schedule_subscriptions.mjs');
+    const store = createMemoryStore([
+        {
+            id: '邸睿__2026-08-02__60',
+            student: '邸睿',
+            date: '2026-08-02',
+            durationMinutes: 60,
+            course: '单词',
+            platform: 'lixiaolaila',
+            token: 'x-token-c-demo',
+            userId: 'u-1',
+            notifyCount: 6,
+            nextCheckAt: '2026-08-02T02:00:00.000Z',
+            createdAt: '2026-08-02T01:00:00.000Z',
+            updatedAt: '2026-08-02T01:50:00.000Z'
+        }
+    ]);
+    const sentMessages = [];
+
+    const summary = await mod.runSubscriptionChecks({
+        store,
+        nowIso: '2026-08-02T02:00:00.000Z',
+        fetchBoardRows: async () => ([]),
+        sendReminderEmail: async (payload) => {
+            sentMessages.push(payload);
+        }
+    });
+
+    assert.strictEqual(summary.notifiedCount, 1, 'final allowed reminder should still be sent');
+    assert.strictEqual(summary.expiredCount, 1, 'subscription should be counted as expired after max reminders');
+    assert.strictEqual(store.snapshot().length, 0, 'expired subscription should be removed from active list');
+    assert(
+        sentMessages[0].message.includes('连续提醒 7 次')
+            && sentMessages[0].message.includes('自动停止轮询'),
+        'final reminder should tell the user polling stops after max reminders'
+    );
+}
+
+async function testCheckerShouldNotSpendNotifyCountOnError() {
+    const mod = await loadModule('scripts/check_schedule_subscriptions.mjs');
+    const store = createMemoryStore([
+        {
+            id: '邸睿__2026-08-02__60',
+            student: '邸睿',
+            date: '2026-08-02',
+            durationMinutes: 60,
+            course: '单词',
+            platform: 'lixiaolaila',
+            token: 'x-token-c-demo',
+            userId: 'u-1',
+            notifyCount: 6,
+            nextCheckAt: '2026-08-02T02:00:00.000Z',
+            createdAt: '2026-08-02T01:00:00.000Z',
+            updatedAt: '2026-08-02T01:50:00.000Z'
+        }
+    ]);
+
+    const summary = await mod.runSubscriptionChecks({
+        store,
+        nowIso: '2026-08-02T02:00:00.000Z',
+        fetchBoardRows: async () => {
+            throw new Error('temporary board failure');
+        },
+        sendReminderEmail: async () => {
+            throw new Error('should not send');
+        }
+    });
+
+    assert.strictEqual(summary.skippedCount, 1, 'temporary errors should be skipped and retried later');
+    assert.strictEqual(summary.expiredCount, 0, 'temporary errors should not expire the subscription');
+    assert.strictEqual(store.snapshot().length, 1, 'failed checks should keep the active subscription');
+    assert.strictEqual(store.snapshot()[0].notifyCount, 6, 'failed checks should not spend a notify attempt');
+    assert.strictEqual(store.snapshot()[0].lastError, 'temporary board failure');
+}
+
+async function testSubscriptionStatusShouldReportActiveIds() {
+    const mod = await loadModule('netlify/functions/schedule-subscription.mjs');
+    const store = createMemoryStore([
+        {
+            id: '邸睿__2026-08-02__60',
+            student: '邸睿',
+            date: '2026-08-02',
+            durationMinutes: 60
+        }
+    ]);
+
+    const result = await mod.getSubscriptionStatus({
+        store,
+        payload: {
+            ids: ['邸睿__2026-08-02__60', '徐智浩__2026-08-02__60']
+        }
+    });
+
+    assert.deepStrictEqual(result.activeIds, ['邸睿__2026-08-02__60']);
+    assert.strictEqual(result.statusById['邸睿__2026-08-02__60'], 'active');
+    assert.strictEqual(result.statusById['徐智浩__2026-08-02__60'], 'inactive');
+}
+
 async function testReminderEmailShouldFallbackToHardcodedRecipient() {
     const mod = await loadModule('scripts/check_schedule_subscriptions.mjs');
     const recipients = mod.resolveMailRecipients({});
@@ -260,6 +359,9 @@ async function run() {
     await testCheckerShouldOmitUserIdHeaderWhenMissing();
     await testCheckerShouldRemoveResolvedSubscription();
     await testCheckerShouldSendEmailAndRescheduleWhenStillUnscheduled();
+    await testCheckerShouldExpireAfterMaxNotifications();
+    await testCheckerShouldNotSpendNotifyCountOnError();
+    await testSubscriptionStatusShouldReportActiveIds();
     await testReminderEmailShouldFallbackToHardcodedRecipient();
     await testReminderEmailShouldFallbackMailFromToSmtpUser();
     await testReminderEmailShouldIncludeScheduleRequestTextWithoutCopyPageLink();

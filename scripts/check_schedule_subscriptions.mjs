@@ -8,6 +8,7 @@ const scheduleCourseMatch = require("../schedule-course-match.js");
 export const ACTIVE_SUBSCRIPTIONS_KEY = "active-subscriptions";
 export const SUBSCRIPTION_STORE_NAME = "schedule-subscriptions";
 const SUBSCRIPTION_CHECK_INTERVAL_MINUTES = 10;
+const MAX_NOTIFY_COUNT = 7;
 
 const DEFAULT_MAIL_TO = "lichanping@126.com";
 
@@ -81,9 +82,9 @@ export function buildScheduleRequestText(subscription) {
         `课程与时长：${course}（${durationText}），谢谢～`;
 }
 
-export function buildReminderMessage(subscription) {
+export function buildReminderMessage(subscription, options = {}) {
     const requestText = buildScheduleRequestText(subscription);
-    return [
+    const lines = [
         "以下课程仍未排课，请及时催排：",
         `学生：${subscription.student}`,
         `日期：${subscription.date}`,
@@ -94,7 +95,14 @@ export function buildReminderMessage(subscription) {
         "",
         "可直接复制下面的申请排课文案：",
         requestText
-    ].join("\n");
+    ];
+    if (options.finalReminder) {
+        lines.push(
+            "",
+            `本订阅已连续提醒 ${MAX_NOTIFY_COUNT} 次仍未检测到排课，系统将自动停止轮询。请手动确认是否需要重新订阅。`
+        );
+    }
+    return lines.join("\n");
 }
 
 export async function readSubscriptions(store) {
@@ -153,7 +161,7 @@ export async function loadBoardRowsForSubscription(subscription) {
     return boardRows.concat(completedRows);
 }
 
-export async function sendSmtpReminderEmail({ subscription, env = process.env }) {
+export async function sendSmtpReminderEmail({ subscription, env = process.env, message }) {
     const smtp = resolveSmtpConfig(env);
 
     if (!smtp.recipients.length || !smtp.from || !smtp.host || !smtp.user || !smtp.pass) {
@@ -175,7 +183,7 @@ export async function sendSmtpReminderEmail({ subscription, env = process.env })
         from: smtp.from,
         to: smtp.recipients,
         subject: `【仍未排课】${subscription.student} ${subscription.date} ${subscription.durationMinutes}分钟`,
-        text: buildReminderMessage(subscription, env)
+        text: message || buildReminderMessage(subscription)
     });
 
     return { skipped: false };
@@ -192,6 +200,7 @@ export async function runSubscriptionChecks({
     const next = [];
     let resolvedCount = 0;
     let notifiedCount = 0;
+    let expiredCount = 0;
     let skippedCount = 0;
 
     for (const subscription of current) {
@@ -214,11 +223,26 @@ export async function runSubscriptionChecks({
                 continue;
             }
 
-            await sendReminderEmail({ subscription, nowIso: now });
+            const previousNotifyCount = Number(subscription.notifyCount) || 0;
+            if (previousNotifyCount >= MAX_NOTIFY_COUNT) {
+                expiredCount += 1;
+                continue;
+            }
+
+            const nextNotifyCount = previousNotifyCount + 1;
+            const message = buildReminderMessage(subscription, {
+                finalReminder: nextNotifyCount >= MAX_NOTIFY_COUNT
+            });
+            await sendReminderEmail({ subscription, nowIso: now, message });
             notifiedCount += 1;
+            if (nextNotifyCount >= MAX_NOTIFY_COUNT) {
+                expiredCount += 1;
+                continue;
+            }
+
             next.push({
                 ...subscription,
-                notifyCount: (Number(subscription.notifyCount) || 0) + 1,
+                notifyCount: nextNotifyCount,
                 lastNotifiedAt: now,
                 nextCheckAt: addMinutes(now, SUBSCRIPTION_CHECK_INTERVAL_MINUTES),
                 updatedAt: now,
@@ -242,6 +266,7 @@ export async function runSubscriptionChecks({
         activeCount: next.length,
         resolvedCount,
         notifiedCount,
+        expiredCount,
         skippedCount
     };
 }

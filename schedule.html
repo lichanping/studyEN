@@ -1291,6 +1291,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
     let lessonOverrideState = {};
     let extraEntriesState = {};
     let scheduleSubscriptionState = {};
+    let scheduleSubscriptionStatusSyncing = false;
     let boardScheduleMatchState = {
         status: "idle",
         index: null,
@@ -1573,6 +1574,42 @@ sourceId: 上课记录唯一标识（用于去重）</span>
     function clearResolvedScheduleSubscription(entry, dateValue, courseScheduleState) {
         if (courseScheduleState?.text !== "已排课" && courseScheduleState?.text !== "已完成") return;
         forgetScheduleSubscription(entry, dateValue);
+    }
+
+    async function syncScheduleSubscriptionStatuses() {
+        const ids = Object.keys(scheduleSubscriptionState || {});
+        if (ids.length === 0 || scheduleSubscriptionStatusSyncing) return;
+        scheduleSubscriptionStatusSyncing = true;
+        try {
+            const response = await fetch("/.netlify/functions/schedule-subscription", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    action: "status",
+                    ids
+                })
+            });
+            const payload = await response.json().catch(() => ({}));
+            if (!response.ok) return;
+            let changed = false;
+            ids.forEach((id) => {
+                if (payload?.statusById?.[id] !== "active" && scheduleSubscriptionState[id]) {
+                    delete scheduleSubscriptionState[id];
+                    changed = true;
+                }
+            });
+            if (changed) {
+                saveScheduleSubscriptions();
+                rerenderScheduleViewsForBoardState();
+                showToast("后端订阅状态已同步，已清理停止的订阅", 2800);
+            }
+        } catch (error) {
+            console.warn("同步后端订阅状态失败", error);
+        } finally {
+            scheduleSubscriptionStatusSyncing = false;
+        }
     }
 
     async function requestScheduleSubscription(action, entry, dateValue) {
@@ -2249,6 +2286,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
     }
 
     function renderDayEntries(list, entries, dateValue, onChange) {
+        syncScheduleSubscriptionStatuses();
         if (entries.length === 0) {
             list.innerHTML = '<div class="empty">这一天没有排课。</div>';
             return;
