@@ -1,8 +1,4 @@
 import { getStore } from "@netlify/blobs";
-import { createRequire } from "node:module";
-
-const require = createRequire(import.meta.url);
-const { buildCourseMatchKey } = require("../../schedule-course-match.js");
 
 export const ACTIVE_SUBSCRIPTIONS_KEY = "active-subscriptions";
 export const SUBSCRIPTION_STORE_NAME = "schedule-subscriptions";
@@ -43,11 +39,11 @@ function addMinutes(isoString, minutes) {
 }
 
 export function buildSubscriptionId(payload) {
-    return buildCourseMatchKey({
-        student: sanitizeText(payload?.student, 64),
-        date: sanitizeText(payload?.date, 32),
-        durationMinutes: normalizeDurationMinutes(payload?.durationMinutes)
-    });
+    const student = sanitizeText(payload?.student, 64);
+    const date = sanitizeText(payload?.date, 32);
+    const durationMinutes = normalizeDurationMinutes(payload?.durationMinutes);
+    if (!student || !date || !durationMinutes) return "";
+    return `${student}__${date}__${durationMinutes}`;
 }
 
 export async function readSubscriptions(store) {

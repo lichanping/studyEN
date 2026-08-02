@@ -242,6 +242,17 @@ async function testGithubActionShouldOwnHourlyChecker() {
     );
 }
 
+async function testNetlifySubscriptionFunctionShouldNotRequireRootBrowserModule() {
+    const fs = require('fs');
+    const functionPath = path.join(__dirname, '..', 'netlify', 'functions', 'schedule-subscription.mjs');
+    const source = fs.readFileSync(functionPath, 'utf8');
+
+    assert(
+        !source.includes('schedule-course-match.js'),
+        'Netlify bundled subscription function should not require root browser modules that are missing from the Lambda package'
+    );
+}
+
 async function run() {
     await testSubscribeShouldPersistTenMinuteSubscription();
     await testSubscribeShouldAllowMissingUserIdWhenTokenExists();
@@ -252,6 +263,7 @@ async function run() {
     await testReminderEmailShouldFallbackMailFromToSmtpUser();
     await testReminderEmailShouldIncludeScheduleRequestTextWithoutCopyPageLink();
     await testGithubActionShouldOwnHourlyChecker();
+    await testNetlifySubscriptionFunctionShouldNotRequireRootBrowserModule();
     console.log('test-schedule-subscription passed');
 }
 
