@@ -3,7 +3,7 @@ import nodemailer from "nodemailer";
 import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
-const scheduleCourseMatch = require("../schedule-course-match.js");
+const scheduleCourseMatch = require("../netlify/functions/schedule-course-match-shared.cjs");
 
 export const ACTIVE_SUBSCRIPTIONS_KEY = "active-subscriptions";
 export const SUBSCRIPTION_STORE_NAME = "schedule-subscriptions";
