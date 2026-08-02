@@ -6,9 +6,9 @@
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#e8e4dc">
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1d1e21">
     <title>排课总览</title>
-    <script src="./meeting-config.js?v=20260726-1"></script>
+    <script src="./meeting-config.js?v=20260802-1"></script>
     <script type="module">
-        import * as commonFunctions from './commonFunctions.js?v=20260402-2';
+        import * as commonFunctions from './commonFunctions.js?v=20260802-1';
         commonFunctions.checkLoginStatus();
     </script>
     <style>
@@ -1269,8 +1269,8 @@ sourceId: 上课记录唯一标识（用于去重）</span>
   ]
 }
 </script>
-<script src="./student-name-alias.js?v=20260501"></script>
-<script src="./schedule-course-match.js?v=20260509-1"></script>
+<script src="./student-name-alias.js?v=20260802-1"></script>
+<script src="./schedule-course-match.js?v=20260802-1"></script>
 
 <script>
     const WEEK_DAYS = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
@@ -3165,7 +3165,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
     })();
 </script>
 <script type="module">
-    import * as commonFunctions from './commonFunctions.js?v=20260402-2';
+    import * as commonFunctions from './commonFunctions.js?v=20260802-1';
 
     document.getElementById("navigateToFormalClass").addEventListener("click", commonFunctions.navigateToFormalClass);
     document.getElementById("navigateToTiyanClass").addEventListener("click", commonFunctions.navigateToTiyanClass);
