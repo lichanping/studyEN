@@ -1,5 +1,3 @@
-"use strict";
-
 const STUDENT_NAME_ALIAS = Object.freeze({
     "硕硕": "俞新硕"
 });
@@ -79,7 +77,7 @@ function mergeCourseState(currentState, nextState) {
     return "none";
 }
 
-function buildCourseMatchKey(input) {
+export function buildCourseMatchKey(input) {
     if (!input || typeof input !== "object") return "";
     const student = normalizeStudentName(input.student);
     const date = String(input.date || "").trim();
@@ -88,7 +86,7 @@ function buildCourseMatchKey(input) {
     return `${student}__${date}__${durationMinutes}`;
 }
 
-function createBoardMatchIndex(boardList) {
+export function createBoardMatchIndex(boardList) {
     const keySet = new Set();
     const stateByKey = new Map();
     const normalizedRows = [];
@@ -109,15 +107,9 @@ function createBoardMatchIndex(boardList) {
     };
 }
 
-function getCourseMatchState(index, targetCourse) {
+export function getCourseMatchState(index, targetCourse) {
     if (!index || typeof index !== "object") return "none";
     const key = buildCourseMatchKey(targetCourse);
     if (!key) return "none";
     return index.stateByKey instanceof Map ? (index.stateByKey.get(key) || "none") : "none";
 }
-
-module.exports = {
-    buildCourseMatchKey,
-    createBoardMatchIndex,
-    getCourseMatchState
-};

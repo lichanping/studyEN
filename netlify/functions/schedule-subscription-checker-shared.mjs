@@ -1,9 +1,6 @@
 import { getStore } from "@netlify/blobs";
 import nodemailer from "nodemailer";
-import { createRequire } from "node:module";
-
-const require = createRequire(import.meta.url);
-const scheduleCourseMatch = require("./schedule-course-match-shared.cjs");
+import * as scheduleCourseMatch from "./schedule-course-match-shared.mjs";
 
 export const ACTIVE_SUBSCRIPTIONS_KEY = "active-subscriptions";
 export const SUBSCRIPTION_STORE_NAME = "schedule-subscriptions";

@@ -528,6 +528,12 @@ async function testNetlifySubscriptionFunctionShouldNotRequireRootBrowserModule(
             && checkerSource.includes('../netlify/functions/schedule-subscription-checker-shared.mjs'),
         'Subscription functions should import a checker shared module from netlify/functions, and the script entry should only wrap that shared module'
     );
+    assert(
+        !source.includes('createRequire')
+            && !scheduledFunctionSource.includes('createRequire')
+            && fs.readFileSync(path.join(__dirname, '..', 'netlify', 'functions', 'schedule-subscription-checker-shared.mjs'), 'utf8').includes('./schedule-course-match-shared.mjs'),
+        'Netlify subscription checker should use a static ESM matcher import so bundling includes the dependency'
+    );
 }
 
 async function run() {
