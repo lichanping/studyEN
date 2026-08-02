@@ -31,7 +31,6 @@ function getFunctionBody(source, functionName) {
 
 const scheduleHtml = read('schedule.html');
 const renderDayEntriesBody = getFunctionBody(scheduleHtml, 'renderDayEntries');
-const syncScheduleSubscriptionStatusesBody = getFunctionBody(scheduleHtml, 'syncScheduleSubscriptionStatuses');
 const initBody = getFunctionBody(scheduleHtml, 'init');
 
 assert(
@@ -46,6 +45,12 @@ assert(
 );
 
 assert(
+    scheduleHtml.includes('if (payload?.subscription)')
+        && scheduleHtml.includes('forgetScheduleSubscription(entry, dateValue);'),
+    'schedule.html 订阅后若当次首检已自动停订，不应继续保留本地已订阅状态'
+);
+
+assert(
     renderDayEntriesBody.includes('courseScheduleState.text === "未排课"')
         && renderDayEntriesBody.includes('subscriptionButton')
         && renderDayEntriesBody.includes('actionGroup.appendChild(subscriptionButton)'),
@@ -53,9 +58,10 @@ assert(
 );
 
 assert(
-    renderDayEntriesBody.includes('每10分钟检查一次')
-        && renderDayEntriesBody.includes('每10分钟复查一次'),
-    'schedule.html 测试阶段订阅提示应显示每10分钟复查'
+    renderDayEntriesBody.includes('每1小时检查一次')
+        && renderDayEntriesBody.includes('最多提醒3次')
+        && renderDayEntriesBody.includes('每1小时复查一次'),
+    'schedule.html 订阅提示应显示每1小时复查且最多提醒3次'
 );
 
 assert(
@@ -88,28 +94,21 @@ assert(
 );
 
 assert(
-    scheduleHtml.includes('function syncScheduleSubscriptionStatuses(')
-        && scheduleHtml.includes('action: "status"')
-        && renderDayEntriesBody.includes('syncScheduleSubscriptionStatuses();'),
-    'schedule.html 渲染时应向后端校验本地订阅状态，后端已停止订阅时清理 localStorage'
+    !scheduleHtml.includes('function syncScheduleSubscriptionStatuses(')
+        && !scheduleHtml.includes('action: "status"')
+        && !renderDayEntriesBody.includes('syncScheduleSubscriptionStatuses();'),
+    'schedule.html 不应在渲染时请求后端订阅状态，应完全依赖 localStorage 减少函数调用'
 );
 
 assert(
-    scheduleHtml.includes('后端订阅状态已同步')
-        && scheduleHtml.includes('delete scheduleSubscriptionState[id];'),
-    'schedule.html 同步发现后端 inactive 时应清理本地订阅缓存并提示状态已同步'
+    !scheduleHtml.includes('后端订阅状态已同步'),
+    'schedule.html 不应再提示后端订阅状态同步'
 );
 
 assert(
-    syncScheduleSubscriptionStatusesBody.includes('rerenderScheduleViewsForBoardState();'),
-    'schedule.html 同步清理本地订阅后应立即重渲染，避免按钮继续停留在取消订阅状态'
-);
-
-assert(
-    scheduleHtml.includes('SCHEDULE_SUBSCRIPTION_STATUS_SYNC_GRACE_MS')
-        && syncScheduleSubscriptionStatusesBody.includes('subscribedAt')
-        && syncScheduleSubscriptionStatusesBody.includes('SCHEDULE_SUBSCRIPTION_STATUS_SYNC_GRACE_MS'),
-    'schedule.html 刚订阅后的短时间内不应被后端 status 读写延迟误清理'
+    !scheduleHtml.includes('SCHEDULE_SUBSCRIPTION_STATUS_SYNC_GRACE_MS')
+        && !scheduleHtml.includes('subscribedAt'),
+    'schedule.html 移除后端状态同步后不应继续保留同步 grace window 状态'
 );
 
 console.log('test-schedule-subscription-ui passed');

@@ -42,7 +42,7 @@ async function testSubscribeShouldPersistTenMinuteSubscription() {
     });
 
     assert.strictEqual(result.subscription.id, '邸睿__2026-08-02__60');
-    assert.strictEqual(result.subscription.nextCheckAt, '2026-08-02T01:10:00.000Z');
+    assert.strictEqual(result.subscription.nextCheckAt, '2026-08-02T02:00:00.000Z');
     assert.strictEqual(store.snapshot().length, 1, 'active subscription should be persisted');
 }
 
@@ -169,7 +169,7 @@ async function testCheckerShouldSendEmailAndRescheduleWhenStillUnscheduled() {
 
     assert.strictEqual(summary.notifiedCount, 1, 'unscheduled course should send reminder email');
     assert.strictEqual(store.snapshot().length, 1, 'unscheduled subscription should remain active');
-    assert.strictEqual(store.snapshot()[0].nextCheckAt, '2026-08-02T02:10:00.000Z');
+    assert.strictEqual(store.snapshot()[0].nextCheckAt, '2026-08-02T03:00:00.000Z');
     assert.strictEqual(sentMessages[0].subscription.id, '邸睿__2026-08-02__60');
 }
 
@@ -185,7 +185,7 @@ async function testCheckerShouldExpireAfterMaxNotifications() {
             platform: 'lixiaolaila',
             token: 'x-token-c-demo',
             userId: 'u-1',
-            notifyCount: 6,
+            notifyCount: 2,
             nextCheckAt: '2026-08-02T02:00:00.000Z',
             createdAt: '2026-08-02T01:00:00.000Z',
             updatedAt: '2026-08-02T01:50:00.000Z'
@@ -206,7 +206,7 @@ async function testCheckerShouldExpireAfterMaxNotifications() {
     assert.strictEqual(summary.expiredCount, 1, 'subscription should be counted as expired after max reminders');
     assert.strictEqual(store.snapshot().length, 0, 'expired subscription should be removed from active list');
     assert(
-        sentMessages[0].message.includes('连续提醒 7 次')
+        sentMessages[0].message.includes('连续提醒 3 次')
             && sentMessages[0].message.includes('自动停止轮询'),
         'final reminder should tell the user polling stops after max reminders'
     );
@@ -224,7 +224,7 @@ async function testCheckerShouldNotSpendNotifyCountOnError() {
             platform: 'lixiaolaila',
             token: 'x-token-c-demo',
             userId: 'u-1',
-            notifyCount: 6,
+            notifyCount: 2,
             nextCheckAt: '2026-08-02T02:00:00.000Z',
             createdAt: '2026-08-02T01:00:00.000Z',
             updatedAt: '2026-08-02T01:50:00.000Z'
@@ -245,8 +245,96 @@ async function testCheckerShouldNotSpendNotifyCountOnError() {
     assert.strictEqual(summary.skippedCount, 1, 'temporary errors should be skipped and retried later');
     assert.strictEqual(summary.expiredCount, 0, 'temporary errors should not expire the subscription');
     assert.strictEqual(store.snapshot().length, 1, 'failed checks should keep the active subscription');
-    assert.strictEqual(store.snapshot()[0].notifyCount, 6, 'failed checks should not spend a notify attempt');
+    assert.strictEqual(store.snapshot()[0].notifyCount, 2, 'failed checks should not spend a notify attempt');
     assert.strictEqual(store.snapshot()[0].lastError, 'temporary board failure');
+}
+
+async function testResubscribeShouldResetNotifyCountAfterExpiry() {
+    const mod = await loadModule('netlify/functions/schedule-subscription.mjs');
+    const store = createMemoryStore([]);
+
+    const result = await mod.upsertSubscription({
+        store,
+        nowIso: '2026-08-02T04:00:00.000Z',
+        payload: {
+            student: '徐智浩',
+            date: '2026-08-03',
+            durationMinutes: 60,
+            course: '单词',
+            platform: 'lixiaolaila',
+            token: 'x-token-c-demo'
+        }
+    });
+
+    assert.strictEqual(result.subscription.notifyCount, 0, 're-subscribing after expiry should start a fresh notify count');
+    assert.strictEqual(result.subscription.nextCheckAt, '2026-08-02T05:00:00.000Z');
+    assert.strictEqual(store.snapshot().length, 1, 're-subscribing after expiry should create a fresh active subscription');
+}
+
+async function testSubscribeShouldImmediatelySendFirstReminderWhenStillUnscheduled() {
+    const mod = await loadModule('netlify/functions/schedule-subscription.mjs');
+    const sentMessages = [];
+    const store = createMemoryStore([]);
+
+    const result = await mod.subscribeAndRunImmediateCheck({
+        store,
+        nowIso: '2026-08-02T04:00:00.000Z',
+        payload: {
+            student: '徐智浩',
+            date: '2026-08-03',
+            durationMinutes: 60,
+            course: '单词',
+            platform: 'lixiaolaila',
+            token: 'x-token-c-demo'
+        },
+        fetchBoardRows: async () => ([]),
+        sendReminderEmail: async (payload) => {
+            sentMessages.push(payload);
+        }
+    });
+
+    assert.strictEqual(result.summary.notifiedCount, 1, 'subscribe should trigger the first reminder immediately when still unscheduled');
+    assert.strictEqual(result.summary.resolvedCount, 0, 'unscheduled first check should not resolve the subscription');
+    assert.strictEqual(store.snapshot().length, 1, 'unscheduled first check should keep the subscription active');
+    assert.strictEqual(store.snapshot()[0].notifyCount, 1, 'immediate first reminder should spend the first notify attempt');
+    assert.strictEqual(store.snapshot()[0].nextCheckAt, '2026-08-02T05:00:00.000Z', 'next hourly retry should be scheduled after the immediate first check');
+    assert.strictEqual(sentMessages.length, 1, 'immediate first check should send exactly one reminder email');
+}
+
+async function testSubscribeShouldImmediatelyResolveAndStopWhenAlreadyScheduled() {
+    const mod = await loadModule('netlify/functions/schedule-subscription.mjs');
+    const sentMessages = [];
+    const store = createMemoryStore([]);
+
+    const result = await mod.subscribeAndRunImmediateCheck({
+        store,
+        nowIso: '2026-08-02T04:00:00.000Z',
+        payload: {
+            student: '徐智浩',
+            date: '2026-08-03',
+            durationMinutes: 60,
+            course: '单词',
+            platform: 'lixiaolaila',
+            token: 'x-token-c-demo'
+        },
+        fetchBoardRows: async () => ([
+            {
+                student: { name: '徐智浩' },
+                scheduleTime: new Date('2026-08-03T10:00:00+08:00').getTime(),
+                type: 'MINUTE_60',
+                status: 'SCHEDULED'
+            }
+        ]),
+        sendReminderEmail: async (payload) => {
+            sentMessages.push(payload);
+        }
+    });
+
+    assert.strictEqual(result.summary.resolvedCount, 1, 'subscribe should immediately resolve when the course is already scheduled');
+    assert.strictEqual(result.summary.notifiedCount, 0, 'resolved first check should not send an unresolved reminder');
+    assert.strictEqual(store.snapshot().length, 0, 'resolved first check should stop the subscription immediately');
+    assert.strictEqual(sentMessages.length, 1, 'resolved first check should send one success email');
+    assert(sentMessages[0].subject.includes('已排课'), 'resolved first check should send a success subject');
 }
 
 async function testSubscriptionStatusShouldReportActiveIds() {
@@ -361,7 +449,7 @@ async function testCheckerShouldBeReadOnlyInDryRunMode() {
         platform: 'lixiaolaila',
         token: 'x-token-c-demo',
         userId: 'u-1',
-        notifyCount: 6,
+        notifyCount: 2,
         nextCheckAt: '2026-08-02T02:00:00.000Z',
         createdAt: '2026-08-02T01:00:00.000Z',
         updatedAt: '2026-08-02T01:50:00.000Z'
@@ -391,25 +479,33 @@ async function testCheckerShouldBeReadOnlyInDryRunMode() {
     assert.strictEqual(sentMessages.length, 0, 'dry-run must not even call the email sender');
 }
 
-async function testGithubActionShouldOwnHourlyChecker() {
+async function testNetlifyScheduledFunctionShouldOwnReminderChecker() {
     const fs = require('fs');
     const workflowPath = path.join(__dirname, '..', '.github', 'workflows', 'schedule-subscription-reminder.yml');
     const workflow = fs.readFileSync(workflowPath, 'utf8');
 
     assert(
-        workflow.includes("cron: '*/10 * * * *'")
+        !workflow.includes("cron: '*/10 * * * *'")
             && workflow.includes('pull_request:')
             && workflow.includes('node scripts/check_schedule_subscriptions.mjs')
             && workflow.includes('NETLIFY_AUTH_TOKEN')
             && workflow.includes('FX_ALERT_SMTP_PASS')
             && workflow.includes("SCHEDULE_SUBSCRIPTION_DRY_RUN: ${{ github.event_name == 'pull_request' && 'true' || 'false' }}"),
-        'GitHub Actions should run pull_request checks in dry-run mode while keeping the 10-minute production checker on GitHub Actions'
+        'GitHub Actions should keep only dry-run validation, not production schedule ownership'
     );
 
-    const oldNetlifyCheckerPath = path.join(__dirname, '..', 'netlify', 'functions', 'schedule-subscription-check.mjs');
+    const netlifyCheckerPath = path.join(__dirname, '..', 'netlify', 'functions', 'schedule-subscription-check.mjs');
     assert(
-        !fs.existsSync(oldNetlifyCheckerPath),
-        'Netlify scheduled checker should be removed so GitHub Actions is the single hourly sender'
+        fs.existsSync(netlifyCheckerPath),
+        'Netlify scheduled checker should exist so production polling is owned by Netlify Scheduled Functions'
+    );
+
+    const netlifyCheckerSource = fs.readFileSync(netlifyCheckerPath, 'utf8');
+    assert(
+        netlifyCheckerSource.includes('schedule = "@hourly"')
+            || netlifyCheckerSource.includes("schedule: '@hourly'")
+            || netlifyCheckerSource.includes('schedule: "@hourly"'),
+        'Netlify scheduled checker should run hourly'
     );
 }
 
@@ -432,13 +528,16 @@ async function run() {
     await testCheckerShouldSendEmailAndRescheduleWhenStillUnscheduled();
     await testCheckerShouldExpireAfterMaxNotifications();
     await testCheckerShouldNotSpendNotifyCountOnError();
+    await testResubscribeShouldResetNotifyCountAfterExpiry();
+    await testSubscribeShouldImmediatelySendFirstReminderWhenStillUnscheduled();
+    await testSubscribeShouldImmediatelyResolveAndStopWhenAlreadyScheduled();
     await testSubscriptionStatusShouldReportActiveIds();
     await testReminderEmailShouldFallbackToHardcodedRecipient();
     await testReminderEmailShouldFallbackMailFromToSmtpUser();
     await testReminderEmailShouldIncludeScheduleRequestTextWithoutCopyPageLink();
     await testReminderEmailShouldSkipWhenDisabledByEnv();
     await testCheckerShouldBeReadOnlyInDryRunMode();
-    await testGithubActionShouldOwnHourlyChecker();
+    await testNetlifyScheduledFunctionShouldOwnReminderChecker();
     await testNetlifySubscriptionFunctionShouldNotRequireRootBrowserModule();
     console.log('test-schedule-subscription passed');
 }

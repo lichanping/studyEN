@@ -7,8 +7,8 @@ const scheduleCourseMatch = require("../schedule-course-match.js");
 
 export const ACTIVE_SUBSCRIPTIONS_KEY = "active-subscriptions";
 export const SUBSCRIPTION_STORE_NAME = "schedule-subscriptions";
-const SUBSCRIPTION_CHECK_INTERVAL_MINUTES = 10;
-const MAX_NOTIFY_COUNT = 7;
+const SUBSCRIPTION_CHECK_INTERVAL_MINUTES = 60;
+const MAX_NOTIFY_COUNT = 3;
 
 const DEFAULT_MAIL_TO = "lichanping@126.com";
 
@@ -224,11 +224,15 @@ export async function runSubscriptionChecks({
     nowIso,
     env = process.env,
     fetchBoardRows = loadBoardRowsForSubscription,
-    sendReminderEmail = sendSmtpReminderEmail
+    sendReminderEmail = sendSmtpReminderEmail,
+    subscriptionIds
 }) {
     const now = nowIso || new Date().toISOString();
     const dryRun = isDryRun(env);
     const current = await readSubscriptions(store);
+    const scopedIds = Array.isArray(subscriptionIds)
+        ? new Set(subscriptionIds.map((item) => String(item || '').trim()).filter(Boolean))
+        : null;
     const next = [];
     let resolvedCount = 0;
     let notifiedCount = 0;
@@ -239,6 +243,10 @@ export async function runSubscriptionChecks({
     let wouldExpireCount = 0;
 
     for (const subscription of current) {
+        if (scopedIds && !scopedIds.has(String(subscription?.id || '').trim())) {
+            next.push(subscription);
+            continue;
+        }
         if (!shouldCheckNow(subscription, now)) {
             next.push(subscription);
             continue;

@@ -1,8 +1,9 @@
 import { getStore } from "@netlify/blobs";
+import { runSubscriptionChecks } from "../../scripts/check_schedule_subscriptions.mjs";
 
 export const ACTIVE_SUBSCRIPTIONS_KEY = "active-subscriptions";
 export const SUBSCRIPTION_STORE_NAME = "schedule-subscriptions";
-const SUBSCRIPTION_CHECK_INTERVAL_MINUTES = 10;
+const SUBSCRIPTION_CHECK_INTERVAL_MINUTES = 60;
 
 function corsHeaders() {
     return {
@@ -56,7 +57,7 @@ export async function writeSubscriptions(store, records) {
     await store.setJSON(ACTIVE_SUBSCRIPTIONS_KEY, safeRecords);
 }
 
-function buildSubscriptionRecord(payload, nowIso) {
+function buildSubscriptionRecord(payload, nowIso, options = {}) {
     const id = buildSubscriptionId(payload);
     const student = sanitizeText(payload?.student, 64);
     const date = sanitizeText(payload?.date, 32);
@@ -66,6 +67,9 @@ function buildSubscriptionRecord(payload, nowIso) {
     const token = sanitizeText(payload?.token, 4096);
     const userId = sanitizeText(payload?.userId, 64);
     const durationMinutes = normalizeDurationMinutes(payload?.durationMinutes);
+    const initialCheckDelayMinutes = Number.isFinite(options.initialCheckDelayMinutes)
+        ? Math.max(0, Number(options.initialCheckDelayMinutes))
+        : SUBSCRIPTION_CHECK_INTERVAL_MINUTES;
 
     if (!id || !student || !date || !durationMinutes) {
         throw new Error("Missing subscription target fields");
@@ -87,7 +91,7 @@ function buildSubscriptionRecord(payload, nowIso) {
         platform,
         token,
         userId,
-        nextCheckAt: addMinutes(nowIso, SUBSCRIPTION_CHECK_INTERVAL_MINUTES),
+        nextCheckAt: addMinutes(nowIso, initialCheckDelayMinutes),
         lastNotifiedAt: "",
         notifyCount: 0,
         createdAt: nowIso,
@@ -95,9 +99,9 @@ function buildSubscriptionRecord(payload, nowIso) {
     };
 }
 
-export async function upsertSubscription({ store, nowIso, payload }) {
+export async function upsertSubscription({ store, nowIso, payload, initialCheckDelayMinutes }) {
     const now = sanitizeText(nowIso, 64) || new Date().toISOString();
-    const record = buildSubscriptionRecord(payload, now);
+    const record = buildSubscriptionRecord(payload, now, { initialCheckDelayMinutes });
     const current = await readSubscriptions(store);
     const next = current.filter((item) => item?.id !== record.id);
 
@@ -118,6 +122,38 @@ export async function upsertSubscription({ store, nowIso, payload }) {
     return {
         ok: true,
         subscription: next.find((item) => item.id === record.id)
+    };
+}
+
+export async function subscribeAndRunImmediateCheck({
+    store,
+    nowIso,
+    payload,
+    env = process.env,
+    fetchBoardRows,
+    sendReminderEmail
+}) {
+    const now = sanitizeText(nowIso, 64) || new Date().toISOString();
+    const upserted = await upsertSubscription({
+        store,
+        nowIso: now,
+        payload,
+        initialCheckDelayMinutes: 0
+    });
+    const subscriptionId = upserted?.subscription?.id;
+    const summary = await runSubscriptionChecks({
+        store,
+        nowIso: now,
+        env,
+        fetchBoardRows,
+        sendReminderEmail,
+        subscriptionIds: subscriptionId ? [subscriptionId] : []
+    });
+    const current = await readSubscriptions(store);
+    return {
+        ok: true,
+        summary,
+        subscription: current.find((item) => item?.id === subscriptionId) || null
     };
 }
 
@@ -199,10 +235,11 @@ export default async (req) => {
             return jsonResponse({ error: "Unsupported action" }, 400);
         }
 
-        const result = await upsertSubscription({
+        const result = await subscribeAndRunImmediateCheck({
             store,
             nowIso: new Date().toISOString(),
-            payload: body
+            payload: body,
+            env: process.env
         });
         return jsonResponse(result, 200);
     } catch (error) {
