@@ -12,6 +12,15 @@ const MAX_NOTIFY_COUNT = 7;
 
 const DEFAULT_MAIL_TO = "lichanping@126.com";
 
+function isDryRun(env = process.env) {
+    return String(env.SCHEDULE_SUBSCRIPTION_DRY_RUN || "").trim().toLowerCase() === "true";
+}
+
+function isEmailDisabled(env = process.env) {
+    return isDryRun(env)
+        || String(env.SCHEDULE_SUBSCRIPTION_DISABLE_EMAIL || "").trim().toLowerCase() === "true";
+}
+
 function addMinutes(isoString, minutes) {
     const baseDate = new Date(isoString);
     return new Date(baseDate.getTime() + minutes * 60 * 1000).toISOString();
@@ -178,6 +187,11 @@ export async function loadBoardRowsForSubscription(subscription) {
 }
 
 export async function sendSmtpReminderEmail({ subscription, env = process.env, subject, message }) {
+    if (isEmailDisabled(env)) {
+        console.warn("schedule subscription checker: email disabled by env; skip email for", subscription.id);
+        return { skipped: true };
+    }
+
     const smtp = resolveSmtpConfig(env);
 
     if (!smtp.recipients.length || !smtp.from || !smtp.host || !smtp.user || !smtp.pass) {
@@ -208,16 +222,21 @@ export async function sendSmtpReminderEmail({ subscription, env = process.env, s
 export async function runSubscriptionChecks({
     store,
     nowIso,
+    env = process.env,
     fetchBoardRows = loadBoardRowsForSubscription,
     sendReminderEmail = sendSmtpReminderEmail
 }) {
     const now = nowIso || new Date().toISOString();
+    const dryRun = isDryRun(env);
     const current = await readSubscriptions(store);
     const next = [];
     let resolvedCount = 0;
     let notifiedCount = 0;
     let expiredCount = 0;
     let skippedCount = 0;
+    let wouldResolveCount = 0;
+    let wouldNotifyCount = 0;
+    let wouldExpireCount = 0;
 
     for (const subscription of current) {
         if (!shouldCheckNow(subscription, now)) {
@@ -235,8 +254,14 @@ export async function runSubscriptionChecks({
             });
 
             if (state !== "none") {
+                if (dryRun) {
+                    wouldResolveCount += 1;
+                    next.push(subscription);
+                    continue;
+                }
                 await sendReminderEmail({
                     subscription,
+                    env,
                     nowIso: now,
                     subject: `【已排课】${subscription.student} ${subscription.date} ${subscription.durationMinutes}分钟`,
                     message: buildResolvedMessage(subscription, state)
@@ -247,6 +272,11 @@ export async function runSubscriptionChecks({
 
             const previousNotifyCount = Number(subscription.notifyCount) || 0;
             if (previousNotifyCount >= MAX_NOTIFY_COUNT) {
+                if (dryRun) {
+                    wouldExpireCount += 1;
+                    next.push(subscription);
+                    continue;
+                }
                 expiredCount += 1;
                 continue;
             }
@@ -255,7 +285,15 @@ export async function runSubscriptionChecks({
             const message = buildReminderMessage(subscription, {
                 finalReminder: nextNotifyCount >= MAX_NOTIFY_COUNT
             });
-            await sendReminderEmail({ subscription, nowIso: now, message });
+            if (dryRun) {
+                wouldNotifyCount += 1;
+                if (nextNotifyCount >= MAX_NOTIFY_COUNT) {
+                    wouldExpireCount += 1;
+                }
+                next.push(subscription);
+                continue;
+            }
+            await sendReminderEmail({ subscription, env, nowIso: now, message });
             notifiedCount += 1;
             if (nextNotifyCount >= MAX_NOTIFY_COUNT) {
                 expiredCount += 1;
@@ -274,28 +312,36 @@ export async function runSubscriptionChecks({
             skippedCount += 1;
             next.push({
                 ...subscription,
-                nextCheckAt: addMinutes(now, SUBSCRIPTION_CHECK_INTERVAL_MINUTES),
-                updatedAt: now,
-                lastError: error.message || "unknown"
+                ...(dryRun ? {} : {
+                    nextCheckAt: addMinutes(now, SUBSCRIPTION_CHECK_INTERVAL_MINUTES),
+                    updatedAt: now,
+                    lastError: error.message || "unknown"
+                })
             });
         }
     }
 
-    await writeSubscriptions(store, next);
+    if (!dryRun) {
+        await writeSubscriptions(store, next);
+    }
     return {
         storeKey: ACTIVE_SUBSCRIPTIONS_KEY,
         checkedAt: now,
-        activeCount: next.length,
+        dryRun,
+        activeCount: dryRun ? current.length : next.length,
         resolvedCount,
         notifiedCount,
         expiredCount,
-        skippedCount
+        skippedCount,
+        wouldResolveCount,
+        wouldNotifyCount,
+        wouldExpireCount
     };
 }
 
 async function main() {
     const store = createGithubActionStore();
-    const summary = await runSubscriptionChecks({ store });
+    const summary = await runSubscriptionChecks({ store, env: process.env });
     console.log(JSON.stringify(summary, null, 2));
 }
 

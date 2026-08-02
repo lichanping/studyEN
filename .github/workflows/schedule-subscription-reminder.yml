@@ -20,6 +20,7 @@ jobs:
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          SCHEDULE_SUBSCRIPTION_DRY_RUN: ${{ github.event_name == 'pull_request' && 'true' || 'false' }}
           FX_ALERT_SMTP_HOST: ${{ secrets.FX_ALERT_SMTP_HOST }}
           FX_ALERT_SMTP_PORT: ${{ secrets.FX_ALERT_SMTP_PORT }}
           FX_ALERT_SMTP_SECURE: ${{ secrets.FX_ALERT_SMTP_SECURE }}

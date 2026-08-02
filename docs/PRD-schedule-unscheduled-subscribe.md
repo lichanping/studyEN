@@ -45,6 +45,7 @@
 ### 3.3 后台巡检
 
 - 测试阶段使用 GitHub Actions 每 10 分钟执行一次
+- 为了支持 merge 前 PR 验证，workflow 也会在 `pull_request` 事件运行一次 checker，但 PR 校验必须使用 dry-run：不发真实邮件、不修改 active subscriptions，只验证巡检和汇总逻辑
 - 对到期订阅：
   - 通过 `NETLIFY_AUTH_TOKEN` / `NETLIFY_SITE_ID` 读取 Netlify Blobs 中的有效订阅
   - 调用现有李校首页排课接口 + 已完成接口

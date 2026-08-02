@@ -327,6 +327,70 @@ async function testReminderEmailShouldIncludeScheduleRequestTextWithoutCopyPageL
     );
 }
 
+async function testReminderEmailShouldSkipWhenDisabledByEnv() {
+    const mod = await loadModule('scripts/check_schedule_subscriptions.mjs');
+    const result = await mod.sendSmtpReminderEmail({
+        subscription: {
+            id: '徐智浩__2026-08-02__60',
+            student: '徐智浩',
+            date: '2026-08-02',
+            durationMinutes: 60,
+            course: '单词',
+            platform: 'lixiaolaila'
+        },
+        env: {
+            SCHEDULE_SUBSCRIPTION_DISABLE_EMAIL: 'true'
+        }
+    });
+
+    assert.deepStrictEqual(
+        result,
+        { skipped: true },
+        'PR validation should be able to disable real email sending explicitly'
+    );
+}
+
+async function testCheckerShouldBeReadOnlyInDryRunMode() {
+    const mod = await loadModule('scripts/check_schedule_subscriptions.mjs');
+    const originalRecord = {
+        id: '邸睿__2026-08-02__60',
+        student: '邸睿',
+        date: '2026-08-02',
+        durationMinutes: 60,
+        course: '单词',
+        platform: 'lixiaolaila',
+        token: 'x-token-c-demo',
+        userId: 'u-1',
+        notifyCount: 6,
+        nextCheckAt: '2026-08-02T02:00:00.000Z',
+        createdAt: '2026-08-02T01:00:00.000Z',
+        updatedAt: '2026-08-02T01:50:00.000Z'
+    };
+    const store = createMemoryStore([originalRecord]);
+    const sentMessages = [];
+
+    const summary = await mod.runSubscriptionChecks({
+        store,
+        nowIso: '2026-08-02T02:00:00.000Z',
+        env: {
+            SCHEDULE_SUBSCRIPTION_DRY_RUN: 'true'
+        },
+        fetchBoardRows: async () => ([]),
+        sendReminderEmail: async (payload) => {
+            sentMessages.push(payload);
+            return { skipped: true };
+        }
+    });
+
+    assert.strictEqual(summary.dryRun, true, 'PR validation should report dry-run mode explicitly');
+    assert.strictEqual(summary.notifiedCount, 0, 'dry-run must not count a real reminder as sent');
+    assert.strictEqual(summary.expiredCount, 0, 'dry-run must not expire active subscriptions');
+    assert.strictEqual(summary.wouldNotifyCount, 1, 'dry-run should still report pending reminder actions');
+    assert.strictEqual(summary.activeCount, 1, 'dry-run should keep the original active subscription count');
+    assert.deepStrictEqual(store.snapshot(), [originalRecord], 'dry-run must not mutate the persisted subscriptions');
+    assert.strictEqual(sentMessages.length, 0, 'dry-run must not even call the email sender');
+}
+
 async function testGithubActionShouldOwnHourlyChecker() {
     const fs = require('fs');
     const workflowPath = path.join(__dirname, '..', '.github', 'workflows', 'schedule-subscription-reminder.yml');
@@ -337,8 +401,9 @@ async function testGithubActionShouldOwnHourlyChecker() {
             && workflow.includes('pull_request:')
             && workflow.includes('node scripts/check_schedule_subscriptions.mjs')
             && workflow.includes('NETLIFY_AUTH_TOKEN')
-            && workflow.includes('FX_ALERT_SMTP_PASS'),
-        'GitHub Actions should run the schedule subscription checker in PR validation and every 10 minutes with Netlify and SMTP secrets'
+            && workflow.includes('FX_ALERT_SMTP_PASS')
+            && workflow.includes("SCHEDULE_SUBSCRIPTION_DRY_RUN: ${{ github.event_name == 'pull_request' && 'true' || 'false' }}"),
+        'GitHub Actions should run pull_request checks in dry-run mode while keeping the 10-minute production checker on GitHub Actions'
     );
 
     const oldNetlifyCheckerPath = path.join(__dirname, '..', 'netlify', 'functions', 'schedule-subscription-check.mjs');
@@ -371,6 +436,8 @@ async function run() {
     await testReminderEmailShouldFallbackToHardcodedRecipient();
     await testReminderEmailShouldFallbackMailFromToSmtpUser();
     await testReminderEmailShouldIncludeScheduleRequestTextWithoutCopyPageLink();
+    await testReminderEmailShouldSkipWhenDisabledByEnv();
+    await testCheckerShouldBeReadOnlyInDryRunMode();
     await testGithubActionShouldOwnHourlyChecker();
     await testNetlifySubscriptionFunctionShouldNotRequireRootBrowserModule();
     console.log('test-schedule-subscription passed');
