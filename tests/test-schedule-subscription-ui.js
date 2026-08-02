@@ -65,6 +65,12 @@ assert(
 );
 
 assert(
+    scheduleHtml.includes('已订阅未排课提醒，将每1小时复查一次，最多提醒3次')
+        && !scheduleHtml.includes('已订阅未排课提醒，将每10分钟复查一次'),
+    'schedule.html 订阅成功 toast 应与当前每1小时、最多3次的策略保持一致'
+);
+
+assert(
     initBody.includes('scheduleSubscriptionState = loadScheduleSubscriptions();'),
     'schedule.html 初始化时应加载本地订阅状态'
 );
