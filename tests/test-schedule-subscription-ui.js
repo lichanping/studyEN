@@ -52,6 +52,12 @@ assert(
 );
 
 assert(
+    renderDayEntriesBody.includes('每10分钟检查一次')
+        && renderDayEntriesBody.includes('每10分钟复查一次'),
+    'schedule.html 测试阶段订阅提示应显示每10分钟复查'
+);
+
+assert(
     initBody.includes('scheduleSubscriptionState = loadScheduleSubscriptions();'),
     'schedule.html 初始化时应加载本地订阅状态'
 );
@@ -60,6 +66,13 @@ assert(
     scheduleHtml.includes('time: getAppointmentClockText(entry, dateValue)')
         && scheduleHtml.includes('time: getAppointmentClockText(entry, dateValue),'),
     'schedule.html 订阅请求和本地订阅快照应保存申请排课使用的上课时间'
+);
+
+assert(
+    scheduleHtml.includes('if (!token)')
+        && scheduleHtml.includes('请先完成李校来啦登录，再订阅未排课提醒')
+        && !scheduleHtml.includes('if (!token || !userId)'),
+    'schedule.html 订阅时应只强制要求 lxll token，避免缺少 x-user-id 的登录态无法订阅'
 );
 
 assert(

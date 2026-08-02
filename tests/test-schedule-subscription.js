@@ -22,7 +22,7 @@ function createMemoryStore(initialRecords) {
     };
 }
 
-async function testSubscribeShouldPersistHourlySubscription() {
+async function testSubscribeShouldPersistTenMinuteSubscription() {
     const mod = await loadModule('netlify/functions/schedule-subscription.mjs');
     const store = createMemoryStore();
     const now = '2026-08-02T01:00:00.000Z';
@@ -42,8 +42,55 @@ async function testSubscribeShouldPersistHourlySubscription() {
     });
 
     assert.strictEqual(result.subscription.id, '邸睿__2026-08-02__60');
-    assert.strictEqual(result.subscription.nextCheckAt, '2026-08-02T02:00:00.000Z');
+    assert.strictEqual(result.subscription.nextCheckAt, '2026-08-02T01:10:00.000Z');
     assert.strictEqual(store.snapshot().length, 1, 'active subscription should be persisted');
+}
+
+async function testSubscribeShouldAllowMissingUserIdWhenTokenExists() {
+    const mod = await loadModule('netlify/functions/schedule-subscription.mjs');
+    const store = createMemoryStore();
+    const now = '2026-08-02T01:00:00.000Z';
+
+    const result = await mod.upsertSubscription({
+        store,
+        nowIso: now,
+        payload: {
+            student: '徐智浩',
+            date: '2026-08-02',
+            durationMinutes: 60,
+            course: '单词',
+            platform: 'lixiaolaila',
+            token: 'x-token-c-demo'
+        }
+    });
+
+    assert.strictEqual(result.subscription.id, '徐智浩__2026-08-02__60');
+    assert.strictEqual(result.subscription.userId, '');
+    assert.strictEqual(store.snapshot().length, 1, 'token-only lxll login state should still be subscribable');
+}
+
+async function testCheckerShouldOmitUserIdHeaderWhenMissing() {
+    const mod = await loadModule('scripts/check_schedule_subscriptions.mjs');
+    const originalFetch = global.fetch;
+    const calls = [];
+    global.fetch = async (url, options) => {
+        calls.push({ url, headers: options.headers });
+        if (String(url).includes('/orders')) {
+            return { ok: true, async json() { return { data: { data: [] } }; } };
+        }
+        return { ok: true, async json() { return { data: [] }; } };
+    };
+
+    try {
+        await mod.loadBoardRowsForSubscription({ token: 'x-token-c-demo', userId: '' });
+    } finally {
+        global.fetch = originalFetch;
+    }
+
+    assert.strictEqual(calls.length, 2, 'checker should query board and completed orders');
+    assert(calls.every((call) => call.headers['x-token-c'] === 'x-token-c-demo'));
+    assert(calls.every((call) => !Object.prototype.hasOwnProperty.call(call.headers, 'x-user-id')),
+        'checker should not send an empty x-user-id header');
 }
 
 async function testCheckerShouldRemoveResolvedSubscription() {
@@ -116,7 +163,7 @@ async function testCheckerShouldSendEmailAndRescheduleWhenStillUnscheduled() {
 
     assert.strictEqual(summary.notifiedCount, 1, 'unscheduled course should send reminder email');
     assert.strictEqual(store.snapshot().length, 1, 'unscheduled subscription should remain active');
-    assert.strictEqual(store.snapshot()[0].nextCheckAt, '2026-08-02T03:00:00.000Z');
+    assert.strictEqual(store.snapshot()[0].nextCheckAt, '2026-08-02T02:10:00.000Z');
     assert.strictEqual(sentMessages[0].subscription.id, '邸睿__2026-08-02__60');
 }
 
@@ -181,11 +228,11 @@ async function testGithubActionShouldOwnHourlyChecker() {
     const workflow = fs.readFileSync(workflowPath, 'utf8');
 
     assert(
-        workflow.includes("cron: '0 * * * *'")
+        workflow.includes("cron: '*/10 * * * *'")
             && workflow.includes('node scripts/check_schedule_subscriptions.mjs')
             && workflow.includes('NETLIFY_AUTH_TOKEN')
             && workflow.includes('FX_ALERT_SMTP_PASS'),
-        'GitHub Actions should run the schedule subscription checker hourly with Netlify and SMTP secrets'
+        'GitHub Actions should run the schedule subscription checker every 10 minutes with Netlify and SMTP secrets'
     );
 
     const oldNetlifyCheckerPath = path.join(__dirname, '..', 'netlify', 'functions', 'schedule-subscription-check.mjs');
@@ -196,7 +243,9 @@ async function testGithubActionShouldOwnHourlyChecker() {
 }
 
 async function run() {
-    await testSubscribeShouldPersistHourlySubscription();
+    await testSubscribeShouldPersistTenMinuteSubscription();
+    await testSubscribeShouldAllowMissingUserIdWhenTokenExists();
+    await testCheckerShouldOmitUserIdHeaderWhenMissing();
     await testCheckerShouldRemoveResolvedSubscription();
     await testCheckerShouldSendEmailAndRescheduleWhenStillUnscheduled();
     await testReminderEmailShouldFallbackToHardcodedRecipient();

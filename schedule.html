@@ -1578,7 +1578,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
     async function requestScheduleSubscription(action, entry, dateValue) {
         const token = getBoardToken();
         const userId = String(localStorage.getItem("x-user-id") || "").trim();
-        if (!token || !userId) {
+        if (!token) {
             throw new Error("请先完成李校来啦登录，再订阅未排课提醒");
         }
 
@@ -2423,7 +2423,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
                 subscriptionButton.type = "button";
                 subscriptionButton.className = "action-btn " + (activeSubscription ? "unsubscribe" : "subscribe");
                 subscriptionButton.textContent = activeSubscription ? "取消订阅" : "订阅";
-                subscriptionButton.title = activeSubscription ? "取消每小时未排课提醒" : "每小时检查一次，仍未排课则发邮件提醒";
+                subscriptionButton.title = activeSubscription ? "取消每10分钟未排课提醒" : "每10分钟检查一次，仍未排课则发邮件提醒";
                 subscriptionButton.disabled = disabled || resolveEntryPlatform(item) !== "lixiaolaila";
                 subscriptionButton.addEventListener("click", async () => {
                     if (subscriptionButton.disabled) return;
@@ -2434,7 +2434,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
                             showToast("已取消未排课订阅");
                         } else {
                             await subscribeScheduleEntry(item, dateValue);
-                            showToast("已订阅未排课提醒，将每小时复查一次", 3200);
+                            showToast("已订阅未排课提醒，将每10分钟复查一次", 3200);
                         }
                         onChange();
                     } catch (error) {

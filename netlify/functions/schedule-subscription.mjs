@@ -6,6 +6,7 @@ const { buildCourseMatchKey } = require("../../schedule-course-match.js");
 
 export const ACTIVE_SUBSCRIPTIONS_KEY = "active-subscriptions";
 export const SUBSCRIPTION_STORE_NAME = "schedule-subscriptions";
+const SUBSCRIPTION_CHECK_INTERVAL_MINUTES = 10;
 
 function corsHeaders() {
     return {
@@ -36,9 +37,9 @@ function normalizeDurationMinutes(value) {
     return Number.isFinite(minutes) && minutes > 0 ? minutes : 0;
 }
 
-function addHours(isoString, hours) {
+function addMinutes(isoString, minutes) {
     const baseDate = new Date(isoString);
-    return new Date(baseDate.getTime() + hours * 60 * 60 * 1000).toISOString();
+    return new Date(baseDate.getTime() + minutes * 60 * 1000).toISOString();
 }
 
 export function buildSubscriptionId(payload) {
@@ -76,8 +77,8 @@ function buildSubscriptionRecord(payload, nowIso) {
     if (platform !== "lixiaolaila") {
         throw new Error("Only lixiaolaila subscriptions are supported");
     }
-    if (!token || !userId) {
-        throw new Error("Missing lixiaolaila token or userId");
+    if (!token) {
+        throw new Error("Missing lixiaolaila token");
     }
 
     return {
@@ -90,7 +91,7 @@ function buildSubscriptionRecord(payload, nowIso) {
         platform,
         token,
         userId,
-        nextCheckAt: addHours(nowIso, 1),
+        nextCheckAt: addMinutes(nowIso, SUBSCRIPTION_CHECK_INTERVAL_MINUTES),
         lastNotifiedAt: "",
         notifyCount: 0,
         createdAt: nowIso,

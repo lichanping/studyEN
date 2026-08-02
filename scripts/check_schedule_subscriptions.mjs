@@ -7,12 +7,13 @@ const scheduleCourseMatch = require("../schedule-course-match.js");
 
 export const ACTIVE_SUBSCRIPTIONS_KEY = "active-subscriptions";
 export const SUBSCRIPTION_STORE_NAME = "schedule-subscriptions";
+const SUBSCRIPTION_CHECK_INTERVAL_MINUTES = 10;
 
 const DEFAULT_MAIL_TO = "lichanping@126.com";
 
-function addHours(isoString, hours) {
+function addMinutes(isoString, minutes) {
     const baseDate = new Date(isoString);
-    return new Date(baseDate.getTime() + hours * 60 * 60 * 1000).toISOString();
+    return new Date(baseDate.getTime() + minutes * 60 * 1000).toISOString();
 }
 
 function shouldCheckNow(subscription, nowIso) {
@@ -123,9 +124,11 @@ export async function loadBoardRowsForSubscription(subscription) {
         "accept": "application/json, text/plain, */*",
         "authorization": "Bearer " + subscription.token,
         "x-token-c": subscription.token,
-        "x-user-id": subscription.userId,
         "x-ua": "ct=2&v=5.0.96"
     };
+    if (subscription.userId) {
+        headers["x-user-id"] = subscription.userId;
+    }
 
     const boardResp = await fetch("https://apiv2.lxll.com/customer/training/board", {
         method: "GET",
@@ -217,7 +220,7 @@ export async function runSubscriptionChecks({
                 ...subscription,
                 notifyCount: (Number(subscription.notifyCount) || 0) + 1,
                 lastNotifiedAt: now,
-                nextCheckAt: addHours(now, 1),
+                nextCheckAt: addMinutes(now, SUBSCRIPTION_CHECK_INTERVAL_MINUTES),
                 updatedAt: now,
                 lastError: ""
             });
@@ -225,7 +228,7 @@ export async function runSubscriptionChecks({
             skippedCount += 1;
             next.push({
                 ...subscription,
-                nextCheckAt: addHours(now, 1),
+                nextCheckAt: addMinutes(now, SUBSCRIPTION_CHECK_INTERVAL_MINUTES),
                 updatedAt: now,
                 lastError: error.message || "unknown"
             });
