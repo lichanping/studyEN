@@ -1281,7 +1281,6 @@ sourceId: 上课记录唯一标识（用于去重）</span>
     const EDITABLE_COURSE_OPTIONS = ["单词", "阅读", "体验"];
     const EXTRA_ENTRIES_STORAGE_KEY = "schedule-extra-entries-v1";
     const SCHEDULE_SUBSCRIPTION_STORAGE_KEY = "schedule-subscriptions-v1";
-    const SCHEDULE_SUBSCRIPTION_STATUS_SYNC_GRACE_MS = 30000;
     const SCHEDULE_CONFIG_OVERRIDE_KEY = "schedule-config-override-v1";
     const CUSTOM_STUDENTS_STORAGE_KEY = "custom-students-v1";
     const CURRENT_PLATFORM_STORAGE_KEY = window.APP_MEETING_CONFIG?.CURRENT_PLATFORM_STORAGE_KEY || "current-platform-v1";
@@ -1292,7 +1291,6 @@ sourceId: 上课记录唯一标识（用于去重）</span>
     let lessonOverrideState = {};
     let extraEntriesState = {};
     let scheduleSubscriptionState = {};
-    let scheduleSubscriptionStatusSyncing = false;
     let boardScheduleMatchState = {
         status: "idle",
         index: null,
@@ -1559,8 +1557,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             date: String(dateValue || "").trim(),
             durationMinutes: Number(resolveDurationMinutes(entry, dateValue)) || 0,
             course: String(resolveCourse(entry, dateValue) || entry?.course || "").trim(),
-            time: getAppointmentClockText(entry, dateValue),
-            subscribedAt: payload?.subscription?.createdAt || new Date().toISOString()
+            time: getAppointmentClockText(entry, dateValue)
         };
         saveScheduleSubscriptions();
     }
@@ -1575,45 +1572,6 @@ sourceId: 上课记录唯一标识（用于去重）</span>
     function clearResolvedScheduleSubscription(entry, dateValue, courseScheduleState) {
         if (courseScheduleState?.text !== "已排课" && courseScheduleState?.text !== "已完成") return;
         forgetScheduleSubscription(entry, dateValue);
-    }
-
-    async function syncScheduleSubscriptionStatuses() {
-        const ids = Object.keys(scheduleSubscriptionState || {});
-        if (ids.length === 0 || scheduleSubscriptionStatusSyncing) return;
-        scheduleSubscriptionStatusSyncing = true;
-        try {
-            const response = await fetch("/.netlify/functions/schedule-subscription", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    action: "status",
-                    ids
-                })
-            });
-            const payload = await response.json().catch(() => ({}));
-            if (!response.ok) return;
-            let changed = false;
-            ids.forEach((id) => {
-                const subscribedAt = new Date(scheduleSubscriptionState[id]?.subscribedAt || "").getTime();
-                const isFreshLocalSubscription = Number.isFinite(subscribedAt)
-                    && Date.now() - subscribedAt < SCHEDULE_SUBSCRIPTION_STATUS_SYNC_GRACE_MS;
-                if (payload?.statusById?.[id] !== "active" && scheduleSubscriptionState[id] && !isFreshLocalSubscription) {
-                    delete scheduleSubscriptionState[id];
-                    changed = true;
-                }
-            });
-            if (changed) {
-                saveScheduleSubscriptions();
-                rerenderScheduleViewsForBoardState();
-                showToast("后端订阅状态已同步，已清理停止的订阅", 2800);
-            }
-        } catch (error) {
-            console.warn("同步后端订阅状态失败", error);
-        } finally {
-            scheduleSubscriptionStatusSyncing = false;
-        }
     }
 
     async function requestScheduleSubscription(action, entry, dateValue) {
@@ -1652,7 +1610,11 @@ sourceId: 上课记录唯一标识（用于去重）</span>
 
     function subscribeScheduleEntry(entry, dateValue) {
         return requestScheduleSubscription("subscribe", entry, dateValue).then((payload) => {
-            rememberScheduleSubscription(entry, dateValue, payload);
+            if (payload?.subscription) {
+                rememberScheduleSubscription(entry, dateValue, payload);
+            } else {
+                forgetScheduleSubscription(entry, dateValue);
+            }
             return payload;
         });
     }
@@ -2290,7 +2252,6 @@ sourceId: 上课记录唯一标识（用于去重）</span>
     }
 
     function renderDayEntries(list, entries, dateValue, onChange) {
-        syncScheduleSubscriptionStatuses();
         if (entries.length === 0) {
             list.innerHTML = '<div class="empty">这一天没有排课。</div>';
             return;
@@ -2465,7 +2426,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
                 subscriptionButton.type = "button";
                 subscriptionButton.className = "action-btn " + (activeSubscription ? "unsubscribe" : "subscribe");
                 subscriptionButton.textContent = activeSubscription ? "取消订阅" : "订阅";
-                subscriptionButton.title = activeSubscription ? "取消每10分钟未排课提醒" : "每10分钟检查一次，仍未排课则发邮件提醒";
+                subscriptionButton.title = activeSubscription ? "取消每1小时未排课提醒" : "每1小时检查一次，最多提醒3次";
                 subscriptionButton.disabled = disabled || resolveEntryPlatform(item) !== "lixiaolaila";
                 subscriptionButton.addEventListener("click", async () => {
                     if (subscriptionButton.disabled) return;
@@ -2476,7 +2437,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
                             showToast("已取消未排课订阅");
                         } else {
                             await subscribeScheduleEntry(item, dateValue);
-                            showToast("已订阅未排课提醒，将每10分钟复查一次", 3200);
+                            showToast("已订阅未排课提醒，将每1小时复查一次，最多提醒3次", 3200);
                         }
                         onChange();
                     } catch (error) {
