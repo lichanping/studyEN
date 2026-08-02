@@ -1281,6 +1281,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
     const EDITABLE_COURSE_OPTIONS = ["单词", "阅读", "体验"];
     const EXTRA_ENTRIES_STORAGE_KEY = "schedule-extra-entries-v1";
     const SCHEDULE_SUBSCRIPTION_STORAGE_KEY = "schedule-subscriptions-v1";
+    const SCHEDULE_SUBSCRIPTION_STATUS_SYNC_GRACE_MS = 30000;
     const SCHEDULE_CONFIG_OVERRIDE_KEY = "schedule-config-override-v1";
     const CUSTOM_STUDENTS_STORAGE_KEY = "custom-students-v1";
     const CURRENT_PLATFORM_STORAGE_KEY = window.APP_MEETING_CONFIG?.CURRENT_PLATFORM_STORAGE_KEY || "current-platform-v1";
@@ -1595,7 +1596,10 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             if (!response.ok) return;
             let changed = false;
             ids.forEach((id) => {
-                if (payload?.statusById?.[id] !== "active" && scheduleSubscriptionState[id]) {
+                const subscribedAt = new Date(scheduleSubscriptionState[id]?.subscribedAt || "").getTime();
+                const isFreshLocalSubscription = Number.isFinite(subscribedAt)
+                    && Date.now() - subscribedAt < SCHEDULE_SUBSCRIPTION_STATUS_SYNC_GRACE_MS;
+                if (payload?.statusById?.[id] !== "active" && scheduleSubscriptionState[id] && !isFreshLocalSubscription) {
                     delete scheduleSubscriptionState[id];
                     changed = true;
                 }

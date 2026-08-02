@@ -105,4 +105,11 @@ assert(
     'schedule.html 同步清理本地订阅后应立即重渲染，避免按钮继续停留在取消订阅状态'
 );
 
+assert(
+    scheduleHtml.includes('SCHEDULE_SUBSCRIPTION_STATUS_SYNC_GRACE_MS')
+        && syncScheduleSubscriptionStatusesBody.includes('subscribedAt')
+        && syncScheduleSubscriptionStatusesBody.includes('SCHEDULE_SUBSCRIPTION_STATUS_SYNC_GRACE_MS'),
+    'schedule.html 刚订阅后的短时间内不应被后端 status 读写延迟误清理'
+);
+
 console.log('test-schedule-subscription-ui passed');
