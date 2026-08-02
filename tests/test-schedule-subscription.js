@@ -22,6 +22,28 @@ function createMemoryStore(initialRecords) {
     };
 }
 
+function createLaggyMemoryStore(initialRecords) {
+    let value = Array.isArray(initialRecords) ? initialRecords.slice() : [];
+    let staleOnce = null;
+    return {
+        async get() {
+            if (staleOnce) {
+                const current = staleOnce.slice();
+                staleOnce = null;
+                return current;
+            }
+            return value.slice();
+        },
+        async setJSON(_key, next) {
+            staleOnce = value.slice();
+            value = Array.isArray(next) ? next.slice() : [];
+        },
+        snapshot() {
+            return value.slice();
+        }
+    };
+}
+
 async function testSubscribeShouldPersistTenMinuteSubscription() {
     const mod = await loadModule('netlify/functions/schedule-subscription.mjs');
     const store = createMemoryStore();
@@ -274,7 +296,7 @@ async function testResubscribeShouldResetNotifyCountAfterExpiry() {
 async function testSubscribeShouldImmediatelySendFirstReminderWhenStillUnscheduled() {
     const mod = await loadModule('netlify/functions/schedule-subscription.mjs');
     const sentMessages = [];
-    const store = createMemoryStore([]);
+    const store = createLaggyMemoryStore([]);
 
     const result = await mod.subscribeAndRunImmediateCheck({
         store,
@@ -438,6 +460,31 @@ async function testReminderEmailShouldSkipWhenDisabledByEnv() {
     );
 }
 
+async function testImmediateCheckShouldNotConsumeAttemptWhenEmailSkipped() {
+    const mod = await loadModule('netlify/functions/schedule-subscription.mjs');
+    const store = createLaggyMemoryStore([]);
+
+    const result = await mod.subscribeAndRunImmediateCheck({
+        store,
+        nowIso: '2026-08-02T04:00:00.000Z',
+        payload: {
+            student: '季筱雯',
+            date: '2026-08-03',
+            durationMinutes: 60,
+            course: '单词',
+            platform: 'lixiaolaila',
+            token: 'x-token-c-demo'
+        },
+        fetchBoardRows: async () => ([]),
+        sendReminderEmail: async () => ({ skipped: true })
+    });
+
+    assert.strictEqual(result.summary.notifiedCount, 0, 'skipped email should not be counted as sent');
+    assert.strictEqual(result.summary.skippedCount, 1, 'skipped email should be reported explicitly');
+    assert.strictEqual(store.snapshot()[0].notifyCount, 0, 'skipped email should not consume a notify attempt');
+    assert.strictEqual(store.snapshot()[0].lastError, 'email skipped');
+}
+
 async function testCheckerShouldBeReadOnlyInDryRunMode() {
     const mod = await loadModule('scripts/check_schedule_subscriptions.mjs');
     const originalRecord = {
@@ -552,6 +599,7 @@ async function run() {
     await testReminderEmailShouldFallbackMailFromToSmtpUser();
     await testReminderEmailShouldIncludeScheduleRequestTextWithoutCopyPageLink();
     await testReminderEmailShouldSkipWhenDisabledByEnv();
+    await testImmediateCheckShouldNotConsumeAttemptWhenEmailSkipped();
     await testCheckerShouldBeReadOnlyInDryRunMode();
     await testNetlifyScheduledFunctionShouldOwnReminderChecker();
     await testNetlifySubscriptionFunctionShouldNotRequireRootBrowserModule();

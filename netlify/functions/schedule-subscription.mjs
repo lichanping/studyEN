@@ -121,7 +121,8 @@ export async function upsertSubscription({ store, nowIso, payload, initialCheckD
     await writeSubscriptions(store, next);
     return {
         ok: true,
-        subscription: next.find((item) => item.id === record.id)
+        subscription: next.find((item) => item.id === record.id),
+        subscriptions: next
     };
 }
 
@@ -147,6 +148,7 @@ export async function subscribeAndRunImmediateCheck({
         env,
         fetchBoardRows,
         sendReminderEmail,
+        subscriptions: upserted?.subscriptions,
         subscriptionIds: subscriptionId ? [subscriptionId] : []
     });
     const current = await readSubscriptions(store);

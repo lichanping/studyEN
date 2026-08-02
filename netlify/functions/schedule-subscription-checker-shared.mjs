@@ -222,11 +222,12 @@ export async function runSubscriptionChecks({
     env = process.env,
     fetchBoardRows = loadBoardRowsForSubscription,
     sendReminderEmail = sendSmtpReminderEmail,
+    subscriptions,
     subscriptionIds
 }) {
     const now = nowIso || new Date().toISOString();
     const dryRun = isDryRun(env);
-    const current = await readSubscriptions(store);
+    const current = Array.isArray(subscriptions) ? subscriptions : await readSubscriptions(store);
     const scopedIds = Array.isArray(subscriptionIds)
         ? new Set(subscriptionIds.map((item) => String(item || "").trim()).filter(Boolean))
         : null;
@@ -264,13 +265,23 @@ export async function runSubscriptionChecks({
                     next.push(subscription);
                     continue;
                 }
-                await sendReminderEmail({
+                const sentResult = await sendReminderEmail({
                     subscription,
                     env,
                     nowIso: now,
                     subject: `【已排课】${subscription.student} ${subscription.date} ${subscription.durationMinutes}分钟`,
                     message: buildResolvedMessage(subscription, state)
                 });
+                if (sentResult?.skipped) {
+                    skippedCount += 1;
+                    next.push({
+                        ...subscription,
+                        nextCheckAt: addMinutes(now, SUBSCRIPTION_CHECK_INTERVAL_MINUTES),
+                        updatedAt: now,
+                        lastError: "email skipped"
+                    });
+                    continue;
+                }
                 resolvedCount += 1;
                 continue;
             }
@@ -298,7 +309,17 @@ export async function runSubscriptionChecks({
                 next.push(subscription);
                 continue;
             }
-            await sendReminderEmail({ subscription, env, nowIso: now, message });
+            const sentResult = await sendReminderEmail({ subscription, env, nowIso: now, message });
+            if (sentResult?.skipped) {
+                skippedCount += 1;
+                next.push({
+                    ...subscription,
+                    nextCheckAt: addMinutes(now, SUBSCRIPTION_CHECK_INTERVAL_MINUTES),
+                    updatedAt: now,
+                    lastError: "email skipped"
+                });
+                continue;
+            }
             notifiedCount += 1;
             if (nextNotifyCount >= MAX_NOTIFY_COUNT) {
                 expiredCount += 1;
