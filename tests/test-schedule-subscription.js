@@ -130,7 +130,13 @@ async function testCheckerShouldRemoveResolvedSubscription() {
 
     assert.strictEqual(summary.resolvedCount, 1, 'resolved course should stop subscription');
     assert.strictEqual(store.snapshot().length, 0, 'resolved subscription should be removed from active list');
-    assert.strictEqual(sentMessages.length, 0, 'resolved course should not send reminder email');
+    assert.strictEqual(sentMessages.length, 1, 'resolved course should send one success email before stopping');
+    assert(
+        sentMessages[0].subject.includes('已排课')
+            && sentMessages[0].message.includes('已检测到排课')
+            && sentMessages[0].message.includes('自动停止订阅'),
+        'resolved success email should explain that polling stops'
+    );
 }
 
 async function testCheckerShouldSendEmailAndRescheduleWhenStillUnscheduled() {

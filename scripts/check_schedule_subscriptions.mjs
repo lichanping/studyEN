@@ -105,6 +105,22 @@ export function buildReminderMessage(subscription, options = {}) {
     return lines.join("\n");
 }
 
+export function buildResolvedMessage(subscription, state) {
+    const stateText = state === "completed" ? "已完成" : "已排课";
+    return [
+        "已检测到排课状态更新，系统将自动停止订阅。",
+        `学生：${subscription.student}`,
+        `日期：${subscription.date}`,
+        `时长：${subscription.durationMinutes} 分钟`,
+        `课程：${subscription.course || "未填写"}`,
+        `平台：${subscription.platform}`,
+        `当前状态：${stateText}`,
+        `订阅编号：${subscription.id}`,
+        "",
+        "本订阅已自动停止订阅，后续不再轮询。"
+    ].join("\n");
+}
+
 export async function readSubscriptions(store) {
     const rows = await store.get(ACTIVE_SUBSCRIPTIONS_KEY, { type: "json" });
     return Array.isArray(rows) ? rows : [];
@@ -161,7 +177,7 @@ export async function loadBoardRowsForSubscription(subscription) {
     return boardRows.concat(completedRows);
 }
 
-export async function sendSmtpReminderEmail({ subscription, env = process.env, message }) {
+export async function sendSmtpReminderEmail({ subscription, env = process.env, subject, message }) {
     const smtp = resolveSmtpConfig(env);
 
     if (!smtp.recipients.length || !smtp.from || !smtp.host || !smtp.user || !smtp.pass) {
@@ -182,7 +198,7 @@ export async function sendSmtpReminderEmail({ subscription, env = process.env, m
     await transporter.sendMail({
         from: smtp.from,
         to: smtp.recipients,
-        subject: `【仍未排课】${subscription.student} ${subscription.date} ${subscription.durationMinutes}分钟`,
+        subject: subject || `【仍未排课】${subscription.student} ${subscription.date} ${subscription.durationMinutes}分钟`,
         text: message || buildReminderMessage(subscription)
     });
 
@@ -219,6 +235,12 @@ export async function runSubscriptionChecks({
             });
 
             if (state !== "none") {
+                await sendReminderEmail({
+                    subscription,
+                    nowIso: now,
+                    subject: `【已排课】${subscription.student} ${subscription.date} ${subscription.durationMinutes}分钟`,
+                    message: buildResolvedMessage(subscription, state)
+                });
                 resolvedCount += 1;
                 continue;
             }
