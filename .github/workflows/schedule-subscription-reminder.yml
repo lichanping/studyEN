@@ -1,0 +1,28 @@
+name: Schedule Subscription Reminder
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: node scripts/check_schedule_subscriptions.mjs
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          FX_ALERT_SMTP_HOST: ${{ secrets.FX_ALERT_SMTP_HOST }}
+          FX_ALERT_SMTP_PORT: ${{ secrets.FX_ALERT_SMTP_PORT }}
+          FX_ALERT_SMTP_SECURE: ${{ secrets.FX_ALERT_SMTP_SECURE }}
+          FX_ALERT_SMTP_USER: ${{ secrets.FX_ALERT_SMTP_USER }}
+          FX_ALERT_SMTP_PASS: ${{ secrets.FX_ALERT_SMTP_PASS }}
+          FX_ALERT_MAIL_FROM: ${{ secrets.FX_ALERT_MAIL_FROM }}
+          FX_ALERT_MAIL_TO: lichanping@126.com

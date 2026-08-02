@@ -551,6 +551,19 @@
             font-weight: 700;
         }
 
+            .action-btn.subscribe {
+                color: #8b2e2e;
+                border-color: #f0a7a7;
+                background: #fff0f0;
+                font-weight: 700;
+            }
+
+            .action-btn.unsubscribe {
+                color: #5f6773;
+                border-color: #c4ccd7;
+                background: #eceff3;
+            }
+
         .schedule-state-label {
             display: inline-flex;
             align-items: center;
@@ -635,6 +648,18 @@
                 background: #2e4058;
                 border-color: #4f6788;
             }
+
+                .action-btn.subscribe {
+                    color: #ffb6b6;
+                    border-color: #8f4040;
+                    background: #4d2424;
+                }
+
+                .action-btn.unsubscribe {
+                    color: #c5cdd8;
+                    border-color: #535e6e;
+                    background: #353b44;
+                }
         }
 
         .toast {
@@ -1255,6 +1280,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
     const LESSON_OVERRIDE_STORAGE_KEY = "schedule-lesson-overrides-v1";
     const EDITABLE_COURSE_OPTIONS = ["单词", "阅读", "体验"];
     const EXTRA_ENTRIES_STORAGE_KEY = "schedule-extra-entries-v1";
+    const SCHEDULE_SUBSCRIPTION_STORAGE_KEY = "schedule-subscriptions-v1";
     const SCHEDULE_CONFIG_OVERRIDE_KEY = "schedule-config-override-v1";
     const CUSTOM_STUDENTS_STORAGE_KEY = "custom-students-v1";
     const CURRENT_PLATFORM_STORAGE_KEY = window.APP_MEETING_CONFIG?.CURRENT_PLATFORM_STORAGE_KEY || "current-platform-v1";
@@ -1264,6 +1290,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
     let timeOverrideState = {};
     let lessonOverrideState = {};
     let extraEntriesState = {};
+    let scheduleSubscriptionState = {};
     let boardScheduleMatchState = {
         status: "idle",
         index: null,
@@ -1470,6 +1497,21 @@ sourceId: 上课记录唯一标识（用于去重）</span>
         localStorage.setItem(EXTRA_ENTRIES_STORAGE_KEY, JSON.stringify(extraEntriesState));
     }
 
+    function loadScheduleSubscriptions() {
+        try {
+            const raw = localStorage.getItem(SCHEDULE_SUBSCRIPTION_STORAGE_KEY);
+            const parsed = raw ? JSON.parse(raw) : {};
+            if (parsed && typeof parsed === "object") return parsed;
+        } catch (error) {
+            console.warn("订阅状态读取失败，已重置", error);
+        }
+        return {};
+    }
+
+    function saveScheduleSubscriptions() {
+        localStorage.setItem(SCHEDULE_SUBSCRIPTION_STORAGE_KEY, JSON.stringify(scheduleSubscriptionState));
+    }
+
     function getExtraEntriesForDate(dateValue) {
         return Array.isArray(extraEntriesState[dateValue]) ? extraEntriesState[dateValue] : [];
     }
@@ -1491,6 +1533,94 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             date: String(dateValue || "").trim(),
             durationMinutes: Number(resolveDurationMinutes(entry, dateValue)) || 0
         };
+    }
+
+    function getScheduleSubscriptionId(entry, dateValue) {
+        const target = buildLocalCourseMatchTarget(entry, dateValue);
+        if (window.ScheduleCourseMatch && typeof window.ScheduleCourseMatch.buildCourseMatchKey === "function") {
+            return window.ScheduleCourseMatch.buildCourseMatchKey(target);
+        }
+        return [target.student, target.date, target.durationMinutes].join("__");
+    }
+
+    function getScheduleSubscriptionSnapshot(entry, dateValue) {
+        const id = getScheduleSubscriptionId(entry, dateValue);
+        return id ? scheduleSubscriptionState[id] || null : null;
+    }
+
+    function rememberScheduleSubscription(entry, dateValue, payload) {
+        const id = getScheduleSubscriptionId(entry, dateValue);
+        if (!id) return;
+        scheduleSubscriptionState[id] = {
+            id,
+            student: String(entry?.student || "").trim(),
+            date: String(dateValue || "").trim(),
+            durationMinutes: Number(resolveDurationMinutes(entry, dateValue)) || 0,
+            course: String(resolveCourse(entry, dateValue) || entry?.course || "").trim(),
+            time: getAppointmentClockText(entry, dateValue),
+            subscribedAt: payload?.subscription?.createdAt || new Date().toISOString()
+        };
+        saveScheduleSubscriptions();
+    }
+
+    function forgetScheduleSubscription(entry, dateValue) {
+        const id = getScheduleSubscriptionId(entry, dateValue);
+        if (!id || !scheduleSubscriptionState[id]) return;
+        delete scheduleSubscriptionState[id];
+        saveScheduleSubscriptions();
+    }
+
+    function clearResolvedScheduleSubscription(entry, dateValue, courseScheduleState) {
+        if (courseScheduleState?.text !== "已排课" && courseScheduleState?.text !== "已完成") return;
+        forgetScheduleSubscription(entry, dateValue);
+    }
+
+    async function requestScheduleSubscription(action, entry, dateValue) {
+        const token = getBoardToken();
+        const userId = String(localStorage.getItem("x-user-id") || "").trim();
+        if (!token || !userId) {
+            throw new Error("请先完成李校来啦登录，再订阅未排课提醒");
+        }
+
+        const target = buildLocalCourseMatchTarget(entry, dateValue);
+        const response = await fetch("/.netlify/functions/schedule-subscription", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                action,
+                id: getScheduleSubscriptionId(entry, dateValue),
+                student: target.student,
+                date: target.date,
+                durationMinutes: target.durationMinutes,
+                course: String(resolveCourse(entry, dateValue) || entry?.course || "").trim(),
+                time: getAppointmentClockText(entry, dateValue),
+                platform: resolveEntryPlatform(entry),
+                token,
+                userId
+            })
+        });
+
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            throw new Error(payload?.error || "订阅请求失败");
+        }
+        return payload;
+    }
+
+    function subscribeScheduleEntry(entry, dateValue) {
+        return requestScheduleSubscription("subscribe", entry, dateValue).then((payload) => {
+            rememberScheduleSubscription(entry, dateValue, payload);
+            return payload;
+        });
+    }
+
+    function unsubscribeScheduleEntry(entry, dateValue) {
+        return requestScheduleSubscription("unsubscribe", entry, dateValue).then((payload) => {
+            forgetScheduleSubscription(entry, dateValue);
+            return payload;
+        });
     }
 
     function getCourseScheduleState(entry, dateValue) {
@@ -1888,6 +2018,12 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             "课程与时长：" + courseText + "（" + toHoursText(durationMinutes) + "），谢谢～";
     }
 
+    function getAppointmentClockText(entry, dateValue) {
+        const selectedClock = getOverrideClock(entry, dateValue);
+        if (selectedClock) return selectedClock;
+        return String(entry?.time || entry?.period || "").trim();
+    }
+
     function getDefaultClockByPeriod(period) {
         const map = {
             "上午": "10:00",
@@ -2275,10 +2411,40 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             const scheduleStateLabel = document.createElement("span");
             scheduleStateLabel.className = "schedule-state-label " + courseScheduleState.className;
             scheduleStateLabel.textContent = courseScheduleState.text;
+            clearResolvedScheduleSubscription(item, dateValue, courseScheduleState);
 
             const actionGroup = document.createElement("div");
             actionGroup.className = "action-group";
             actionGroup.append(button, remindButton, notifyButton, scheduleStateLabel);
+
+            if (courseScheduleState.text === "未排课") {
+                const subscriptionButton = document.createElement("button");
+                const activeSubscription = getScheduleSubscriptionSnapshot(item, dateValue);
+                subscriptionButton.type = "button";
+                subscriptionButton.className = "action-btn " + (activeSubscription ? "unsubscribe" : "subscribe");
+                subscriptionButton.textContent = activeSubscription ? "取消订阅" : "订阅";
+                subscriptionButton.title = activeSubscription ? "取消每小时未排课提醒" : "每小时检查一次，仍未排课则发邮件提醒";
+                subscriptionButton.disabled = disabled || resolveEntryPlatform(item) !== "lixiaolaila";
+                subscriptionButton.addEventListener("click", async () => {
+                    if (subscriptionButton.disabled) return;
+                    subscriptionButton.disabled = true;
+                    try {
+                        if (activeSubscription) {
+                            await unsubscribeScheduleEntry(item, dateValue);
+                            showToast("已取消未排课订阅");
+                        } else {
+                            await subscribeScheduleEntry(item, dateValue);
+                            showToast("已订阅未排课提醒，将每小时复查一次", 3200);
+                        }
+                        onChange();
+                    } catch (error) {
+                        showToast(error.message || "订阅失败，请稍后重试", 4200);
+                    } finally {
+                        subscriptionButton.disabled = false;
+                    }
+                });
+                actionGroup.appendChild(subscriptionButton);
+            }
 
             if (item._isExtra) {
                 const deleteBtn = document.createElement("button");
@@ -2438,6 +2604,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
         timeOverrideState = loadTimeOverrides();
         lessonOverrideState = loadLessonOverrides();
         extraEntriesState = loadExtraEntries();
+        scheduleSubscriptionState = loadScheduleSubscriptions();
 
         const today = new Date();
         const yyyy = today.getFullYear();
