@@ -49,4 +49,5 @@ node_modules
 MissingSounds.txt
 # Local Netlify folder
 .netlify
+.qoder/
 deno.lock
