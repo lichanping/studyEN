@@ -1,0 +1,231 @@
+const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
+
+function read(fileName) {
+    return fs.readFileSync(path.join(__dirname, '..', fileName), 'utf8');
+}
+
+function extractBlock(source, signature, openChar = '{', closeChar = '}') {
+    const start = source.indexOf(signature);
+    if (start === -1) {
+        throw new Error(`Unable to find block: ${signature}`);
+    }
+
+    const bodyStart = source.indexOf(openChar, start);
+    if (bodyStart === -1) {
+        throw new Error(`Unable to find block body for: ${signature}`);
+    }
+
+    let depth = 0;
+    for (let index = bodyStart; index < source.length; index += 1) {
+        const char = source[index];
+        if (char === openChar) depth += 1;
+        if (char === closeChar) {
+            depth -= 1;
+            if (depth === 0) {
+                return source.slice(start, index + 1);
+            }
+        }
+    }
+
+    throw new Error(`Unable to extract block: ${signature}`);
+}
+
+const monthlySummarySource = read('monthly-summary.js');
+const indexSource = read('index.html');
+const classFormalSource = read('classFormal.js');
+const classReadSource = read('classRead.js');
+const commonFunctionsSource = read('commonFunctions.js');
+const prdPath = path.join(__dirname, '..', 'docs', 'PRD-monthly-summary.md');
+
+assert(fs.existsSync(prdPath), 'docs/PRD-monthly-summary.md 应存在于当前分支');
+
+const prdSource = fs.readFileSync(prdPath, 'utf8');
+assert(
+    prdSource.includes('仅统计抗遗忘复习的正确率/遗忘情况') && !prdSource.includes('newWordCorrectRate'),
+    'refined PRD 应明确 P0 只统计抗遗忘复习的正确率/遗忘情况，且不新增正课字段'
+);
+
+assert(
+    indexSource.includes('id="monthlySummaryButton"')
+        && indexSource.includes('id="recordLeaveButton"')
+        && indexSource.includes('id="viewLeaveRecordsButton"'),
+    'index.html 应提供月末总结、记录请假、查看请假记录三个入口'
+);
+
+assert(
+    indexSource.includes('id="statsModeDay"')
+        && indexSource.includes('id="statsModeMonth"')
+        && indexSource.includes('id="statsMonthInput"'),
+    'index.html 应提供按天/按月切换控件和月份选择器'
+);
+
+assert(
+    indexSource.includes('monthly-summary.js')
+        && indexSource.includes('monthlySummary.monthlySummaryOpen')
+        && indexSource.includes('monthlySummary.recordLeaveOpen')
+        && indexSource.includes('monthlySummary.viewLeaveRecordsOpen'),
+    'index.html 应接线月末总结和请假管理入口'
+);
+
+assert(/export\s+function\s+monthlySummaryOpen/.test(monthlySummarySource), 'monthly-summary.js 应导出 monthlySummaryOpen');
+assert(/export\s+function\s+recordLeaveOpen/.test(monthlySummarySource), 'monthly-summary.js 应导出 recordLeaveOpen');
+assert(/export\s+function\s+viewLeaveRecordsOpen/.test(monthlySummarySource), 'monthly-summary.js 应导出 viewLeaveRecordsOpen');
+assert(/export\s+function\s+resolveLeaveCountOverride/.test(monthlySummarySource), 'monthly-summary.js 应导出 resolveLeaveCountOverride');
+assert(/export\s+function\s+getMonthDisplay/.test(monthlySummarySource), 'monthly-summary.js 应导出 getMonthDisplay');
+assert(/export\s+function\s+summarizeFeedbackEntries/.test(monthlySummarySource), 'monthly-summary.js 应导出 summarizeFeedbackEntries');
+assert(/export\s+function\s+generateImprovements/.test(monthlySummarySource), 'monthly-summary.js 应导出 generateImprovements');
+
+assert(
+    classFormalSource.includes('forgetWord')
+        && classFormalSource.includes('correctRate')
+        && classReadSource.includes('storeClassStatistics(')
+        && commonFunctionsSource.includes('feedbackEntries'),
+    '现有历史数据源应继续复用正式课和抗遗忘原始统计结构'
+);
+
+assert(
+    commonFunctionsSource.includes('statsModeMonth')
+        && commonFunctionsSource.includes('statsMonthInput')
+        && classFormalSource.includes('statsModeMonth')
+        && classFormalSource.includes('statsMonthInput'),
+    '正课统计和抗遗忘统计都应支持按月模式'
+);
+
+const parseLocalDateYmdCode = extractBlock(monthlySummarySource, 'function parseLocalDateYmd');
+const getMonthRangeCode = extractBlock(monthlySummarySource, 'function getMonthRange');
+const calculateMonthlyClassStatsCode = extractBlock(monthlySummarySource, 'export function calculateMonthlyClassStats');
+const getMonthDisplayCode = extractBlock(monthlySummarySource, 'export function getMonthDisplay');
+const resolveLeaveCountOverrideCode = extractBlock(monthlySummarySource, 'export function resolveLeaveCountOverride');
+const summarizeFeedbackEntriesCode = extractBlock(monthlySummarySource, 'export function summarizeFeedbackEntries');
+const improvementsLibraryCode = extractBlock(monthlySummarySource, 'const IMPROVEMENTS_LIBRARY = [', '[', ']');
+const generateImprovementsCode = extractBlock(monthlySummarySource, 'export function generateImprovements');
+const storeClassStatisticsCode = extractBlock(commonFunctionsSource, 'export function storeClassStatistics');
+
+const calculateMonthlyClassStats = new Function(
+    'localStorage',
+    `${parseLocalDateYmdCode}\n${getMonthRangeCode}\n${calculateMonthlyClassStatsCode.replace('export ', '')}\nreturn calculateMonthlyClassStats;`
+)({
+    store: {
+        '徐智浩_classStatistics': JSON.stringify({
+            '2026-08-01': {
+                date: '2026-08-01',
+                type: '词汇课',
+                newWord: 20,
+                reviewWordCount: 5,
+                duration: 1,
+                forgetNewWords: 2
+            },
+            '2026-08-01_reading': {
+                date: '2026-08-01',
+                type: '阅读完型语法课',
+                newWord: 8,
+                reviewWordCount: 3,
+                duration: 1
+            },
+            '2026-08-10_trial': {
+                date: '2026-08-10',
+                type: '体验课',
+                newWord: 15,
+                reviewWordCount: 0,
+                duration: 0.5,
+                forgetNewWords: 2
+            },
+            '2026-08-15': {
+                date: '2026-08-15',
+                type: '词汇课',
+                newWord: 10,
+                reviewWordCount: 4,
+                duration: 0.5
+            },
+            '2026-07-30': {
+                date: '2026-07-30',
+                type: '词汇课',
+                newWord: 100,
+                reviewWordCount: 100,
+                duration: 3
+            }
+        })
+    },
+    getItem(key) {
+        return this.store[key] || null;
+    }
+});
+
+const classStats = calculateMonthlyClassStats('徐智浩', '2026-08');
+assert.strictEqual(classStats.classCount, 3, '月末总结应按日期去重统计正课次数，并包含体验课');
+assert.strictEqual(classStats.totalDuration, 3, '月末总结应汇总所选月份内所有命中课时，并包含体验课');
+assert.strictEqual(classStats.totalNewWords, 53, '月末总结应统计所选月份内的新词总量，并包含体验课');
+assert.strictEqual(classStats.totalReviewWords, 12, '月末总结应统计所选月份内的复习词总量');
+assert.strictEqual(classStats.totalWords, 65, '月末总结应输出新词与复习词总和，并包含体验课');
+
+const getMonthDisplay = new Function(`${getMonthDisplayCode.replace('export ', '')}; return getMonthDisplay;`)();
+const resolveLeaveCountOverride = new Function(`${resolveLeaveCountOverrideCode.replace('export ', '')}; return resolveLeaveCountOverride;`)();
+const summarizeFeedbackEntries = new Function(
+    `${parseLocalDateYmdCode}\n${getMonthRangeCode}\n${summarizeFeedbackEntriesCode.replace('export ', '')}\nreturn summarizeFeedbackEntries;`
+)();
+const generateImprovements = new Function(
+    `${improvementsLibraryCode};\n${generateImprovementsCode.replace('export ', '')}\nreturn generateImprovements;`
+)();
+
+const antiForgettingStats = summarizeFeedbackEntries([
+    '2026-08-02(周日): 80% | 10|8',
+    '2026-08-09(周日): 90% | 10|9',
+    '2026-08-20(周四): 100% | 5|5',
+    '2026-07-28(周二): 50% | 10|5',
+    'bad-data'
+], '2026-08');
+
+assert.strictEqual(antiForgettingStats.totalReviewed, 25, '月末总结应汇总所选月份内的抗遗忘复盘词数');
+assert.strictEqual(antiForgettingStats.totalCorrect, 22, '月末总结应汇总所选月份内的正确词数');
+assert.strictEqual(antiForgettingStats.correctRate, 88, '月末总结应基于原始 feedbackEntries 计算月度正确率');
+assert.strictEqual(antiForgettingStats.sessionCount, 3, '月末总结应统计所选月份内的抗遗忘次数');
+assert.strictEqual(antiForgettingStats.trend, 'rising', '月末总结应按周比较抗遗忘正确率趋势');
+
+assert.strictEqual(getMonthDisplay('2026-08'), '8🈷️', '月末总结标题应使用 8🈷️ 这类月份展示格式');
+assert.strictEqual(resolveLeaveCountOverride('', 3), 0, '手动清空请假输入框应视为 0 次请假');
+assert.strictEqual(resolveLeaveCountOverride('0', 3), 0, '手动输入 0 应覆盖自动请假次数');
+assert.strictEqual(resolveLeaveCountOverride('2', 3), 2, '手动输入正整数时应优先生效');
+
+assert(
+    generateImprovements({ antiForgettingSessionCount: 14, classCount: 4, antiForgettingCorrectRate: 95 }).some((text) => text.includes('复盘次数还可以再加一些')),
+    '抗遗忘次数少的阈值应为 < 15'
+);
+assert(
+    !generateImprovements({ antiForgettingSessionCount: 15, classCount: 4, antiForgettingCorrectRate: 95 }).some((text) => text.includes('复盘次数还可以再加一些')),
+    '抗遗忘次数达到 15 时不应再命中次数偏少提示'
+);
+
+const storageMock = {
+    store: {
+        '徐智浩_classStatistics': JSON.stringify({
+            '2026-08-05': {
+                newWord: 20,
+                reviewWordCount: 5,
+                duration: 1,
+                platform: 'lixiaolaila',
+                type: '词汇课'
+            }
+        })
+    },
+    getItem(key) {
+        return this.store[key] || null;
+    },
+    setItem(key, value) {
+        this.store[key] = value;
+    }
+};
+
+const storeClassStatistics = new Function(
+    'localStorage',
+    'getCurrentSchedulePlatformId',
+    `${storeClassStatisticsCode.replace('export ', '')}; return storeClassStatistics;`
+)(storageMock, () => 'lixiaolaila');
+
+storeClassStatistics('徐智浩', '2026-08-06', 18, 6, 1, '词汇课', 3);
+const storedStats = JSON.parse(storageMock.store['徐智浩_classStatistics']);
+assert.strictEqual(storedStats['2026-08-06'].forgetNewWords, 3, 'storeClassStatistics 应在原有记录结构中新增 forgetNewWords 字段');
+assert.strictEqual(storedStats['2026-08-05'].type, '词汇课', 'storeClassStatistics 不应改写已有记录结构');
+
+console.log('test-monthly-summary passed');

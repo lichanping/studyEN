@@ -356,7 +356,8 @@ export async function handleReadClassFeedbackClick() {
             newWord,
             reviewWordCount,
             classDuration,
-            "阅读完型语法课" // 指定课程类型
+            "阅读完型语法课", // 指定课程类型
+            mistakeWords
         );
 
         // 计算第21天的复习日期
