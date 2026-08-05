@@ -139,11 +139,21 @@ function loadScheduleExtraTrialStudents() {
     }
 }
 
-function loadCustomStudents() {
+function loadCustomStudents(platformId) {
     try {
         const raw = localStorage.getItem(CUSTOM_STUDENTS_STORAGE_KEY);
         const arr = raw ? JSON.parse(raw) : [];
-        return Array.isArray(arr) ? arr : [];
+        if (!Array.isArray(arr)) return [];
+        // 按平台过滤：字符串类型 legacy 条目无平台信息，默认归 DEFAULT_PLATFORM_ID
+        const normalizedPlatform = normalizePlatformId(platformId || DEFAULT_PLATFORM_ID);
+        return arr.filter((item) => {
+            if (typeof item === "string") {
+                return normalizedPlatform === DEFAULT_PLATFORM_ID;
+            }
+            if (!item || typeof item !== "object") return false;
+            const itemPlatform = normalizePlatformId(item.platform || DEFAULT_PLATFORM_ID);
+            return itemPlatform === normalizedPlatform;
+        });
     } catch (_) {
         return [];
     }
@@ -167,13 +177,12 @@ function updateTrialUserOptions() {
         })).filter((item) => item.value);
     }
 
-    const filteredCustomStudents = loadCustomStudents().map((item) => {
+    const filteredCustomStudents = loadCustomStudents(platformId).map((item) => {
         if (typeof item === "string") {
-            return platformId === DEFAULT_PLATFORM_ID ? item : "";
+            return item;
         }
         if (!item || typeof item !== "object") return "";
-        const itemPlatform = normalizePlatformId(item.platform || DEFAULT_PLATFORM_ID);
-        return itemPlatform === platformId ? String(item.name || "") : "";
+        return String(item.name || "");
     }).filter(Boolean);
 
     const filteredOriginalOptions = platformId === DEFAULT_PLATFORM_ID

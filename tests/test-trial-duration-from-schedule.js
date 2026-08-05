@@ -59,4 +59,16 @@ assert(
     'loadScheduleOverrideStudents 应过滤 course="体验" 的条目'
 );
 
+// 8. loadCustomStudents 应接受 platformId 参数并按平台过滤
+// （避免非 lxll 平台的 custom students 被错误加载到 lxll 列表）
+assert(
+    /function\s+loadCustomStudents\s*\(\s*platformId\s*\)/.test(classTrialContent),
+    'loadCustomStudents 应接受 platformId 参数'
+);
+
+assert(
+    classTrialContent.includes('loadCustomStudents(platformId)'),
+    'updateTrialUserOptions 应传入 platformId 给 loadCustomStudents'
+);
+
 console.log('test-trial-duration-from-schedule passed');
