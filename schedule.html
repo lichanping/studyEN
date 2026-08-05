@@ -1856,14 +1856,25 @@ sourceId: 上课记录唯一标识（用于去重）</span>
         } catch (_) { return []; }
     }
 
-    function saveCustomStudent(name) {
+    function saveCustomStudent(name, platformId) {
         const trimmed = String(name || "").trim();
         if (!trimmed) return;
         const list = loadCustomStudents();
-        const nextList = window.ScheduleCourseMatch?.prioritizeCustomStudent
-            ? window.ScheduleCourseMatch.prioritizeCustomStudent(list, trimmed)
-            : [trimmed].concat(list.filter(function (item) { return String(item || "").trim() !== trimmed; }));
-        localStorage.setItem(CUSTOM_STUDENTS_STORAGE_KEY, JSON.stringify(nextList));
+        const normalizedPlatform = normalizePlatformId(platformId || DEFAULT_PLATFORM_ID);
+        // 统一转为对象格式 {name, platform}
+        const normalizedList = list.map(function (item) {
+            if (typeof item === "string") {
+                return { name: item.trim(), platform: DEFAULT_PLATFORM_ID };
+            }
+            return {
+                name: String(item?.name || "").trim(),
+                platform: normalizePlatformId(item?.platform || DEFAULT_PLATFORM_ID)
+            };
+        }).filter(function (item) {
+            return item.name && !(item.name === trimmed && item.platform === normalizedPlatform);
+        });
+        normalizedList.unshift({ name: trimmed, platform: normalizedPlatform });
+        localStorage.setItem(CUSTOM_STUDENTS_STORAGE_KEY, JSON.stringify(normalizedList));
     }
 
     function getLessonOverrideKey(entry, dateValue) {
@@ -2213,7 +2224,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             if (studentSelect.value === "__custom__") {
                 student = customNameInput.value.trim();
                 if (!student) { showToast("请输入学生姓名"); return; }
-                saveCustomStudent(student);
+                saveCustomStudent(student, platformSelect.value);
             } else {
                 student = studentSelect.value;
             }
