@@ -105,6 +105,8 @@ function loadScheduleOverrideStudents() {
         entries.forEach((entry) => {
             const entryPlatform = normalizePlatformId(entry?.platform || DEFAULT_PLATFORM_ID);
             if (entryPlatform !== platformId) return;
+            const course = String(entry?.course || "").trim();
+            if (course !== "体验") return;
             const name = String(entry?.student || "").trim();
             if (name) names.add(name);
         });
@@ -147,16 +149,23 @@ function loadCustomStudents() {
     }
 }
 
+// 缓存原始 hardcoded 学生选项，避免平台切换后 select 被重建导致丢失
+let cachedOriginalOptions = null;
+
 function updateTrialUserOptions() {
     const userNameSelect = document.getElementById("userName");
     if (!userNameSelect) return;
     const platformId = getCurrentPlatformId();
 
     const previousValue = userNameSelect.value;
-    const originalOptions = Array.from(userNameSelect.options).map((opt) => ({
-        value: String(opt.value || "").trim(),
-        text: String(opt.textContent || "").trim()
-    })).filter((item) => item.value);
+
+    // 首次调用时从 DOM 缓存原始选项，后续复用缓存
+    if (!cachedOriginalOptions) {
+        cachedOriginalOptions = Array.from(userNameSelect.options).map((opt) => ({
+            value: String(opt.value || "").trim(),
+            text: String(opt.textContent || "").trim()
+        })).filter((item) => item.value);
+    }
 
     const filteredCustomStudents = loadCustomStudents().map((item) => {
         if (typeof item === "string") {
@@ -168,7 +177,7 @@ function updateTrialUserOptions() {
     }).filter(Boolean);
 
     const filteredOriginalOptions = platformId === DEFAULT_PLATFORM_ID
-        ? originalOptions
+        ? cachedOriginalOptions
         : [];
 
     // MVP: 新增/最近维护的学生优先展示在最顶部（custom-students-v1 在管理页会 move-to-front）

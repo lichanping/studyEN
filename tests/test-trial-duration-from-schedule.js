@@ -51,4 +51,12 @@ assert(
     'classTrial.js 页面加载时应尝试从排课配置覆盖 duration'
 );
 
+// 7. loadScheduleOverrideStudents 应只返回 course="体验" 的学生
+// （避免非体验课条目被错误加载到体验课学生列表）
+const overrideStudentsMatch = classTrialContent.match(/function\s+loadScheduleOverrideStudents[\s\S]*?return \[\.\.\.names\];/);
+assert(
+    overrideStudentsMatch && overrideStudentsMatch[0].includes('"体验"') || overrideStudentsMatch[0].includes("'体验'"),
+    'loadScheduleOverrideStudents 应过滤 course="体验" 的条目'
+);
+
 console.log('test-trial-duration-from-schedule passed');
