@@ -66,12 +66,18 @@ function createModalShell(id, title) {
     overlay.style.overflowY = 'auto';
 
     const panel = document.createElement('div');
-    panel.style.background = '#fff';
+    panel.style.background = '#2b2f36';
+    panel.style.color = '#e7e7e7';
     panel.style.borderRadius = '10px';
-    panel.style.padding = '20px';
+    panel.style.padding = '28px 30px';
     panel.style.width = 'min(560px, 100%)';
     panel.style.boxSizing = 'border-box';
-    panel.innerHTML = `<h3 style="margin:0 0 16px;">${title}</h3>`;
+    panel.style.border = '1px solid #5a606a';
+    panel.style.boxShadow = '0 20px 56px rgba(0, 0, 0, 0.4)';
+    panel.style.fontFamily = '"Segoe UI", Arial, sans-serif';
+    panel.style.lineHeight = '1.6';
+    panel.style.colorScheme = 'dark';
+    panel.innerHTML = `<h3 style="margin:0 0 20px;font-size:22px;font-weight:700;color:#ececec;">${title}</h3>`;
 
     overlay.appendChild(panel);
     document.body.appendChild(overlay);
@@ -82,6 +88,45 @@ function createModalShell(id, title) {
     });
 
     return panel;
+}
+
+function styleModalControls(panel) {
+    panel.querySelectorAll('label').forEach((label) => {
+        label.style.color = '#d5d9df';
+        label.style.fontSize = '15px';
+        label.style.fontWeight = '600';
+    });
+
+    panel.querySelectorAll('strong').forEach((strong) => {
+        strong.style.color = '#f8fafc';
+        strong.style.fontSize = '18px';
+        strong.style.fontWeight = '700';
+    });
+
+    panel.querySelectorAll('input').forEach((input) => {
+        input.style.height = '44px';
+        input.style.padding = '0 14px';
+        input.style.border = '1px solid #5a606a';
+        input.style.borderRadius = '10px';
+        input.style.background = '#3a3d43';
+        input.style.color = '#ececec';
+        input.style.fontSize = '16px';
+        input.style.boxSizing = 'border-box';
+        input.style.colorScheme = 'dark';
+    });
+
+    panel.querySelectorAll('button').forEach((button) => {
+        button.style.height = '44px';
+        button.style.padding = '0 20px';
+        button.style.border = '1px solid #5a606a';
+        button.style.borderRadius = '10px';
+        button.style.background = '#3a3d43';
+        button.style.color = '#ececec';
+        button.style.fontSize = '16px';
+        button.style.fontWeight = '700';
+        button.style.cursor = 'pointer';
+        button.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.28)';
+    });
 }
 
 function getSelectedUserName() {
@@ -318,7 +363,7 @@ function buildPreviewHtml(classStats, antiForgettingStats) {
         `正课次数：${classStats.classCount} 节，共 ${classStats.totalDuration} 小时`,
         `累计学单词：${classStats.totalWords} 个（新词${classStats.totalNewWords}+旧词${classStats.totalReviewWords}）`,
         `抗遗忘复盘：${antiForgettingStats.totalReviewed} 词（正确率 ${antiForgettingStats.correctRate}%）`
-    ].map((line) => `<div>${line}</div>`).join('');
+    ].map((line) => `<div style="color:#e5e7eb;font-size:15px;font-weight:600;">${line}</div>`).join('');
 }
 
 export async function generateMonthlySummary() {
@@ -435,18 +480,19 @@ export function monthlySummaryOpen() {
     const panel = createModalShell(MONTHLY_MODAL_ID, '月末总结生成器');
     const autoLeaveCount = getLeaveCount(userName, getCurrentMonth());
     panel.insertAdjacentHTML('beforeend', `
-        <div style="display:grid; gap:12px;">
-            <div><label>学员：</label><strong id="monthlySummaryStudent">${userName}</strong></div>
-            <div><label for="monthlySummaryMonth">月份：</label><input type="month" id="monthlySummaryMonth" value="${getCurrentMonth()}"></div>
-            <div><label for="monthlySummaryLeaves">本月请假次数：</label><input type="number" id="monthlySummaryLeaves" min="0" value="${autoLeaveCount}"><span style="margin-left:8px;color:#666;font-size:12px;">可手动覆盖，清空视为 0</span></div>
+        <div style="display:grid; gap:18px;">
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;"><label>学员：</label><strong id="monthlySummaryStudent">${userName}</strong></div>
+            <div style="display:grid;grid-template-columns:84px minmax(180px, 1fr);align-items:center;gap:12px;"><label for="monthlySummaryMonth">月份：</label><input type="month" id="monthlySummaryMonth" value="${getCurrentMonth()}"></div>
+            <div style="display:grid;grid-template-columns:184px minmax(160px, 1fr) auto;align-items:center;gap:12px;"><label for="monthlySummaryLeaves">本月请假次数：</label><input type="number" id="monthlySummaryLeaves" min="0" value="${autoLeaveCount}"><span style="color:#cbd5e1;font-size:13px;font-weight:500;">可手动覆盖，清空视为 0</span></div>
             <div style="display:flex; gap:10px;">
                 <button id="monthlySummaryPreviewButton">预览数据</button>
                 <button id="monthlySummaryGenerateButton">生成报告</button>
                 <button id="monthlySummaryCloseButton">关闭</button>
             </div>
-            <div id="monthlySummaryPreview" style="display:none;padding:12px;background:#f6f6f6;border-radius:6px;"></div>
+            <div id="monthlySummaryPreview" style="display:none;padding:16px;background:#1f2329;border:1px solid #5a606a;border-radius:10px;"></div>
         </div>
     `);
+    styleModalControls(panel);
 
     panel.querySelector('#monthlySummaryPreviewButton')?.addEventListener('click', previewMonthlySummaryData);
     panel.querySelector('#monthlySummaryGenerateButton')?.addEventListener('click', generateMonthlySummary);
@@ -463,15 +509,16 @@ export function recordLeaveOpen() {
     const today = formatLocalDateYmd(new Date());
     const panel = createModalShell(LEAVE_MODAL_ID, '记录请假');
     panel.insertAdjacentHTML('beforeend', `
-        <div style="display:grid; gap:12px;">
-            <div><label>学员：</label><strong>${userName}</strong></div>
-            <div><label for="leaveRecordDate">日期：</label><input type="date" id="leaveRecordDate" value="${today}"></div>
+        <div style="display:grid; gap:18px;">
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;"><label>学员：</label><strong>${userName}</strong></div>
+            <div style="display:grid;grid-template-columns:84px minmax(180px, 1fr);align-items:center;gap:12px;"><label for="leaveRecordDate">日期：</label><input type="date" id="leaveRecordDate" value="${today}"></div>
             <div style="display:flex; gap:10px;">
                 <button id="saveLeaveRecordButton">保存</button>
                 <button id="closeLeaveRecordButton">关闭</button>
             </div>
         </div>
     `);
+    styleModalControls(panel);
 
     panel.querySelector('#saveLeaveRecordButton')?.addEventListener('click', () => {
         const date = panel.querySelector('#leaveRecordDate')?.value;
@@ -495,16 +542,19 @@ export function viewLeaveRecordsOpen() {
 
     const panel = createModalShell(LEAVE_LIST_MODAL_ID, '查看请假记录');
     const list = document.createElement('div');
+    list.style.display = 'grid';
+    list.style.gap = '8px';
     const render = () => {
         const leaves = getLeavesStorage(userName);
         if (!Array.isArray(leaves) || leaves.length === 0) {
-            list.innerHTML = '<div style="color:#666;">暂无请假记录</div>';
+            list.innerHTML = '<div style="color:#cbd5e1;font-size:14px;font-weight:500;">暂无请假记录</div>';
             return;
         }
         list.innerHTML = leaves
             .sort((a, b) => String(a.date).localeCompare(String(b.date)))
-            .map((item) => `<div style="display:flex;justify-content:space-between;gap:12px;padding:6px 0;"><span>${item.date}</span><button data-date="${item.date}">删除</button></div>`)
+            .map((item) => `<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 12px;border:1px solid #5a606a;border-radius:10px;background:#1f2329;"><span style="color:#ececec;font-size:15px;font-weight:600;">${item.date}</span><button data-date="${item.date}">删除</button></div>`)
             .join('');
+        styleModalControls(panel);
         list.querySelectorAll('button[data-date]').forEach((button) => {
             button.addEventListener('click', () => {
                 deleteLeaveRecord(userName, button.dataset.date);
@@ -519,5 +569,6 @@ export function viewLeaveRecordsOpen() {
     closeButton.style.marginTop = '12px';
     closeButton.addEventListener('click', () => safeRemoveElementById(LEAVE_LIST_MODAL_ID));
     panel.appendChild(closeButton);
+    styleModalControls(panel);
     render();
 }
