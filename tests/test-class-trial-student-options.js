@@ -49,9 +49,14 @@ function testScheduleCustomStudentShouldBeRemovedWhenNoExtraEntryUsesIt() {
 
 function testSchedulePageShouldUseSharedPrioritizer() {
     const html = readWorkspaceFile("schedule.html");
+    // saveCustomStudent 应保存对象格式 {name, platform} 而非纯字符串
     assert.ok(
-        html.includes("ScheduleCourseMatch.prioritizeCustomStudent"),
-        "schedule 临时加课保存自定义学生时应复用置顶规则"
+        html.includes("saveCustomStudent(student, platformSelect.value)"),
+        "schedule 临时加课保存自定义学生时应传入平台参数"
+    );
+    assert.ok(
+        html.includes("{ name: trimmed, platform: normalizedPlatform }"),
+        "saveCustomStudent 应保存对象格式 {name, platform}"
     );
 }
 

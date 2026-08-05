@@ -1,4 +1,4 @@
-import {copyToClipboard, getRandomMotto, showAlert, showLongText, storeClassStatistics, validateBeforeClassFeedbackSubmit, filterLegacyStudents, resolveClassFeedbackDurationHours, formatLocalDateYmd} from './commonFunctions.js'
+import {copyToClipboard, getRandomMotto, showAlert, showLongText, storeClassStatistics, validateBeforeClassFeedbackSubmit, filterLegacyStudents, resolveClassFeedbackDurationHours, formatLocalDateYmd, resolveTrialDurationMinutes} from './commonFunctions.js'
 // Attach the function when the page loads
 // window.addEventListener("load", copyToClipboard);
 const setInitialDateTime = () => {
@@ -63,6 +63,20 @@ function syncTrialDurationDefaultByPlatform() {
     durationSelect.value = getDefaultTrialDurationHours(getCurrentPlatformId());
 }
 
+function syncTrialDurationForSelectedStudent() {
+    const userNameSelect = document.getElementById("userName");
+    const durationSelect = document.getElementById("classDuration");
+    if (!userNameSelect || !durationSelect) return;
+    const userName = userNameSelect.value;
+    if (!userName) return;
+    const trialDurationMinutes = resolveTrialDurationMinutes(userName, getCurrentPlatformId());
+    if (trialDurationMinutes) {
+        durationSelect.value = (trialDurationMinutes / 60).toString();
+    } else {
+        syncTrialDurationDefaultByPlatform();
+    }
+}
+
 function initPlatformSelector() {
     const select = document.getElementById("platformSelect");
     if (!select) return;
@@ -76,7 +90,7 @@ function initPlatformSelector() {
     select.addEventListener("change", () => {
         const next = normalizePlatformId(select.value);
         localStorage.setItem(CURRENT_PLATFORM_STORAGE_KEY, next);
-        syncTrialDurationDefaultByPlatform();
+        syncTrialDurationForSelectedStudent();
         updateTrialUserOptions();
     });
 }
@@ -91,6 +105,8 @@ function loadScheduleOverrideStudents() {
         entries.forEach((entry) => {
             const entryPlatform = normalizePlatformId(entry?.platform || DEFAULT_PLATFORM_ID);
             if (entryPlatform !== platformId) return;
+            const course = String(entry?.course || "").trim();
+            if (course !== "体验") return;
             const name = String(entry?.student || "").trim();
             if (name) names.add(name);
         });
@@ -123,15 +139,28 @@ function loadScheduleExtraTrialStudents() {
     }
 }
 
-function loadCustomStudents() {
+function loadCustomStudents(platformId) {
     try {
         const raw = localStorage.getItem(CUSTOM_STUDENTS_STORAGE_KEY);
         const arr = raw ? JSON.parse(raw) : [];
-        return Array.isArray(arr) ? arr : [];
+        if (!Array.isArray(arr)) return [];
+        // 按平台过滤：字符串类型 legacy 条目无平台信息，默认归 DEFAULT_PLATFORM_ID
+        const normalizedPlatform = normalizePlatformId(platformId || DEFAULT_PLATFORM_ID);
+        return arr.filter((item) => {
+            if (typeof item === "string") {
+                return normalizedPlatform === DEFAULT_PLATFORM_ID;
+            }
+            if (!item || typeof item !== "object") return false;
+            const itemPlatform = normalizePlatformId(item.platform || DEFAULT_PLATFORM_ID);
+            return itemPlatform === normalizedPlatform;
+        });
     } catch (_) {
         return [];
     }
 }
+
+// 缓存原始 hardcoded 学生选项，避免平台切换后 select 被重建导致丢失
+let cachedOriginalOptions = null;
 
 function updateTrialUserOptions() {
     const userNameSelect = document.getElementById("userName");
@@ -139,22 +168,25 @@ function updateTrialUserOptions() {
     const platformId = getCurrentPlatformId();
 
     const previousValue = userNameSelect.value;
-    const originalOptions = Array.from(userNameSelect.options).map((opt) => ({
-        value: String(opt.value || "").trim(),
-        text: String(opt.textContent || "").trim()
-    })).filter((item) => item.value);
 
-    const filteredCustomStudents = loadCustomStudents().map((item) => {
+    // 首次调用时从 DOM 缓存原始选项，后续复用缓存
+    if (!cachedOriginalOptions) {
+        cachedOriginalOptions = Array.from(userNameSelect.options).map((opt) => ({
+            value: String(opt.value || "").trim(),
+            text: String(opt.textContent || "").trim()
+        })).filter((item) => item.value);
+    }
+
+    const filteredCustomStudents = loadCustomStudents(platformId).map((item) => {
         if (typeof item === "string") {
-            return platformId === DEFAULT_PLATFORM_ID ? item : "";
+            return item;
         }
         if (!item || typeof item !== "object") return "";
-        const itemPlatform = normalizePlatformId(item.platform || DEFAULT_PLATFORM_ID);
-        return itemPlatform === platformId ? String(item.name || "") : "";
+        return String(item.name || "");
     }).filter(Boolean);
 
     const filteredOriginalOptions = platformId === DEFAULT_PLATFORM_ID
-        ? originalOptions
+        ? cachedOriginalOptions
         : [];
 
     // MVP: 新增/最近维护的学生优先展示在最顶部（custom-students-v1 在管理页会 move-to-front）
@@ -201,7 +233,13 @@ function updateTrialUserOptions() {
 // Attach the function to the "load" event of the window
 window.addEventListener("load", updateTrialUserOptions);
 window.addEventListener("load", initPlatformSelector);
-window.addEventListener("load", syncTrialDurationDefaultByPlatform);
+window.addEventListener("load", syncTrialDurationForSelectedStudent);
+window.addEventListener("load", () => {
+    const userNameSelect = document.getElementById("userName");
+    if (userNameSelect) {
+        userNameSelect.addEventListener("change", syncTrialDurationForSelectedStudent);
+    }
+});
 
 // JavaScript code for the button click functions
 export function handleScheduleNotificationClick() {

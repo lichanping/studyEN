@@ -564,6 +564,12 @@
                 background: #eceff3;
             }
 
+            .action-btn.subscribe:disabled,
+            .action-btn.unsubscribe:disabled {
+                opacity: 0.45;
+                cursor: not-allowed;
+            }
+
         .schedule-state-label {
             display: inline-flex;
             align-items: center;
@@ -1203,14 +1209,6 @@ sourceId: 上课记录唯一标识（用于去重）</span>
 {
   "entries": [
     {
-      "student": "陈怡睿",
-      "course": "单词",
-      "durationMinutes": 30,
-      "days": ["周一", "周二", "周三", "周四", "周五", "周六", "周日"],
-      "period": "晚上",
-      "time": ""
-    },
-    {
       "student": "硕硕",
       "course": "单词",
       "durationMinutes": 30,
@@ -1237,7 +1235,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
     {
       "student": "邸睿",
       "course": "单词",
-      "durationMinutes": 60,
+      "durationMinutes": 30,
       "days": ["周六"],
       "period": "上午",
       "time": ""
@@ -1255,14 +1253,6 @@ sourceId: 上课记录唯一标识（用于去重）</span>
       "course": "单词",
       "durationMinutes": 60,
       "days": ["周六", "周日"],
-      "period": "上午",
-      "time": "10:00"
-    },
-    {
-      "student": "季筱雯",
-      "course": "单词",
-      "durationMinutes": 60,
-      "days": ["周日"],
       "period": "上午",
       "time": "10:00"
     }
@@ -1866,14 +1856,25 @@ sourceId: 上课记录唯一标识（用于去重）</span>
         } catch (_) { return []; }
     }
 
-    function saveCustomStudent(name) {
+    function saveCustomStudent(name, platformId) {
         const trimmed = String(name || "").trim();
         if (!trimmed) return;
         const list = loadCustomStudents();
-        const nextList = window.ScheduleCourseMatch?.prioritizeCustomStudent
-            ? window.ScheduleCourseMatch.prioritizeCustomStudent(list, trimmed)
-            : [trimmed].concat(list.filter(function (item) { return String(item || "").trim() !== trimmed; }));
-        localStorage.setItem(CUSTOM_STUDENTS_STORAGE_KEY, JSON.stringify(nextList));
+        const normalizedPlatform = normalizePlatformId(platformId || DEFAULT_PLATFORM_ID);
+        // 统一转为对象格式 {name, platform}
+        const normalizedList = list.map(function (item) {
+            if (typeof item === "string") {
+                return { name: item.trim(), platform: DEFAULT_PLATFORM_ID };
+            }
+            return {
+                name: String(item?.name || "").trim(),
+                platform: normalizePlatformId(item?.platform || DEFAULT_PLATFORM_ID)
+            };
+        }).filter(function (item) {
+            return item.name && !(item.name === trimmed && item.platform === normalizedPlatform);
+        });
+        normalizedList.unshift({ name: trimmed, platform: normalizedPlatform });
+        localStorage.setItem(CUSTOM_STUDENTS_STORAGE_KEY, JSON.stringify(normalizedList));
     }
 
     function getLessonOverrideKey(entry, dateValue) {
@@ -2223,7 +2224,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             if (studentSelect.value === "__custom__") {
                 student = customNameInput.value.trim();
                 if (!student) { showToast("请输入学生姓名"); return; }
-                saveCustomStudent(student);
+                saveCustomStudent(student, platformSelect.value);
             } else {
                 student = studentSelect.value;
             }
@@ -2430,7 +2431,9 @@ sourceId: 上课记录唯一标识（用于去重）</span>
                 subscriptionButton.disabled = disabled || resolveEntryPlatform(item) !== "lixiaolaila";
                 subscriptionButton.addEventListener("click", async () => {
                     if (subscriptionButton.disabled) return;
+                    const originalText = subscriptionButton.textContent;
                     subscriptionButton.disabled = true;
+                    subscriptionButton.textContent = activeSubscription ? "取消中…" : "订阅中…";
                     try {
                         if (activeSubscription) {
                             await unsubscribeScheduleEntry(item, dateValue);
@@ -2441,6 +2444,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
                         }
                         onChange();
                     } catch (error) {
+                        subscriptionButton.textContent = originalText;
                         showToast(error.message || "订阅失败，请稍后重试", 4200);
                     } finally {
                         subscriptionButton.disabled = false;
@@ -4135,16 +4139,6 @@ sourceId: 上课记录唯一标识（用于去重）</span>
                 statusType: "missing",
                 statusText: "系统未查到",
                 zeroFields: ["quota30", "quota60", "quotaAccompany"]
-            },
-            {
-                queryName: "陈怡睿",
-                displayName: "陈怡睿",
-                quota30: "12",
-                quota60: "8",
-                quotaAccompany: "5",
-                statusType: "ok",
-                statusText: "正常",
-                zeroFields: []
             }
         ];
         renderQuotaCheckResults(mockRows);
