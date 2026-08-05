@@ -146,8 +146,8 @@ assert(
 
 assert(
     clickHandlerBody.includes('originalText')
-        && (clickHandlerBody.match(/originalText/g) || []).length >= 3,
-    'schedule.html 订阅按钮失败时应恢复原始按钮文字（originalText 至少出现 3 次：保存、恢复×2）'
+        && (clickHandlerBody.match(/originalText/g) || []).length >= 2,
+    'schedule.html 订阅按钮失败时应恢复原始按钮文字（originalText 至少出现 2 次：保存、catch 恢复）'
 );
 
 assert(

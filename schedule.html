@@ -2452,7 +2452,6 @@ sourceId: 上课记录唯一标识（用于去重）</span>
                         subscriptionButton.textContent = originalText;
                         showToast(error.message || "订阅失败，请稍后重试", 4200);
                     } finally {
-                        subscriptionButton.textContent = originalText;
                         subscriptionButton.disabled = false;
                     }
                 });
