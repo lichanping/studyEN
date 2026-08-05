@@ -1,4 +1,4 @@
-import {copyToClipboard, getRandomMotto, showAlert, showLongText, storeClassStatistics, validateBeforeClassFeedbackSubmit, filterLegacyStudents, resolveClassFeedbackDurationHours, formatLocalDateYmd} from './commonFunctions.js'
+import {copyToClipboard, getRandomMotto, showAlert, showLongText, storeClassStatistics, validateBeforeClassFeedbackSubmit, filterLegacyStudents, resolveClassFeedbackDurationHours, formatLocalDateYmd, resolveTrialDurationMinutes} from './commonFunctions.js'
 // Attach the function when the page loads
 // window.addEventListener("load", copyToClipboard);
 const setInitialDateTime = () => {
@@ -63,6 +63,20 @@ function syncTrialDurationDefaultByPlatform() {
     durationSelect.value = getDefaultTrialDurationHours(getCurrentPlatformId());
 }
 
+function syncTrialDurationForSelectedStudent() {
+    const userNameSelect = document.getElementById("userName");
+    const durationSelect = document.getElementById("classDuration");
+    if (!userNameSelect || !durationSelect) return;
+    const userName = userNameSelect.value;
+    if (!userName) return;
+    const trialDurationMinutes = resolveTrialDurationMinutes(userName, getCurrentPlatformId());
+    if (trialDurationMinutes) {
+        durationSelect.value = (trialDurationMinutes / 60).toString();
+    } else {
+        syncTrialDurationDefaultByPlatform();
+    }
+}
+
 function initPlatformSelector() {
     const select = document.getElementById("platformSelect");
     if (!select) return;
@@ -76,7 +90,7 @@ function initPlatformSelector() {
     select.addEventListener("change", () => {
         const next = normalizePlatformId(select.value);
         localStorage.setItem(CURRENT_PLATFORM_STORAGE_KEY, next);
-        syncTrialDurationDefaultByPlatform();
+        syncTrialDurationForSelectedStudent();
         updateTrialUserOptions();
     });
 }
@@ -201,7 +215,13 @@ function updateTrialUserOptions() {
 // Attach the function to the "load" event of the window
 window.addEventListener("load", updateTrialUserOptions);
 window.addEventListener("load", initPlatformSelector);
-window.addEventListener("load", syncTrialDurationDefaultByPlatform);
+window.addEventListener("load", syncTrialDurationForSelectedStudent);
+window.addEventListener("load", () => {
+    const userNameSelect = document.getElementById("userName");
+    if (userNameSelect) {
+        userNameSelect.addEventListener("change", syncTrialDurationForSelectedStudent);
+    }
+});
 
 // JavaScript code for the button click functions
 export function handleScheduleNotificationClick() {

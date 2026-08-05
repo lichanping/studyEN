@@ -9,7 +9,8 @@ import {
     validateBeforeClassFeedbackSubmit,
     filterLegacyStudents,
     formatLocalDateYmd,
-    parseLocalDateYmd
+    parseLocalDateYmd,
+    resolveStudentDurationMinutes
 } from './commonFunctions.js'
 
 const setInitialDateTime = () => {
@@ -238,6 +239,13 @@ export function updateLabel2() {
         courseWordCountLabel.textContent = userDataForSelectedUser.courseWordCount;
         currentDate.setHours(...userDataForSelectedUser.hours, 0, 0);
         let duration = userInfo.duration.toString()
+        const scheduleDurationMinutes = resolveStudentDurationMinutes(
+            userName,
+            userInfo.course?.includes("阅读") ? "阅读" : "单词"
+        );
+        if (scheduleDurationMinutes) {
+            duration = (scheduleDurationMinutes / 60).toString();
+        }
         const durationSelect = document.getElementById("classDuration");
         durationSelect.value = duration
     } else {
