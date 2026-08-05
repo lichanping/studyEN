@@ -341,7 +341,7 @@ ${getRandomMotto()}`;
     if (classDateTime) {
         const classDate = formatLocalDateYmd(classDateTime);
         const classDurationHours = await resolveClassFeedbackDurationHours("体验课");
-        storeClassStatistics(userName, classDate, newWord, 0, classDurationHours, "体验课");
+        storeClassStatistics(userName, classDate, newWord, 0, classDurationHours, "体验课", forgetWord);
     } else {
         alert("请选择有效的课程时间");
     }

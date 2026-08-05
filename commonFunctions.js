@@ -973,13 +973,24 @@ async function formatFeedbackContent(userData) {
         weekday: "short"
     });
 
-    // Read day range from input
+    const statsModeMonth = document.getElementById("statsModeMonth");
+    const statsMonthInput = document.getElementById("statsMonthInput");
     const dayRangeInput = document.getElementById("daysRangeInput");
-    const dayRange = parseInt(dayRangeInput.value) || 7; // Default to 7 days if input is invalid
+    const dayRange = parseInt(dayRangeInput?.value, 10) || 7;
 
     const today = new Date();
-    const startDate = new Date();
-    startDate.setDate(today.getDate() - dayRange);
+    const useMonthMode = Boolean(statsModeMonth?.checked && statsMonthInput?.value);
+    let startDate = new Date();
+    let endDate = new Date(today);
+    if (useMonthMode) {
+        const [year, month] = statsMonthInput.value.split('-').map(Number);
+        startDate = new Date(year, month - 1, 1);
+        endDate = new Date(year, month, 0);
+    } else {
+        startDate.setDate(today.getDate() - dayRange);
+    }
+    startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(23, 59, 59, 999);
 
     // Process forget words
     let forgetWordsContent = '';
@@ -987,7 +998,7 @@ async function formatFeedbackContent(userData) {
     const forgetWords = userData.forgetWords;
     for (const [datePart, words] of Object.entries(forgetWords)) {
         const wordDate = new Date(datePart.trim());
-        if (wordDate >= startDate && wordDate <= today) {
+        if (wordDate >= startDate && wordDate <= endDate) {
             if (words) {
                 forgetWordsData += words + '\n';
             }
@@ -1020,7 +1031,7 @@ async function formatFeedbackContent(userData) {
 
     // Process feedback entries (correct rate content)
     const feedbackEntries = userData.feedbackEntries.filter(entry => entry.trim());
-    let totalCorrectRate = 0;
+    let totalCorrectWords = 0;
     let validEntries = 0;
     let totalWordsReviewed = 0;
 
@@ -1060,8 +1071,8 @@ async function formatFeedbackContent(userData) {
 
         if (!isNaN(correctRate)) {
             const entryDate = new Date(datePart);
-            if (entryDate >= startDate && entryDate <= today) {
-                totalCorrectRate += correctRate;
+            if (entryDate >= startDate && entryDate <= endDate) {
+                totalCorrectWords += correctWords;
                 validEntries++;
                 totalWordsReviewed += wordsReviewed;
                 if (wordsReviewed >= 100) {
@@ -1083,7 +1094,7 @@ async function formatFeedbackContent(userData) {
     formattedEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
 
     const sortedFormattedEntries = formattedEntries.map(entry => entry.formatted);
-    const averageRate = validEntries > 0 ? (totalCorrectRate / validEntries).toFixed(0) : '无数据';
+    const averageRate = totalWordsReviewed > 0 ? Math.round((totalCorrectWords / totalWordsReviewed) * 100) : '无数据';
 
     const header = `📝 抗遗忘复习详情\n日期（星期）          | 正确率\n-------------------------------`;
     const footer = validEntries > 0
@@ -1730,7 +1741,7 @@ export function generateTrialReport() {
     link.click();
 }
 
-export function storeClassStatistics(userName, date, newWord, reviewWordCount, duration, type) {
+export function storeClassStatistics(userName, date, newWord, reviewWordCount, duration, type, forgetNewWords) {
     try {
         const statsKey = `${userName}_classStatistics`;
         let classStats = JSON.parse(localStorage.getItem(statsKey)) || {};
@@ -1741,7 +1752,8 @@ export function storeClassStatistics(userName, date, newWord, reviewWordCount, d
             reviewWordCount: reviewWordCount,
             duration: duration,
             platform: getCurrentSchedulePlatformId(),
-            type: type
+            type: type,
+            forgetNewWords: Number(forgetNewWords) || 0
         };
 
         localStorage.setItem(statsKey, JSON.stringify(classStats));
