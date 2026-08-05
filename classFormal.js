@@ -519,7 +519,7 @@ export async function handleClassFeedbackClick() {
     if (classDateTime) {
         const classDate = formatLocalDateYmd(classDateTime);
         const classDuration = parseFloat(document.getElementById("classDuration").value);
-        storeClassStatistics(userName, classDate, newWord, reviewWordCount, classDuration, "词汇课");
+        storeClassStatistics(userName, classDate, newWord, reviewWordCount, classDuration, "词汇课", forgetWord);
 
         // ✅ 存储 newLearnedWords 到 IndexedDB
         storeNewLearnedWords(userName, newLearnedWordsText);
@@ -602,13 +602,24 @@ export async function generateReport() {
     }
 
     const dayRangeInput = document.getElementById("daysRangeInput");
-    const dayRange = parseInt(dayRangeInput.value) || 7;
+    const dayRange = parseInt(dayRangeInput.value, 10) || 7;
+    const statsModeMonth = document.getElementById("statsModeMonth");
+    const statsMonthInput = document.getElementById("statsMonthInput");
+    const useMonthMode = Boolean(statsModeMonth?.checked && statsMonthInput?.value);
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const startDate = new Date();
-    startDate.setDate(today.getDate() - dayRange);
+    let startDate = new Date();
+    let endDate = new Date(today);
+    if (useMonthMode) {
+        const [year, month] = statsMonthInput.value.split('-').map(Number);
+        startDate = new Date(year, month - 1, 1);
+        endDate = new Date(year, month, 0);
+    } else {
+        startDate.setDate(today.getDate() - dayRange);
+    }
     startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(0, 0, 0, 0);
 
     let validEntries = 0;
     let sortedEntries = [];
@@ -618,14 +629,14 @@ export async function generateReport() {
 
 
     Object.entries(allClassStats).forEach(([key, stats]) => {
-        const isVocabClass = !key.includes('_') || (stats.type === "词汇课" || stats.type === "阅读完型语法课");
+        const isVocabClass = !key.includes('_') || (stats.type === "词汇课" || stats.type === "阅读完型语法课" || stats.type === "体验课");
         if (!isVocabClass) return;
 
         const date = stats.date || key;
         const recordDate = parseStoredDateToLocalDate(date);
         recordDate.setHours(0, 0, 0, 0);
 
-        if (recordDate > startDate && recordDate <= today) {
+        if (recordDate >= startDate && recordDate <= endDate) {
             // 累加已用课时（处理可能的未定义情况）
             totalUsedHours += parseFloat(stats.duration) || 0;
 
@@ -641,6 +652,8 @@ export async function generateReport() {
                 courseType = duration === 0.5 ? "半词课" : "词汇课";
             } else if (courseType === "阅读完型语法课") {
                 courseType = "阅语课";
+            } else if (courseType === "体验课") {
+                courseType = "体验课";
             }
 
             sortedEntries.push({
