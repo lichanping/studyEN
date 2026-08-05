@@ -117,4 +117,44 @@ assert(
     'schedule.html 移除后端状态同步后不应继续保留同步 grace window 状态'
 );
 
+const clickHandlerMatch = renderDayEntriesBody.match(/subscriptionButton\.addEventListener\("click",\s*async\s*\(\)\s*=>\s*\{/);
+assert(
+    clickHandlerMatch,
+    'schedule.html 订阅按钮应绑定 async click handler'
+);
+const clickHandlerStart = clickHandlerMatch.index;
+let handlerDepth = 0;
+let clickHandlerBody = '';
+for (let i = renderDayEntriesBody.indexOf('{', clickHandlerStart); i < renderDayEntriesBody.length; i += 1) {
+    if (renderDayEntriesBody[i] === '{') handlerDepth += 1;
+    if (renderDayEntriesBody[i] === '}') handlerDepth -= 1;
+    clickHandlerBody += renderDayEntriesBody[i];
+    if (handlerDepth === 0) break;
+}
+
+assert(
+    clickHandlerBody.includes('originalText')
+        && clickHandlerBody.includes('subscriptionButton.textContent'),
+    'schedule.html 订阅按钮 click handler 应保存 originalText 并在 loading 时切换按钮文字'
+);
+
+assert(
+    clickHandlerBody.includes('订阅中')
+        && clickHandlerBody.includes('取消中'),
+    'schedule.html 订阅按钮点击后应显示"订阅中…"或"取消中…"作为 loading 反馈'
+);
+
+assert(
+    clickHandlerBody.includes('originalText')
+        && (clickHandlerBody.match(/originalText/g) || []).length >= 3,
+    'schedule.html 订阅按钮失败时应恢复原始按钮文字（originalText 至少出现 3 次：保存、恢复×2）'
+);
+
+assert(
+    scheduleHtml.includes('.action-btn.subscribe:disabled')
+        && scheduleHtml.includes('.action-btn.unsubscribe:disabled')
+        && !scheduleHtml.includes('.action-btn:disabled {'),
+    'schedule.html 应为订阅/取消订阅按钮单独定义 :disabled 样式，不影响其他 action-btn'
+);
+
 console.log('test-schedule-subscription-ui passed');

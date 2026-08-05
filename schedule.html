@@ -564,6 +564,12 @@
                 background: #eceff3;
             }
 
+            .action-btn.subscribe:disabled,
+            .action-btn.unsubscribe:disabled {
+                opacity: 0.45;
+                cursor: not-allowed;
+            }
+
         .schedule-state-label {
             display: inline-flex;
             align-items: center;
@@ -2430,7 +2436,9 @@ sourceId: 上课记录唯一标识（用于去重）</span>
                 subscriptionButton.disabled = disabled || resolveEntryPlatform(item) !== "lixiaolaila";
                 subscriptionButton.addEventListener("click", async () => {
                     if (subscriptionButton.disabled) return;
+                    const originalText = subscriptionButton.textContent;
                     subscriptionButton.disabled = true;
+                    subscriptionButton.textContent = activeSubscription ? "取消中…" : "订阅中…";
                     try {
                         if (activeSubscription) {
                             await unsubscribeScheduleEntry(item, dateValue);
@@ -2441,8 +2449,10 @@ sourceId: 上课记录唯一标识（用于去重）</span>
                         }
                         onChange();
                     } catch (error) {
+                        subscriptionButton.textContent = originalText;
                         showToast(error.message || "订阅失败，请稍后重试", 4200);
                     } finally {
+                        subscriptionButton.textContent = originalText;
                         subscriptionButton.disabled = false;
                     }
                 });
