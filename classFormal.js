@@ -12,7 +12,8 @@ import {
     validateBeforeClassFeedbackSubmit,
     filterLegacyStudents,
     formatLocalDateYmd,
-    parseLocalDateYmd
+    parseLocalDateYmd,
+    resolveStudentDurationMinutes
 } from './commonFunctions.js'
 
 let hasAutoSyncedNewWordFromReviewWord = false;
@@ -63,13 +64,6 @@ const initReviewWordFirstBlurAutoSync = () => {
 const teacherData = {
     "liTeacher": {
         users: {
-            "陈怡睿": {
-                schedule: "陈怡睿-每天半小时",
-                course: "托福高频词汇",
-                hours: [19, 30],
-                courseWordCount: 3573,
-                duration: 0.5
-            },
             "徐智浩": {
                 schedule: "徐智浩(每周五到周日)",
                 course: "【推荐】2020版沪外教版必修三（单元顺序）",
@@ -92,11 +86,11 @@ const teacherData = {
                 duration: 0.5
             },
             "邸睿": {
-                schedule: "周四一小时，周六周日上午半小时 邸睿(6年级)",
+                schedule: "周四一小时，周六周日上午半小时 邸睿 (6 年级)",
                 course: "【推荐】沪教版单词课程",
                 hours: [21, 0],
                 courseWordCount: 92,
-                duration: 1
+                duration: 0.5
             }
         }
     },
@@ -291,6 +285,13 @@ export function updateLabel() {
         courseWordCountLabel.textContent = userDataForSelectedUser.courseWordCount;
         currentDate.setHours(...userDataForSelectedUser.hours, 0, 0);
         let duration = userInfo.duration.toString()
+        const scheduleDurationMinutes = resolveStudentDurationMinutes(
+            userName,
+            userInfo.course?.includes("阅读") ? "阅读" : "单词"
+        );
+        if (scheduleDurationMinutes) {
+            duration = (scheduleDurationMinutes / 60).toString();
+        }
         const durationSelect = document.getElementById("classDuration");
         durationSelect.value = duration
     } else {

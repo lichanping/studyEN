@@ -1941,6 +1941,88 @@ export function resolveSubmittedDurationMinutes(classDurationValue, courseEntrie
     return Number(fallbackMinutes) || 60;
 }
 
+/**
+ * 从排课配置中查找学生的课时时长（分钟）。
+ * 优先级：localStorage override (schedule-config-override-v1) > 返回 null（由调用方 fallback）
+ *
+ * @param {string} studentName - 学生姓名
+ * @param {string} courseKeyword - 课程关键词，如 "单词"、"阅读"
+ * @returns {number|null} durationMinutes，未找到返回 null
+ */
+export function resolveStudentDurationMinutes(studentName, courseKeyword = "") {
+    try {
+        const raw = localStorage.getItem(SCHEDULE_CONFIG_OVERRIDE_KEY);
+        const parsed = raw ? JSON.parse(raw) : null;
+        const entries = Array.isArray(parsed?.entries) ? parsed.entries : [];
+        const normalizedCourse = normalizeSubmittedCourseType(courseKeyword);
+
+        for (const entry of entries) {
+            if (String(entry.student || "").trim() !== studentName) continue;
+            const entryCourse = normalizeSubmittedCourseType(entry.course || "");
+            if (normalizedCourse && entryCourse !== normalizedCourse) continue;
+            const minutes = Number(entry.durationMinutes);
+            if (Number.isFinite(minutes) && minutes > 0) return minutes;
+        }
+    } catch (error) {
+        console.warn("resolveStudentDurationMinutes: 读取排课覆盖配置失败:", error);
+    }
+    return null;
+}
+
+/**
+ * 从排课临时加课和覆盖配置中查找体验课的课时时长。
+ * 优先级：schedule-extra-entries-v1 > schedule-config-override-v1 > null
+ *
+ * @param {string} studentName - 学生姓名
+ * @param {string} platformId - 平台 ID
+ * @returns {number|null} durationMinutes，未找到返回 null
+ */
+export function resolveTrialDurationMinutes(studentName, platformId) {
+    const normalizedPlatform = normalizeSubmittedCourseType(platformId || "").toLowerCase() || "lixiaolaila";
+
+    // 1. 从 schedule-extra-entries-v1（临时加课）查找
+    try {
+        const extraRaw = localStorage.getItem(EXTRA_ENTRIES_STORAGE_KEY);
+        const extraParsed = extraRaw ? JSON.parse(extraRaw) : {};
+        if (extraParsed && typeof extraParsed === "object") {
+            for (const [, entries] of Object.entries(extraParsed)) {
+                if (!Array.isArray(entries)) continue;
+                for (const entry of entries) {
+                    const entryPlatform = String(entry?.platform || "lixiaolaila").trim().toLowerCase();
+                    const entryCourse = String(entry?.course || "").trim();
+                    if (entryPlatform !== normalizedPlatform) continue;
+                    if (entryCourse !== "体验") continue;
+                    if (String(entry?.student || "").trim() !== studentName) continue;
+                    const minutes = Number(entry.durationMinutes);
+                    if (Number.isFinite(minutes) && minutes > 0) return minutes;
+                }
+            }
+        }
+    } catch (error) {
+        console.warn("resolveTrialDurationMinutes: 读取临时加课配置失败:", error);
+    }
+
+    // 2. 从 schedule-config-override-v1 查找
+    try {
+        const overrideRaw = localStorage.getItem(SCHEDULE_CONFIG_OVERRIDE_KEY);
+        const overrideParsed = overrideRaw ? JSON.parse(overrideRaw) : null;
+        const entries = Array.isArray(overrideParsed?.entries) ? overrideParsed.entries : [];
+        for (const entry of entries) {
+            const entryPlatform = String(entry?.platform || "lixiaolaila").trim().toLowerCase();
+            const entryCourse = String(entry?.course || "").trim();
+            if (entryPlatform !== normalizedPlatform) continue;
+            if (entryCourse !== "体验") continue;
+            if (String(entry?.student || "").trim() !== studentName) continue;
+            const minutes = Number(entry.durationMinutes);
+            if (Number.isFinite(minutes) && minutes > 0) return minutes;
+        }
+    } catch (error) {
+        console.warn("resolveTrialDurationMinutes: 读取排课覆盖配置失败:", error);
+    }
+
+    return null;
+}
+
 export async function resolveClassFeedbackDurationHours(courseType = "词汇课") {
     const classDateTimeEl = document.getElementById("classDateTime");
     const classDateTime = classDateTimeEl ? classDateTimeEl.value : "";
