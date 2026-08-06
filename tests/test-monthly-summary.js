@@ -60,6 +60,13 @@ assert(
 );
 
 assert(
+    prdSource.includes('正课遗忘词总数：`SUM(forgetNewWords)`')
+        && prdSource.includes('正课新词掌握率 `>= 90%`')
+        && prdSource.includes('当正课次数、累计学词、抗遗忘复盘次数均为 `0` 时，整份月末总结统一输出暖心寄语式鼓励文案'),
+    'PRD 应明确月末总结统计正课遗忘词与掌握率，并覆盖 0 正课 + 0 复习的暖心寄语场景'
+);
+
+assert(
     indexSource.includes('id="monthlySummaryButton"')
         && indexSource.includes('id="recordLeaveButton"')
         && indexSource.includes('id="viewLeaveRecordsButton"'),
@@ -112,12 +119,15 @@ const calculateMonthlyClassStatsCode = extractBlock(monthlySummarySource, 'expor
 const getMonthDisplayCode = extractBlock(monthlySummarySource, 'export function getMonthDisplay');
 const resolveLeaveCountOverrideCode = extractBlock(monthlySummarySource, 'export function resolveLeaveCountOverride');
 const summarizeFeedbackEntriesCode = extractBlock(monthlySummarySource, 'export function summarizeFeedbackEntries');
+const highlightsLibraryCode = extractBlock(monthlySummarySource, 'const HIGHLIGHTS_LIBRARY = [', '[', ']');
 const improvementsLibraryCode = extractBlock(monthlySummarySource, 'const IMPROVEMENTS_LIBRARY = [', '[', ']');
+const generateHighlightsCode = extractBlock(monthlySummarySource, 'export function generateHighlights');
 const generateImprovementsCode = extractBlock(monthlySummarySource, 'export function generateImprovements');
 const getMonthlySummaryStudentDisplayNameCode = extractBlock(monthlySummarySource, 'export function getMonthlySummaryStudentDisplayName');
 const getAttendanceTextCode = extractBlock(monthlySummarySource, 'function getAttendanceText');
 const getAntiForgettingTextCode = extractBlock(monthlySummarySource, 'function getAntiForgettingText');
 const buildWarmMessageCode = extractBlock(monthlySummarySource, 'function buildWarmMessage');
+const buildGoalsCode = extractBlock(monthlySummarySource, 'function buildGoals');
 const buildMonthlySummaryReportCode = extractBlock(monthlySummarySource, 'function buildMonthlySummaryReport');
 const storeClassStatisticsCode = extractBlock(commonFunctionsSource, 'export function storeClassStatistics');
 
@@ -177,6 +187,8 @@ assert.strictEqual(classStats.totalDuration, 3, '月末总结应汇总所选月�
 assert.strictEqual(classStats.totalNewWords, 53, '月末总结应统计所选月份内的新词总量，并包含体验课');
 assert.strictEqual(classStats.totalReviewWords, 12, '月末总结应统计所选月份内的复习词总量');
 assert.strictEqual(classStats.totalWords, 65, '月末总结应输出新词与复习词总和，并包含体验课');
+assert.strictEqual(classStats.totalForgetNewWords, 4, '月末总结应统计所选月份内正课遗忘词总量');
+assert.strictEqual(classStats.newWordMasteryRate, 92, '月末总结应按月汇总计算正课新词掌握率，并兼容历史 forgetNewWords 缺失按 0 处理');
 
 const getMonthDisplay = new Function(`${getMonthDisplayCode.replace('export ', '')}; return getMonthDisplay;`)();
 const resolveLeaveCountOverride = new Function(`${resolveLeaveCountOverrideCode.replace('export ', '')}; return resolveLeaveCountOverride;`)();
@@ -186,9 +198,13 @@ const getMonthlySummaryStudentDisplayName = new Function(
 const summarizeFeedbackEntries = new Function(
     `${parseLocalDateYmdCode}\n${getMonthRangeCode}\n${summarizeFeedbackEntriesCode.replace('export ', '')}\nreturn summarizeFeedbackEntries;`
 )();
+const generateHighlights = new Function(
+    `${highlightsLibraryCode};\n${generateHighlightsCode.replace('export ', '')}\nreturn generateHighlights;`
+)();
 const generateImprovements = new Function(
     `${improvementsLibraryCode};\n${generateImprovementsCode.replace('export ', '')}\nreturn generateImprovements;`
 )();
+const buildGoals = new Function(`${buildGoalsCode}\nreturn buildGoals;`)();
 const buildMonthlySummaryReport = new Function(
     `${getAttendanceTextCode}\n${getAntiForgettingTextCode}\n${buildWarmMessageCode}\n${buildMonthlySummaryReportCode}\nreturn buildMonthlySummaryReport;`
 )();
@@ -248,12 +264,88 @@ assert(
 );
 
 assert(
+    generateHighlights({ antiForgettingCorrectRate: 80, classCount: 4, antiForgettingTrend: 'stable', totalDuration: 3, newWordMasteryRate: 90 }).some((text) => text.includes('本月新学内容掌握得比较扎实')),
+    '正课新词掌握率达到 90% 时应命中掌握率闪光点'
+);
+assert(
     generateImprovements({ antiForgettingSessionCount: 14, classCount: 4, antiForgettingCorrectRate: 95 }).some((text) => text.includes('复盘次数还可以再加一些')),
     '抗遗忘次数少的阈值应为 < 15'
 );
 assert(
     !generateImprovements({ antiForgettingSessionCount: 15, classCount: 4, antiForgettingCorrectRate: 95 }).some((text) => text.includes('复盘次数还可以再加一些')),
     '抗遗忘次数达到 15 时不应再命中次数偏少提示'
+);
+assert(
+    generateImprovements({ antiForgettingSessionCount: 20, classCount: 4, antiForgettingCorrectRate: 95, antiForgettingTrend: 'rising', newWordMasteryRate: 89 }).some((text) => text.includes('本月新学内容里还有一些词需要反复回看')),
+    '正课新词掌握率低于 90% 时应命中掌握率提升点'
+);
+
+const zeroStatsReport = buildMonthlySummaryReport({
+    reportStudentName: '小明',
+    monthDisplay: '8🈷️',
+    classStats: {
+        classCount: 0,
+        totalDuration: 0,
+        totalWords: 0,
+        totalNewWords: 0,
+        totalReviewWords: 0,
+        totalForgetNewWords: 0,
+        newWordMasteryRate: null
+    },
+    antiForgettingStats: {
+        totalReviewed: 0,
+        correctRate: 0,
+        forgetCount: 0,
+        sessionCount: 0
+    },
+    leaveCount: 0,
+    highlights: [],
+    improvements: ['这个月我们先稍作调整，期待下个月一起把学习节奏慢慢找回来，继续稳稳往前走。'],
+    goals: ['下月优先恢复稳定上课与复习安排，先把学习节奏重新建立起来。'],
+    allStats: {
+        totalWords: 0,
+        antiForgettingTotalReviewed: 0,
+        antiForgettingSessionCount: 0
+    }
+});
+
+assert(zeroStatsReport.includes('本月暂无课堂与复习数据'), '0 正课 + 0 复习时月末总结应使用暖心寄语式鼓励文案');
+assert(!zeroStatsReport.includes('全勤，出勤超棒'), '0 正课时月末总结不应输出全勤文案');
+
+const reviewOnlyReport = buildMonthlySummaryReport({
+    reportStudentName: '小明',
+    monthDisplay: '8🈷️',
+    classStats: {
+        classCount: 0,
+        totalDuration: 0,
+        totalWords: 0,
+        totalNewWords: 0,
+        totalReviewWords: 0,
+        totalForgetNewWords: 0,
+        newWordMasteryRate: null
+    },
+    antiForgettingStats: {
+        totalReviewed: 12,
+        correctRate: 92,
+        forgetCount: 1,
+        sessionCount: 2
+    },
+    leaveCount: 0,
+    highlights: ['▫️ 抗遗忘意识足，主动配合复盘，旧词巩固到位✅'],
+    improvements: ['▫️ 本月正课次数偏少，下月可适当多安排一些课程，保持学习节奏更稳📚'],
+    goals: ['下月适当增加正课安排，尽量保持每周稳定上课频率。'],
+    allStats: {
+        totalWords: 0,
+        antiForgettingTotalReviewed: 12,
+        antiForgettingSessionCount: 2
+    }
+});
+
+assert(reviewOnlyReport.includes('本月暂未安排正课，但复习节奏仍在持续保持。'), '0 正课但有复习时应使用单独的鼓励文案');
+
+assert(
+    buildGoals({ classCount: 0, antiForgettingSessionCount: 0, antiForgettingCorrectRate: 0, antiForgettingTrend: 'stable', totalWords: 0, totalReviewed: 0 }).includes('下月优先恢复稳定上课与复习安排，先把学习节奏重新建立起来。'),
+    '0 正课 + 0 复习时下月目标应优先恢复学习节奏'
 );
 
 const storageMock = {

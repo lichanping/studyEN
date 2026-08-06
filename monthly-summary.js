@@ -167,6 +167,7 @@ export function calculateMonthlyClassStats(userName, yearMonth) {
     let totalNewWords = 0;
     let totalReviewWords = 0;
     let totalDuration = 0;
+    let totalForgetNewWords = 0;
     let classCount = 0;
     const uniqueDates = new Set();
 
@@ -190,14 +191,21 @@ export function calculateMonthlyClassStats(userName, yearMonth) {
         totalNewWords += Number(stats?.newWord) || 0;
         totalReviewWords += Number(stats?.reviewWordCount) || 0;
         totalDuration += Number(stats?.duration) || 0;
+        totalForgetNewWords += Number(stats?.forgetNewWords) || 0;
     });
+
+    const newWordMasteryRate = totalNewWords > 0
+        ? Math.round(((totalNewWords - totalForgetNewWords) / totalNewWords) * 100)
+        : null;
 
     return {
         classCount,
         totalDuration: Math.round(totalDuration * 10) / 10,
         totalNewWords,
         totalReviewWords,
-        totalWords: totalNewWords + totalReviewWords
+        totalWords: totalNewWords + totalReviewWords,
+        totalForgetNewWords,
+        newWordMasteryRate
     };
 }
 
@@ -305,7 +313,8 @@ const HIGHLIGHTS_LIBRARY = [
     { condition: (stats) => stats.antiForgettingCorrectRate >= 90, text: '▫️ 抗遗忘意识足，主动配合复盘，旧词巩固到位✅' },
     { condition: (stats) => stats.classCount >= 4, text: '▫️ 课堂专注认真，积极互动，单词疑问及时问，态度超赞👍' },
     { condition: (stats) => stats.antiForgettingTrend === 'rising', text: '▫️ 易混词/易错词能及时订正，二次出错率低，进步超明显✨' },
-    { condition: (stats) => stats.totalDuration >= 8, text: '▫️ 自主学习性强，课后能主动打卡，坚持超给力🌟' }
+    { condition: (stats) => stats.totalDuration >= 8, text: '▫️ 自主学习性强，课后能主动打卡，坚持超给力🌟' },
+    { condition: (stats) => stats.newWordMasteryRate >= 90, text: '▫️ 本月新学内容掌握得比较扎实，课堂吸收效率不错👏' }
 ];
 
 export function generateHighlights(stats) {
@@ -319,7 +328,8 @@ const IMPROVEMENTS_LIBRARY = [
     { condition: (stats) => stats.antiForgettingSessionCount < 15, text: '▫️ 抗遗忘复盘次数还可以再加一些，尽量把复习频率提上来，记得会更牢🔄' },
     { condition: (stats) => stats.classCount < 4, text: '▫️ 本月正课次数偏少，下月可适当多安排一些课程，保持学习节奏更稳📚' },
     { condition: (stats) => stats.antiForgettingCorrectRate < 90, text: '▫️ 易错词还可以继续针对性巩固，把整体正确率再往上提一提📝' },
-    { condition: (stats) => stats.antiForgettingTrend !== 'rising', text: '▫️ 复习状态还可以再稳一点，争取让后半月的表现持续往上走📈' }
+    { condition: (stats) => stats.antiForgettingTrend !== 'rising', text: '▫️ 复习状态还可以再稳一点，争取让后半月的表现持续往上走📈' },
+    { condition: (stats) => stats.newWordMasteryRate !== null && stats.newWordMasteryRate < 90, text: '▫️ 本月新学内容里还有一些词需要反复回看，建议课后把易忘词再多巩固几遍📝' }
 ];
 
 export function generateImprovements(stats) {
@@ -332,6 +342,10 @@ export function generateImprovements(stats) {
 }
 
 function buildGoals(stats) {
+    if (stats.classCount === 0 && stats.antiForgettingSessionCount === 0 && stats.totalWords === 0) {
+        return ['下月优先恢复稳定上课与复习安排，先把学习节奏重新建立起来。'];
+    }
+
     const goals = [];
     if (stats.classCount < 4) {
         goals.push('下月适当增加正课安排，尽量保持每周稳定上课频率。');
@@ -341,6 +355,9 @@ function buildGoals(stats) {
     }
     if (stats.antiForgettingCorrectRate < 90) {
         goals.push('下月继续针对易错词反复巩固，争取把抗遗忘正确率再往上提。');
+    }
+    if (stats.newWordMasteryRate !== null && stats.newWordMasteryRate < 90) {
+        goals.push('下月继续加强新词课后回顾，尽量把课堂中容易遗忘的词及时滚动复习。');
     }
     if (stats.antiForgettingTrend !== 'rising') {
         goals.push('下月继续优化复习状态，争取让后半月的抗遗忘表现更稳定向上。');
@@ -352,14 +369,26 @@ function buildGoals(stats) {
 }
 
 function getAttendanceText(leaveCount) {
+    if (leaveCount === 0) {
+        return '本月暂无正课安排';
+    }
     return leaveCount === 0 ? '全勤，出勤超棒！' : `本月请假${leaveCount}次，整体出勤稳定。`;
 }
 
 function getAntiForgettingText(correctRate, forgetCount) {
+    if (correctRate === 0 && forgetCount === 0) {
+        return '本月暂无抗遗忘复盘记录。';
+    }
     return `累计遗忘${forgetCount}词，综合正确率${correctRate}%。`;
 }
 
 function buildWarmMessage(reportStudentName, stats) {
+    if (stats.totalWords === 0 && stats.antiForgettingTotalReviewed === 0) {
+        return '这个月我们先稍作调整，期待下个月一起把学习节奏慢慢找回来，继续稳稳往前走。';
+    }
+    if (stats.totalWords === 0 && stats.antiForgettingTotalReviewed > 0) {
+        return '本月暂未安排正课，但复习节奏仍在持续保持。继续把这份坚持延续下去，下个月会更扎实。';
+    }
     return `${reportStudentName}本月累计学词${stats.totalWords}个，抗遗忘复盘${stats.antiForgettingTotalReviewed}词。继续保持这股稳定投入的劲头，下个月会更扎实。`;
 }
 
@@ -377,12 +406,22 @@ function buildMonthlySummaryReport(options) {
     } = options;
     let report = `${reportStudentName}学员${monthDisplay}月末总结\n\n`;
     report += '一、本月核心学习数据📊\n\n';
-    report += `✅ 本月正课次数：${classStats.classCount}节，共${classStats.totalDuration}小时（${getAttendanceText(leaveCount)}）\n`;
-    report += `✅ 本月累计学单词：${classStats.totalWords}个（新词学习${classStats.totalNewWords}个+旧词巩固${classStats.totalReviewWords}个）\n`;
-    report += `✅ 本月抗遗忘复盘：${antiForgettingStats.totalReviewed}个单词，${getAntiForgettingText(antiForgettingStats.correctRate, antiForgettingStats.forgetCount)}\n\n`;
+    if (classStats.classCount === 0 && classStats.totalWords === 0 && antiForgettingStats.totalReviewed === 0) {
+        report += '✅ 本月暂无课堂与复习数据，当前以学习安排衔接和下月节奏准备为主。\n\n';
+    } else {
+        report += `✅ 本月正课次数：${classStats.classCount}节，共${classStats.totalDuration}小时（${classStats.classCount === 0 ? '本月暂无正课安排' : getAttendanceText(leaveCount)}）\n`;
+        report += `✅ 本月累计学单词：${classStats.totalWords}个（新词学习${classStats.totalNewWords}个+旧词巩固${classStats.totalReviewWords}个）\n`;
+        if (classStats.totalNewWords > 0) {
+            report += `✅ 本月正课遗忘词：${classStats.totalForgetNewWords}个，新词掌握率${classStats.newWordMasteryRate}%\n`;
+        }
+        report += `✅ 本月抗遗忘复盘：${antiForgettingStats.totalReviewed}个单词，${antiForgettingStats.totalReviewed === 0 ? '本月暂无抗遗忘复盘记录。' : getAntiForgettingText(antiForgettingStats.correctRate, antiForgettingStats.forgetCount)}\n\n`;
+    }
     report += '二、本月表现点评🌟\n\n';
     report += '👍 闪光点\n\n';
-    (highlights.length > 0 ? highlights : ['▫️ 本月整体表现稳定，学习节奏保持得不错。']).forEach((line) => {
+    const defaultHighlights = classStats.classCount === 0 && antiForgettingStats.totalReviewed === 0
+        ? ['▫️ 这个月我们先稍作调整，期待下个月一起把学习节奏慢慢找回来，继续稳稳往前走。']
+        : ['▫️ 本月整体表现稳定，学习节奏保持得不错。'];
+    (highlights.length > 0 ? highlights : defaultHighlights).forEach((line) => {
         report += `${line}\n`;
     });
     report += '\n📌 小提升点\n\n';
