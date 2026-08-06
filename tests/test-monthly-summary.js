@@ -48,6 +48,12 @@ assert(
 );
 
 assert(
+    prdSource.includes('若学员姓名为 3 个字，月末总结报告正文中的学员称呼去掉姓氏，仅保留后 2 个字')
+        && prdSource.includes('下载的 txt 文件名仍使用学员完整姓名'),
+    'PRD 应明确三字学员名仅在月末总结报告正文中去姓，下载文件名仍保留全名'
+);
+
+assert(
     indexSource.includes('id="monthlySummaryButton"')
         && indexSource.includes('id="recordLeaveButton"')
         && indexSource.includes('id="viewLeaveRecordsButton"'),
@@ -76,6 +82,7 @@ assert(/export\s+function\s+resolveLeaveCountOverride/.test(monthlySummarySource
 assert(/export\s+function\s+getMonthDisplay/.test(monthlySummarySource), 'monthly-summary.js 应导出 getMonthDisplay');
 assert(/export\s+function\s+summarizeFeedbackEntries/.test(monthlySummarySource), 'monthly-summary.js 应导出 summarizeFeedbackEntries');
 assert(/export\s+function\s+generateImprovements/.test(monthlySummarySource), 'monthly-summary.js 应导出 generateImprovements');
+assert(/export\s+function\s+getMonthlySummaryStudentDisplayName/.test(monthlySummarySource), 'monthly-summary.js 应导出 getMonthlySummaryStudentDisplayName');
 
 assert(
     classFormalSource.includes('forgetWord')
@@ -101,6 +108,11 @@ const resolveLeaveCountOverrideCode = extractBlock(monthlySummarySource, 'export
 const summarizeFeedbackEntriesCode = extractBlock(monthlySummarySource, 'export function summarizeFeedbackEntries');
 const improvementsLibraryCode = extractBlock(monthlySummarySource, 'const IMPROVEMENTS_LIBRARY = [', '[', ']');
 const generateImprovementsCode = extractBlock(monthlySummarySource, 'export function generateImprovements');
+const getMonthlySummaryStudentDisplayNameCode = extractBlock(monthlySummarySource, 'export function getMonthlySummaryStudentDisplayName');
+const getAttendanceTextCode = extractBlock(monthlySummarySource, 'function getAttendanceText');
+const getAntiForgettingTextCode = extractBlock(monthlySummarySource, 'function getAntiForgettingText');
+const buildWarmMessageCode = extractBlock(monthlySummarySource, 'function buildWarmMessage');
+const buildMonthlySummaryReportCode = extractBlock(monthlySummarySource, 'function buildMonthlySummaryReport');
 const storeClassStatisticsCode = extractBlock(commonFunctionsSource, 'export function storeClassStatistics');
 
 const calculateMonthlyClassStats = new Function(
@@ -162,11 +174,17 @@ assert.strictEqual(classStats.totalWords, 65, '月末总结应输出新词与复
 
 const getMonthDisplay = new Function(`${getMonthDisplayCode.replace('export ', '')}; return getMonthDisplay;`)();
 const resolveLeaveCountOverride = new Function(`${resolveLeaveCountOverrideCode.replace('export ', '')}; return resolveLeaveCountOverride;`)();
+const getMonthlySummaryStudentDisplayName = new Function(
+    `${getMonthlySummaryStudentDisplayNameCode.replace('export ', '')}; return getMonthlySummaryStudentDisplayName;`
+)();
 const summarizeFeedbackEntries = new Function(
     `${parseLocalDateYmdCode}\n${getMonthRangeCode}\n${summarizeFeedbackEntriesCode.replace('export ', '')}\nreturn summarizeFeedbackEntries;`
 )();
 const generateImprovements = new Function(
     `${improvementsLibraryCode};\n${generateImprovementsCode.replace('export ', '')}\nreturn generateImprovements;`
+)();
+const buildMonthlySummaryReport = new Function(
+    `${getAttendanceTextCode}\n${getAntiForgettingTextCode}\n${buildWarmMessageCode}\n${buildMonthlySummaryReportCode}\nreturn buildMonthlySummaryReport;`
 )();
 
 const antiForgettingStats = summarizeFeedbackEntries([
@@ -187,6 +205,41 @@ assert.strictEqual(getMonthDisplay('2026-08'), '8🈷️', '月末总结标题�
 assert.strictEqual(resolveLeaveCountOverride('', 3), 0, '手动清空请假输入框应视为 0 次请假');
 assert.strictEqual(resolveLeaveCountOverride('0', 3), 0, '手动输入 0 应覆盖自动请假次数');
 assert.strictEqual(resolveLeaveCountOverride('2', 3), 2, '手动输入正整数时应优先生效');
+assert.strictEqual(getMonthlySummaryStudentDisplayName('徐智浩'), '智浩', '三字学员名在月末总结正文中应去掉姓氏');
+assert.strictEqual(getMonthlySummaryStudentDisplayName('李响'), '李响', '两字学员名在月末总结正文中应保持原样');
+assert.strictEqual(getMonthlySummaryStudentDisplayName('欧阳娜娜'), '欧阳娜娜', '非三字学员名在月末总结正文中不应裁剪');
+
+const reportText = buildMonthlySummaryReport({
+    reportStudentName: '智浩',
+    monthDisplay: '8🈷️',
+    classStats: {
+        classCount: 3,
+        totalDuration: 3,
+        totalWords: 65,
+        totalNewWords: 53,
+        totalReviewWords: 12
+    },
+    antiForgettingStats: {
+        totalReviewed: 25,
+        correctRate: 88,
+        forgetCount: 3
+    },
+    leaveCount: 1,
+    highlights: ['▫️ 课堂专注认真，积极互动，单词疑问及时问，态度超赞👍'],
+    improvements: ['▫️ 抗遗忘复盘次数还可以再加一些，尽量把复习频率提上来，记得会更牢🔄'],
+    goals: ['下月增加抗遗忘复盘次数，尽量形成更稳定的复习节奏。'],
+    allStats: {
+        totalWords: 65,
+        antiForgettingTotalReviewed: 25
+    }
+});
+
+assert(reportText.startsWith('智浩学员8🈷️月末总结'), '月末总结标题中的三字学员名应去掉姓氏');
+assert(reportText.includes('智浩本月累计学词65个，抗遗忘复盘25词。'), '月末总结寄语中的三字学员名应去掉姓氏');
+assert(
+    monthlySummarySource.includes('link.download = `${userName}_${yearMonth}_月末总结.txt`;'),
+    '月末总结下载文件名应继续使用学员完整姓名'
+);
 
 assert(
     generateImprovements({ antiForgettingSessionCount: 14, classCount: 4, antiForgettingCorrectRate: 95 }).some((text) => text.includes('复盘次数还可以再加一些')),

@@ -142,6 +142,11 @@ export function getMonthDisplay(yearMonth) {
     return `${Number(month || 0)}🈷️`;
 }
 
+export function getMonthlySummaryStudentDisplayName(userName) {
+    const chars = [...String(userName || '').trim()];
+    return chars.length === 3 ? chars.slice(1).join('') : String(userName || '').trim();
+}
+
 export function resolveLeaveCountOverride(rawValue, autoLeaveCount) {
     const normalized = String(rawValue ?? '').trim();
     if (normalized === '') return 0;
@@ -354,8 +359,43 @@ function getAntiForgettingText(correctRate, forgetCount) {
     return `累计遗忘${forgetCount}词，综合正确率${correctRate}%。`;
 }
 
-function buildWarmMessage(userName, stats) {
-    return `${userName}本月累计学词${stats.totalWords}个，抗遗忘复盘${stats.antiForgettingTotalReviewed}词。继续保持这股稳定投入的劲头，下个月会更扎实。`;
+function buildWarmMessage(reportStudentName, stats) {
+    return `${reportStudentName}本月累计学词${stats.totalWords}个，抗遗忘复盘${stats.antiForgettingTotalReviewed}词。继续保持这股稳定投入的劲头，下个月会更扎实。`;
+}
+
+function buildMonthlySummaryReport(options) {
+    const {
+        reportStudentName,
+        monthDisplay,
+        classStats,
+        antiForgettingStats,
+        leaveCount,
+        highlights,
+        improvements,
+        goals,
+        allStats
+    } = options;
+    let report = `${reportStudentName}学员${monthDisplay}月末总结\n\n`;
+    report += '一、本月核心学习数据📊\n\n';
+    report += `✅ 本月正课次数：${classStats.classCount}节，共${classStats.totalDuration}小时（${getAttendanceText(leaveCount)}）\n`;
+    report += `✅ 本月累计学单词：${classStats.totalWords}个（新词学习${classStats.totalNewWords}个+旧词巩固${classStats.totalReviewWords}个）\n`;
+    report += `✅ 本月抗遗忘复盘：${antiForgettingStats.totalReviewed}个单词，${getAntiForgettingText(antiForgettingStats.correctRate, antiForgettingStats.forgetCount)}\n\n`;
+    report += '二、本月表现点评🌟\n\n';
+    report += '👍 闪光点\n\n';
+    (highlights.length > 0 ? highlights : ['▫️ 本月整体表现稳定，学习节奏保持得不错。']).forEach((line) => {
+        report += `${line}\n`;
+    });
+    report += '\n📌 小提升点\n\n';
+    improvements.forEach((line) => {
+        report += `${line}\n`;
+    });
+    report += '\n三、下月小目标🎯\n\n';
+    goals.forEach((goal, index) => {
+        report += `${index + 1}. ${goal}\n`;
+    });
+    report += '\n四、教练暖心寄语💌\n\n';
+    report += buildWarmMessage(reportStudentName, allStats);
+    return report;
 }
 
 function buildPreviewHtml(classStats, antiForgettingStats) {
@@ -406,27 +446,19 @@ export async function generateMonthlySummary() {
     const improvements = generateImprovements(allStats);
     const goals = buildGoals(allStats);
     const monthDisplay = getMonthDisplay(yearMonth);
+    const reportStudentName = getMonthlySummaryStudentDisplayName(userName);
 
-    let report = `${userName}学员${monthDisplay}月末总结\n\n`;
-    report += '一、本月核心学习数据📊\n\n';
-    report += `✅ 本月正课次数：${classStats.classCount}节，共${classStats.totalDuration}小时（${getAttendanceText(leaveCount)}）\n`;
-    report += `✅ 本月累计学单词：${classStats.totalWords}个（新词学习${classStats.totalNewWords}个+旧词巩固${classStats.totalReviewWords}个）\n`;
-    report += `✅ 本月抗遗忘复盘：${antiForgettingStats.totalReviewed}个单词，${getAntiForgettingText(antiForgettingStats.correctRate, antiForgettingStats.forgetCount)}\n\n`;
-    report += '二、本月表现点评🌟\n\n';
-    report += '👍 闪光点\n\n';
-    (highlights.length > 0 ? highlights : ['▫️ 本月整体表现稳定，学习节奏保持得不错。']).forEach((line) => {
-        report += `${line}\n`;
+    const report = buildMonthlySummaryReport({
+        reportStudentName,
+        monthDisplay,
+        classStats,
+        antiForgettingStats,
+        leaveCount,
+        highlights,
+        improvements,
+        goals,
+        allStats
     });
-    report += '\n📌 小提升点\n\n';
-    improvements.forEach((line) => {
-        report += `${line}\n`;
-    });
-    report += '\n三、下月小目标🎯\n\n';
-    goals.forEach((goal, index) => {
-        report += `${index + 1}. ${goal}\n`;
-    });
-    report += '\n四、教练暖心寄语💌\n\n';
-    report += buildWarmMessage(userName, allStats);
 
     copyToClipboard(report);
 
