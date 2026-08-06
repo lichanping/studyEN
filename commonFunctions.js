@@ -1794,6 +1794,7 @@ export function addRightClickPasteEvent(element) {
 }
 
 export async function handleNewVersionFeedbackClick() {
+    const userName = document.getElementById("userName").value;
 
     const reviewInputs = Array.from(document.querySelectorAll('.antiForgettingReviewWord'));
     const keyLanguagePoints = (document.getElementById('keyLanguagePoints')?.value || '').trim();
@@ -1812,6 +1813,13 @@ export async function handleNewVersionFeedbackClick() {
         const v = parseInt((input.value || '').trim(), 10);
         return sum + (Number.isFinite(v) ? v : 0);
     }, 0) + autoReviewWordCount;
+    const forgetCountInput = document.getElementById('antiForgettingForgetWord');
+    const parsedForgetCount = parseInt((forgetCountInput?.value || '').trim(), 10);
+    const forgetCount = Number.isFinite(parsedForgetCount) && parsedForgetCount >= 0 ? parsedForgetCount : 0;
+    const correctWordsCount = Math.max(antiForgettingReviewWord - forgetCount, 0);
+    const correctRate = antiForgettingReviewWord > 0
+        ? (correctWordsCount / antiForgettingReviewWord * 100).toFixed(0)
+        : '0';
 
     // Build message
     const motto = getRandomMotto();
@@ -1826,6 +1834,10 @@ export async function handleNewVersionFeedbackClick() {
     copyToClipboard(message);
     // Show alert with the generated message
     showLongText(`${message}`);
+
+    if (!skipStats) {
+        storeFeedbackInFile(userName, correctRate, antiForgettingReviewWord, correctWordsCount);
+    }
 }
 
 // =========================

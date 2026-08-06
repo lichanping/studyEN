@@ -54,6 +54,12 @@ assert(
 );
 
 assert(
+    prdSource.includes('点击 `新版反馈` 后也会写入 `FeedbackDB.feedbackData[userName].feedbackEntries`')
+        && prdSource.includes('点击 `新版反馈`：不再读取“遗忘词（英文+中文）”文本框做统计，直接读取“遗忘：”输入框里的数字'),
+    'PRD 应明确新版反馈也会写入月末总结依赖的 feedbackEntries，且遗忘数直接读取遗忘输入框'
+);
+
+assert(
     indexSource.includes('id="monthlySummaryButton"')
         && indexSource.includes('id="recordLeaveButton"')
         && indexSource.includes('id="viewLeaveRecordsButton"'),

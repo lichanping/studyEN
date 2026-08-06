@@ -18,8 +18,16 @@
 | 数据项 | 当前来源 | 当前状态 |
 |---|---|---|
 | 正课次数、课时、新词数、复习词数 | `${userName}_classStatistics` | 已存在，可直接复用 |
-| 抗遗忘复盘词数、正确率 | `FeedbackDB.feedbackData.feedbackEntries` | 已存在，可直接复用 |
+| 抗遗忘复盘词数、正确率 | `FeedbackDB.feedbackData.feedbackEntries` | 已存在；本次需将“新版反馈”也归并到同一记录来源 |
 | 请假记录 | `${userName}_leaves` | 本次新增 |
+
+### 抗遗忘反馈记录归并约束
+
+1. 月末总结统计抗遗忘复盘时，统一只读取 `FeedbackDB.feedbackData[userName].feedbackEntries`。
+2. 点击 `抗遗忘课堂反馈` 与点击 `新版反馈` 后，都需要写入同一种复习记录格式，便于月末总结统一汇总。
+3. 复习记录沿用现有格式：`YYYY-MM-DD(周X): rate% | totalWordsReviewed | correctWordsCount`。
+4. 同一学员同一天若重复写入复习记录，继续沿用现有“按日期覆盖”的行为，后一次写入覆盖前一次写入；本次不新增“同日多条并存”的存储结构。
+5. `forgetWords` 明细文本仍属于课堂反馈附加信息，不作为月末总结统计的唯一数据源。
 
 ## 优先级
 
@@ -65,11 +73,29 @@
 #### 本月抗遗忘复盘
 
 1. 数据源：`FeedbackDB.feedbackData[userName].feedbackEntries`
-2. 解析格式：`YYYY-MM-DD(周X): rate% | totalWordsReviewed | correctWordsCount`
-3. 复盘词数：`SUM(totalWordsReviewed)`
-4. 月度正确率不直接取单条记录中的 `rate%`，而是按所选月份全部命中记录先汇总：
+2. 该数据源需同时包含点击 `抗遗忘课堂反馈` 与点击 `新版反馈` 后写入的复习记录
+3. 两个按钮写入的记录格式保持一致：`YYYY-MM-DD(周X): rate% | totalWordsReviewed | correctWordsCount`
+4. `totalWordsReviewed` 为当前页“复习词数输入框合计 + 重点语言点非空行数 + 语言闯关非空行数”
+5. `correctWordsCount` 统一按 `totalWordsReviewed - forgetCount` 计算
+6. `forgetCount` 取值规则分按钮来源：
+  - 点击 `抗遗忘课堂反馈`：继续按现有逻辑，从“遗忘词（英文+中文）”文本框中统计英文单词数
+  - 点击 `新版反馈`：不再读取“遗忘词（英文+中文）”文本框做统计，直接读取“遗忘：”输入框里的数字
+7. 复盘词数：`SUM(totalWordsReviewed)`
+8. 月度正确率不直接取单条记录中的 `rate%`，而是按所选月份全部命中记录先汇总：
   `SUM(correctWordsCount) / SUM(totalWordsReviewed) * 100`
-5. 遗忘词数可按 `SUM(totalWordsReviewed) - SUM(correctWordsCount)` 回算，用于文案生成
+9. 遗忘词数可按 `SUM(totalWordsReviewed) - SUM(correctWordsCount)` 回算，用于文案生成
+#### 抗遗忘反馈按钮写库异同
+
+1. 共同点
+  - 都写入 `FeedbackDB.feedbackData[userName].feedbackEntries`
+  - 都使用同一条统计记录格式：`YYYY-MM-DD(周X): rate% | totalWordsReviewed | correctWordsCount`
+  - 都可被月末总结直接纳入抗遗忘复盘统计
+  - 同一学员同一天重复写入时，都按日期覆盖旧记录
+2. 差异点
+  - `抗遗忘课堂反馈` 会继续依赖“遗忘词（英文+中文）”文本框统计 `forgetCount`
+  - `新版反馈` 改为直接读取“遗忘：”输入框数字作为 `forgetCount`，不依赖遗忘词列表文本统计
+  - `抗遗忘课堂反馈` 继续承载遗忘词明细、发音词明细等课堂反馈文案
+  - `新版反馈` 本需求的核心是补齐月末总结所需的复习统计 record；不要求新增新的月末总结专用存储结构
 
 #### 抗遗忘趋势
 
@@ -113,9 +139,9 @@
 1. 标题格式：`${userName}学员8🈷️月末总结`
 2. 若学员姓名为 3 个字，月末总结报告正文中的学员称呼去掉姓氏，仅保留后 2 个字；非 3 个字姓名保持原样
 3. 下载的 txt 文件名仍使用学员完整姓名
-2. 报告分四段：核心学习数据、表现点评、下月目标、暖心寄语
-4. 自动复制到剪贴板
-5. 自动下载 `${userName}_${yearMonth}_月末总结.txt`
+4. 报告分四段：核心学习数据、表现点评、下月目标、暖心寄语
+5. 自动复制到剪贴板
+6. 自动下载 `${userName}_${yearMonth}_月末总结.txt`
 
 ## 功能二：请假记录管理（P1）
 
@@ -201,6 +227,9 @@ value:
 3. 报告为纯文本，且自动复制、自动下载 `.txt`
 4. 仅统计抗遗忘复习的正确率/遗忘情况，不要求正课月度正确率
 5. 抗遗忘正确率需按月内全部命中记录汇总后统一计算，不直接使用单条 `rate%`
+6. 点击 `新版反馈` 后也会写入 `FeedbackDB.feedbackData[userName].feedbackEntries`，且月末总结能统计到该条复习记录
+7. 点击 `新版反馈` 时，复习记录里的遗忘词数直接取“遗忘：”输入框数字，不依赖遗忘词列表文本框
+8. 同一学员同一天分别点击两个反馈按钮时，月末总结最终读取该日期最后一次写入的复习记录
 
 ### P1 请假记录
 
