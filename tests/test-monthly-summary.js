@@ -126,6 +126,7 @@ const generateImprovementsCode = extractBlock(monthlySummarySource, 'export func
 const getMonthlySummaryStudentDisplayNameCode = extractBlock(monthlySummarySource, 'export function getMonthlySummaryStudentDisplayName');
 const getAttendanceTextCode = extractBlock(monthlySummarySource, 'function getAttendanceText');
 const getAntiForgettingTextCode = extractBlock(monthlySummarySource, 'function getAntiForgettingText');
+const getFormalStudyTextCode = extractBlock(monthlySummarySource, 'function getFormalStudyText');
 const buildWarmMessageCode = extractBlock(monthlySummarySource, 'function buildWarmMessage');
 const buildGoalsCode = extractBlock(monthlySummarySource, 'function buildGoals');
 const buildMonthlySummaryReportCode = extractBlock(monthlySummarySource, 'function buildMonthlySummaryReport');
@@ -207,9 +208,9 @@ const generateImprovements = new Function(
 )();
 const buildGoals = new Function(`${buildGoalsCode}\nreturn buildGoals;`)();
 const buildMonthlySummaryReport = new Function(
-    `${getAttendanceTextCode}\n${getAntiForgettingTextCode}\n${buildWarmMessageCode}\n${buildMonthlySummaryReportCode}\nreturn buildMonthlySummaryReport;`
+    `${getAttendanceTextCode}\n${getAntiForgettingTextCode}\n${getFormalStudyTextCode}\n${buildWarmMessageCode}\n${buildMonthlySummaryReportCode}\nreturn buildMonthlySummaryReport;`
 )();
-const buildPreviewHtml = new Function(`${buildPreviewHtmlCode}\nreturn buildPreviewHtml;`)();
+const buildPreviewHtml = new Function(`${getFormalStudyTextCode}\n${buildPreviewHtmlCode}\nreturn buildPreviewHtml;`)();
 
 const antiForgettingStats = summarizeFeedbackEntries([
     '2026-08-02(周日): 80% | 10|8',
@@ -269,7 +270,7 @@ const reportText = buildMonthlySummaryReport({
 
 assert(reportText.startsWith('智浩学员8🈷️月末总结'), '月末总结标题中的三字学员名应去掉姓氏');
 assert(reportText.includes('智浩本月累计学词65个，抗遗忘复盘25词。'), '月末总结寄语中的三字学员名应去掉姓氏');
-assert(reportText.includes('本月正课遗忘词：4个，新词掌握率92%'), '月末总结 txt 正文应展示正课遗忘词和新词掌握率');
+assert(reportText.includes('本月累计学单词：65个（新词学习53个+旧词巩固12个），累计遗忘4词，综合正确率92%。'), '月末总结 txt 正文应将正课学习汇总为与抗遗忘一致的单行格式');
 assert(
     monthlySummarySource.includes('link.download = `${userName}_${yearMonth}_月末总结.txt`;'),
     '月末总结下载文件名应继续使用学员完整姓名'
@@ -287,7 +288,7 @@ const previewHtml = buildPreviewHtml({
     totalReviewed: 220,
     correctRate: 99
 });
-assert(previewHtml.includes('正课遗忘词：7 个（新词掌握率 89%）'), '月末总结预览区应展示正课遗忘词和新词掌握率');
+assert(previewHtml.includes('累计学单词：163个（新词学习63个+旧词巩固100个），累计遗忘7词，综合正确率89%'), '月末总结预览区应按单行格式展示正课遗忘词和正确率');
 
 assert(
     generateHighlights({ antiForgettingCorrectRate: 80, classCount: 4, antiForgettingTrend: 'stable', totalDuration: 3, newWordMasteryRate: 90 }).some((text) => text.includes('本月新学内容掌握得比较扎实')),
@@ -341,6 +342,8 @@ const zeroStatsReport = buildMonthlySummaryReport({
 
 assert(zeroStatsReport.includes('本月暂无课堂与复习数据'), '0 正课 + 0 复习时月末总结应使用暖心寄语式鼓励文案');
 assert(!zeroStatsReport.includes('全勤，出勤超棒'), '0 正课时月末总结不应输出全勤文案');
+assert.strictEqual((zeroStatsReport.match(/这个月我们先稍作调整，期待下个月一起把学习节奏慢慢找回来，继续稳稳往前走。/g) || []).length, 1, '0 正课 + 0 复习时同一句暖心文案不应在 txt 中重复出现');
+assert(!zeroStatsReport.includes('📌 小提升点'), '0 正课 + 0 复习时 txt 应省略冗余的小提升点段落');
 
 const reviewOnlyReport = buildMonthlySummaryReport({
     reportStudentName: '小明',

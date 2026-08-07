@@ -383,6 +383,15 @@ function getAntiForgettingText(correctRate, forgetCount) {
     return `累计遗忘${forgetCount}词，综合正确率${correctRate}%。`;
 }
 
+function getFormalStudyText(classStats) {
+    const baseText = `本月累计学单词：${classStats.totalWords}个（新词学习${classStats.totalNewWords}个+旧词巩固${classStats.totalReviewWords}个）`;
+    if (classStats.totalNewWords <= 0 || classStats.newWordMasteryRate === null) {
+        return `${baseText}。`;
+    }
+
+    return `${baseText}，累计遗忘${classStats.totalForgetNewWords}词，综合正确率${classStats.newWordMasteryRate}%。`;
+}
+
 function buildWarmMessage(reportStudentName, stats) {
     if (stats.totalWords === 0 && stats.antiForgettingTotalReviewed === 0) {
         return '这个月我们先稍作调整，期待下个月一起把学习节奏慢慢找回来，继续稳稳往前走。';
@@ -409,12 +418,18 @@ function buildMonthlySummaryReport(options) {
     report += '一、本月核心学习数据📊\n\n';
     if (classStats.classCount === 0 && classStats.totalWords === 0 && antiForgettingStats.totalReviewed === 0) {
         report += '✅ 本月暂无课堂与复习数据，当前以学习安排衔接和下月节奏准备为主。\n\n';
+        report += '二、本月表现点评🌟\n\n';
+        report += '本月暂无可统计的课堂与复习表现，本段先不做表现评价。\n\n';
+        report += '三、下月小目标🎯\n\n';
+        goals.forEach((goal, index) => {
+            report += `${index + 1}. ${goal}\n`;
+        });
+        report += '\n四、教练暖心寄语💌\n\n';
+        report += buildWarmMessage(reportStudentName, allStats);
+        return report;
     } else {
         report += `✅ 本月正课次数：${classStats.classCount}节，共${classStats.totalDuration}小时（${classStats.classCount === 0 ? '本月暂无正课安排' : getAttendanceText(leaveCount)}）\n`;
-        report += `✅ 本月累计学单词：${classStats.totalWords}个（新词学习${classStats.totalNewWords}个+旧词巩固${classStats.totalReviewWords}个）\n`;
-        if (classStats.totalNewWords > 0) {
-            report += `✅ 本月正课遗忘词：${classStats.totalForgetNewWords}个，新词掌握率${classStats.newWordMasteryRate}%\n`;
-        }
+        report += `✅ ${getFormalStudyText(classStats)}\n`;
         report += `✅ 本月抗遗忘复盘：${antiForgettingStats.totalReviewed}个单词，${antiForgettingStats.totalReviewed === 0 ? '本月暂无抗遗忘复盘记录。' : getAntiForgettingText(antiForgettingStats.correctRate, antiForgettingStats.forgetCount)}\n\n`;
     }
     report += '二、本月表现点评🌟\n\n';
@@ -441,13 +456,16 @@ function buildMonthlySummaryReport(options) {
 function buildPreviewHtml(classStats, antiForgettingStats) {
     const lines = [
         `正课次数：${classStats.classCount} 节，共 ${classStats.totalDuration} 小时`,
-        `累计学单词：${classStats.totalWords} 个（新词${classStats.totalNewWords}+旧词${classStats.totalReviewWords}）`,
+        getFormalStudyText({
+            ...classStats,
+            totalWords: classStats.totalWords,
+            totalNewWords: classStats.totalNewWords,
+            totalReviewWords: classStats.totalReviewWords,
+            totalForgetNewWords: classStats.totalForgetNewWords,
+            newWordMasteryRate: classStats.newWordMasteryRate
+        }).replace('本月', '').replace(/。$/, ''),
         `抗遗忘复盘：${antiForgettingStats.totalReviewed} 词（正确率 ${antiForgettingStats.correctRate}%）`
     ];
-
-    if (classStats.totalNewWords > 0) {
-        lines.splice(2, 0, `正课遗忘词：${classStats.totalForgetNewWords} 个（新词掌握率 ${classStats.newWordMasteryRate}%）`);
-    }
 
     return lines.map((line) => `<div style="color:#e5e7eb;font-size:15px;font-weight:600;">${line}</div>`).join('');
 }
