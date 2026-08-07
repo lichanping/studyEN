@@ -333,6 +333,10 @@ const IMPROVEMENTS_LIBRARY = [
 ];
 
 export function generateImprovements(stats) {
+    if (stats.classCount === 0 && stats.antiForgettingSessionCount === 0 && stats.totalWords === 0) {
+        return ['这个月我们先稍作调整，期待下个月一起把学习节奏慢慢找回来，继续稳稳往前走。'];
+    }
+
     const matched = IMPROVEMENTS_LIBRARY
         .filter((item) => item.condition(stats))
         .map((item) => item.text)
@@ -369,9 +373,6 @@ function buildGoals(stats) {
 }
 
 function getAttendanceText(leaveCount) {
-    if (leaveCount === 0) {
-        return '本月暂无正课安排';
-    }
     return leaveCount === 0 ? '全勤，出勤超棒！' : `本月请假${leaveCount}次，整体出勤稳定。`;
 }
 
@@ -438,11 +439,17 @@ function buildMonthlySummaryReport(options) {
 }
 
 function buildPreviewHtml(classStats, antiForgettingStats) {
-    return [
+    const lines = [
         `正课次数：${classStats.classCount} 节，共 ${classStats.totalDuration} 小时`,
         `累计学单词：${classStats.totalWords} 个（新词${classStats.totalNewWords}+旧词${classStats.totalReviewWords}）`,
         `抗遗忘复盘：${antiForgettingStats.totalReviewed} 词（正确率 ${antiForgettingStats.correctRate}%）`
-    ].map((line) => `<div style="color:#e5e7eb;font-size:15px;font-weight:600;">${line}</div>`).join('');
+    ];
+
+    if (classStats.totalNewWords > 0) {
+        lines.splice(2, 0, `正课遗忘词：${classStats.totalForgetNewWords} 个（新词掌握率 ${classStats.newWordMasteryRate}%）`);
+    }
+
+    return lines.map((line) => `<div style="color:#e5e7eb;font-size:15px;font-weight:600;">${line}</div>`).join('');
 }
 
 export async function generateMonthlySummary() {

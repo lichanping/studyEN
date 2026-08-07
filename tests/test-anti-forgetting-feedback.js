@@ -35,6 +35,7 @@ function extractBlock(source, signature, openChar = '{', closeChar = '}') {
 const commonFunctionsSource = read('commonFunctions.js');
 const countNonEmptyLinesCode = extractBlock(commonFunctionsSource, 'function countNonEmptyLines');
 const handleNewVersionFeedbackClickCode = extractBlock(commonFunctionsSource, 'export async function handleNewVersionFeedbackClick');
+const formatFeedbackContentCode = extractBlock(commonFunctionsSource, 'async function formatFeedbackContent');
 
 let copiedMessage = '';
 let shownMessage = '';
@@ -61,6 +62,21 @@ const documentMock = {
         return reviewInputs;
     },
     getElementById(id) {
+        if (id === 'teacherName') {
+            return {
+                selectedIndex: 0,
+                options: [{ text: '英语提升李教练' }]
+            };
+        }
+        if (id === 'statsModeMonth') {
+            return { checked: false };
+        }
+        if (id === 'statsMonthInput') {
+            return { value: '2026-08' };
+        }
+        if (id === 'daysRangeInput') {
+            return { value: '7' };
+        }
         return elements[id] || null;
     }
 };
@@ -93,6 +109,11 @@ const handleNewVersionFeedbackClick = new Function(
     }
 );
 
+const formatFeedbackContent = new Function(
+    'document',
+    `${formatFeedbackContentCode}\nreturn formatFeedbackContent;`
+)(documentMock);
+
 (async () => {
     await handleNewVersionFeedbackClick();
 
@@ -102,8 +123,20 @@ const handleNewVersionFeedbackClick = new Function(
         ['邱睿', '90', 10, 9],
         '新版反馈应按遗忘输入框数字写入 feedbackEntries 统计记录，而不是按遗忘词文本计数'
     );
-    assert(copiedMessage.includes('1. 复习 10 词'), '新版反馈文案应展示汇总后的复习词数');
+    assert(copiedMessage.includes('1. 复习 10 词，遗忘 1 词'), '新版反馈文案应展示汇总后的复习词数和遗忘词数');
     assert.strictEqual(shownMessage, copiedMessage, '新版反馈展示文案应与复制内容一致');
+
+    const formattedContent = await formatFeedbackContent({
+        forgetWords: {},
+        feedbackEntries: [
+            '2026-08-05(三): 100% | 10|10',
+            '2026-08-06(四): 100% | 200|200',
+            '2026-08-07(五): 90% | 10|9'
+        ]
+    });
+
+    assert(formattedContent.includes('平均正确率: 100 %'), '抗遗忘统计详情应按汇总结果并沿用全局四舍五入口径显示 100%');
+    assert(formattedContent.includes('总复习词汇: 220 词'), '抗遗忘统计详情应正确汇总复习词总数');
     console.log('test-anti-forgetting-feedback passed');
 })().catch((error) => {
     console.error(error);

@@ -129,6 +129,7 @@ const getAntiForgettingTextCode = extractBlock(monthlySummarySource, 'function g
 const buildWarmMessageCode = extractBlock(monthlySummarySource, 'function buildWarmMessage');
 const buildGoalsCode = extractBlock(monthlySummarySource, 'function buildGoals');
 const buildMonthlySummaryReportCode = extractBlock(monthlySummarySource, 'function buildMonthlySummaryReport');
+const buildPreviewHtmlCode = extractBlock(monthlySummarySource, 'function buildPreviewHtml');
 const storeClassStatisticsCode = extractBlock(commonFunctionsSource, 'export function storeClassStatistics');
 
 const calculateMonthlyClassStats = new Function(
@@ -208,6 +209,7 @@ const buildGoals = new Function(`${buildGoalsCode}\nreturn buildGoals;`)();
 const buildMonthlySummaryReport = new Function(
     `${getAttendanceTextCode}\n${getAntiForgettingTextCode}\n${buildWarmMessageCode}\n${buildMonthlySummaryReportCode}\nreturn buildMonthlySummaryReport;`
 )();
+const buildPreviewHtml = new Function(`${buildPreviewHtmlCode}\nreturn buildPreviewHtml;`)();
 
 const antiForgettingStats = summarizeFeedbackEntries([
     '2026-08-02(周日): 80% | 10|8',
@@ -231,6 +233,13 @@ assert.strictEqual(getMonthlySummaryStudentDisplayName('徐智浩'), '智浩', '
 assert.strictEqual(getMonthlySummaryStudentDisplayName('李响'), '李响', '两字学员名在月末总结正文中应保持原样');
 assert.strictEqual(getMonthlySummaryStudentDisplayName('欧阳娜娜'), '欧阳娜娜', '非三字学员名在月末总结正文中不应裁剪');
 
+const roundedEdgeStats = summarizeFeedbackEntries([
+    '2026-08-05(周三): 100% | 10|10',
+    '2026-08-06(周四): 100% | 200|200',
+    '2026-08-07(周五): 90% | 10|9'
+], '2026-08');
+assert.strictEqual(roundedEdgeStats.correctRate, 100, '月末总结抗遗忘正确率应按汇总结果沿用全局四舍五入口径显示整数百分比');
+
 const reportText = buildMonthlySummaryReport({
     reportStudentName: '智浩',
     monthDisplay: '8🈷️',
@@ -239,7 +248,9 @@ const reportText = buildMonthlySummaryReport({
         totalDuration: 3,
         totalWords: 65,
         totalNewWords: 53,
-        totalReviewWords: 12
+        totalReviewWords: 12,
+        totalForgetNewWords: 4,
+        newWordMasteryRate: 92
     },
     antiForgettingStats: {
         totalReviewed: 25,
@@ -258,10 +269,25 @@ const reportText = buildMonthlySummaryReport({
 
 assert(reportText.startsWith('智浩学员8🈷️月末总结'), '月末总结标题中的三字学员名应去掉姓氏');
 assert(reportText.includes('智浩本月累计学词65个，抗遗忘复盘25词。'), '月末总结寄语中的三字学员名应去掉姓氏');
+assert(reportText.includes('本月正课遗忘词：4个，新词掌握率92%'), '月末总结 txt 正文应展示正课遗忘词和新词掌握率');
 assert(
     monthlySummarySource.includes('link.download = `${userName}_${yearMonth}_月末总结.txt`;'),
     '月末总结下载文件名应继续使用学员完整姓名'
 );
+
+const previewHtml = buildPreviewHtml({
+    classCount: 2,
+    totalDuration: 1.5,
+    totalWords: 163,
+    totalNewWords: 63,
+    totalReviewWords: 100,
+    totalForgetNewWords: 7,
+    newWordMasteryRate: 89
+}, {
+    totalReviewed: 220,
+    correctRate: 99
+});
+assert(previewHtml.includes('正课遗忘词：7 个（新词掌握率 89%）'), '月末总结预览区应展示正课遗忘词和新词掌握率');
 
 assert(
     generateHighlights({ antiForgettingCorrectRate: 80, classCount: 4, antiForgettingTrend: 'stable', totalDuration: 3, newWordMasteryRate: 90 }).some((text) => text.includes('本月新学内容掌握得比较扎实')),
@@ -278,6 +304,10 @@ assert(
 assert(
     generateImprovements({ antiForgettingSessionCount: 20, classCount: 4, antiForgettingCorrectRate: 95, antiForgettingTrend: 'rising', newWordMasteryRate: 89 }).some((text) => text.includes('本月新学内容里还有一些词需要反复回看')),
     '正课新词掌握率低于 90% 时应命中掌握率提升点'
+);
+assert(
+    !generateImprovements({ antiForgettingSessionCount: 0, classCount: 0, antiForgettingCorrectRate: 0, antiForgettingTrend: 'stable', newWordMasteryRate: null, totalWords: 0 }).some((text) => text.includes('本月正课次数偏少')),
+    '0 正课 + 0 复习时小提升点不应出现“本月正课次数偏少”'
 );
 
 const zeroStatsReport = buildMonthlySummaryReport({

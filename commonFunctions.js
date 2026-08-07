@@ -1827,7 +1827,7 @@ export async function handleNewVersionFeedbackClick() {
     if (skipStats) {
         message = `1. 同学表现很好，整节课注意力都很在线，我们的课堂也进步神速！要继续保持哦！\n📚知识小船📚\n${motto}`;
     } else {
-        message = `1. 复习 ${antiForgettingReviewWord} 词\n2. 同学表现很好，整节课注意力都很在线，我们的课堂也进步神速！要继续保持哦！\n📚知识小船📚\n${motto}`;
+        message = `1. 复习 ${antiForgettingReviewWord} 词，遗忘 ${forgetCount} 词\n2. 同学表现很好，整节课注意力都很在线，我们的课堂也进步神速！要继续保持哦！\n📚知识小船📚\n${motto}`;
     }
 
     // Copy the message to clipboard
