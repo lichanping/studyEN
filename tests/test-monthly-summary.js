@@ -210,7 +210,7 @@ const buildGoals = new Function(`${buildGoalsCode}\nreturn buildGoals;`)();
 const buildMonthlySummaryReport = new Function(
     `${getAttendanceTextCode}\n${getAntiForgettingTextCode}\n${getFormalStudyTextCode}\n${buildWarmMessageCode}\n${buildMonthlySummaryReportCode}\nreturn buildMonthlySummaryReport;`
 )();
-const buildPreviewHtml = new Function(`${getFormalStudyTextCode}\n${buildPreviewHtmlCode}\nreturn buildPreviewHtml;`)();
+const buildPreviewHtml = new Function(`${getAntiForgettingTextCode}\n${getFormalStudyTextCode}\n${buildPreviewHtmlCode}\nreturn buildPreviewHtml;`)();
 
 const antiForgettingStats = summarizeFeedbackEntries([
     '2026-08-02(周日): 80% | 10|8',
@@ -286,9 +286,11 @@ const previewHtml = buildPreviewHtml({
     newWordMasteryRate: 89
 }, {
     totalReviewed: 220,
-    correctRate: 99
+    correctRate: 99,
+    forgetCount: 11
 });
 assert(previewHtml.includes('累计学单词：163个（新词学习63个+旧词巩固100个），累计遗忘7词，综合正确率89%'), '月末总结预览区应按单行格式展示正课遗忘词和正确率');
+assert(previewHtml.includes('抗遗忘复盘：220 词，累计遗忘11词，综合正确率99%'), '月末总结预览区应展示抗遗忘累计遗忘词和正确率');
 
 assert(
     generateHighlights({ antiForgettingCorrectRate: 80, classCount: 4, antiForgettingTrend: 'stable', totalDuration: 3, newWordMasteryRate: 90 }).some((text) => text.includes('本月新学内容掌握得比较扎实')),

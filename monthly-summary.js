@@ -464,7 +464,7 @@ function buildPreviewHtml(classStats, antiForgettingStats) {
             totalForgetNewWords: classStats.totalForgetNewWords,
             newWordMasteryRate: classStats.newWordMasteryRate
         }).replace('本月', '').replace(/。$/, ''),
-        `抗遗忘复盘：${antiForgettingStats.totalReviewed} 词（正确率 ${antiForgettingStats.correctRate}%）`
+        `抗遗忘复盘：${antiForgettingStats.totalReviewed} 词，${antiForgettingStats.totalReviewed === 0 ? '本月暂无抗遗忘复盘记录。' : getAntiForgettingText(antiForgettingStats.correctRate, antiForgettingStats.forgetCount)}`
     ];
 
     return lines.map((line) => `<div style="color:#e5e7eb;font-size:15px;font-weight:600;">${line}</div>`).join('');
