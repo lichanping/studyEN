@@ -1794,6 +1794,7 @@ export function addRightClickPasteEvent(element) {
 }
 
 export async function handleNewVersionFeedbackClick() {
+    const userName = document.getElementById("userName").value;
 
     const reviewInputs = Array.from(document.querySelectorAll('.antiForgettingReviewWord'));
     const keyLanguagePoints = (document.getElementById('keyLanguagePoints')?.value || '').trim();
@@ -1812,6 +1813,13 @@ export async function handleNewVersionFeedbackClick() {
         const v = parseInt((input.value || '').trim(), 10);
         return sum + (Number.isFinite(v) ? v : 0);
     }, 0) + autoReviewWordCount;
+    const forgetCountInput = document.getElementById('antiForgettingForgetWord');
+    const parsedForgetCount = parseInt((forgetCountInput?.value || '').trim(), 10);
+    const forgetCount = Number.isFinite(parsedForgetCount) && parsedForgetCount >= 0 ? parsedForgetCount : 0;
+    const correctWordsCount = Math.max(antiForgettingReviewWord - forgetCount, 0);
+    const correctRate = antiForgettingReviewWord > 0
+        ? (correctWordsCount / antiForgettingReviewWord * 100).toFixed(0)
+        : '0';
 
     // Build message
     const motto = getRandomMotto();
@@ -1819,13 +1827,17 @@ export async function handleNewVersionFeedbackClick() {
     if (skipStats) {
         message = `1. 同学表现很好，整节课注意力都很在线，我们的课堂也进步神速！要继续保持哦！\n📚知识小船📚\n${motto}`;
     } else {
-        message = `1. 复习 ${antiForgettingReviewWord} 词\n2. 同学表现很好，整节课注意力都很在线，我们的课堂也进步神速！要继续保持哦！\n📚知识小船📚\n${motto}`;
+        message = `1. 复习 ${antiForgettingReviewWord} 词，遗忘 ${forgetCount} 词\n2. 同学表现很好，整节课注意力都很在线，我们的课堂也进步神速！要继续保持哦！\n📚知识小船📚\n${motto}`;
     }
 
     // Copy the message to clipboard
     copyToClipboard(message);
     // Show alert with the generated message
     showLongText(`${message}`);
+
+    if (!skipStats) {
+        storeFeedbackInFile(userName, correctRate, antiForgettingReviewWord, correctWordsCount);
+    }
 }
 
 // =========================
