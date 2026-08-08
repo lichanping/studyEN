@@ -18,6 +18,27 @@ import {
 
 let hasAutoSyncedNewWordFromReviewWord = false;
 
+export function calculateMonthElapsedPercent(date = new Date()) {
+    const currentDate = date instanceof Date ? new Date(date.getTime()) : new Date(date);
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    const day = currentDate.getDate();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    return Number(((day / daysInMonth) * 100).toFixed(1));
+}
+
+export function getMonthElapsedHeadlineText(date = new Date()) {
+    return `本月已过 ${calculateMonthElapsedPercent(date).toFixed(1)}%`;
+}
+
+function renderMonthProgressBadge(date = new Date()) {
+    const badge = document.getElementById('monthProgressBadge');
+    if (!badge) {
+        return;
+    }
+    badge.textContent = getMonthElapsedHeadlineText(date);
+}
+
 const setInitialDateTime = () => {
     const currentDate = new Date();
     currentDate.setHours(19, 40, 0, 0); // Set the time to 21:00 (9 PM)
@@ -337,6 +358,7 @@ initPlatformSelector();
 setInitialDateTime();
 updateUserNameOptions();
 initReviewWordFirstBlurAutoSync();
+renderMonthProgressBadge();
 
 function showTodayReviewDates(userName) {
     try {

@@ -4,8 +4,11 @@
  */
 
 const assert = require("assert");
+const fs = require("fs");
+const path = require("path");
 const { normalizeStudentName } = require("../student-name-alias.js");
 const LEGACY_STUDENT_NAMES = new Set(["李敏维", "季筱雯", "施博睿", "于熠凡", "陈怡睿"]);
+const scheduleSource = fs.readFileSync(path.join(__dirname, "..", "schedule.html"), "utf8");
 
 // ============ Mock 函数 ============
 
@@ -76,6 +79,32 @@ function getRequiredFields(requirement) {
     if ((Number(requirement?.requiredQuota60) || 0) > 0) fields.push("quota60");
     if ((Number(requirement?.requiredAccompanyHours) || 0) > 0) fields.push("quotaAccompany");
     return fields;
+}
+
+function extractBlock(source, signature, openChar = "{", closeChar = "}") {
+    const start = source.indexOf(signature);
+    if (start === -1) {
+        throw new Error(`Unable to find block: ${signature}`);
+    }
+
+    const bodyStart = source.indexOf(openChar, start);
+    if (bodyStart === -1) {
+        throw new Error(`Unable to find block body for: ${signature}`);
+    }
+
+    let depth = 0;
+    for (let index = bodyStart; index < source.length; index += 1) {
+        const char = source[index];
+        if (char === openChar) depth += 1;
+        if (char === closeChar) {
+            depth -= 1;
+            if (depth === 0) {
+                return source.slice(start, index + 1);
+            }
+        }
+    }
+
+    throw new Error(`Unable to extract block: ${signature}`);
 }
 
 // ============ 测试用例 ============
@@ -149,6 +178,28 @@ const isAnomalous_1D =
     (test1Req.requiredQuota60 > 0 && (quota60_1D === null || quota60_1D < test1Req.requiredQuota60)) ||
     (test1Req.requiredAccompanyHours > 0 && (accompany_1D === null || accompany_1D < test1Req.requiredAccompanyHours));
 console.log(`60分钟 0 < 需求 ${formatQuotaNeed(test1Req.requiredQuota60)} => 异常: ${isAnomalous_1D} ✓`);
+
+console.log("\n========== 测试 1E: 异常文案仅展示异常项当前剩余 ==========");
+const formatQuotaAnomalyCurrentValuesCode = extractBlock(scheduleSource, "function formatQuotaAnomalyCurrentValues");
+const buildQuotaAnomalyDetailLineCode = extractBlock(scheduleSource, "function buildQuotaAnomalyDetailLine");
+const buildQuotaAnomalyDetailLine = new Function(
+    `${formatQuotaAnomalyCurrentValuesCode}\n${buildQuotaAnomalyDetailLineCode}\nreturn buildQuotaAnomalyDetailLine;`
+)();
+
+const anomalyLine = buildQuotaAnomalyDetailLine({
+    queryName: "俞新硕",
+    displayNames: ["硕硕"],
+    quota30: "8",
+    quota60: "4",
+    quotaAccompany: "0.0",
+    zeroFields: ["quotaAccompany"],
+    issueText: "陪练服务时长不足（剩余0.0，需求1小时）"
+});
+
+assert(anomalyLine.includes('请帮忙为硕硕（系统名：俞新硕）充值：陪练服务时长不足（剩余0.0，需求1小时）'), '异常文案应保留异常项说明');
+assert(anomalyLine.includes('当前"陪练服务时长剩余"为0.0'), '异常文案应展示实际异常项的当前剩余值');
+assert(!anomalyLine.includes('当前"30分钟剩余"为 8'), '异常文案不应展示未异常的 30 分钟剩余值');
+assert(!anomalyLine.includes('"60分钟剩余"为 4'), '异常文案不应展示未异常的 60 分钟剩余值');
 
 // ============ 测试 2: legacy 学生不参与课时余额检查 ============
 console.log("\n========== 测试 2: legacy 学生不参与课时余额检查 ==========");

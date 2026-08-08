@@ -3945,15 +3945,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             return;
         }
 
-        const detailLines = anomalies.map((entry) => {
-            const displayName = entry.displayNames.join("/");
-            const systemNameTip = displayName === entry.queryName ? "" : `（系统名：${entry.queryName}）`;
-            const missingFieldsText = formatFieldLabels(entry.zeroFields);
-            if (entry.isMissingStudent) {
-                return `学员${displayName}${systemNameTip}在系统未查到，需核对学员名称；待核对课时：${missingFieldsText}`;
-            }
-            return `请帮忙为${displayName}${systemNameTip}充值：${entry.issueText || ("缺失课时[" + missingFieldsText + "]")}；当前"30分钟剩余"为 ${entry.quota30 ?? "-"}、"60分钟剩余"为 ${entry.quota60 ?? "-"}，"陪练服务时长剩余"为${entry.quotaAccompany ?? "-"}`;
-        });
+        const detailLines = anomalies.map((entry) => buildQuotaAnomalyDetailLine(entry));
 
         const alertMsg = `发现异常学生(${anomalies.length})：\n${detailLines.join("\n")}`;
         const copied = await copyToClipboard(alertMsg);
@@ -3962,6 +3954,36 @@ sourceId: 上课记录唯一标识（用于去重）</span>
         } else {
             window.showToast?.(copied ? "异常文案已复制到剪贴板" : "复制失败，请手动复制");
         }
+    }
+
+    function formatQuotaAnomalyCurrentValues(entry) {
+        const labels = {
+            quota30: "30分钟剩余",
+            quota60: "60分钟剩余",
+            quotaAccompany: "陪练服务时长剩余"
+        };
+        const values = {
+            quota30: entry?.quota30 ?? "-",
+            quota60: entry?.quota60 ?? "-",
+            quotaAccompany: entry?.quotaAccompany ?? "-"
+        };
+
+        return (Array.isArray(entry?.zeroFields) ? entry.zeroFields : [])
+            .map((field) => labels[field] ? `当前"${labels[field]}"为${values[field]}` : "")
+            .filter(Boolean)
+            .join("、");
+    }
+
+    function buildQuotaAnomalyDetailLine(entry) {
+        const displayName = entry.displayNames.join("/");
+        const systemNameTip = displayName === entry.queryName ? "" : `（系统名：${entry.queryName}）`;
+        if (entry.isMissingStudent) {
+            const missingFieldsText = formatFieldLabels(entry.zeroFields);
+            return `学员${displayName}${systemNameTip}在系统未查到，需核对学员名称；待核对课时：${missingFieldsText}`;
+        }
+
+        const currentValuesText = formatQuotaAnomalyCurrentValues(entry);
+        return `请帮忙为${displayName}${systemNameTip}充值：${entry.issueText || ("缺失课时[" + missingFieldsText + "]")}${currentValuesText ? `；${currentValuesText}` : ""}`;
     }
 
     function buildQuotaResultTable(rows) {

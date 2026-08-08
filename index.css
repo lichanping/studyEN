@@ -210,6 +210,32 @@ h1 {
     margin-bottom: 15px;
 }
 
+.page-headline {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+
+.page-headline h1 {
+    margin-bottom: 0;
+}
+
+.month-progress-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid var(--panel-border);
+    background-color: var(--panel-bg);
+    color: var(--muted-text);
+    font-size: 14px;
+    font-weight: 700;
+    box-shadow: var(--control-shadow);
+}
+
 #button-container {
     display: inline-flex;
     align-items: center;
