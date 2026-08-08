@@ -1,0 +1,76 @@
+const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
+
+const root = path.resolve(__dirname, '..');
+const classFormalSource = fs.readFileSync(path.join(root, 'classFormal.js'), 'utf8');
+const indexSource = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const indexCssSource = fs.readFileSync(path.join(root, 'index.css'), 'utf8');
+
+function extractBlock(source, signature, openChar = '{', closeChar = '}') {
+    const start = source.indexOf(signature);
+    if (start === -1) {
+        throw new Error(`Unable to find block: ${signature}`);
+    }
+
+    const bodyStart = source.indexOf(openChar, start);
+    if (bodyStart === -1) {
+        throw new Error(`Unable to find block body for: ${signature}`);
+    }
+
+    let depth = 0;
+    for (let index = bodyStart; index < source.length; index += 1) {
+        const char = source[index];
+        if (char === openChar) depth += 1;
+        if (char === closeChar) {
+            depth -= 1;
+            if (depth === 0) {
+                return source.slice(start, index + 1);
+            }
+        }
+    }
+
+    throw new Error(`Unable to extract block: ${signature}`);
+}
+
+assert(
+    indexSource.includes('id="monthProgressBadge"'),
+    'index.html 应提供 headline 右侧的本月进度挂载点'
+);
+
+assert(
+    indexCssSource.includes('.month-progress-badge')
+        && indexCssSource.includes('min-height: 44px;')
+        && indexCssSource.includes('padding: 0 18px;')
+        && indexCssSource.includes('font-size: 16px;'),
+    'index.css 应为 headline 本月进度 badge 提供更稳定一致的视觉高度'
+);
+
+const calculateMonthElapsedPercentCode = extractBlock(classFormalSource, 'export function calculateMonthElapsedPercent');
+const getMonthElapsedHeadlineTextCode = extractBlock(classFormalSource, 'export function getMonthElapsedHeadlineText');
+
+const calculateMonthElapsedPercent = new Function(
+    `${calculateMonthElapsedPercentCode.replace('export ', '')}\nreturn calculateMonthElapsedPercent;`
+)();
+const getMonthElapsedHeadlineText = new Function(
+    'calculateMonthElapsedPercent',
+    `${getMonthElapsedHeadlineTextCode.replace('export ', '')}\nreturn getMonthElapsedHeadlineText;`
+)(calculateMonthElapsedPercent);
+
+assert.strictEqual(
+    calculateMonthElapsedPercent(new Date(2026, 7, 8)),
+    25.8,
+    '8 月 8 日的本月进度应按 8/31 计算为 25.8%'
+);
+assert.strictEqual(
+    calculateMonthElapsedPercent(new Date(2026, 7, 31)),
+    100.0,
+    '当月最后一天的本月进度应为 100.0%'
+);
+assert.strictEqual(
+    getMonthElapsedHeadlineText(new Date(2026, 7, 8)),
+    '本月已过 25.8%',
+    'headline 本月进度文案应使用固定前缀并展示 1 位小数'
+);
+
+console.log('test-index-month-progress passed');

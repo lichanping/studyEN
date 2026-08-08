@@ -69,6 +69,29 @@ assert(
 );
 
 assert(
+    content.includes('commonFunctions.addRightClickPasteEvent(input);'),
+    'anti-forgetting.html 动态新增的复习词数输入框也应支持右键粘贴'
+);
+
+assert(
+    content.includes("getReviewWordInputs().forEach((input) => commonFunctions.addRightClickPasteEvent(input));")
+        || content.includes('getReviewWordInputs().forEach((input) => commonFunctions.addRightClickPasteEvent(input));'),
+    'anti-forgetting.html 初始复习词数输入框应统一绑定右键粘贴'
+);
+
+assert(
+    content.includes('const nextInput = createReviewWordInput(getReviewWordInputs().length + 1);')
+        && content.includes('container.insertBefore(nextInput, button);')
+        && content.includes('nextInput.focus();'),
+    'anti-forgetting.html 在现有输入框已全部展开后，仍应允许通过 + 按钮继续新增复习词数输入框'
+);
+
+assert(
+    !content.includes('button.hidden = !getReviewWordInputs().some(input => input.hidden);'),
+    'anti-forgetting.html 不应因为初始 7 个输入框全部展开就隐藏手工 + 按钮'
+);
+
+assert(
     content.includes('id="copyPronounceWordsTaskButton"')
         && content.includes('>纠音MP3</button>')
         && content.includes('>发音任务</button>')

@@ -1376,10 +1376,10 @@ function extractEnglishWords(text) {
     const CHINESE_ONLY = /^[\u4e00-\u9fa5\s，。！？；、“”‘’（）【】《》·…—]+$/;
 
     // 2) 全英文行：补充了感叹号 !
-    const FULL_EN = /^[\w\s.,;:()'"\-…\?!]+$/;
+    const FULL_EN = /^[\w\s.,;:()'’"\-…\?!]+$/;
 
     // 3) 英文起头 + 后接中文：同样补充了感叹号 !，并保留对全角括号与全角分号的判断
-    const MIXED = /^([\w\s.,;:()'"\-…\?!]+)(?:[\u4e00-\u9fa5\uFF08\uFF09]|；)/;
+    const MIXED = /^([\w\s.,;:()'’"\-…\?!]+)(?:[\u4e00-\u9fa5\uFF08\uFF09]|；)/;
 
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
