@@ -5,6 +5,7 @@ const path = require('path');
 const root = path.resolve(__dirname, '..');
 const classFormalSource = fs.readFileSync(path.join(root, 'classFormal.js'), 'utf8');
 const indexSource = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const indexCssSource = fs.readFileSync(path.join(root, 'index.css'), 'utf8');
 
 function extractBlock(source, signature, openChar = '{', closeChar = '}') {
     const start = source.indexOf(signature);
@@ -35,6 +36,14 @@ function extractBlock(source, signature, openChar = '{', closeChar = '}') {
 assert(
     indexSource.includes('id="monthProgressBadge"'),
     'index.html 应提供 headline 右侧的本月进度挂载点'
+);
+
+assert(
+    indexCssSource.includes('.month-progress-badge')
+        && indexCssSource.includes('min-height: 44px;')
+        && indexCssSource.includes('padding: 0 18px;')
+        && indexCssSource.includes('font-size: 16px;'),
+    'index.css 应为 headline 本月进度 badge 提供更稳定一致的视觉高度'
 );
 
 const calculateMonthElapsedPercentCode = extractBlock(classFormalSource, 'export function calculateMonthElapsedPercent');
