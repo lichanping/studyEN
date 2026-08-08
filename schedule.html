@@ -4258,7 +4258,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
 
     function buildAntiForgettingNoticeMessage(clock) {
         return "【抗遗忘温馨提醒-" + clock + "】\n" +
-            "👍 " + (window.APP_MEETING_CONFIG?.getCurrentTencentMeetingTag?.() || window.APP_MEETING_CONFIG.tencentMeetingTag) + "\n" +
+            "👍 " + (window.APP_MEETING_CONFIG?.getCurrentAntiForgettingTencentMeetingTag?.() || window.APP_MEETING_CONFIG.antiForgettingTencentMeetingTag || window.APP_MEETING_CONFIG?.getCurrentTencentMeetingTag?.() || window.APP_MEETING_CONFIG.tencentMeetingTag) + "\n" +
             "⏰ 请准时参加会议，如有特殊情况无法参加，请提前告知！\n" +
             "🔔 若未按约定时间参加复习，请自主复习并打卡至学习群📱\n" +
             "🔒 仅在当天有收到提醒通知才需入会。\n" +
