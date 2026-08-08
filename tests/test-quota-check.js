@@ -179,11 +179,10 @@ const isAnomalous_1D =
     (test1Req.requiredAccompanyHours > 0 && (accompany_1D === null || accompany_1D < test1Req.requiredAccompanyHours));
 console.log(`60分钟 0 < 需求 ${formatQuotaNeed(test1Req.requiredQuota60)} => 异常: ${isAnomalous_1D} ✓`);
 
-console.log("\n========== 测试 1E: 异常文案仅展示异常项当前剩余 ==========");
-const formatQuotaAnomalyCurrentValuesCode = extractBlock(scheduleSource, "function formatQuotaAnomalyCurrentValues");
+console.log("\n========== 测试 1E: 异常文案不重复追加当前剩余 ==========");
 const buildQuotaAnomalyDetailLineCode = extractBlock(scheduleSource, "function buildQuotaAnomalyDetailLine");
 const buildQuotaAnomalyDetailLine = new Function(
-    `${formatQuotaAnomalyCurrentValuesCode}\n${buildQuotaAnomalyDetailLineCode}\nreturn buildQuotaAnomalyDetailLine;`
+    `${buildQuotaAnomalyDetailLineCode}\nreturn buildQuotaAnomalyDetailLine;`
 )();
 
 const anomalyLine = buildQuotaAnomalyDetailLine({
@@ -197,7 +196,7 @@ const anomalyLine = buildQuotaAnomalyDetailLine({
 });
 
 assert(anomalyLine.includes('请帮忙为硕硕（系统名：俞新硕）充值：陪练服务时长不足（剩余0.0，需求1小时）'), '异常文案应保留异常项说明');
-assert(anomalyLine.includes('当前"陪练服务时长剩余"为0.0'), '异常文案应展示实际异常项的当前剩余值');
+assert(!anomalyLine.includes('当前"陪练服务时长剩余"为0.0'), '异常文案不应重复追加陪练服务时长当前剩余值');
 assert(!anomalyLine.includes('当前"30分钟剩余"为 8'), '异常文案不应展示未异常的 30 分钟剩余值');
 assert(!anomalyLine.includes('"60分钟剩余"为 4'), '异常文案不应展示未异常的 60 分钟剩余值');
 
