@@ -417,7 +417,8 @@ function buildMonthlySummaryReport(options) {
     let report = `${reportStudentName}学员${monthDisplay}月末总结\n\n`;
     report += '一、本月核心学习数据📊\n\n';
     if (classStats.classCount === 0 && classStats.totalWords === 0 && antiForgettingStats.totalReviewed === 0) {
-        report += '✅ 本月暂无课堂与复习数据，当前以学习安排衔接和下月节奏准备为主。\n\n';
+        const leaveText = leaveCount > 0 ? `学员本月请假${leaveCount}次，` : '';
+        report += `✅ 本月暂无课堂与复习数据，${leaveText}当前以学习安排衔接和下月节奏准备为主。\n\n`;
         report += '二、本月表现点评🌟\n\n';
         report += '本月暂无可统计的课堂与复习表现，本段先不做表现评价。\n\n';
         report += '三、下月小目标🎯\n\n';

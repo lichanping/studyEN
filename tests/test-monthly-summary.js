@@ -348,6 +348,37 @@ assert(!zeroStatsReport.includes('全勤，出勤超棒'), '0 正课时月末总
 assert.strictEqual((zeroStatsReport.match(/这个月我们先稍作调整，期待下个月一起把学习节奏慢慢找回来，继续稳稳往前走。/g) || []).length, 1, '0 正课 + 0 复习时同一句暖心文案不应在 txt 中重复出现');
 assert(!zeroStatsReport.includes('📌 小提升点'), '0 正课 + 0 复习时 txt 应省略冗余的小提升点段落');
 
+const zeroStatsWithLeaveReport = buildMonthlySummaryReport({
+    reportStudentName: '小明',
+    monthDisplay: '8🈷️',
+    classStats: {
+        classCount: 0,
+        totalDuration: 0,
+        totalWords: 0,
+        totalNewWords: 0,
+        totalReviewWords: 0,
+        totalForgetNewWords: 0,
+        newWordMasteryRate: null
+    },
+    antiForgettingStats: {
+        totalReviewed: 0,
+        correctRate: 0,
+        forgetCount: 0,
+        sessionCount: 0
+    },
+    leaveCount: 1,
+    highlights: [],
+    improvements: ['这个月我们先稍作调整，期待下个月一起把学习节奏慢慢找回来，继续稳稳往前走。'],
+    goals: ['下月优先恢复稳定上课与复习安排，先把学习节奏重新建立起来。'],
+    allStats: {
+        totalWords: 0,
+        antiForgettingTotalReviewed: 0,
+        antiForgettingSessionCount: 0
+    }
+});
+
+assert(zeroStatsWithLeaveReport.includes('学员本月请假1次'), '0 正课 + 0 复习但有请假时，月末总结仍应展示学员请假信息');
+
 const reviewOnlyReport = buildMonthlySummaryReport({
     reportStudentName: '小明',
     monthDisplay: '8🈷️',
