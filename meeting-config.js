@@ -5,17 +5,20 @@
         lixiaolaila: Object.freeze({
             id: "lixiaolaila",
             displayName: "李校来啦",
-            meetingId: "957-2306-5683"
+            meetingId: "957-2306-5683",
+            antiForgettingMeetingId: "332-6955-7102"
         }),
         baifendii: Object.freeze({
             id: "baifendii",
             displayName: "百分缔",
-            meetingId: "684-1587-8369"
+            meetingId: "684-1587-8369",
+            antiForgettingMeetingId: "684-1587-8369"
         }),
         maisuiyingyu: Object.freeze({
             id: "maisuiyingyu",
             displayName: "麦穗英语",
-            meetingId: "569-8084-0547"
+            meetingId: "569-8084-0547",
+            antiForgettingMeetingId: "569-8084-0547"
         })
     });
 
@@ -95,12 +98,26 @@
         return PLATFORM_MEETING_IDS[normalized] || PLATFORM_MEETING_IDS[DEFAULT_PLATFORM_ID];
     }
 
+    function getAntiForgettingMeetingIdByPlatform(platformId) {
+        const normalized = normalizePlatformId(platformId);
+        const platformConfig = PLATFORM_CONFIGS[normalized] || PLATFORM_CONFIGS[DEFAULT_PLATFORM_ID];
+        return platformConfig.antiForgettingMeetingId || platformConfig.meetingId;
+    }
+
     function getTencentMeetingTagByPlatform(platformId) {
         return `#腾讯会议：${getMeetingIdByPlatform(platformId)}`;
     }
 
+    function getAntiForgettingTencentMeetingTagByPlatform(platformId) {
+        return `#腾讯会议：${getAntiForgettingMeetingIdByPlatform(platformId)}`;
+    }
+
     function getCurrentTencentMeetingTag() {
         return getTencentMeetingTagByPlatform(getCurrentPlatformId());
+    }
+
+    function getCurrentAntiForgettingTencentMeetingTag() {
+        return getAntiForgettingTencentMeetingTagByPlatform(getCurrentPlatformId());
     }
 
     global.APP_MEETING_CONFIG = Object.freeze({
@@ -114,13 +131,22 @@
         normalizePlatformId,
         getCurrentPlatformId,
         getMeetingIdByPlatform,
+        getAntiForgettingMeetingIdByPlatform,
         getTencentMeetingTagByPlatform,
+        getAntiForgettingTencentMeetingTagByPlatform,
         getCurrentTencentMeetingTag,
+        getCurrentAntiForgettingTencentMeetingTag,
         get meetingId() {
             return getMeetingIdByPlatform(getCurrentPlatformId());
         },
+        get antiForgettingMeetingId() {
+            return getAntiForgettingMeetingIdByPlatform(getCurrentPlatformId());
+        },
         get tencentMeetingTag() {
             return getCurrentTencentMeetingTag();
+        },
+        get antiForgettingTencentMeetingTag() {
+            return getCurrentAntiForgettingTencentMeetingTag();
         }
     });
 })(window);
