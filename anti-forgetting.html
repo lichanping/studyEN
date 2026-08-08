@@ -7,6 +7,7 @@
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1d1e21">
     <title>抗遗忘复习</title>
     <link rel="stylesheet" href="index.css?v=20260405-1">
+    <script src="./meeting-config.js"></script>
     <script src="./student-name-alias.js"></script>
     <script type="module">
         import * as commonFunctions from './commonFunctions.js?v=20260428-1';
@@ -440,7 +441,23 @@
     }
 
     function getPlatformDisplayName(platformId) {
-        return window.APP_MEETING_CONFIG?.getPlatformDisplayName?.(platformId) || '李校来啦';
+        const resolvedByConfig = window.APP_MEETING_CONFIG?.getPlatformDisplayName?.(platformId);
+        if (resolvedByConfig) return resolvedByConfig;
+
+        const normalizedPlatformId = normalizePlatformId(platformId);
+        const platformSelect = document.getElementById('platformSelect');
+        const selectedPlatformId = normalizePlatformId(platformSelect?.value || '');
+        const selectedOptionText = String(platformSelect?.selectedOptions?.[0]?.textContent || '').trim();
+        if (selectedOptionText && selectedPlatformId === normalizedPlatformId) {
+            return selectedOptionText;
+        }
+
+        const fallbackDisplayNames = {
+            lixiaolaila: '李校来啦',
+            baifendii: '百分缔',
+            maisuiyingyu: '麦穗英语'
+        };
+        return fallbackDisplayNames[normalizedPlatformId] || fallbackDisplayNames[DEFAULT_PLATFORM_ID];
     }
 
     function normalizeStudentName(value) {
@@ -587,6 +604,8 @@
             localStorage.setItem(CURRENT_PLATFORM_STORAGE_KEY, next);
             await loadStudentOptions();
             clearFormFields();
+            renderReviewScheduleHint(next);
+            refreshReviewScheduleForCurrentSelection();
         });
     }
 
@@ -621,7 +640,7 @@
     function updateAddReviewWordInputButton() {
         const button = document.getElementById('addReviewWordInputButton');
         if (!button) return;
-        button.hidden = !getReviewWordInputs().some(input => input.hidden);
+        button.hidden = false;
     }
 
     function resetReviewWordInputs() {
@@ -632,18 +651,100 @@
     }
 
     function showNextReviewWordInput() {
+        const button = document.getElementById('addReviewWordInputButton');
         const nextHiddenInput = getReviewWordInputs().find(input => input.hidden);
         if (nextHiddenInput) {
             nextHiddenInput.hidden = false;
             nextHiddenInput.focus();
+        } else if (button?.parentElement) {
+            const container = button.parentElement;
+            const nextInput = createReviewWordInput(getReviewWordInputs().length + 1);
+            container.insertBefore(nextInput, button);
+            nextInput.focus();
         }
+        updateAddReviewWordInputButton();
+    }
+
+    function createReviewWordInput(index) {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'antiForgettingReviewWord mini-input';
+        input.setAttribute('aria-label', `复习词数${index}`);
+        input.value = '';
+        return input;
+    }
+
+    function ensureReviewWordInputCount(expectedCount) {
+        const button = document.getElementById('addReviewWordInputButton');
+        const container = button?.parentElement;
+        if (!button || !container) return;
+
+        let inputs = getReviewWordInputs();
+        while (inputs.length < expectedCount) {
+            const nextInput = createReviewWordInput(inputs.length + 1);
+            container.insertBefore(nextInput, button);
+            inputs = getReviewWordInputs();
+        }
+
+        inputs.forEach((input, index) => {
+            const shouldShow = index < expectedCount;
+            input.hidden = !shouldShow;
+            if (!shouldShow) {
+                input.value = '';
+            }
+        });
+
         updateAddReviewWordInputButton();
     }
 
     document.getElementById('userName').addEventListener('change', clearFormFields);
 
     // ── 复习计划核对功能 ──
+    const REVIEW_RULES = {
+        lixiaolaila: {
+            offsets: [1, 2, 3, 6, 9, 12, 15, 17, 19, 21],
+            compareMode: 'diff'
+        },
+        baifendii: {
+            offsets: [1, 2, 3, 5, 7, 9, 12, 14, 17, 21],
+            compareMode: 'expected-only'
+        }
+    };
     const REVIEW_OFFSETS = [1, 2, 3, 6, 9, 12, 15, 17, 19, 21];
+
+    function getReviewRule(platformId) {
+        const fallbackPlatformId = 'lixiaolaila';
+        const normalizedPlatformId = String(platformId || '').trim().toLowerCase();
+        const resolvedPlatformId = REVIEW_RULES[normalizedPlatformId] ? normalizedPlatformId : fallbackPlatformId;
+        return REVIEW_RULES[resolvedPlatformId] || REVIEW_RULES[fallbackPlatformId];
+    }
+
+    function formatReviewOffsetLabel(platformId, offset) {
+        const numericOffset = Number(offset);
+        if (!Number.isFinite(numericOffset)) return '?';
+
+        const rule = getReviewRule(platformId);
+        const reviewIndex = rule.offsets.findIndex((candidate) => candidate === numericOffset);
+        if (reviewIndex === -1) return `+${numericOffset}`;
+
+        return `第${reviewIndex + 1}次（+${numericOffset}）`;
+    }
+
+    function getReviewHintHtml(platformId) {
+        const rule = getReviewRule(platformId);
+        const offsetsText = rule.offsets.join('/');
+        const exampleBaseDate = parseDate('2026-04-17');
+        const exampleDates = rule.offsets
+            .map((offset) => formatDate(addDays(exampleBaseDate, offset)))
+            .map((dateText, index) => (index === 0 ? dateText : dateText.slice(5)));
+        return `复习公式：复习日期 = 正课日期 + ${offsetsText} 天。<br>例如正课是 2026-04-17，则对应复习日依次为 ${exampleDates.join('、')}。`;
+    }
+
+    function renderReviewScheduleHint(platformId) {
+        const panel = document.getElementById('reviewScheduleHintPanel');
+        if (!panel) return;
+        panel.innerHTML = getReviewHintHtml(platformId);
+    }
 
     // 独立获取学生列表（不修改现有逻辑）
     function getStudentsForScheduleCheck() {
@@ -753,6 +854,116 @@
         if (Number.isNaN(parsed.getTime())) return null;
         parsed.setHours(0, 0, 0, 0);
         return parsed;
+    }
+
+    function loadClassStatisticsMapByStudentName(studentName) {
+        const candidateNames = Array.from(new Set([
+            String(studentName || '').trim(),
+            normalizeStudentName(studentName)
+        ].filter(Boolean)));
+        const mergedStats = {};
+
+        candidateNames.forEach((name) => {
+            try {
+                const raw = localStorage.getItem(`${name}_classStatistics`);
+                const parsed = raw ? JSON.parse(raw) : {};
+                if (parsed && typeof parsed === 'object') {
+                    Object.assign(mergedStats, parsed);
+                }
+            } catch (_) {
+                // ignore invalid local data
+            }
+        });
+
+        return mergedStats;
+    }
+
+    function calculateReviewScheduleFromClassStats(classStatistics, checkDate, platformId) {
+        const targetDate = formatDate(parseDate(checkDate));
+        if (!targetDate) return [];
+
+        const rule = getReviewRule(platformId);
+        const normalizedTargetPlatformId = String(platformId || '').trim().toLowerCase() || 'lixiaolaila';
+        return Object.entries(classStatistics || {})
+            .flatMap(([trainingDateKey, stats]) => {
+                const trainingDate = parseDate(trainingDateKey);
+                if (!trainingDate || !stats || typeof stats !== 'object') return [];
+
+                const statsPlatformId = String(stats.platform || 'lixiaolaila').trim().toLowerCase() || 'lixiaolaila';
+                if (statsPlatformId !== normalizedTargetPlatformId) return [];
+
+                const courseType = String(stats.type || '词汇课').trim();
+                if (courseType !== '词汇课') return [];
+
+                return rule.offsets.flatMap((offset) => {
+                    const reviewDate = formatDate(addDays(trainingDate, offset));
+                    if (reviewDate !== targetDate) return [];
+                    return [{
+                        reviewDate,
+                        trainingDate: formatDate(trainingDate),
+                        offset,
+                        courseType
+                    }];
+                });
+            })
+            .sort((left, right) => left.trainingDate.localeCompare(right.trainingDate, 'zh-CN') || left.offset - right.offset);
+    }
+
+    function getBfdExpectedReviewItems(studentName, checkDate) {
+        const classStatistics = loadClassStatisticsMapByStudentName(studentName);
+        return calculateReviewScheduleFromClassStats(classStatistics, checkDate, 'baifendii');
+    }
+
+    function syncReviewWordInputsForCurrentSelection() {
+        if (getReviewRule(getCurrentPlatformId()).compareMode !== 'expected-only') {
+            resetReviewWordInputs();
+            return [];
+        }
+
+        const studentName = String(document.getElementById('userName')?.value || '').trim();
+        if (!studentName) {
+            ensureReviewWordInputCount(0);
+            return [];
+        }
+
+        const expectedItems = getBfdExpectedReviewItems(studentName, getSelectedReviewDate());
+        ensureReviewWordInputCount(expectedItems.length);
+        return expectedItems;
+    }
+
+    function refreshReviewScheduleForCurrentSelection() {
+        const expectedItems = syncReviewWordInputsForCurrentSelection();
+        const summaryEl = document.getElementById('reviewScheduleSummary');
+        const diffEl = document.getElementById('reviewScheduleDiff');
+        const collapseBody = document.getElementById('reviewScheduleCollapseBody');
+        const hasVisibleResult = collapseBody?.style.display === 'block';
+        const shouldRefreshRenderedResult = hasVisibleResult || lastCheckResult?.mode === 'expected-only';
+        const platformId = getCurrentPlatformId();
+
+        if (platformId !== 'baifendii') {
+            if (lastCheckResult?.mode === 'expected-only') {
+                lastCheckResult = null;
+                if (summaryEl) summaryEl.innerHTML = '';
+                if (diffEl) diffEl.innerHTML = '';
+            }
+            return expectedItems;
+        }
+
+        if (!shouldRefreshRenderedResult) {
+            return expectedItems;
+        }
+
+        const studentName = String(document.getElementById('userName')?.value || '').trim();
+        if (!studentName) {
+            lastCheckResult = null;
+            if (summaryEl) summaryEl.innerHTML = '<div style="color:#991b1b;">❌ 请先选择学员，再执行核对。</div>';
+            if (diffEl) diffEl.innerHTML = '';
+            return expectedItems;
+        }
+
+        setReviewScheduleExpanded(true);
+        renderScheduleCheckResultForBfd(expectedItems, studentName, getSelectedReviewDate());
+        return expectedItems;
     }
 
     function getScheduleBoardProxyCandidates(query) {
@@ -1024,6 +1235,8 @@
         }
     }
 
+    let lastCheckResult = null;
+
     function renderNoReviewTodayNames(checkDate, studentEntries, noReviewEntries) {
         const target = document.getElementById('noReviewTodayNames');
         if (!target) return;
@@ -1172,6 +1385,13 @@
         const diffEl = document.getElementById('reviewScheduleDiff');
         
         if (!summaryEl || !diffEl) return;
+
+        lastCheckResult = {
+            mode: 'diff',
+            studentName,
+            checkDate,
+            ...diff
+        };
         
         const { normal, missing, extra, summary } = diff;
         
@@ -1230,15 +1450,58 @@
         diffEl.innerHTML = diffHtml;
     }
 
-    // 核对复习计划按钮事件
-    document.getElementById('checkReviewScheduleBtn').addEventListener('click', async () => {
-        const token = localStorage.getItem('x-token-c');
-        const userId = localStorage.getItem('x-user-id') || '144620';
-        
-        if (!token) {
-            alert('未找到登录 token，请先点击"设置登录信息"后重试。');
+    function renderScheduleCheckResultForBfd(expectedItems, studentName, checkDate) {
+        const summaryEl = document.getElementById('reviewScheduleSummary');
+        const diffEl = document.getElementById('reviewScheduleDiff');
+        if (!summaryEl || !diffEl) return;
+
+        lastCheckResult = {
+            mode: 'expected-only',
+            studentName,
+            checkDate,
+            expected: expectedItems
+        };
+
+        summaryEl.innerHTML = `
+            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
+                <span style="padding:4px 12px;border-radius:12px;background:#dbeafe;color:#1d4ed8;font-weight:700;">📚 应复习 ${expectedItems.length}</span>
+            </div>
+            <div style="font-size:13px;color:var(--muted-text);">学员：${studentName} | 核对日期：${checkDate} | 平台：${getPlatformDisplayName(getCurrentPlatformId())} | 数据来源：本地正课记录</div>
+        `;
+
+        if (expectedItems.length === 0) {
+            diffEl.innerHTML = '<div style="padding:12px;background:#dbeafe;border-radius:8px;color:#1d4ed8;font-weight:700;">当天按已提交正课记录无应复习任务</div>';
             return;
         }
+
+        const rowsHtml = expectedItems.map((item) => `
+            <tr>
+                <td style="padding:6px;border:1px solid var(--panel-border);">${item.reviewDate}</td>
+                <td style="padding:6px;border:1px solid var(--panel-border);">${item.trainingDate}</td>
+                <td style="padding:6px;border:1px solid var(--panel-border);">${formatReviewOffsetLabel('baifendii', item.offset)}</td>
+                <td style="padding:6px;border:1px solid var(--panel-border);">${item.courseType || '词汇课'}</td>
+            </tr>
+        `).join('');
+
+        diffEl.innerHTML = `
+            <h4 style="color:#1d4ed8;margin:8px 0;">📚 BFD 今日应复习来源</h4>
+            <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:8px;">
+                <thead>
+                    <tr style="background:var(--table-head-bg);">
+                        <th style="padding:6px;border:1px solid var(--panel-border);">复习日期</th>
+                        <th style="padding:6px;border:1px solid var(--panel-border);">来源正课日期</th>
+                        <th style="padding:6px;border:1px solid var(--panel-border);">复习节点</th>
+                        <th style="padding:6px;border:1px solid var(--panel-border);">来源类型</th>
+                    </tr>
+                </thead>
+                <tbody>${rowsHtml}</tbody>
+            </table>
+        `;
+    }
+
+    // 核对复习计划按钮事件
+    document.getElementById('checkReviewScheduleBtn').addEventListener('click', async () => {
+        const platformId = getCurrentPlatformId();
         
         const btn = document.getElementById('checkReviewScheduleBtn');
         btn.textContent = '⏳ 核对中...';
@@ -1254,6 +1517,25 @@
             }
 
             const checkDate = getSelectedReviewDate();
+
+            if (platformId === 'baifendii') {
+                setReviewScheduleExpanded(true);
+                document.getElementById('reviewScheduleSummary').innerHTML = '<div>正在根据本地正课记录推算应复习来源...</div>';
+                document.getElementById('reviewScheduleDiff').innerHTML = '';
+
+                const expectedItems = getBfdExpectedReviewItems(studentName, checkDate);
+                ensureReviewWordInputCount(expectedItems.length);
+                renderScheduleCheckResultForBfd(expectedItems, studentName, checkDate);
+                return;
+            }
+
+            const token = localStorage.getItem('x-token-c');
+            const userId = localStorage.getItem('x-user-id') || '144620';
+
+            if (!token) {
+                alert('未找到登录 token，请先点击"设置登录信息"后重试。');
+                return;
+            }
             
             // 显示加载状态
             setReviewScheduleExpanded(true);
@@ -1304,6 +1586,7 @@
     document.getElementById('reviewScheduleHintToggle').addEventListener('click', () => {
         const panel = document.getElementById('reviewScheduleHintPanel');
         if (!panel) return;
+        renderReviewScheduleHint(getCurrentPlatformId());
         panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
     });
 
@@ -1350,34 +1633,43 @@
     });
 
     // 导出CSV功能
-    let lastCheckResult = null;
-    
     document.getElementById('exportReviewScheduleCSV').addEventListener('click', () => {
-        if (!lastCheckResult || (!lastCheckResult.normal?.length && !lastCheckResult.missing?.length && !lastCheckResult.extra?.length)) {
+        if (!lastCheckResult) {
             alert('请先执行核对操作后再导出CSV');
             return;
         }
-        
-        const { normal, missing, extra } = lastCheckResult;
-        const csvRows = [];
-        
-        // CSV 表头
-        csvRows.push(['复习日期', '应排来源', '复习节点', '状态']);
 
-        // 正常数据
-        normal.forEach(item => {
-            csvRows.push([item.reviewDate, item.trainingDate, `+${item.offset}`, '正常']);
-        });
-        
-        // 漏排数据
-        missing.forEach(item => {
-            csvRows.push([item.reviewDate, item.trainingDate, `+${item.offset}`, '漏排']);
-        });
-        
-        // 多排数据
-        extra.forEach(item => {
-            csvRows.push([item.reviewDate, item.trainingDate || item.sourceDate, '?', '多排']);
-        });
+        const csvRows = [];
+
+        if (lastCheckResult.mode === 'expected-only') {
+            const expected = Array.isArray(lastCheckResult.expected) ? lastCheckResult.expected : [];
+            if (expected.length === 0) {
+                alert('当前无可导出的 BFD 应复习任务');
+                return;
+            }
+
+            csvRows.push(['复习日期', '来源正课日期', '复习节点', '来源类型', '状态']);
+            expected.forEach((item) => {
+                csvRows.push([item.reviewDate, item.trainingDate, `+${item.offset}`, item.courseType || '词汇课', '应复习']);
+            });
+        } else {
+            const { normal, missing, extra } = lastCheckResult;
+            if (!normal?.length && !missing?.length && !extra?.length) {
+                alert('请先执行核对操作后再导出CSV');
+                return;
+            }
+
+            csvRows.push(['复习日期', '应排来源', '复习节点', '状态']);
+            normal.forEach(item => {
+                csvRows.push([item.reviewDate, item.trainingDate, `+${item.offset}`, '正常']);
+            });
+            missing.forEach(item => {
+                csvRows.push([item.reviewDate, item.trainingDate, `+${item.offset}`, '漏排']);
+            });
+            extra.forEach(item => {
+                csvRows.push([item.reviewDate, item.trainingDate || item.sourceDate, '?', '多排']);
+            });
+        }
         
         // 生成 CSV 内容（添加 BOM 以支持中文）
         const csvContent = '\uFEFF' + csvRows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
@@ -1390,13 +1682,6 @@
         link.download = `复习计划核对结果_${today}.csv`;
         link.click();
     });
-
-    // 保存最后核对结果供导出使用
-    const originalRender = renderScheduleCheckResult;
-    renderScheduleCheckResult = function(diff, studentName, checkDate) {
-        lastCheckResult = diff;
-        return originalRender(diff, studentName, checkDate);
-    };
 
     document.getElementById('navigateToFormalClass').addEventListener('click', commonFunctions.navigateToFormalClass);
     document.getElementById('navigateToSchedulePage').addEventListener('click', () => {
@@ -1411,6 +1696,8 @@
     document.getElementById('generatePronounceWordsMP3Button').addEventListener('click', commonFunctions.generatePronounceWordsMP3);
     document.getElementById('copyPronounceWordsTaskButton').addEventListener('click', copyPronounceWordsTask);
     document.getElementById('addReviewWordInputButton').addEventListener('click', showNextReviewWordInput);
+    document.getElementById('reviewTime').addEventListener('change', refreshReviewScheduleForCurrentSelection);
+    document.getElementById('userName').addEventListener('change', refreshReviewScheduleForCurrentSelection);
 
     commonFunctions.addRightClickPasteEvent(document.getElementById('forgetWords'));
     commonFunctions.addRightClickPasteEvent(document.getElementById('pronounceWords'));
@@ -1421,7 +1708,8 @@
     setDefaultReviewTime();
     resetReviewWordInputs();
     setReviewScheduleExpanded(false);
-    loadStudentOptions();
+    renderReviewScheduleHint(getCurrentPlatformId());
+    loadStudentOptions().then(refreshReviewScheduleForCurrentSelection);
 </script>
 </body>
 </html>

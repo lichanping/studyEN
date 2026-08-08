@@ -654,6 +654,13 @@ export async function generateReport() {
         const isVocabClass = !key.includes('_') || (stats.type === "词汇课" || stats.type === "阅读完型语法课" || stats.type === "体验课");
         if (!isVocabClass) return;
 
+        const hasValidNewWord = Number.isFinite(Number(stats?.newWord));
+        const hasValidReviewWordCount = Number.isFinite(Number(stats?.reviewWordCount));
+        if (!hasValidNewWord || !hasValidReviewWordCount) return;
+
+        const newWord = Number(stats.newWord);
+        const reviewWordCount = Number(stats.reviewWordCount);
+
         const date = stats.date || key;
         const recordDate = parseStoredDateToLocalDate(date);
         recordDate.setHours(0, 0, 0, 0);
@@ -669,7 +676,7 @@ export async function generateReport() {
             if (courseType === "词汇课") {
                 let duration = stats.duration;
                 if (typeof duration === 'undefined') {
-                    duration = (stats.newWord < 20) ? 0.5 : 1;
+                    duration = (newWord < 20) ? 0.5 : 1;
                 }
                 courseType = duration === 0.5 ? "半词课" : "词汇课";
             } else if (courseType === "阅读完型语法课") {
@@ -680,16 +687,16 @@ export async function generateReport() {
 
             sortedEntries.push({
                 date: recordDate,
-                formatted: `${formattedDate} (${weekDay}) | ${courseType} | ${stats.newWord} | ${stats.reviewWordCount}`,
+                formatted: `${formattedDate} (${weekDay}) | ${courseType} | ${newWord} | ${reviewWordCount}`,
                 year: recordDate.getFullYear(),
-                newWord: stats.newWord,
-                reviewWordCount: parseInt(stats.reviewWordCount),
+                newWord,
+                reviewWordCount,
                 courseType
             });
 
 
-            totalNewWords += stats.newWord;
-            totalReviewWords += parseInt(stats.reviewWordCount);
+            totalNewWords += newWord;
+            totalReviewWords += reviewWordCount;
             validEntries++;
         }
     });
