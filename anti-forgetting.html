@@ -671,6 +671,7 @@
         input.className = 'antiForgettingReviewWord mini-input';
         input.setAttribute('aria-label', `复习词数${index}`);
         input.value = '';
+        commonFunctions.addRightClickPasteEvent(input);
         return input;
     }
 
@@ -1703,6 +1704,7 @@
     commonFunctions.addRightClickPasteEvent(document.getElementById('pronounceWords'));
     commonFunctions.addRightClickPasteEvent(document.getElementById('keyLanguagePoints'));
     commonFunctions.addRightClickPasteEvent(document.getElementById('practiceArea'));
+    getReviewWordInputs().forEach((input) => commonFunctions.addRightClickPasteEvent(input));
     commonFunctions.initTtsPrefixMaintenanceUI();
 
     setDefaultReviewTime();
