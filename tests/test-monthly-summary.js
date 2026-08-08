@@ -270,6 +270,7 @@ const reportText = buildMonthlySummaryReport({
 
 assert(reportText.startsWith('智浩学员8🈷️月末总结'), '月末总结标题中的三字学员名应去掉姓氏');
 assert(reportText.includes('智浩本月累计学词65个，抗遗忘复盘25词。'), '月末总结寄语中的三字学员名应去掉姓氏');
+assert(reportText.includes('学员本月请假1次，整体出勤稳定。'), '月末总结请假文案应明确是学员请假，避免歧义');
 assert(reportText.includes('本月累计学单词：65个（新词学习53个+旧词巩固12个），累计遗忘4词，综合正确率92%。'), '月末总结 txt 正文应将正课学习汇总为与抗遗忘一致的单行格式');
 assert(
     monthlySummarySource.includes('link.download = `${userName}_${yearMonth}_月末总结.txt`;'),

@@ -373,7 +373,7 @@ function buildGoals(stats) {
 }
 
 function getAttendanceText(leaveCount) {
-    return leaveCount === 0 ? '全勤，出勤超棒！' : `本月请假${leaveCount}次，整体出勤稳定。`;
+    return leaveCount === 0 ? '全勤，出勤超棒！' : `学员本月请假${leaveCount}次，整体出勤稳定。`;
 }
 
 function getAntiForgettingText(correctRate, forgetCount) {
