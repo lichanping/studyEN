@@ -3958,13 +3958,13 @@ sourceId: 上课记录唯一标识（用于去重）</span>
 
     function buildQuotaAnomalyDetailLine(entry) {
         const displayName = entry.displayNames.join("/");
-        const systemNameTip = displayName === entry.queryName ? "" : `（系统名：${entry.queryName}）`;
         if (entry.isMissingStudent) {
+            const systemNameTip = displayName === entry.queryName ? "" : `（系统名：${entry.queryName}）`;
             const missingFieldsText = formatFieldLabels(entry.zeroFields);
             return `学员${displayName}${systemNameTip}在系统未查到，需核对学员名称；待核对课时：${missingFieldsText}`;
         }
 
-        return `请帮忙为${displayName}${systemNameTip}充值：${entry.issueText || "课时异常，需人工核对"}`;
+        return `请帮忙为${entry.queryName || displayName}充值：${entry.issueText || "课时异常，需人工核对"}`;
     }
 
     function buildQuotaResultTable(rows) {

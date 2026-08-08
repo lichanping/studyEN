@@ -195,7 +195,8 @@ const anomalyLine = buildQuotaAnomalyDetailLine({
     issueText: "陪练服务时长不足（剩余0.0，需求1小时）"
 });
 
-assert(anomalyLine.includes('请帮忙为硕硕（系统名：俞新硕）充值：陪练服务时长不足（剩余0.0，需求1小时）'), '异常文案应保留异常项说明');
+assert(!anomalyLine.includes('请帮忙为硕硕（系统名：俞新硕）充值'), '异常文案主语不应再使用昵称 + 系统名的重复写法');
+assert(anomalyLine.includes('请帮忙为俞新硕充值：陪练服务时长不足（剩余0.0，需求1小时）'), '异常文案应优先使用系统名作为充值对象');
 assert(!anomalyLine.includes('当前"陪练服务时长剩余"为0.0'), '异常文案不应重复追加陪练服务时长当前剩余值');
 assert(!anomalyLine.includes('当前"30分钟剩余"为 8'), '异常文案不应展示未异常的 30 分钟剩余值');
 assert(!anomalyLine.includes('"60分钟剩余"为 4'), '异常文案不应展示未异常的 60 分钟剩余值');
