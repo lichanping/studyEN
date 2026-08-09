@@ -57,6 +57,10 @@ These instructions apply to all coding tasks in this repository.
 - For Python code, prefer `pytest` style tests unless the target area already uses another framework.
 - For schedule or quota logic changes, run `npm run test:quota` before and after implementation, and report both results.
 - For any MCP-driven UI verification, always launch and inspect the page in an external Chrome browser via Chrome DevTools MCP. Do not use VS Code embedded pages for UI acceptance checks, because the viewport is too small for reliable review.
+- 当用户要求“给我回归验证用例 / 验证点 / 验收场景 / regression cases”时，在完成 coding 和相关自测后，输出必须优先使用表格格式。
+- 该表格应只描述“本次改动对应的验证点”，不要把通用历史测试清单或整仓库固定测试样例直接写入规约或直接整段复用给用户。
+- 推荐表头：`模块 | 回归点 | 操作步骤 | 预期结果 | 已跑自动化（可选）`。
+- 若本次改动同时包含 UI、文案、数据口径、导出或存储行为，表格中应分别列出，不要混成一条。
 
 ## Delivery Expectations
 
