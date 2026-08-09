@@ -60,14 +60,13 @@ body {
     color: var(--text-color);
     font-size: 17px;
     line-height: 1.6;
-    position: relative;
     padding-top: 100px;
 }
-
-.form-group.fixed-display {
+        min-height: 32px;
+        padding: 0 14px;
     position: fixed;
     top: 10px;
-    left: 20px;
+        background: linear-gradient(90deg, #7ec8a0 0%, #7ec8a0 var(--month-progress-percent, 0%), var(--panel-bg) var(--month-progress-percent, 0%), var(--panel-bg) 100%);
     width: 100%;
     max-width: 700px;
     background-color: var(--panel-bg);
@@ -75,7 +74,6 @@ body {
     box-shadow: var(--card-shadow);
     z-index: 1000;
     display: flex;
-    flex-wrap: wrap;
     gap: 10px;
     align-items: center;
     border: 1px solid var(--panel-border);
@@ -83,21 +81,6 @@ body {
 }
 
 #userName {
-    width: 120px;
-    height: 50px;
-    padding: 10px 16px;
-    font-size: 20px;
-    font-weight: bold;
-    color: var(--label-color);
-    background: var(--panel-bg);
-    border: 2px solid var(--button-border);
-    border-radius: 8px;
-    appearance: none;
-    outline: none;
-    cursor: pointer;
-    box-shadow: var(--control-shadow);
-}
-
 #classFeedbackButton, #appointmentSchedulingButton, #stop, #noReviewTodayButton, #newFeedbackButton {
     background-color: var(--action-bg);
 }
@@ -105,8 +88,8 @@ body {
 #viewTotalHoursButton {
     background-color: var(--view-hours-bg);
     font-weight: 600;
-}
-
+            min-height: 30px;
+            padding: 0 12px;
 /* Add more styles as needed */
 .long-text {
     position: fixed;

@@ -39,12 +39,26 @@ assert(
 );
 
 assert(
+    !indexSource.includes('month-progress-bar')
+        && !indexSource.includes('month-progress-fill')
+        && indexSource.includes('class="month-progress-text"'),
+    'index.html 应改为仅保留文字容器，由 badge 自身承载进度填充背景'
+);
+
+assert(
     indexCssSource.includes('.month-progress-badge')
-        && indexCssSource.includes('min-height: 40px;')
-        && indexCssSource.includes('padding: 6px 16px 8px;')
+        && indexCssSource.includes('min-height: 32px;')
+        && indexCssSource.includes('padding: 0 14px;')
         && indexCssSource.includes('font-size: 15px;')
+        && indexCssSource.includes('linear-gradient(90deg, #7ec8a0 0%, #7ec8a0 var(--month-progress-percent, 0%), var(--panel-bg) var(--month-progress-percent, 0%), var(--panel-bg) 100%)')
         && indexCssSource.includes('flex-wrap: nowrap;'),
-    'index.css 应让 headline 本月进度 badge 维持更紧凑的同排布局，避免单独占一行'
+    'index.css 应让 headline 本月进度 badge 使用自身背景承载进度填充，并维持更紧凑的同排布局'
+);
+
+assert(
+    classFormalSource.includes("badge.style.setProperty('--month-progress-percent', `${percent}%`);")
+        || classFormalSource.includes("badge.style.setProperty(\"--month-progress-percent\", `${percent}%`);"),
+    'classFormal.js 应通过 CSS 变量驱动 badge 背景填充比例'
 );
 
 const calculateMonthElapsedPercentCode = extractBlock(classFormalSource, 'export function calculateMonthElapsedPercent');

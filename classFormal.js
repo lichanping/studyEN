@@ -38,13 +38,10 @@ function renderMonthProgressBadge(date = new Date()) {
     }
     const percent = calculateMonthElapsedPercent(date);
     const textEl = badge.querySelector('.month-progress-text');
-    const fillEl = badge.querySelector('.month-progress-fill');
     if (textEl) {
         textEl.textContent = getMonthElapsedHeadlineText(date);
     }
-    if (fillEl) {
-        fillEl.style.width = `${percent}%`;
-    }
+    badge.style.setProperty('--month-progress-percent', `${percent}%`);
 }
 
 const setInitialDateTime = () => {
