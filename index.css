@@ -227,10 +227,11 @@ h1 {
 
 .month-progress-badge {
     display: inline-flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     min-height: 40px;
-    padding: 0 16px;
+    padding: 6px 16px 8px;
     border-radius: 999px;
     border: 1px solid var(--panel-border);
     background-color: var(--panel-bg);
@@ -241,6 +242,28 @@ h1 {
     white-space: nowrap;
     flex: 0 0 auto;
     box-shadow: var(--control-shadow);
+    gap: 4px;
+}
+
+.month-progress-text {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--muted-text);
+}
+
+.month-progress-bar {
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background-color: var(--panel-border);
+    overflow: hidden;
+}
+
+.month-progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    background-color: #7ec8a0;
+    transition: width 0.3s ease;
 }
 
 @media (max-width: 640px) {
@@ -250,7 +273,10 @@ h1 {
 
     .month-progress-badge {
         min-height: 36px;
-        padding: 0 12px;
+        padding: 5px 12px 7px;
+    }
+
+    .month-progress-text {
         font-size: 14px;
     }
 }
