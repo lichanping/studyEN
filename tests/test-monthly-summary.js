@@ -60,6 +60,12 @@ assert(
 );
 
 assert(
+    prdSource.includes('抗遗忘复盘次数由系统规则决定，不将“提高复盘次数”作为对学员的直接要求')
+        && prdSource.includes('月末总结需优先强调课后作业落实、每日复习打卡与家长跟进的重要性'),
+    'PRD 应明确月末总结不再要求学员提高系统复盘次数，而是强调课后作业落实'
+);
+
+assert(
     prdSource.includes('正课遗忘词总数：`SUM(forgetNewWords)`')
         && prdSource.includes('正课新词掌握率 `>= 90%`')
         && prdSource.includes('当正课次数、累计学词、抗遗忘复盘次数均为 `0` 时，整份月末总结统一输出暖心寄语式鼓励文案'),
@@ -260,8 +266,8 @@ const reportText = buildMonthlySummaryReport({
     },
     leaveCount: 1,
     highlights: ['▫️ 课堂专注认真，积极互动，单词疑问及时问，态度超赞👍'],
-    improvements: ['▫️ 抗遗忘复盘次数还可以再加一些，尽量把复习频率提上来，记得会更牢🔄'],
-    goals: ['下月增加抗遗忘复盘次数，尽量形成更稳定的复习节奏。'],
+    improvements: ['▫️ 课后作业和每日复习打卡还需要继续落实，尽量把当天作业按时完成、及时巩固，记得会更牢🔄'],
+    goals: ['下月继续加强课后作业落实与每日复习打卡，尽量把当天新学内容及时巩固。'],
     allStats: {
         totalWords: 65,
         antiForgettingTotalReviewed: 25
@@ -272,6 +278,10 @@ assert(reportText.startsWith('智浩学员8🈷️月末总结'), '月末总结�
 assert(reportText.includes('智浩本月累计学词65个，抗遗忘复盘25词。'), '月末总结寄语中的三字学员名应去掉姓氏');
 assert(reportText.includes('学员本月请假1次，整体出勤稳定。'), '月末总结请假文案应明确是学员请假，避免歧义');
 assert(reportText.includes('本月累计学单词：65个（新词学习53个+旧词巩固12个），累计遗忘4词，综合正确率92%。'), '月末总结 txt 正文应将正课学习汇总为与抗遗忘一致的单行格式');
+assert(
+    reportText.includes('课后作业和每日复习打卡还需要继续落实，尽量把当天作业按时完成、及时巩固，记得会更牢🔄'),
+    '月末总结小提升点应强调课后作业落实，而不是要求提高系统复盘次数'
+);
 assert(
     monthlySummarySource.includes('link.download = `${userName}_${yearMonth}_月末总结.txt`;'),
     '月末总结下载文件名应继续使用学员完整姓名'
@@ -298,12 +308,12 @@ assert(
     '正课新词掌握率达到 90% 时应命中掌握率闪光点'
 );
 assert(
-    generateImprovements({ antiForgettingSessionCount: 14, classCount: 4, antiForgettingCorrectRate: 95 }).some((text) => text.includes('复盘次数还可以再加一些')),
-    '抗遗忘次数少的阈值应为 < 15'
+    generateImprovements({ antiForgettingSessionCount: 14, classCount: 4, antiForgettingCorrectRate: 95 }).some((text) => text.includes('课后作业和每日复习打卡还需要继续落实')),
+    '抗遗忘次数少的场景应转为强调课后作业落实，而不是要求提高系统复盘次数'
 );
 assert(
-    !generateImprovements({ antiForgettingSessionCount: 15, classCount: 4, antiForgettingCorrectRate: 95 }).some((text) => text.includes('复盘次数还可以再加一些')),
-    '抗遗忘次数达到 15 时不应再命中次数偏少提示'
+    !generateImprovements({ antiForgettingSessionCount: 15, classCount: 4, antiForgettingCorrectRate: 95 }).some((text) => text.includes('课后作业和每日复习打卡还需要继续落实')),
+    '抗遗忘次数达到 15 时不应再命中课后作业落实提示'
 );
 assert(
     generateImprovements({ antiForgettingSessionCount: 20, classCount: 4, antiForgettingCorrectRate: 95, antiForgettingTrend: 'rising', newWordMasteryRate: 89 }).some((text) => text.includes('本月新学内容里还有一些词需要反复回看')),

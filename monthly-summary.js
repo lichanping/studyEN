@@ -325,7 +325,7 @@ export function generateHighlights(stats) {
 }
 
 const IMPROVEMENTS_LIBRARY = [
-    { condition: (stats) => stats.antiForgettingSessionCount < 15, text: '▫️ 抗遗忘复盘次数还可以再加一些，尽量把复习频率提上来，记得会更牢🔄' },
+    { condition: (stats) => stats.antiForgettingSessionCount < 15, text: '▫️ 课后作业和每日复习打卡还需要继续落实，尽量把当天作业按时完成、及时巩固，记得会更牢🔄' },
     { condition: (stats) => stats.classCount < 4, text: '▫️ 本月正课次数偏少，下月可适当多安排一些课程，保持学习节奏更稳📚' },
     { condition: (stats) => stats.antiForgettingCorrectRate < 90, text: '▫️ 易错词还可以继续针对性巩固，把整体正确率再往上提一提📝' },
     { condition: (stats) => stats.antiForgettingTrend !== 'rising', text: '▫️ 复习状态还可以再稳一点，争取让后半月的表现持续往上走📈' },
@@ -355,7 +355,7 @@ function buildGoals(stats) {
         goals.push('下月适当增加正课安排，尽量保持每周稳定上课频率。');
     }
     if (stats.antiForgettingSessionCount < 15) {
-        goals.push('下月增加抗遗忘复盘次数，尽量形成更稳定的复习节奏。');
+        goals.push('下月继续加强课后作业落实与每日复习打卡，尽量把当天新学内容及时巩固。');
     }
     if (stats.antiForgettingCorrectRate < 90) {
         goals.push('下月继续针对易错词反复巩固，争取把抗遗忘正确率再往上提。');
@@ -414,8 +414,10 @@ function buildMonthlySummaryReport(options) {
         goals,
         allStats
     } = options;
+
     let report = `${reportStudentName}学员${monthDisplay}月末总结\n\n`;
     report += '一、本月核心学习数据📊\n\n';
+
     if (classStats.classCount === 0 && classStats.totalWords === 0 && antiForgettingStats.totalReviewed === 0) {
         const leaveText = leaveCount > 0 ? `学员本月请假${leaveCount}次，` : '';
         report += `✅ 本月暂无课堂与复习数据，${leaveText}当前以学习安排衔接和下月节奏准备为主。\n\n`;
@@ -428,11 +430,12 @@ function buildMonthlySummaryReport(options) {
         report += '\n四、教练暖心寄语💌\n\n';
         report += buildWarmMessage(reportStudentName, allStats);
         return report;
-    } else {
-        report += `✅ 本月正课次数：${classStats.classCount}节，共${classStats.totalDuration}小时（${classStats.classCount === 0 ? '本月暂无正课安排' : getAttendanceText(leaveCount)}）\n`;
-        report += `✅ ${getFormalStudyText(classStats)}\n`;
-        report += `✅ 本月抗遗忘复盘：${antiForgettingStats.totalReviewed}个单词，${antiForgettingStats.totalReviewed === 0 ? '本月暂无抗遗忘复盘记录。' : getAntiForgettingText(antiForgettingStats.correctRate, antiForgettingStats.forgetCount)}\n\n`;
     }
+
+    report += `✅ 本月正课次数：${classStats.classCount}节，共${classStats.totalDuration}小时（${classStats.classCount === 0 ? '本月暂无正课安排' : getAttendanceText(leaveCount)}）\n`;
+    report += `✅ ${getFormalStudyText(classStats)}\n`;
+    report += `✅ 本月抗遗忘复盘：${antiForgettingStats.totalReviewed}个单词，${antiForgettingStats.totalReviewed === 0 ? '本月暂无抗遗忘复盘记录。' : getAntiForgettingText(antiForgettingStats.correctRate, antiForgettingStats.forgetCount)}\n\n`;
+
     report += '二、本月表现点评🌟\n\n';
     report += '👍 闪光点\n\n';
     const defaultHighlights = classStats.classCount === 0 && antiForgettingStats.totalReviewed === 0
@@ -441,14 +444,17 @@ function buildMonthlySummaryReport(options) {
     (highlights.length > 0 ? highlights : defaultHighlights).forEach((line) => {
         report += `${line}\n`;
     });
+
     report += '\n📌 小提升点\n\n';
     improvements.forEach((line) => {
         report += `${line}\n`;
     });
+
     report += '\n三、下月小目标🎯\n\n';
     goals.forEach((goal, index) => {
         report += `${index + 1}. ${goal}\n`;
     });
+
     report += '\n四、教练暖心寄语💌\n\n';
     report += buildWarmMessage(reportStudentName, allStats);
     return report;

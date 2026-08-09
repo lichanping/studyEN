@@ -40,10 +40,11 @@ assert(
 
 assert(
     indexCssSource.includes('.month-progress-badge')
-        && indexCssSource.includes('min-height: 44px;')
-        && indexCssSource.includes('padding: 0 18px;')
-        && indexCssSource.includes('font-size: 16px;'),
-    'index.css 应为 headline 本月进度 badge 提供更稳定一致的视觉高度'
+        && indexCssSource.includes('min-height: 40px;')
+        && indexCssSource.includes('padding: 0 16px;')
+        && indexCssSource.includes('font-size: 15px;')
+        && indexCssSource.includes('flex-wrap: nowrap;'),
+    'index.css 应让 headline 本月进度 badge 维持更紧凑的同排布局，避免单独占一行'
 );
 
 const calculateMonthElapsedPercentCode = extractBlock(classFormalSource, 'export function calculateMonthElapsedPercent');
