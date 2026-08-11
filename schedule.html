@@ -870,6 +870,29 @@
             color: var(--quota-danger-text);
         }
 
+        .quota-status-cell {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .quota-copy-btn {
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            background: var(--card);
+            color: var(--text);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 10px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .quota-copy-btn:hover {
+            background: var(--menu-hover-bg);
+        }
+
         .quota-cell-danger {
             color: var(--quota-danger-text);
             font-weight: 700;
@@ -1657,7 +1680,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
         renderWeek(dayMap, baseDate);
     }
 
-    async function refreshBoardScheduleMatches() {
+    async function refreshBoardScheduleMatches(options = {}) {
         if (!window.ScheduleCourseMatch || typeof window.ScheduleCourseMatch.createBoardMatchIndex !== "function") {
             setBoardScheduleMatchState({
                 status: "error",
@@ -1785,7 +1808,9 @@ sourceId: 上课记录唯一标识（用于去重）</span>
                 updatedAt: "",
                 errorMessage: error.message || "未知错误"
             });
-            window.showToast?.("首页排课查询失败，状态标记将显示未获取", 4200);
+            if (!options?.suppressErrorToast) {
+                window.showToast?.("首页排课查询失败，状态标记将显示未获取", 4200);
+            }
         }
 
         rerenderScheduleViewsForBoardState();
@@ -3269,6 +3294,17 @@ sourceId: 上课记录唯一标识（用于去重）</span>
         return String(Number(numeric.toFixed(2)));
     }
 
+    function formatQuotaDisplay(value) {
+        const raw = String(value ?? "").trim();
+        if (!raw) return "-";
+        const numeric = toQuotaNumber(raw);
+        if (numeric === null) return raw;
+        if (Math.abs(numeric - Math.round(numeric)) < 0.00001) {
+            return String(Math.round(numeric));
+        }
+        return String(Number(numeric.toFixed(2)));
+    }
+
     function getQuotaScopeByDate(baseDate) {
         const picked = String(baseDate || "").trim() || dateToYmd(new Date());
         const weekStart = window.getMondayOfWeek?.(picked) || picked;
@@ -3847,6 +3883,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
                 checkedRows.push({
                     queryName,
                     displayName,
+                    displayNames: [...requirement.displayNames],
                     quota30: "-",
                     quota60: "-",
                     quotaAccompany: "-",
@@ -3856,6 +3893,8 @@ sourceId: 上课记录唯一标识（用于去重）</span>
                     requiredQuota30,
                     requiredQuota60,
                     requiredAccompanyHours,
+                    isMissingStudent: true,
+                    issueText: "",
                     sourceScopeLabel: scopeLabel
                 });
 
@@ -3882,23 +3921,23 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             const quotaAccompanyValue = toQuotaNumber(item?.quotaAccompany);
 
             if (requiredQuota30 > 0) {
-                if (quota30Value === null || quota30Value + 0.00001 < requiredQuota30) {
+                if (quota30Value === null || quota30Value <= 0.00001) {
                     zeroFields.push("quota30");
-                    issueTexts.push(`30分钟课时不足（剩余${item?.quota30 ?? "-"}，需求${formatQuotaNeed(requiredQuota30)}）`);
+                    issueTexts.push(`30分钟课时不足（剩余${formatQuotaDisplay(item?.quota30)}，需求${formatQuotaNeed(requiredQuota30)}）`);
                 }
             }
 
             if (requiredQuota60 > 0) {
-                if (quota60Value === null || quota60Value + 0.00001 < requiredQuota60) {
+                if (quota60Value === null || quota60Value <= 0.00001) {
                     zeroFields.push("quota60");
-                    issueTexts.push(`60分钟课时不足（剩余${item?.quota60 ?? "-"}，需求${formatQuotaNeed(requiredQuota60)}）`);
+                    issueTexts.push(`60分钟课时不足（剩余${formatQuotaDisplay(item?.quota60)}，需求${formatQuotaNeed(requiredQuota60)}）`);
                 }
             }
 
             if (requiredAccompanyHours > 0) {
                 if (quotaAccompanyValue === null || quotaAccompanyValue + 0.00001 < requiredAccompanyHours) {
                     zeroFields.push("quotaAccompany");
-                    issueTexts.push(`陪练服务时长不足（剩余${item?.quotaAccompany ?? "-"}，需求${formatQuotaNeed(requiredAccompanyHours)}小时）`);
+                    issueTexts.push(`陪练服务时长不足（剩余${formatQuotaDisplay(item?.quotaAccompany)}，需求${formatQuotaNeed(requiredAccompanyHours)}小时）`);
                 }
             }
 
@@ -3910,15 +3949,18 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             checkedRows.push({
                 queryName,
                 displayName,
-                quota30: item?.quota30 ?? "-",
-                quota60: item?.quota60 ?? "-",
-                quotaAccompany: item?.quotaAccompany ?? "-",
+                displayNames: [...requirement.displayNames],
+                quota30: formatQuotaDisplay(item?.quota30),
+                quota60: formatQuotaDisplay(item?.quota60),
+                quotaAccompany: formatQuotaDisplay(item?.quotaAccompany),
                 statusType,
                 statusText,
                 zeroFields,
                 requiredQuota30,
                 requiredQuota60,
                 requiredAccompanyHours,
+                isMissingStudent: false,
+                issueText: issueTexts.join("；"),
                 sourceScopeLabel: scopeLabel
             });
 
@@ -3926,9 +3968,9 @@ sourceId: 上课记录唯一标识（用于去重）</span>
                 anomalies.push({
                     queryName,
                     displayNames: [...requirement.displayNames],
-                    quota30: item?.quota30,
-                    quota60: item?.quota60,
-                    quotaAccompany: item?.quotaAccompany,
+                    quota30: formatQuotaDisplay(item?.quota30),
+                    quota60: formatQuotaDisplay(item?.quota60),
+                    quotaAccompany: formatQuotaDisplay(item?.quotaAccompany),
                     zeroFields,
                     requiredQuota30,
                     requiredQuota60,
@@ -3991,6 +4033,8 @@ sourceId: 上课记录唯一标识（用于去重）</span>
                 ? "quota-status missing"
                 : (row.statusType === "warn" ? "quota-status warn" : "quota-status");
 
+            const shouldShowCopyButton = row.statusType === "warn" || row.statusType === "missing";
+
             const appendCell = (value, fieldName) => {
                 const td = document.createElement("td");
                 td.textContent = value;
@@ -4007,7 +4051,30 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             appendCell(String(row.quotaAccompany), "quotaAccompany");
 
             const statusTd = document.createElement("td");
-            statusTd.innerHTML = "<span class=\"" + statusClass + "\">" + row.statusText + "</span>";
+            statusTd.className = "quota-status-cell";
+
+            const statusSpan = document.createElement("span");
+            statusSpan.className = statusClass;
+            statusSpan.textContent = row.statusText;
+            statusTd.appendChild(statusSpan);
+
+            if (shouldShowCopyButton) {
+                const copyButton = document.createElement("button");
+                copyButton.type = "button";
+                copyButton.className = "quota-copy-btn";
+                copyButton.textContent = "复制";
+                copyButton.addEventListener("click", async () => {
+                    const detailLine = buildQuotaAnomalyDetailLine(row);
+                    const copied = await copyToClipboard(detailLine);
+                    if (typeof window.showCopiedContentToast === "function") {
+                        window.showCopiedContentToast(copied, detailLine, "已复制该生异常文案：");
+                    } else {
+                        window.showToast?.(copied ? "该生异常文案已复制到剪贴板" : "复制失败，请手动复制");
+                    }
+                });
+                statusTd.appendChild(copyButton);
+            }
+
             tr.appendChild(statusTd);
             tbody.appendChild(tr);
         });
@@ -4117,7 +4184,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
     const viewTotalHoursButton = document.getElementById("viewTotalHoursButton");
     viewTotalHoursButton?.addEventListener("click", async () => {
         await runScheduleQuotaCheck({ silent: false });
-        await refreshBoardScheduleMatches();
+        await refreshBoardScheduleMatches({ suppressErrorToast: true });
     });
 
     const mockQuotaCheckButton = document.getElementById("mockQuotaCheckButton");
