@@ -5,6 +5,10 @@ export const ACTIVE_SUBSCRIPTIONS_KEY = "active-subscriptions";
 export const SUBSCRIPTION_STORE_NAME = "schedule-subscriptions";
 const SUBSCRIPTION_CHECK_INTERVAL_MINUTES = 60;
 
+function normalizeSubscriptionType(value) {
+    return String(value || "").trim() === "abnormal-student" ? "abnormal-student" : "unscheduled-course";
+}
+
 function corsHeaders() {
     return {
         "Access-Control-Allow-Origin": "*",
@@ -40,7 +44,11 @@ function addMinutes(isoString, minutes) {
 }
 
 export function buildSubscriptionId(payload) {
+    const subscriptionType = normalizeSubscriptionType(payload?.subscriptionType);
     const student = sanitizeText(payload?.student, 64);
+    if (subscriptionType === "abnormal-student") {
+        return student ? `abnormal-student__${student}` : "";
+    }
     const date = sanitizeText(payload?.date, 32);
     const durationMinutes = normalizeDurationMinutes(payload?.durationMinutes);
     if (!student || !date || !durationMinutes) return "";
@@ -58,6 +66,7 @@ export async function writeSubscriptions(store, records) {
 }
 
 function buildSubscriptionRecord(payload, nowIso, options = {}) {
+    const subscriptionType = normalizeSubscriptionType(payload?.subscriptionType);
     const id = buildSubscriptionId(payload);
     const student = sanitizeText(payload?.student, 64);
     const date = sanitizeText(payload?.date, 32);
@@ -67,11 +76,22 @@ function buildSubscriptionRecord(payload, nowIso, options = {}) {
     const token = sanitizeText(payload?.token, 4096);
     const userId = sanitizeText(payload?.userId, 64);
     const durationMinutes = normalizeDurationMinutes(payload?.durationMinutes);
+    const issueText = sanitizeText(payload?.issueText, 512);
+    const sourceScopeLabel = sanitizeText(payload?.sourceScopeLabel, 256);
+    const requiredQuota30 = Number(payload?.requiredQuota30 || 0);
+    const requiredQuota60 = Number(payload?.requiredQuota60 || 0);
+    const requiredAccompanyHours = Number(payload?.requiredAccompanyHours || 0);
+    const zeroFields = Array.isArray(payload?.zeroFields)
+        ? payload.zeroFields.map((item) => sanitizeText(item, 32)).filter(Boolean)
+        : [];
     const initialCheckDelayMinutes = Number.isFinite(options.initialCheckDelayMinutes)
         ? Math.max(0, Number(options.initialCheckDelayMinutes))
         : SUBSCRIPTION_CHECK_INTERVAL_MINUTES;
 
-    if (!id || !student || !date || !durationMinutes) {
+    if (!id || !student) {
+        throw new Error("Missing subscription target fields");
+    }
+    if (subscriptionType !== "abnormal-student" && (!date || !durationMinutes)) {
         throw new Error("Missing subscription target fields");
     }
     if (platform !== "lixiaolaila") {
@@ -83,12 +103,19 @@ function buildSubscriptionRecord(payload, nowIso, options = {}) {
 
     return {
         id,
+        subscriptionType,
         student,
         date,
         durationMinutes,
         course,
         time,
         platform,
+        issueText,
+        sourceScopeLabel,
+        requiredQuota30,
+        requiredQuota60,
+        requiredAccompanyHours,
+        zeroFields,
         token,
         userId,
         nextCheckAt: addMinutes(nowIso, initialCheckDelayMinutes),
@@ -132,6 +159,7 @@ export async function subscribeAndRunImmediateCheck({
     payload,
     env = process.env,
     fetchBoardRows,
+    fetchQuotaRows,
     sendReminderEmail
 }) {
     const now = sanitizeText(nowIso, 64) || new Date().toISOString();
@@ -147,6 +175,7 @@ export async function subscribeAndRunImmediateCheck({
         nowIso: now,
         env,
         fetchBoardRows,
+        fetchQuotaRows,
         sendReminderEmail,
         subscriptions: upserted?.subscriptions,
         subscriptionIds: subscriptionId ? [subscriptionId] : []
