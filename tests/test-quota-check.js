@@ -27,6 +27,12 @@ function formatQuotaNeed(value) {
     return String(Number(numeric.toFixed(2)));
 }
 
+const formatQuotaDisplayCode = extractBlock(scheduleSource, "function formatQuotaDisplay");
+const formatQuotaDisplay = new Function(
+    "toQuotaNumber",
+    `${formatQuotaDisplayCode}\nreturn formatQuotaDisplay;`
+)(toQuotaNumber);
+
 function collectQuotaNeeds(entries) {
     const needsMap = new Map();
 
@@ -225,6 +231,18 @@ const buildQuotaAnomalyDetailLine = new Function(
     `${buildQuotaAnomalyDetailLineCode}\nreturn buildQuotaAnomalyDetailLine;`
 )();
 
+console.log("\n========== 测试 1D3: 剩余值展示格式 ==========");
+assert.strictEqual(formatQuotaDisplay("0.0"), "0", "整数型剩余值不应保留 .0");
+assert.strictEqual(formatQuotaDisplay("2.0"), "2", "整数型剩余值显示应去掉 .0");
+assert.strictEqual(formatQuotaDisplay("0.5"), "0.5", "浮点型剩余值应保留有效小数");
+assert.strictEqual(formatQuotaDisplay("-"), "-", "非数字占位值应保持原样");
+assert(
+    scheduleSource.includes("剩余${formatQuotaDisplay(item?.quota30)}")
+    && scheduleSource.includes("剩余${formatQuotaDisplay(item?.quota60)}")
+    && scheduleSource.includes("剩余${formatQuotaDisplay(item?.quotaAccompany)}"),
+    "异常文案中的剩余值应使用统一格式化，整数去掉 .0，浮点保留有效小数"
+);
+
 const anomalyLine = buildQuotaAnomalyDetailLine({
     queryName: "俞新硕",
     displayNames: ["硕硕"],
@@ -241,20 +259,152 @@ assert(!anomalyLine.includes('当前"陪练服务时长剩余"为0.0'), '异常�
 assert(!anomalyLine.includes('当前"30分钟剩余"为 8'), '异常文案不应展示未异常的 30 分钟剩余值');
 assert(!anomalyLine.includes('"60分钟剩余"为 4'), '异常文案不应展示未异常的 60 分钟剩余值');
 
-// ============ 测试 2: legacy 学生不参与课时余额检查 ============
-console.log("\n========== 测试 2: legacy 学生不参与课时余额检查 ==========");
-const test2Entries = [
-    { student: "陈怡睿", course: "单词", durationMinutes: 30 }
-];
-const test2Needs = collectQuotaNeeds(test2Entries);
-assert.strictEqual(test2Needs.has("陈怡睿"), false, "legacy 学生陈怡睿不应进入课时余额检查");
+console.log("\n========== 测试 1F: 异常列表状态栏提供单行复制 ==========");
+class FakeElement {
+    constructor(tagName) {
+        this.tagName = String(tagName || "").toUpperCase();
+        this.children = [];
+        this.className = "";
+        this._textContent = "";
+        this._innerHTML = "";
+        this.listeners = {};
+    }
 
-// ============ 测试 3: legacy 60分钟学生不参与课时余额检查 ============
-console.log("\n========== 测试 3: legacy 60分钟学生不参与课时余额检查 ==========");
-const test3Entries = [
-    { student: "季筱雯", course: "单词", durationMinutes: 60 }
-];
-const test3Needs = collectQuotaNeeds(test3Entries);
-assert.strictEqual(test3Needs.has("季筱雯"), false, "legacy 学生季筱雯不应进入课时余额检查");
+    appendChild(child) {
+        this.children.push(child);
+        return child;
+    }
 
-console.log("\n========== 所有测试完成 ==========\n");
+    addEventListener(eventName, handler) {
+        if (!this.listeners[eventName]) {
+            this.listeners[eventName] = [];
+        }
+        this.listeners[eventName].push(handler);
+    }
+
+    set textContent(value) {
+        this._textContent = String(value ?? "");
+    }
+
+    get textContent() {
+        return this._textContent;
+    }
+
+    set innerHTML(value) {
+        this._innerHTML = String(value ?? "");
+    }
+
+    get innerHTML() {
+        return this._innerHTML;
+    }
+}
+
+function findFirstElement(root, predicate) {
+    if (!root) return null;
+    if (predicate(root)) return root;
+    for (const child of root.children || []) {
+        const matched = findFirstElement(child, predicate);
+        if (matched) return matched;
+    }
+    return null;
+}
+
+const buildQuotaResultTableCode = extractBlock(scheduleSource, "function buildQuotaResultTable");
+const quotaCopyCalls = [];
+const buildQuotaResultTable = new Function(
+    "document",
+    "buildQuotaAnomalyDetailLine",
+    "copyToClipboard",
+    "window",
+    `${buildQuotaResultTableCode}\nreturn buildQuotaResultTable;`
+)(
+    {
+        createElement(tagName) {
+            return new FakeElement(tagName);
+        }
+    },
+    buildQuotaAnomalyDetailLine,
+    async (text) => {
+        quotaCopyCalls.push(text);
+        return true;
+    },
+    {
+        showToast() {},
+        showCopiedContentToast() {}
+    }
+);
+
+const quotaResultTable = buildQuotaResultTable([
+    {
+        displayName: "硕硕",
+        queryName: "俞新硕",
+        displayNames: ["硕硕"],
+        quota30: "8",
+        quota60: "4",
+        quotaAccompany: "0.0",
+        zeroFields: ["quotaAccompany"],
+        statusType: "warn",
+        statusText: "异常：陪练服务时长不足（剩余0.0，需求1小时）",
+        issueText: "陪练服务时长不足（剩余0.0，需求1小时）"
+    },
+    {
+        displayName: "张舒睿",
+        queryName: "张舒睿",
+        quota30: "6",
+        quota60: "1",
+        quotaAccompany: "1.0",
+        zeroFields: [],
+        statusType: "ok",
+        statusText: "正常",
+        issueText: "",
+        displayNames: ["张舒睿"]
+    }
+]);
+
+const copyButton = findFirstElement(quotaResultTable, (node) => node.tagName === "BUTTON" && node.textContent === "复制");
+assert(copyButton, "异常行状态栏应提供单独复制按钮");
+assert.strictEqual(quotaCopyCalls.length, 0, "未点击复制按钮前不应触发复制");
+assert(copyButton.listeners.click?.length, "复制按钮应绑定点击事件");
+Promise.resolve(copyButton.listeners.click[0]())
+    .then(() => {
+        assert.deepStrictEqual(quotaCopyCalls, [anomalyLine], "点击异常行复制按钮时应只复制该行充值文案");
+
+        const normalRowCopyButton = findFirstElement(
+            quotaResultTable.children[1],
+            (node) => node.tagName === "BUTTON" && node.textContent === "复制"
+        );
+        assert.strictEqual(normalRowCopyButton, null, "正常学生行不应出现异常充值复制按钮");
+
+        console.log("\n========== 测试 1G: 查看课时数不应被首页排课失败 toast 覆盖 ==========");
+        assert(
+            scheduleSource.includes("await refreshBoardScheduleMatches({ suppressErrorToast: true });"),
+            "查看课时数按钮触发的首页排课状态刷新应静默错误 toast，避免覆盖课时检查结果提示"
+        );
+        assert(
+            scheduleSource.includes("if (!options?.suppressErrorToast) {")
+            && scheduleSource.includes("window.showToast?.(\"首页排课查询失败，状态标记将显示未获取\", 4200);"),
+            "首页排课查询失败 toast 应支持按调用场景静默"
+        );
+
+        // ============ 测试 2: legacy 学生不参与课时余额检查 ============
+        console.log("\n========== 测试 2: legacy 学生不参与课时余额检查 ==========");
+        const test2Entries = [
+            { student: "陈怡睿", course: "单词", durationMinutes: 30 }
+        ];
+        const test2Needs = collectQuotaNeeds(test2Entries);
+        assert.strictEqual(test2Needs.has("陈怡睿"), false, "legacy 学生陈怡睿不应进入课时余额检查");
+
+        // ============ 测试 3: legacy 60分钟学生不参与课时余额检查 ============
+        console.log("\n========== 测试 3: legacy 60分钟学生不参与课时余额检查 ==========");
+        const test3Entries = [
+            { student: "季筱雯", course: "单词", durationMinutes: 60 }
+        ];
+        const test3Needs = collectQuotaNeeds(test3Entries);
+        assert.strictEqual(test3Needs.has("季筱雯"), false, "legacy 学生季筱雯不应进入课时余额检查");
+
+        console.log("\n========== 所有测试完成 ==========\n");
+    })
+    .catch((error) => {
+        console.error(error);
+        process.exitCode = 1;
+    });
