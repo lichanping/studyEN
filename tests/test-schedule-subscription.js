@@ -465,6 +465,7 @@ async function testAbnormalStudentSubscribeShouldNotifyWhenQuotaStillInsufficien
     assert.strictEqual(store.snapshot().length, 1, 'still-insufficient abnormal student subscription should remain active');
     assert.strictEqual(store.snapshot()[0].notifyCount, 1, 'first abnormal student reminder should consume one notify attempt');
     assert(sentMessages[0].message.includes('30分钟课时不足'), 'abnormal student reminder should mention the subscribed quota issue');
+    assert(sentMessages[0].message.includes('轮询次数：1'), 'first abnormal student reminder should include poll attempt 1');
     assert(sentMessages[0].message.includes('当前30分钟剩余：0'), 'abnormal student reminder should include the latest quota30 value');
     assert(sentMessages[0].message.includes('当前60分钟剩余：3'), 'abnormal student reminder should include the latest quota60 value');
     assert(sentMessages[0].message.includes('当前陪练服务时长剩余：2.0'), 'abnormal student reminder should include the latest accompany quota value');
@@ -481,6 +482,8 @@ async function testAbnormalStudentReminderMessageShouldFocusOnQuotaInfo() {
         issueText: '陪练服务时长不足（剩余0，需求1小时）',
         zeroFields: ['quotaAccompany']
     }, {
+        pollAttemptText: '3',
+        finalReminder: true,
         quotaRow: {
             quota30: '8',
             quota60: '4',
@@ -491,7 +494,25 @@ async function testAbnormalStudentReminderMessageShouldFocusOnQuotaInfo() {
     assert(message.includes('当前30分钟剩余：8'), 'abnormal student reminder message should include quota30 snapshot');
     assert(message.includes('当前60分钟剩余：4'), 'abnormal student reminder message should include quota60 snapshot');
     assert(message.includes('当前陪练服务时长剩余：0'), 'abnormal student reminder message should include accompany quota snapshot');
+    assert(message.includes('轮询次数：3(last)'), 'final abnormal student reminder message should mark the last poll attempt explicitly');
     assert(!message.includes('检查范围：'), 'abnormal student reminder message should not include schedule-scope text');
+}
+
+async function testUnscheduledReminderMessageShouldIncludePollAttempt() {
+    const mod = await loadModule('scripts/check_schedule_subscriptions.mjs');
+    const message = mod.buildReminderMessage({
+        id: '徐智浩__2026-08-02__60',
+        student: '徐智浩',
+        date: '2026-08-02',
+        time: '10:00',
+        durationMinutes: 60,
+        course: '单词',
+        platform: 'lixiaolaila'
+    }, {
+        pollAttemptText: '2'
+    });
+
+    assert(message.includes('轮询次数：2'), 'unscheduled reminder message should include the current poll attempt');
 }
 
 async function testSubscriptionStatusShouldReportActiveIds() {
@@ -733,6 +754,7 @@ async function run() {
     await testAbnormalStudentSubscribeShouldImmediatelyResolveWhenQuotaRecovered();
     await testAbnormalStudentSubscribeShouldNotifyWhenQuotaStillInsufficient();
     await testAbnormalStudentReminderMessageShouldFocusOnQuotaInfo();
+    await testUnscheduledReminderMessageShouldIncludePollAttempt();
     await testSubscriptionStatusShouldReportActiveIds();
     await testReminderEmailShouldFallbackToHardcodedRecipient();
     await testReminderEmailShouldFallbackMailFromToSmtpUser();

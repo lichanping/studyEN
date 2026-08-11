@@ -103,6 +103,12 @@ function buildAbnormalStudentQuotaLines(subscription, quotaRow) {
     ];
 }
 
+function buildPollAttemptText(options = {}) {
+    const rawAttempt = String(options.pollAttemptText || options.pollAttempt || '').trim();
+    if (!rawAttempt) return '';
+    return options.finalReminder ? `${rawAttempt}(last)` : rawAttempt;
+}
+
 function formatScheduleDate(value) {
     const date = new Date(String(value || "") + "T00:00:00");
     if (!Number.isFinite(date.getTime())) return String(value || "").trim();
@@ -150,11 +156,13 @@ export function buildScheduleRequestText(subscription) {
 }
 
 export function buildReminderMessage(subscription, options = {}) {
+    const pollAttemptText = buildPollAttemptText(options);
     if (subscription?.subscriptionType === "abnormal-student") {
         const lines = [
             "以下异常学生的课时额度仍未恢复，请及时跟进：",
             `学生：${subscription.student}`,
             `平台：${subscription.platform}`,
+            ...(pollAttemptText ? [`轮询次数：${pollAttemptText}`] : []),
             ...buildAbnormalStudentQuotaLines(subscription, options.quotaRow),
             `订阅编号：${subscription.id}`
         ];
@@ -175,6 +183,7 @@ export function buildReminderMessage(subscription, options = {}) {
         `时长：${subscription.durationMinutes} 分钟`,
         `课程：${subscription.course || "未填写"}`,
         `平台：${subscription.platform}`,
+        ...(pollAttemptText ? [`轮询次数：${pollAttemptText}`] : []),
         `订阅编号：${subscription.id}`,
         "",
         "可直接复制下面的申请排课文案：",
@@ -447,6 +456,7 @@ export async function runSubscriptionChecks({
             const nextNotifyCount = previousNotifyCount + 1;
             const message = buildReminderMessage(subscription, {
                 quotaRow,
+                pollAttempt: nextNotifyCount,
                 finalReminder: nextNotifyCount >= MAX_NOTIFY_COUNT
             });
             if (dryRun) {
