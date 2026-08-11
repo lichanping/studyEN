@@ -81,9 +81,16 @@ assert(
 );
 
 assert(
-    scheduleHtml.includes('showToast("已订阅异常学生课时不足提醒，将每1小时复查一次，最多提醒3次"')
+    scheduleHtml.includes('已订阅异常学生课时不足提醒，将每1小时复查一次，最多提醒3次')
         && scheduleHtml.includes('showToast("已取消异常学生课时不足订阅"'),
     'schedule.html 异常学生订阅成功/取消提示应指向课时不足复查策略'
+);
+
+assert(
+    scheduleHtml.includes('result?.summary?.skippedCount')
+        && scheduleHtml.includes('result?.subscription?.lastError')
+        && scheduleHtml.includes('已订阅，但首封提醒邮件发送失败：'),
+    'schedule.html 订阅后若首封提醒邮件被跳过或发送失败，应展示真实诊断信息'
 );
 
 assert(

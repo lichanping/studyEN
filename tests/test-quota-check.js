@@ -310,12 +310,19 @@ function findFirstElement(root, predicate) {
 }
 
 const buildQuotaResultTableCode = extractBlock(scheduleSource, "function buildQuotaResultTable");
+const getSubscriptionSuccessToastCode = extractBlock(scheduleSource, "function getSubscriptionSuccessToast");
 const quotaCopyCalls = [];
 const abnormalSubscriptionState = {};
+const toastCalls = [];
+const getSubscriptionSuccessToast = new Function(
+    `${getSubscriptionSuccessToastCode}
+return getSubscriptionSuccessToast;`
+)();
 const buildQuotaResultTable = new Function(
     "document",
     "buildQuotaAnomalyDetailLine",
     "copyToClipboard",
+    "getSubscriptionSuccessToast",
     "window",
     `${buildQuotaResultTableCode}\nreturn buildQuotaResultTable;`
 )(
@@ -329,20 +336,29 @@ const buildQuotaResultTable = new Function(
         quotaCopyCalls.push(text);
         return true;
     },
+    getSubscriptionSuccessToast,
     {
         clearResolvedAbnormalStudentSubscription() {},
         getAbnormalStudentSubscriptionSnapshot(row) {
             return abnormalSubscriptionState[row.queryName] || null;
         },
         async subscribeAbnormalStudentEntry(row) {
-            abnormalSubscriptionState[row.queryName] = { id: `abnormal-student__${row.queryName}` };
-            return { subscription: abnormalSubscriptionState[row.queryName] };
+            abnormalSubscriptionState[row.queryName] = {
+                id: `abnormal-student__${row.queryName}`,
+                lastError: 'SMTP config is incomplete'
+            };
+            return {
+                subscription: abnormalSubscriptionState[row.queryName],
+                summary: { skippedCount: 1 }
+            };
         },
         async unsubscribeAbnormalStudentEntry(row) {
             delete abnormalSubscriptionState[row.queryName];
             return { ok: true };
         },
-        showToast() {},
+        showToast(message) {
+            toastCalls.push(message);
+        },
         showCopiedContentToast() {}
     }
 );
@@ -393,6 +409,10 @@ Promise.resolve(copyButton.listeners.click[0]())
         return Promise.resolve(subscribeButton.listeners.click[0]())
             .then(() => {
                 assert.strictEqual(subscribeButton.textContent, "取消订阅", "异常学生订阅成功后按钮应立即切换为取消订阅");
+                assert(
+                    toastCalls.some((message) => String(message || '').includes('已订阅，但首封提醒邮件发送失败：SMTP config is incomplete')),
+                    '异常学生订阅首检邮件被跳过时，前端应展示真实诊断，而不是只提示已订阅'
+                );
                 return subscribeButton.listeners.click[0]();
             })
             .then(() => {

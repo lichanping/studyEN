@@ -1687,6 +1687,15 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             }, "请先完成李校来啦登录，再订阅未排课提醒");
     }
 
+    function getSubscriptionSuccessToast(result, successMessage) {
+        const skippedCount = Number(result?.summary?.skippedCount || 0);
+        const lastError = String(result?.subscription?.lastError || "").trim();
+        if (skippedCount > 0) {
+            return `已订阅，但首封提醒邮件发送失败：${lastError || "email skipped"}`;
+        }
+        return successMessage;
+    }
+
     function subscribeScheduleEntry(entry, dateValue) {
         return requestScheduleSubscription("subscribe", entry, dateValue).then((payload) => {
             if (payload?.subscription) {
@@ -2557,8 +2566,8 @@ sourceId: 上课记录唯一标识（用于去重）</span>
                             await unsubscribeScheduleEntry(item, dateValue);
                             showToast("已取消未排课订阅");
                         } else {
-                            await subscribeScheduleEntry(item, dateValue);
-                            showToast("已订阅未排课提醒，将每1小时复查一次，最多提醒3次", 3200);
+                            const result = await subscribeScheduleEntry(item, dateValue);
+                            showToast(getSubscriptionSuccessToast(result, "已订阅未排课提醒，将每1小时复查一次，最多提醒3次"), 4200);
                         }
                         onChange();
                     } catch (error) {
@@ -4195,11 +4204,11 @@ sourceId: 上课记录唯一标识（用于去重）</span>
                             subscriptionButton.title = "每1小时检查一次，最多提醒3次";
                             if (window.showToast) window.showToast("已取消异常学生课时不足订阅");
                         } else {
-                            await window.subscribeAbnormalStudentEntry?.(row);
+                            const result = await window.subscribeAbnormalStudentEntry?.(row);
                             subscriptionButton.textContent = "取消订阅";
                             subscriptionButton.className = "quota-copy-btn unsubscribe";
                             subscriptionButton.title = "取消每1小时异常学生课时不足提醒";
-                            if (window.showToast) window.showToast("已订阅异常学生课时不足提醒，将每1小时复查一次，最多提醒3次", 3200);
+                            if (window.showToast) window.showToast(getSubscriptionSuccessToast(result, "已订阅异常学生课时不足提醒，将每1小时复查一次，最多提醒3次"), 4200);
                         }
                     } catch (error) {
                         subscriptionButton.textContent = originalText;
