@@ -138,7 +138,7 @@ const quota30_1A = toQuotaNumber(apiResponse_1A.quota30);
 const quota60_1A = toQuotaNumber(apiResponse_1A.quota60);
 const accompany_1A = toQuotaNumber(apiResponse_1A.quotaAccompany);
 const isAnomalous_1A = 
-    (test1Req.requiredQuota30 > 0 && (quota30_1A === null || quota30_1A < test1Req.requiredQuota30)) ||
+    (test1Req.requiredQuota30 > 0 && (quota30_1A === null || quota30_1A <= 0.00001)) ||
     (test1Req.requiredQuota60 > 0 && (quota60_1A === null || quota60_1A < test1Req.requiredQuota60)) ||
     (test1Req.requiredAccompanyHours > 0 && (accompany_1A === null || accompany_1A < test1Req.requiredAccompanyHours));
 console.log(`陪练 0.5 < 需求 ${formatQuotaNeed(test1Req.requiredAccompanyHours)} => 异常: ${isAnomalous_1A} ✓`);
@@ -150,7 +150,7 @@ const quota30_1B = toQuotaNumber(apiResponse_1B.quota30);
 const quota60_1B = toQuotaNumber(apiResponse_1B.quota60);
 const accompany_1B = toQuotaNumber(apiResponse_1B.quotaAccompany);
 const isAnomalous_1B = 
-    (test1Req.requiredQuota30 > 0 && (quota30_1B === null || quota30_1B < test1Req.requiredQuota30)) ||
+    (test1Req.requiredQuota30 > 0 && (quota30_1B === null || quota30_1B <= 0.00001)) ||
     (test1Req.requiredQuota60 > 0 && (quota60_1B === null || quota60_1B < test1Req.requiredQuota60)) ||
     (test1Req.requiredAccompanyHours > 0 && (accompany_1B === null || accompany_1B < test1Req.requiredAccompanyHours));
 console.log(`陪练 1.0 >= 需求 ${formatQuotaNeed(test1Req.requiredAccompanyHours)} => 异常: ${isAnomalous_1B} ✓`);
@@ -162,10 +162,30 @@ const quota30_1C = toQuotaNumber(apiResponse_1C.quota30);
 const quota60_1C = toQuotaNumber(apiResponse_1C.quota60);
 const accompany_1C = toQuotaNumber(apiResponse_1C.quotaAccompany);
 const isAnomalous_1C = 
-    (test1Req.requiredQuota30 > 0 && (quota30_1C === null || quota30_1C < test1Req.requiredQuota30)) ||
-    (test1Req.requiredQuota60 > 0 && (quota60_1C === null || quota60_1C < test1Req.requiredQuota60)) ||
+    (test1Req.requiredQuota30 > 0 && (quota30_1C === null || quota30_1C <= 0.00001)) ||
+    (test1Req.requiredQuota60 > 0 && (quota60_1C === null || quota60_1C <= 0.00001)) ||
     (test1Req.requiredAccompanyHours > 0 && (accompany_1C === null || accompany_1C < test1Req.requiredAccompanyHours));
 console.log(`30分钟 0 < 需求 ${formatQuotaNeed(test1Req.requiredQuota30)} => 异常: ${isAnomalous_1C} ✓`);
+assert.strictEqual(isAnomalous_1C, true, "30分钟剩余为 0 时应判定为异常");
+
+console.log("\n场景 C2：邸睿本周需 3 节 30分钟课，剩余 2（非 0，不应异常）");
+const test1C2Entries = [
+    { student: "邸睿", course: "单词", durationMinutes: 30 },
+    { student: "邸睿", course: "单词", durationMinutes: 30 },
+    { student: "邸睿", course: "单词", durationMinutes: 30 }
+];
+const test1C2Needs = collectQuotaNeeds(test1C2Entries);
+const test1C2Req = test1C2Needs.get("邸睿");
+const apiResponse_1C2 = { quota30: "2", quota60: "0", quotaAccompany: "0.5" };
+const quota30_1C2 = toQuotaNumber(apiResponse_1C2.quota30);
+const quota60_1C2 = toQuotaNumber(apiResponse_1C2.quota60);
+const accompany_1C2 = toQuotaNumber(apiResponse_1C2.quotaAccompany);
+const isAnomalous_1C2 = 
+    (test1C2Req.requiredQuota30 > 0 && (quota30_1C2 === null || quota30_1C2 <= 0.00001)) ||
+    (test1C2Req.requiredQuota60 > 0 && (quota60_1C2 === null || quota60_1C2 <= 0.00001)) ||
+    (test1C2Req.requiredAccompanyHours > 0 && (accompany_1C2 === null || accompany_1C2 < test1C2Req.requiredAccompanyHours));
+console.log(`30分钟剩余 2，需求 ${formatQuotaNeed(test1C2Req.requiredQuota30)} => 异常: ${isAnomalous_1C2}`);
+assert.strictEqual(isAnomalous_1C2, false, "30分钟剩余只要不是 0，就不应判定为异常");
 
 // 测试场景 D：60分钟课时不足
 console.log("\n场景 D：邸睿 60分钟剩余 0（不足）");
@@ -174,10 +194,30 @@ const quota30_1D = toQuotaNumber(apiResponse_1D.quota30);
 const quota60_1D = toQuotaNumber(apiResponse_1D.quota60);
 const accompany_1D = toQuotaNumber(apiResponse_1D.quotaAccompany);
 const isAnomalous_1D = 
-    (test1Req.requiredQuota30 > 0 && (quota30_1D === null || quota30_1D < test1Req.requiredQuota30)) ||
-    (test1Req.requiredQuota60 > 0 && (quota60_1D === null || quota60_1D < test1Req.requiredQuota60)) ||
+    (test1Req.requiredQuota30 > 0 && (quota30_1D === null || quota30_1D <= 0.00001)) ||
+    (test1Req.requiredQuota60 > 0 && (quota60_1D === null || quota60_1D <= 0.00001)) ||
     (test1Req.requiredAccompanyHours > 0 && (accompany_1D === null || accompany_1D < test1Req.requiredAccompanyHours));
 console.log(`60分钟 0 < 需求 ${formatQuotaNeed(test1Req.requiredQuota60)} => 异常: ${isAnomalous_1D} ✓`);
+assert.strictEqual(isAnomalous_1D, true, "60分钟剩余为 0 时应判定为异常");
+
+console.log("\n场景 D2：邸睿本周需 3 节 60分钟课，剩余 2（非 0，不应异常）");
+const test1D2Entries = [
+    { student: "邸睿", course: "阅读", durationMinutes: 60 },
+    { student: "邸睿", course: "阅读", durationMinutes: 60 },
+    { student: "邸睿", course: "阅读", durationMinutes: 60 }
+];
+const test1D2Needs = collectQuotaNeeds(test1D2Entries);
+const test1D2Req = test1D2Needs.get("邸睿");
+const apiResponse_1D2 = { quota30: "0", quota60: "2", quotaAccompany: "1.0" };
+const quota30_1D2 = toQuotaNumber(apiResponse_1D2.quota30);
+const quota60_1D2 = toQuotaNumber(apiResponse_1D2.quota60);
+const accompany_1D2 = toQuotaNumber(apiResponse_1D2.quotaAccompany);
+const isAnomalous_1D2 = 
+    (test1D2Req.requiredQuota30 > 0 && (quota30_1D2 === null || quota30_1D2 <= 0.00001)) ||
+    (test1D2Req.requiredQuota60 > 0 && (quota60_1D2 === null || quota60_1D2 <= 0.00001)) ||
+    (test1D2Req.requiredAccompanyHours > 0 && (accompany_1D2 === null || accompany_1D2 < test1D2Req.requiredAccompanyHours));
+console.log(`60分钟剩余 2，需求 ${formatQuotaNeed(test1D2Req.requiredQuota60)} => 异常: ${isAnomalous_1D2}`);
+assert.strictEqual(isAnomalous_1D2, false, "60分钟剩余只要不是 0，就不应判定为异常");
 
 console.log("\n========== 测试 1E: 异常文案不重复追加当前剩余 ==========");
 const buildQuotaAnomalyDetailLineCode = extractBlock(scheduleSource, "function buildQuotaAnomalyDetailLine");

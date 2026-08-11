@@ -3882,14 +3882,14 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             const quotaAccompanyValue = toQuotaNumber(item?.quotaAccompany);
 
             if (requiredQuota30 > 0) {
-                if (quota30Value === null || quota30Value + 0.00001 < requiredQuota30) {
+                if (quota30Value === null || quota30Value <= 0.00001) {
                     zeroFields.push("quota30");
                     issueTexts.push(`30分钟课时不足（剩余${item?.quota30 ?? "-"}，需求${formatQuotaNeed(requiredQuota30)}）`);
                 }
             }
 
             if (requiredQuota60 > 0) {
-                if (quota60Value === null || quota60Value + 0.00001 < requiredQuota60) {
+                if (quota60Value === null || quota60Value <= 0.00001) {
                     zeroFields.push("quota60");
                     issueTexts.push(`60分钟课时不足（剩余${item?.quota60 ?? "-"}，需求${formatQuotaNeed(requiredQuota60)}）`);
                 }
