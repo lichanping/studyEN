@@ -4176,22 +4176,29 @@ sourceId: 上课记录唯一标识（用于去重）</span>
 
             if (shouldShowSubscriptionButton) {
                 window.clearResolvedAbnormalStudentSubscription?.(row);
-                const activeSubscription = window.getAbnormalStudentSubscriptionSnapshot?.(row);
+                const initialSubscription = window.getAbnormalStudentSubscriptionSnapshot?.(row);
                 const subscriptionButton = document.createElement("button");
                 subscriptionButton.type = "button";
-                subscriptionButton.className = "quota-copy-btn " + (activeSubscription ? "unsubscribe" : "subscribe");
-                subscriptionButton.textContent = activeSubscription ? "取消订阅" : "订阅";
-                subscriptionButton.title = activeSubscription ? "取消每1小时异常学生课时不足提醒" : "每1小时检查一次，最多提醒3次";
+                subscriptionButton.className = "quota-copy-btn " + (initialSubscription ? "unsubscribe" : "subscribe");
+                subscriptionButton.textContent = initialSubscription ? "取消订阅" : "订阅";
+                subscriptionButton.title = initialSubscription ? "取消每1小时异常学生课时不足提醒" : "每1小时检查一次，最多提醒3次";
                 subscriptionButton.addEventListener("click", async () => {
+                    const activeSubscription = window.getAbnormalStudentSubscriptionSnapshot?.(row);
                     const originalText = subscriptionButton.textContent;
                     subscriptionButton.disabled = true;
                     subscriptionButton.textContent = activeSubscription ? "取消中…" : "订阅中…";
                     try {
                         if (activeSubscription) {
                             await window.unsubscribeAbnormalStudentEntry?.(row);
+                            subscriptionButton.textContent = "订阅";
+                            subscriptionButton.className = "quota-copy-btn subscribe";
+                            subscriptionButton.title = "每1小时检查一次，最多提醒3次";
                             if (window.showToast) window.showToast("已取消异常学生课时不足订阅");
                         } else {
                             await window.subscribeAbnormalStudentEntry?.(row);
+                            subscriptionButton.textContent = "取消订阅";
+                            subscriptionButton.className = "quota-copy-btn unsubscribe";
+                            subscriptionButton.title = "取消每1小时异常学生课时不足提醒";
                             if (window.showToast) window.showToast("已订阅异常学生课时不足提醒，将每1小时复查一次，最多提醒3次", 3200);
                         }
                     } catch (error) {

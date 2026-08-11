@@ -311,6 +311,7 @@ function findFirstElement(root, predicate) {
 
 const buildQuotaResultTableCode = extractBlock(scheduleSource, "function buildQuotaResultTable");
 const quotaCopyCalls = [];
+const abnormalSubscriptionState = {};
 const buildQuotaResultTable = new Function(
     "document",
     "buildQuotaAnomalyDetailLine",
@@ -329,6 +330,18 @@ const buildQuotaResultTable = new Function(
         return true;
     },
     {
+        clearResolvedAbnormalStudentSubscription() {},
+        getAbnormalStudentSubscriptionSnapshot(row) {
+            return abnormalSubscriptionState[row.queryName] || null;
+        },
+        async subscribeAbnormalStudentEntry(row) {
+            abnormalSubscriptionState[row.queryName] = { id: `abnormal-student__${row.queryName}` };
+            return { subscription: abnormalSubscriptionState[row.queryName] };
+        },
+        async unsubscribeAbnormalStudentEntry(row) {
+            delete abnormalSubscriptionState[row.queryName];
+            return { ok: true };
+        },
         showToast() {},
         showCopiedContentToast() {}
     }
@@ -376,6 +389,17 @@ Promise.resolve(copyButton.listeners.click[0]())
             (node) => node.tagName === "BUTTON" && node.textContent === "订阅"
         );
         assert(subscribeButton, "李校异常学生行应展示订阅按钮");
+        assert(subscribeButton.listeners.click?.length, "异常学生订阅按钮应绑定点击事件");
+        return Promise.resolve(subscribeButton.listeners.click[0]())
+            .then(() => {
+                assert.strictEqual(subscribeButton.textContent, "取消订阅", "异常学生订阅成功后按钮应立即切换为取消订阅");
+                return subscribeButton.listeners.click[0]();
+            })
+            .then(() => {
+                assert.strictEqual(subscribeButton.textContent, "订阅", "异常学生取消订阅成功后按钮应立即切换回订阅");
+            });
+    })
+    .then(() => {
 
         const normalRowCopyButton = findFirstElement(
             quotaResultTable.children[1],
