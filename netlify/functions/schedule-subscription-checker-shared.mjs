@@ -86,6 +86,23 @@ function isAbnormalStudentResolved(subscription, quotaRows) {
     return zeroFields.every((fieldName) => isQuotaFieldRecovered(fieldName, quotaRow, subscription));
 }
 
+function formatQuotaSnapshotValue(value) {
+    const text = String(value ?? "").trim();
+    return text || "-";
+}
+
+function buildAbnormalStudentQuotaLines(subscription, quotaRow) {
+    const zeroFields = normalizeQuotaFieldList(subscription?.zeroFields);
+    const subscribedFieldsText = zeroFields.length > 0 ? zeroFields.join('、') : '未记录';
+    return [
+        `异常说明：${subscription.issueText || "课时异常，需人工核对"}`,
+        `订阅关注字段：${subscribedFieldsText}`,
+        `当前30分钟剩余：${formatQuotaSnapshotValue(quotaRow?.quota30)}`,
+        `当前60分钟剩余：${formatQuotaSnapshotValue(quotaRow?.quota60)}`,
+        `当前陪练服务时长剩余：${formatQuotaSnapshotValue(quotaRow?.quotaAccompany)}`
+    ];
+}
+
 function formatScheduleDate(value) {
     const date = new Date(String(value || "") + "T00:00:00");
     if (!Number.isFinite(date.getTime())) return String(value || "").trim();
@@ -138,8 +155,7 @@ export function buildReminderMessage(subscription, options = {}) {
             "以下异常学生的课时额度仍未恢复，请及时跟进：",
             `学生：${subscription.student}`,
             `平台：${subscription.platform}`,
-            `异常说明：${subscription.issueText || "课时异常，需人工核对"}`,
-            `检查范围：${subscription.sourceScopeLabel || "当前排课页"}`,
+            ...buildAbnormalStudentQuotaLines(subscription, options.quotaRow),
             `订阅编号：${subscription.id}`
         ];
         if (options.finalReminder) {
@@ -173,14 +189,13 @@ export function buildReminderMessage(subscription, options = {}) {
     return lines.join("\n");
 }
 
-export function buildResolvedMessage(subscription, state) {
+export function buildResolvedMessage(subscription, state, options = {}) {
     if (subscription?.subscriptionType === "abnormal-student") {
         return [
             "已检测到异常学生课时额度恢复，系统将自动停止订阅。",
             `学生：${subscription.student}`,
             `平台：${subscription.platform}`,
-            `异常说明：${subscription.issueText || "课时异常，需人工核对"}`,
-            `检查范围：${subscription.sourceScopeLabel || "当前排课页"}`,
+            ...buildAbnormalStudentQuotaLines(subscription, options.quotaRow),
             `恢复字段：${normalizeQuotaFieldList(subscription?.zeroFields).join('、') || '已恢复'}`,
             `订阅编号：${subscription.id}`,
             "",
@@ -380,8 +395,10 @@ export async function runSubscriptionChecks({
 
         try {
             let state = 'none';
+            let quotaRow = null;
             if (subscription?.subscriptionType === 'abnormal-student') {
                 const quotaRows = await fetchQuotaRows(subscription);
+                quotaRow = findQuotaRowByStudent(quotaRows, subscription?.student);
                 state = isAbnormalStudentResolved(subscription, quotaRows) ? 'resolved' : 'none';
             } else {
                 const rows = await fetchBoardRows(subscription);
@@ -400,7 +417,7 @@ export async function runSubscriptionChecks({
                     env,
                     nowIso: now,
                     subject: buildResolvedSubject(subscription, state),
-                    message: buildResolvedMessage(subscription, state)
+                    message: buildResolvedMessage(subscription, state, { quotaRow })
                 });
                 if (sentResult?.skipped) {
                     skippedCount += 1;
@@ -429,6 +446,7 @@ export async function runSubscriptionChecks({
 
             const nextNotifyCount = previousNotifyCount + 1;
             const message = buildReminderMessage(subscription, {
+                quotaRow,
                 finalReminder: nextNotifyCount >= MAX_NOTIFY_COUNT
             });
             if (dryRun) {
