@@ -310,11 +310,19 @@ function findFirstElement(root, predicate) {
 }
 
 const buildQuotaResultTableCode = extractBlock(scheduleSource, "function buildQuotaResultTable");
+const getSubscriptionSuccessToastCode = extractBlock(scheduleSource, "function getSubscriptionSuccessToast");
 const quotaCopyCalls = [];
+const abnormalSubscriptionState = {};
+const toastCalls = [];
+const getSubscriptionSuccessToast = new Function(
+    `${getSubscriptionSuccessToastCode}
+return getSubscriptionSuccessToast;`
+)();
 const buildQuotaResultTable = new Function(
     "document",
     "buildQuotaAnomalyDetailLine",
     "copyToClipboard",
+    "getSubscriptionSuccessToast",
     "window",
     `${buildQuotaResultTableCode}\nreturn buildQuotaResultTable;`
 )(
@@ -328,8 +336,29 @@ const buildQuotaResultTable = new Function(
         quotaCopyCalls.push(text);
         return true;
     },
+    getSubscriptionSuccessToast,
     {
-        showToast() {},
+        clearResolvedAbnormalStudentSubscription() {},
+        getAbnormalStudentSubscriptionSnapshot(row) {
+            return abnormalSubscriptionState[row.queryName] || null;
+        },
+        async subscribeAbnormalStudentEntry(row) {
+            abnormalSubscriptionState[row.queryName] = {
+                id: `abnormal-student__${row.queryName}`,
+                lastError: 'SMTP config is incomplete'
+            };
+            return {
+                subscription: abnormalSubscriptionState[row.queryName],
+                summary: { skippedCount: 1 }
+            };
+        },
+        async unsubscribeAbnormalStudentEntry(row) {
+            delete abnormalSubscriptionState[row.queryName];
+            return { ok: true };
+        },
+        showToast(message) {
+            toastCalls.push(message);
+        },
         showCopiedContentToast() {}
     }
 );
@@ -339,6 +368,7 @@ const quotaResultTable = buildQuotaResultTable([
         displayName: "硕硕",
         queryName: "俞新硕",
         displayNames: ["硕硕"],
+        platform: "lixiaolaila",
         quota30: "8",
         quota60: "4",
         quotaAccompany: "0.0",
@@ -350,6 +380,7 @@ const quotaResultTable = buildQuotaResultTable([
     {
         displayName: "张舒睿",
         queryName: "张舒睿",
+        platform: "lixiaolaila",
         quota30: "6",
         quota60: "1",
         quotaAccompany: "1.0",
@@ -369,11 +400,53 @@ Promise.resolve(copyButton.listeners.click[0]())
     .then(() => {
         assert.deepStrictEqual(quotaCopyCalls, [anomalyLine], "点击异常行复制按钮时应只复制该行充值文案");
 
+        const subscribeButton = findFirstElement(
+            quotaResultTable,
+            (node) => node.tagName === "BUTTON" && node.textContent === "订阅"
+        );
+        assert(subscribeButton, "李校异常学生行应展示订阅按钮");
+        assert(subscribeButton.listeners.click?.length, "异常学生订阅按钮应绑定点击事件");
+        return Promise.resolve(subscribeButton.listeners.click[0]())
+            .then(() => {
+                assert.strictEqual(subscribeButton.textContent, "取消订阅", "异常学生订阅成功后按钮应立即切换为取消订阅");
+                assert(
+                    toastCalls.some((message) => String(message || '').includes('已订阅，但首封提醒邮件发送失败：SMTP config is incomplete')),
+                    '异常学生订阅首检邮件被跳过时，前端应展示真实诊断，而不是只提示已订阅'
+                );
+                return subscribeButton.listeners.click[0]();
+            })
+            .then(() => {
+                assert.strictEqual(subscribeButton.textContent, "订阅", "异常学生取消订阅成功后按钮应立即切换回订阅");
+            });
+    })
+    .then(() => {
+
         const normalRowCopyButton = findFirstElement(
             quotaResultTable.children[1],
             (node) => node.tagName === "BUTTON" && node.textContent === "复制"
         );
         assert.strictEqual(normalRowCopyButton, null, "正常学生行不应出现异常充值复制按钮");
+
+        const nonLxllQuotaResultTable = buildQuotaResultTable([
+            {
+                displayName: "Leo",
+                queryName: "Leo",
+                displayNames: ["Leo"],
+                platform: "baifendai",
+                quota30: "0",
+                quota60: "0",
+                quotaAccompany: "0.0",
+                zeroFields: ["quota30"],
+                statusType: "warn",
+                statusText: "异常：30分钟课时不足（剩余0，需求1）",
+                issueText: "30分钟课时不足（剩余0，需求1）"
+            }
+        ]);
+        const nonLxllSubscribeButton = findFirstElement(
+            nonLxllQuotaResultTable,
+            (node) => node.tagName === "BUTTON" && node.textContent === "订阅"
+        );
+        assert.strictEqual(nonLxllSubscribeButton, null, "非李校异常学生行不应展示订阅按钮");
 
         console.log("\n========== 测试 1G: 查看课时数不应被首页排课失败 toast 覆盖 ==========");
         assert(

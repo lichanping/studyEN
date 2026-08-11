@@ -42,6 +42,73 @@ function toHoursText(minutes) {
     return hours.toFixed(1).replace(".0", "") + "小时";
 }
 
+function toQuotaNumber(value) {
+    const raw = String(value ?? "").trim();
+    if (!raw) return null;
+    const numeric = Number(raw);
+    return Number.isFinite(numeric) ? numeric : null;
+}
+
+function normalizeQuotaFieldList(value) {
+    return Array.isArray(value)
+        ? value.map((item) => String(item || "").trim()).filter(Boolean)
+        : [];
+}
+
+function findQuotaRowByStudent(rows, student) {
+    const target = String(student || "").trim();
+    if (!target) return null;
+    return (Array.isArray(rows) ? rows : []).find((item) => String(item?.userName || item?.studentName || "").trim() === target) || null;
+}
+
+function isQuotaFieldRecovered(fieldName, quotaRow, subscription) {
+    if (!quotaRow) return false;
+    if (fieldName === 'quota30') {
+        const quota30Value = toQuotaNumber(quotaRow.quota30);
+        return quota30Value !== null && quota30Value > 0.00001;
+    }
+    if (fieldName === 'quota60') {
+        const quota60Value = toQuotaNumber(quotaRow.quota60);
+        return quota60Value !== null && quota60Value > 0.00001;
+    }
+    if (fieldName === 'quotaAccompany') {
+        const quotaAccompanyValue = toQuotaNumber(quotaRow.quotaAccompany);
+        const requiredAccompanyHours = Number(subscription?.requiredAccompanyHours || 0);
+        return quotaAccompanyValue !== null && quotaAccompanyValue + 0.00001 >= requiredAccompanyHours;
+    }
+    return false;
+}
+
+function isAbnormalStudentResolved(subscription, quotaRows) {
+    const quotaRow = findQuotaRowByStudent(quotaRows, subscription?.student);
+    const zeroFields = normalizeQuotaFieldList(subscription?.zeroFields);
+    if (!quotaRow || zeroFields.length === 0) return false;
+    return zeroFields.every((fieldName) => isQuotaFieldRecovered(fieldName, quotaRow, subscription));
+}
+
+function formatQuotaSnapshotValue(value) {
+    const text = String(value ?? "").trim();
+    return text || "-";
+}
+
+function buildAbnormalStudentQuotaLines(subscription, quotaRow) {
+    const zeroFields = normalizeQuotaFieldList(subscription?.zeroFields);
+    const subscribedFieldsText = zeroFields.length > 0 ? zeroFields.join('、') : '未记录';
+    return [
+        `异常说明：${subscription.issueText || "课时异常，需人工核对"}`,
+        `订阅关注字段：${subscribedFieldsText}`,
+        `当前30分钟剩余：${formatQuotaSnapshotValue(quotaRow?.quota30)}`,
+        `当前60分钟剩余：${formatQuotaSnapshotValue(quotaRow?.quota60)}`,
+        `当前陪练服务时长剩余：${formatQuotaSnapshotValue(quotaRow?.quotaAccompany)}`
+    ];
+}
+
+function buildPollAttemptText(options = {}) {
+    const rawAttempt = String(options.pollAttemptText || options.pollAttempt || '').trim();
+    if (!rawAttempt) return '';
+    return options.finalReminder ? `${rawAttempt}(last)` : rawAttempt;
+}
+
 function formatScheduleDate(value) {
     const date = new Date(String(value || "") + "T00:00:00");
     if (!Number.isFinite(date.getTime())) return String(value || "").trim();
@@ -89,6 +156,25 @@ export function buildScheduleRequestText(subscription) {
 }
 
 export function buildReminderMessage(subscription, options = {}) {
+    const pollAttemptText = buildPollAttemptText(options);
+    if (subscription?.subscriptionType === "abnormal-student") {
+        const lines = [
+            "以下异常学生的课时额度仍未恢复，请及时跟进：",
+            `学生：${subscription.student}`,
+            `平台：${subscription.platform}`,
+            ...(pollAttemptText ? [`轮询次数：${pollAttemptText}`] : []),
+            ...buildAbnormalStudentQuotaLines(subscription, options.quotaRow),
+            `订阅编号：${subscription.id}`
+        ];
+        if (options.finalReminder) {
+            lines.push(
+                "",
+                `本订阅已连续提醒 ${MAX_NOTIFY_COUNT} 次课时仍未恢复，系统将自动停止轮询。请手动确认是否需要重新订阅。`
+            );
+        }
+        return lines.join("\n");
+    }
+
     const requestText = buildScheduleRequestText(subscription);
     const lines = [
         "以下课程仍未排课，请及时催排：",
@@ -97,6 +183,7 @@ export function buildReminderMessage(subscription, options = {}) {
         `时长：${subscription.durationMinutes} 分钟`,
         `课程：${subscription.course || "未填写"}`,
         `平台：${subscription.platform}`,
+        ...(pollAttemptText ? [`轮询次数：${pollAttemptText}`] : []),
         `订阅编号：${subscription.id}`,
         "",
         "可直接复制下面的申请排课文案：",
@@ -111,8 +198,22 @@ export function buildReminderMessage(subscription, options = {}) {
     return lines.join("\n");
 }
 
-export function buildResolvedMessage(subscription, state) {
+export function buildResolvedMessage(subscription, state, options = {}) {
+    if (subscription?.subscriptionType === "abnormal-student") {
+        return [
+            "已检测到异常学生课时额度恢复，系统将自动停止订阅。",
+            `学生：${subscription.student}`,
+            `平台：${subscription.platform}`,
+            ...buildAbnormalStudentQuotaLines(subscription, options.quotaRow),
+            `恢复字段：${normalizeQuotaFieldList(subscription?.zeroFields).join('、') || '已恢复'}`,
+            `订阅编号：${subscription.id}`,
+            "",
+            "本订阅已自动停止订阅，后续不再轮询。"
+        ].join("\n");
+    }
+
     const stateText = state === "completed" ? "已完成" : "已排课";
+
     return [
         "已检测到排课状态更新，系统将自动停止订阅。",
         `学生：${subscription.student}`,
@@ -183,6 +284,33 @@ export async function loadBoardRowsForSubscription(subscription) {
     return boardRows.concat(completedRows);
 }
 
+export async function loadQuotaRowsForSubscription(subscription) {
+    const headers = {
+        "accept": "application/json, text/plain, */*",
+        "content-type": "application/json",
+        "origin": "https://h5.lxll.com",
+        "referer": "https://h5.lxll.com/",
+        "x-token-c": subscription.token,
+        "x-ua": "ct=1&version=5.0.6",
+        "x-user-id": subscription.userId || '144620'
+    };
+
+    const response = await fetch("https://api.lxll.com/request/CustomerTeacherListClient", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+            pageNumber: 1,
+            pageSize: 100,
+            whereCriteria: { studentName: "" }
+        })
+    });
+    if (!response.ok) {
+        throw new Error("Quota request failed: " + response.status);
+    }
+    const data = await response.json();
+    return Array.isArray(data?.data?.data) ? data.data.data : [];
+}
+
 export async function sendSmtpReminderEmail({ subscription, env = process.env, subject, message }) {
     if (isEmailDisabled(env)) {
         console.warn("schedule subscription checker: email disabled by env; skip email for", subscription.id);
@@ -221,6 +349,7 @@ export async function runSubscriptionChecks({
     nowIso,
     env = process.env,
     fetchBoardRows = loadBoardRowsForSubscription,
+    fetchQuotaRows = loadQuotaRowsForSubscription,
     sendReminderEmail = sendSmtpReminderEmail,
     subscriptions,
     subscriptionIds
@@ -240,6 +369,29 @@ export async function runSubscriptionChecks({
     let wouldNotifyCount = 0;
     let wouldExpireCount = 0;
 
+    function resolveCourseMatchState(index, subscription) {
+        return scheduleCourseMatch.getCourseMatchState(index, {
+            student: subscription.student,
+            date: subscription.date,
+            durationMinutes: subscription.durationMinutes
+        });
+    }
+
+    function buildResolvedSubject(subscription, state) {
+        if (subscription?.subscriptionType === "abnormal-student") {
+            return `【课时已恢复】${subscription.student} 异常学生订阅`;
+        }
+        const stateText = state === "completed" ? "已完成" : "已排课";
+        return `【已排课】${subscription.student} ${subscription.date} ${subscription.durationMinutes}分钟`;
+    }
+
+    function buildReminderSubject(subscription) {
+        if (subscription?.subscriptionType === "abnormal-student") {
+            return `【课时仍不足】${subscription.student} 异常学生订阅`;
+        }
+        return `【仍未排课】${subscription.student} ${subscription.date} ${subscription.durationMinutes}分钟`;
+    }
+
     for (const subscription of current) {
         if (scopedIds && !scopedIds.has(String(subscription?.id || "").trim())) {
             next.push(subscription);
@@ -251,13 +403,17 @@ export async function runSubscriptionChecks({
         }
 
         try {
-            const rows = await fetchBoardRows(subscription);
-            const index = scheduleCourseMatch.createBoardMatchIndex(rows);
-            const state = scheduleCourseMatch.getCourseMatchState(index, {
-                student: subscription.student,
-                date: subscription.date,
-                durationMinutes: subscription.durationMinutes
-            });
+            let state = 'none';
+            let quotaRow = null;
+            if (subscription?.subscriptionType === 'abnormal-student') {
+                const quotaRows = await fetchQuotaRows(subscription);
+                quotaRow = findQuotaRowByStudent(quotaRows, subscription?.student);
+                state = isAbnormalStudentResolved(subscription, quotaRows) ? 'resolved' : 'none';
+            } else {
+                const rows = await fetchBoardRows(subscription);
+                const index = scheduleCourseMatch.createBoardMatchIndex(rows);
+                state = resolveCourseMatchState(index, subscription);
+            }
 
             if (state !== "none") {
                 if (dryRun) {
@@ -269,8 +425,8 @@ export async function runSubscriptionChecks({
                     subscription,
                     env,
                     nowIso: now,
-                    subject: `【已排课】${subscription.student} ${subscription.date} ${subscription.durationMinutes}分钟`,
-                    message: buildResolvedMessage(subscription, state)
+                    subject: buildResolvedSubject(subscription, state),
+                    message: buildResolvedMessage(subscription, state, { quotaRow })
                 });
                 if (sentResult?.skipped) {
                     skippedCount += 1;
@@ -299,6 +455,8 @@ export async function runSubscriptionChecks({
 
             const nextNotifyCount = previousNotifyCount + 1;
             const message = buildReminderMessage(subscription, {
+                quotaRow,
+                pollAttempt: nextNotifyCount,
                 finalReminder: nextNotifyCount >= MAX_NOTIFY_COUNT
             });
             if (dryRun) {
@@ -309,7 +467,7 @@ export async function runSubscriptionChecks({
                 next.push(subscription);
                 continue;
             }
-            const sentResult = await sendReminderEmail({ subscription, env, nowIso: now, message });
+            const sentResult = await sendReminderEmail({ subscription, env, nowIso: now, subject: buildReminderSubject(subscription), message });
             if (sentResult?.skipped) {
                 skippedCount += 1;
                 next.push({

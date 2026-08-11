@@ -45,6 +45,12 @@ assert(
 );
 
 assert(
+    scheduleHtml.includes('function subscribeAbnormalStudentEntry(')
+        && scheduleHtml.includes('function unsubscribeAbnormalStudentEntry('),
+    'schedule.html 应提供异常学生订阅 / 取消订阅逻辑'
+);
+
+assert(
     scheduleHtml.includes('if (payload?.subscription)')
         && scheduleHtml.includes('forgetScheduleSubscription(entry, dateValue);'),
     'schedule.html 订阅后若当次首检已自动停订，不应继续保留本地已订阅状态'
@@ -55,6 +61,36 @@ assert(
         && renderDayEntriesBody.includes('subscriptionButton')
         && renderDayEntriesBody.includes('actionGroup.appendChild(subscriptionButton)'),
     'schedule.html 仅应在未排课条目渲染订阅按钮'
+);
+
+assert(
+    scheduleHtml.includes('function getAbnormalStudentSubscriptionSnapshot(')
+        && scheduleHtml.includes('function clearResolvedAbnormalStudentSubscription('),
+    'schedule.html 应维护异常学生订阅的本地快照与自动清理逻辑'
+);
+
+assert(
+    scheduleHtml.includes('subscriptionType: "abnormal-student"')
+        && scheduleHtml.includes('issueText: String(row?.issueText || "").trim()')
+        && scheduleHtml.includes('sourceScopeLabel: String(row?.sourceScopeLabel || "").trim()')
+        && scheduleHtml.includes('requiredQuota30: Number(row?.requiredQuota30 || 0)')
+        && scheduleHtml.includes('requiredQuota60: Number(row?.requiredQuota60 || 0)')
+        && scheduleHtml.includes('requiredAccompanyHours: Number(row?.requiredAccompanyHours || 0)')
+        && scheduleHtml.includes('zeroFields: Array.isArray(row?.zeroFields) ? row.zeroFields.slice() : []'),
+    'schedule.html 异常学生订阅请求应携带 subscriptionType、异常说明和额度缺口上下文'
+);
+
+assert(
+    scheduleHtml.includes('已订阅异常学生课时不足提醒，将每1小时复查一次，最多提醒3次')
+        && scheduleHtml.includes('showToast("已取消异常学生课时不足订阅"'),
+    'schedule.html 异常学生订阅成功/取消提示应指向课时不足复查策略'
+);
+
+assert(
+    scheduleHtml.includes('result?.summary?.skippedCount')
+        && scheduleHtml.includes('result?.subscription?.lastError')
+        && scheduleHtml.includes('已订阅，但首封提醒邮件发送失败：'),
+    'schedule.html 订阅后若首封提醒邮件被跳过或发送失败，应展示真实诊断信息'
 );
 
 assert(
