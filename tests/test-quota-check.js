@@ -339,6 +339,7 @@ const quotaResultTable = buildQuotaResultTable([
         displayName: "硕硕",
         queryName: "俞新硕",
         displayNames: ["硕硕"],
+        platform: "lixiaolaila",
         quota30: "8",
         quota60: "4",
         quotaAccompany: "0.0",
@@ -350,6 +351,7 @@ const quotaResultTable = buildQuotaResultTable([
     {
         displayName: "张舒睿",
         queryName: "张舒睿",
+        platform: "lixiaolaila",
         quota30: "6",
         quota60: "1",
         quotaAccompany: "1.0",
@@ -369,11 +371,38 @@ Promise.resolve(copyButton.listeners.click[0]())
     .then(() => {
         assert.deepStrictEqual(quotaCopyCalls, [anomalyLine], "点击异常行复制按钮时应只复制该行充值文案");
 
+        const subscribeButton = findFirstElement(
+            quotaResultTable,
+            (node) => node.tagName === "BUTTON" && node.textContent === "订阅"
+        );
+        assert(subscribeButton, "李校异常学生行应展示订阅按钮");
+
         const normalRowCopyButton = findFirstElement(
             quotaResultTable.children[1],
             (node) => node.tagName === "BUTTON" && node.textContent === "复制"
         );
         assert.strictEqual(normalRowCopyButton, null, "正常学生行不应出现异常充值复制按钮");
+
+        const nonLxllQuotaResultTable = buildQuotaResultTable([
+            {
+                displayName: "Leo",
+                queryName: "Leo",
+                displayNames: ["Leo"],
+                platform: "baifendai",
+                quota30: "0",
+                quota60: "0",
+                quotaAccompany: "0.0",
+                zeroFields: ["quota30"],
+                statusType: "warn",
+                statusText: "异常：30分钟课时不足（剩余0，需求1）",
+                issueText: "30分钟课时不足（剩余0，需求1）"
+            }
+        ]);
+        const nonLxllSubscribeButton = findFirstElement(
+            nonLxllQuotaResultTable,
+            (node) => node.tagName === "BUTTON" && node.textContent === "订阅"
+        );
+        assert.strictEqual(nonLxllSubscribeButton, null, "非李校异常学生行不应展示订阅按钮");
 
         console.log("\n========== 测试 1G: 查看课时数不应被首页排课失败 toast 覆盖 ==========");
         assert(

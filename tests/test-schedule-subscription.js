@@ -91,6 +91,36 @@ async function testSubscribeShouldAllowMissingUserIdWhenTokenExists() {
     assert.strictEqual(store.snapshot().length, 1, 'token-only lxll login state should still be subscribable');
 }
 
+async function testAbnormalStudentSubscribeShouldPersistStudentScopedSubscription() {
+    const mod = await loadModule('netlify/functions/schedule-subscription.mjs');
+    const store = createMemoryStore();
+    const now = '2026-08-11T01:00:00.000Z';
+
+    const result = await mod.upsertSubscription({
+        store,
+        nowIso: now,
+        payload: {
+            subscriptionType: 'abnormal-student',
+            student: '俞新硕',
+            platform: 'lixiaolaila',
+            token: 'x-token-c-demo',
+            issueText: '陪练服务时长不足（剩余0.0，需求1小时）',
+            sourceScopeLabel: '2026-08-11~2026-08-17',
+            zeroFields: ['quotaAccompany'],
+            requiredQuota30: 0,
+            requiredQuota60: 0,
+            requiredAccompanyHours: 1
+        }
+    });
+
+    assert.strictEqual(result.subscription.id, 'abnormal-student__俞新硕');
+    assert.strictEqual(result.subscription.subscriptionType, 'abnormal-student');
+    assert.strictEqual(result.subscription.issueText, '陪练服务时长不足（剩余0.0，需求1小时）');
+    assert.deepStrictEqual(result.subscription.zeroFields, ['quotaAccompany']);
+    assert.strictEqual(result.subscription.requiredAccompanyHours, 1);
+    assert.strictEqual(store.snapshot().length, 1, 'abnormal student subscription should be persisted');
+}
+
 async function testCheckerShouldOmitUserIdHeaderWhenMissing() {
     const mod = await loadModule('scripts/check_schedule_subscriptions.mjs');
     const originalFetch = global.fetch;
@@ -359,6 +389,80 @@ async function testSubscribeShouldImmediatelyResolveAndStopWhenAlreadyScheduled(
     assert(sentMessages[0].subject.includes('已排课'), 'resolved first check should send a success subject');
 }
 
+async function testAbnormalStudentSubscribeShouldImmediatelyResolveWhenQuotaRecovered() {
+    const mod = await loadModule('netlify/functions/schedule-subscription.mjs');
+    const sentMessages = [];
+    const store = createMemoryStore([]);
+
+    const result = await mod.subscribeAndRunImmediateCheck({
+        store,
+        nowIso: '2026-08-11T04:00:00.000Z',
+        payload: {
+            subscriptionType: 'abnormal-student',
+            student: '俞新硕',
+            platform: 'lixiaolaila',
+            token: 'x-token-c-demo',
+            issueText: '陪练服务时长不足（剩余0.0，需求1小时）',
+            zeroFields: ['quotaAccompany'],
+            requiredAccompanyHours: 1
+        },
+        fetchQuotaRows: async () => ([
+            {
+                userName: '俞新硕',
+                quota30: '2',
+                quota60: '1',
+                quotaAccompany: '1.0'
+            }
+        ]),
+        sendReminderEmail: async (payload) => {
+            sentMessages.push(payload);
+        }
+    });
+
+    assert.strictEqual(result.summary.resolvedCount, 1, 'abnormal student subscription should resolve when the subscribed quota issue is recovered');
+    assert.strictEqual(result.summary.notifiedCount, 0, 'resolved abnormal student subscription should not send unresolved reminders');
+    assert.strictEqual(store.snapshot().length, 0, 'resolved abnormal student subscription should stop immediately');
+    assert.strictEqual(sentMessages.length, 1, 'resolved abnormal student subscription should send one result email');
+    assert.strictEqual(sentMessages[0].subscription.subscriptionType, 'abnormal-student');
+}
+
+async function testAbnormalStudentSubscribeShouldNotifyWhenQuotaStillInsufficient() {
+    const mod = await loadModule('netlify/functions/schedule-subscription.mjs');
+    const sentMessages = [];
+    const store = createLaggyMemoryStore([]);
+
+    const result = await mod.subscribeAndRunImmediateCheck({
+        store,
+        nowIso: '2026-08-11T04:00:00.000Z',
+        payload: {
+            subscriptionType: 'abnormal-student',
+            student: '俞新硕',
+            platform: 'lixiaolaila',
+            token: 'x-token-c-demo',
+            issueText: '30分钟课时不足（剩余0，需求1）',
+            zeroFields: ['quota30'],
+            requiredQuota30: 1
+        },
+        fetchQuotaRows: async () => ([
+            {
+                userName: '俞新硕',
+                quota30: '0',
+                quota60: '3',
+                quotaAccompany: '2.0'
+            }
+        ]),
+        sendReminderEmail: async (payload) => {
+            sentMessages.push(payload);
+        }
+    });
+
+    assert.strictEqual(result.summary.notifiedCount, 1, 'abnormal student subscription should notify when the subscribed quota issue still exists');
+    assert.strictEqual(result.summary.resolvedCount, 0, 'still-insufficient abnormal student subscription should not resolve');
+    assert.strictEqual(store.snapshot().length, 1, 'still-insufficient abnormal student subscription should remain active');
+    assert.strictEqual(store.snapshot()[0].notifyCount, 1, 'first abnormal student reminder should consume one notify attempt');
+    assert(sentMessages[0].message.includes('30分钟课时不足'), 'abnormal student reminder should mention the subscribed quota issue');
+}
+
 async function testSubscriptionStatusShouldReportActiveIds() {
     const mod = await loadModule('netlify/functions/schedule-subscription.mjs');
     const store = createMemoryStore([
@@ -586,6 +690,7 @@ async function testNetlifySubscriptionFunctionShouldNotRequireRootBrowserModule(
 async function run() {
     await testSubscribeShouldPersistTenMinuteSubscription();
     await testSubscribeShouldAllowMissingUserIdWhenTokenExists();
+    await testAbnormalStudentSubscribeShouldPersistStudentScopedSubscription();
     await testCheckerShouldOmitUserIdHeaderWhenMissing();
     await testCheckerShouldRemoveResolvedSubscription();
     await testCheckerShouldSendEmailAndRescheduleWhenStillUnscheduled();
@@ -594,6 +699,8 @@ async function run() {
     await testResubscribeShouldResetNotifyCountAfterExpiry();
     await testSubscribeShouldImmediatelySendFirstReminderWhenStillUnscheduled();
     await testSubscribeShouldImmediatelyResolveAndStopWhenAlreadyScheduled();
+    await testAbnormalStudentSubscribeShouldImmediatelyResolveWhenQuotaRecovered();
+    await testAbnormalStudentSubscribeShouldNotifyWhenQuotaStillInsufficient();
     await testSubscriptionStatusShouldReportActiveIds();
     await testReminderEmailShouldFallbackToHardcodedRecipient();
     await testReminderEmailShouldFallbackMailFromToSmtpUser();

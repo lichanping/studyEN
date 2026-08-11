@@ -1587,14 +1587,73 @@ sourceId: 上课记录唯一标识（用于去重）</span>
         forgetScheduleSubscription(entry, dateValue);
     }
 
-    async function requestScheduleSubscription(action, entry, dateValue) {
+    function buildAbnormalStudentSubscriptionPayload(row) {
+        const datePicker = document.getElementById("datePicker");
+        return {
+            subscriptionType: "abnormal-student",
+            student: String(row?.queryName || row?.displayName || "").trim(),
+            date: String(datePicker?.value || "").trim(),
+            durationMinutes: 0,
+            course: "",
+            time: "",
+            platform: normalizePlatformId(row?.platform || DEFAULT_PLATFORM_ID),
+            issueText: String(row?.issueText || "").trim(),
+            sourceScopeLabel: String(row?.sourceScopeLabel || "").trim(),
+            requiredQuota30: Number(row?.requiredQuota30 || 0),
+            requiredQuota60: Number(row?.requiredQuota60 || 0),
+            requiredAccompanyHours: Number(row?.requiredAccompanyHours || 0),
+            zeroFields: Array.isArray(row?.zeroFields) ? row.zeroFields.slice() : []
+        };
+    }
+
+    function getAbnormalStudentSubscriptionId(row) {
+        const payload = buildAbnormalStudentSubscriptionPayload(row);
+        return payload.student ? `abnormal-student__${payload.student}` : "";
+    }
+
+    function getAbnormalStudentSubscriptionSnapshot(row) {
+        const id = getAbnormalStudentSubscriptionId(row);
+        return id ? scheduleSubscriptionState[id] || null : null;
+    }
+
+    function rememberAbnormalStudentSubscription(row) {
+        const payload = buildAbnormalStudentSubscriptionPayload(row);
+        const id = getAbnormalStudentSubscriptionId(row);
+        if (!id) return;
+        scheduleSubscriptionState[id] = {
+            id,
+            subscriptionType: "abnormal-student",
+            student: payload.student,
+            platform: payload.platform,
+            issueText: payload.issueText,
+            sourceScopeLabel: payload.sourceScopeLabel,
+            requiredQuota30: payload.requiredQuota30,
+            requiredQuota60: payload.requiredQuota60,
+            requiredAccompanyHours: payload.requiredAccompanyHours,
+            zeroFields: payload.zeroFields.slice()
+        };
+        saveScheduleSubscriptions();
+    }
+
+    function forgetAbnormalStudentSubscription(row) {
+        const id = getAbnormalStudentSubscriptionId(row);
+        if (!id || !scheduleSubscriptionState[id]) return;
+        delete scheduleSubscriptionState[id];
+        saveScheduleSubscriptions();
+    }
+
+    function clearResolvedAbnormalStudentSubscription(row) {
+        if (row?.statusType === "warn" || row?.statusType === "missing") return;
+        forgetAbnormalStudentSubscription(row);
+    }
+
+    async function requestScheduleSubscriptionPayload(action, payload, missingTokenMessage) {
         const token = getBoardToken();
         const userId = String(localStorage.getItem("x-user-id") || "").trim();
         if (!token) {
-            throw new Error("请先完成李校来啦登录，再订阅未排课提醒");
+            throw new Error(missingTokenMessage || "请先完成李校来啦登录，再订阅未排课提醒");
         }
 
-        const target = buildLocalCourseMatchTarget(entry, dateValue);
         const response = await fetch("/.netlify/functions/schedule-subscription", {
             method: "POST",
             headers: {
@@ -1602,23 +1661,30 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             },
             body: JSON.stringify({
                 action,
+                token,
+                userId,
+                ...payload
+            })
+        });
+
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            throw new Error(result?.error || "订阅请求失败");
+        }
+        return result;
+    }
+
+    async function requestScheduleSubscription(action, entry, dateValue) {
+        const target = buildLocalCourseMatchTarget(entry, dateValue);
+        return requestScheduleSubscriptionPayload(action, {
                 id: getScheduleSubscriptionId(entry, dateValue),
                 student: target.student,
                 date: target.date,
                 durationMinutes: target.durationMinutes,
                 course: String(resolveCourse(entry, dateValue) || entry?.course || "").trim(),
                 time: getAppointmentClockText(entry, dateValue),
-                platform: resolveEntryPlatform(entry),
-                token,
-                userId
-            })
-        });
-
-        const payload = await response.json().catch(() => ({}));
-        if (!response.ok) {
-            throw new Error(payload?.error || "订阅请求失败");
-        }
-        return payload;
+                platform: resolveEntryPlatform(entry)
+            }, "请先完成李校来啦登录，再订阅未排课提醒");
     }
 
     function subscribeScheduleEntry(entry, dateValue) {
@@ -1638,6 +1704,33 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             return payload;
         });
     }
+
+    function subscribeAbnormalStudentEntry(row) {
+        const payload = buildAbnormalStudentSubscriptionPayload(row);
+        payload.id = getAbnormalStudentSubscriptionId(row);
+        return requestScheduleSubscriptionPayload("subscribe", payload, "请先完成李校来啦登录，再订阅异常学生课时不足提醒").then((result) => {
+            if (result?.subscription) {
+                rememberAbnormalStudentSubscription(row);
+            } else {
+                forgetAbnormalStudentSubscription(row);
+            }
+            return result;
+        });
+    }
+
+    function unsubscribeAbnormalStudentEntry(row) {
+        const payload = buildAbnormalStudentSubscriptionPayload(row);
+        payload.id = getAbnormalStudentSubscriptionId(row);
+        return requestScheduleSubscriptionPayload("unsubscribe", payload, "请先完成李校来啦登录，再订阅异常学生课时不足提醒").then((result) => {
+            forgetAbnormalStudentSubscription(row);
+            return result;
+        });
+    }
+
+    window.getAbnormalStudentSubscriptionSnapshot = getAbnormalStudentSubscriptionSnapshot;
+    window.clearResolvedAbnormalStudentSubscription = clearResolvedAbnormalStudentSubscription;
+    window.subscribeAbnormalStudentEntry = subscribeAbnormalStudentEntry;
+    window.unsubscribeAbnormalStudentEntry = unsubscribeAbnormalStudentEntry;
 
     function getCourseScheduleState(entry, dateValue) {
         const state = boardScheduleMatchState;
@@ -3884,6 +3977,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
                     queryName,
                     displayName,
                     displayNames: [...requirement.displayNames],
+                    platform: "lixiaolaila",
                     quota30: "-",
                     quota60: "-",
                     quotaAccompany: "-",
@@ -3901,6 +3995,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
                 anomalies.push({
                     queryName,
                     displayNames: [...requirement.displayNames],
+                    platform: "lixiaolaila",
                     quota30: "-",
                     quota60: "-",
                     quotaAccompany: "-",
@@ -3950,6 +4045,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
                 queryName,
                 displayName,
                 displayNames: [...requirement.displayNames],
+                platform: "lixiaolaila",
                 quota30: formatQuotaDisplay(item?.quota30),
                 quota60: formatQuotaDisplay(item?.quota60),
                 quotaAccompany: formatQuotaDisplay(item?.quotaAccompany),
@@ -3968,6 +4064,7 @@ sourceId: 上课记录唯一标识（用于去重）</span>
                 anomalies.push({
                     queryName,
                     displayNames: [...requirement.displayNames],
+                    platform: "lixiaolaila",
                     quota30: formatQuotaDisplay(item?.quota30),
                     quota60: formatQuotaDisplay(item?.quota60),
                     quotaAccompany: formatQuotaDisplay(item?.quotaAccompany),
@@ -4034,6 +4131,8 @@ sourceId: 上课记录唯一标识（用于去重）</span>
                 : (row.statusType === "warn" ? "quota-status warn" : "quota-status");
 
             const shouldShowCopyButton = row.statusType === "warn" || row.statusType === "missing";
+            const rowPlatformId = String(row?.platform || "lixiaolaila").trim() || "lixiaolaila";
+            const shouldShowSubscriptionButton = shouldShowCopyButton && rowPlatformId === "lixiaolaila";
 
             const appendCell = (value, fieldName) => {
                 const td = document.createElement("td");
@@ -4073,6 +4172,36 @@ sourceId: 上课记录唯一标识（用于去重）</span>
                     }
                 });
                 statusTd.appendChild(copyButton);
+            }
+
+            if (shouldShowSubscriptionButton) {
+                window.clearResolvedAbnormalStudentSubscription?.(row);
+                const activeSubscription = window.getAbnormalStudentSubscriptionSnapshot?.(row);
+                const subscriptionButton = document.createElement("button");
+                subscriptionButton.type = "button";
+                subscriptionButton.className = "quota-copy-btn " + (activeSubscription ? "unsubscribe" : "subscribe");
+                subscriptionButton.textContent = activeSubscription ? "取消订阅" : "订阅";
+                subscriptionButton.title = activeSubscription ? "取消每1小时异常学生课时不足提醒" : "每1小时检查一次，最多提醒3次";
+                subscriptionButton.addEventListener("click", async () => {
+                    const originalText = subscriptionButton.textContent;
+                    subscriptionButton.disabled = true;
+                    subscriptionButton.textContent = activeSubscription ? "取消中…" : "订阅中…";
+                    try {
+                        if (activeSubscription) {
+                            await window.unsubscribeAbnormalStudentEntry?.(row);
+                            if (window.showToast) window.showToast("已取消异常学生课时不足订阅");
+                        } else {
+                            await window.subscribeAbnormalStudentEntry?.(row);
+                            if (window.showToast) window.showToast("已订阅异常学生课时不足提醒，将每1小时复查一次，最多提醒3次", 3200);
+                        }
+                    } catch (error) {
+                        subscriptionButton.textContent = originalText;
+                        window.showToast?.(error?.message || "订阅失败，请稍后重试", 4200);
+                    } finally {
+                        subscriptionButton.disabled = false;
+                    }
+                });
+                statusTd.appendChild(subscriptionButton);
             }
 
             tr.appendChild(statusTd);
@@ -4125,6 +4254,10 @@ sourceId: 上课记录唯一标识（用于去重）</span>
 
         const abnormalRows = rows.filter((row) => row.statusType === "warn" || row.statusType === "missing");
         const normalRows = rows.filter((row) => row.statusType !== "warn" && row.statusType !== "missing");
+
+        rows.forEach((row) => {
+            clearResolvedAbnormalStudentSubscription(row);
+        });
 
         topAbnormalResults.innerHTML = "";
         if (abnormalRows.length > 0) {
