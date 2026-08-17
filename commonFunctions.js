@@ -31,7 +31,7 @@ export function navigateToReadClass() {
     window.location.href = "class-read.html";
 }
 
-export const LEGACY_STUDENT_NAMES = Object.freeze(["李敏维", "季筱雯", "施博睿", "于熠凡", "陈怡睿"]);
+export const LEGACY_STUDENT_NAMES = Object.freeze(["李敏维", "季筱雯", "施博睿", "于熠凡", "陈怡睿", "徐崇楷", "闫奕洁", "喻书涵", "悦慧", "Joe"]);
 const LEGACY_STUDENT_NAME_SET = new Set(LEGACY_STUDENT_NAMES);
 const LOGIN_VALIDITY_MS = 30 * 24 * 60 * 60 * 1000;
 
