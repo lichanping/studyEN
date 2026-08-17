@@ -7,6 +7,7 @@
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1d1e21">
     <title>排课学生管理</title>
     <link rel="stylesheet" href="schedule-students-manage.css">
+    <script src="./student-name-alias.js"></script>
     <script type="module">
         import * as commonFunctions from './commonFunctions.js?v=20260403-1';
         commonFunctions.checkLoginStatus();
@@ -38,6 +39,25 @@
     </div>
     <div id="metaText" class="hint"></div>
     <div id="studentSummary" class="hint"></div>
+</section>
+
+<section class="panel">
+    <h2>隐藏学生名单</h2>
+    <div class="form-row">
+        <label for="hiddenStudentInput">学生</label>
+        <input id="hiddenStudentInput" type="text" placeholder="输入学生姓名或别名">
+        <button type="button" id="addHiddenStudentButton">加入隐藏名单</button>
+    </div>
+    <table>
+        <thead>
+        <tr>
+            <th>学生姓名</th>
+            <th>更新时间</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody id="hiddenStudentsTableBody"></tbody>
+    </table>
 </section>
 
 <section class="panel">

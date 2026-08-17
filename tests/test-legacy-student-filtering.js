@@ -33,8 +33,13 @@ assert(
     legacyNamesSection.includes("季筱雯") &&
     legacyNamesSection.includes("施博睿") &&
     legacyNamesSection.includes("于熠凡") &&
-    legacyNamesSection.includes("陈怡睿"),
-    "commonFunctions.js 中的 legacy 名单应包含新增需过滤学员：季筱雯、施博睿、于熠凡、陈怡睿"
+    legacyNamesSection.includes("陈怡睿") &&
+    legacyNamesSection.includes("徐崇楷") &&
+    legacyNamesSection.includes("闫奕洁") &&
+    legacyNamesSection.includes("喻书涵") &&
+    legacyNamesSection.includes("悦慧") &&
+    legacyNamesSection.includes("Joe"),
+    "commonFunctions.js 中的 legacy 名单应包含需过滤学员：季筱雯、施博睿、于熠凡、陈怡睿、徐崇楷、闫奕洁、喻书涵、悦慧、Joe"
 );
 
 assert(
