@@ -1,4 +1,4 @@
-import { filterLegacyStudents } from './commonFunctions.js';
+import { filterLegacyStudents, loadHiddenStudents, upsertHiddenStudent, removeHiddenStudent } from './commonFunctions.js';
 
 const SCHEDULE_CONFIG_URL = "./schedule.html";
 const SCHEDULE_CONFIG_OVERRIDE_KEY = "schedule-config-override-v1";
@@ -10,6 +10,9 @@ const keywordInput = document.getElementById("keywordInput");
 const metaText = document.getElementById("metaText");
 const studentSummary = document.getElementById("studentSummary");
 const entriesTableBody = document.getElementById("entriesTableBody");
+const hiddenStudentInput = document.getElementById("hiddenStudentInput");
+const addHiddenStudentButton = document.getElementById("addHiddenStudentButton");
+const hiddenStudentsTableBody = document.getElementById("hiddenStudentsTableBody");
 
 const entryForm = document.getElementById("entryForm");
 const entryIdInput = document.getElementById("entryId");
@@ -218,6 +221,21 @@ function renderMeta() {
     studentSummary.textContent = `当前学生数: ${uniqueStudents.size}，数据来源: ${override ? "本地覆盖" : "内置配置"}`;
 }
 
+function renderHiddenStudents() {
+    const hiddenStudents = loadHiddenStudents();
+    if (!hiddenStudents.length) {
+        hiddenStudentsTableBody.innerHTML = '<tr><td colspan="3">暂无隐藏学生</td></tr>';
+        return;
+    }
+    hiddenStudentsTableBody.innerHTML = hiddenStudents.map((item) => `
+        <tr>
+            <td>${item.name}</td>
+            <td>${item.updatedAt ? item.updatedAt.replace('T', ' ').slice(0, 16) : '-'}</td>
+            <td><button data-action="remove-hidden-student" data-name="${item.name}">取消隐藏</button></td>
+        </tr>
+    `).join("");
+}
+
 function renderTable() {
     const keyword = keywordInput.value.trim();
     const platformKeyword = platformFilter?.value || "all";
@@ -261,6 +279,7 @@ function renderTable() {
 function renderAll() {
     renderMeta();
     renderTable();
+    renderHiddenStudents();
 }
 
 function fillForm(item) {
@@ -317,6 +336,24 @@ function handleTableAction(event) {
         clearForm();
         renderAll();
     }
+}
+
+function handleHiddenStudentTableAction(event) {
+    const button = event.target.closest('button[data-action="remove-hidden-student"]');
+    if (!button) return;
+    removeHiddenStudent(button.dataset.name || "");
+    renderAll();
+}
+
+function handleHiddenStudentSubmit() {
+    if (!hiddenStudentInput.value.trim()) {
+        alert("学生姓名不能为空");
+        return;
+    }
+    upsertHiddenStudent(hiddenStudentInput.value);
+    hiddenStudentInput.value = "";
+    renderHiddenStudents();
+    renderTable();
 }
 
 function handleSubmit(event) {
@@ -413,7 +450,22 @@ function bindEvents() {
     platformFilter?.addEventListener("change", renderTable);
     entryForm.addEventListener("submit", handleSubmit);
     entriesTableBody.addEventListener("click", handleTableAction);
+    hiddenStudentsTableBody?.addEventListener("click", (event) => {
+        const button = event.target.closest('button[data-action="remove-hidden-student"]');
+        if (!button) {
+            handleHiddenStudentTableAction(event);
+            return;
+        }
+        removeHiddenStudent(button.dataset.name || "");
+        renderAll();
+    });
     document.getElementById("clearFormButton").addEventListener("click", clearForm);
+    addHiddenStudentButton?.addEventListener("click", handleHiddenStudentSubmit);
+    hiddenStudentInput?.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter") return;
+        event.preventDefault();
+        handleHiddenStudentSubmit();
+    });
     document.getElementById("exportOverrideButton").addEventListener("click", exportOverride);
     document.getElementById("resetToBuiltinButton").addEventListener("click", async () => {
         if (!window.confirm("确认恢复内置配置？这会清除本地覆盖配置。")) return;

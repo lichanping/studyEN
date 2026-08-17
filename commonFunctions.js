@@ -31,13 +31,75 @@ export function navigateToReadClass() {
     window.location.href = "class-read.html";
 }
 
-export const LEGACY_STUDENT_NAMES = Object.freeze(["李敏维", "季筱雯", "施博睿", "于熠凡", "陈怡睿"]);
-const LEGACY_STUDENT_NAME_SET = new Set(LEGACY_STUDENT_NAMES);
+export const LEGACY_STUDENT_NAMES = Object.freeze(["李敏维", "季筱雯", "施博睿", "于熠凡", "陈怡睿", "徐崇楷", "闫奕洁", "喻书涵", "悦慧", "Joe"]);
+export const HIDDEN_STUDENTS_STORAGE_KEY = "hidden-students-v1";
+
+function normalizeStudentName(value) {
+    const trimmed = String(value || "").trim();
+    return globalThis.StudentNameAlias?.normalizeStudentName?.(trimmed) || trimmed;
+}
+
+const LEGACY_STUDENT_NAME_SET = new Set(LEGACY_STUDENT_NAMES.map((name) => normalizeStudentName(name)));
 const LOGIN_VALIDITY_MS = 30 * 24 * 60 * 60 * 1000;
+
+export function loadHiddenStudents() {
+    try {
+        const raw = localStorage.getItem(HIDDEN_STUDENTS_STORAGE_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        if (!Array.isArray(parsed)) return [];
+        return parsed.map((item) => {
+            if (typeof item === "string") {
+                return {
+                    name: normalizeStudentName(item),
+                    platform: "all",
+                    updatedAt: ""
+                };
+            }
+            return {
+                name: normalizeStudentName(item?.name),
+                platform: "all",
+                updatedAt: String(item?.updatedAt || "")
+            };
+        }).filter((item) => item.name);
+    } catch (_) {
+        return [];
+    }
+}
+
+function saveHiddenStudents(list) {
+    localStorage.setItem(HIDDEN_STUDENTS_STORAGE_KEY, JSON.stringify(list));
+}
+
+export function upsertHiddenStudent(name) {
+    const normalizedName = normalizeStudentName(name);
+    if (!normalizedName) return;
+    const nextList = loadHiddenStudents()
+        .filter((item) => normalizeStudentName(item?.name) !== normalizedName);
+    nextList.unshift({
+        name: normalizedName,
+        platform: "all",
+        updatedAt: new Date().toISOString()
+    });
+    saveHiddenStudents(nextList);
+}
+
+export function removeHiddenStudent(name) {
+    const normalizedName = normalizeStudentName(name);
+    if (!normalizedName) return;
+    saveHiddenStudents(
+        loadHiddenStudents().filter((item) => normalizeStudentName(item?.name) !== normalizedName)
+    );
+}
 
 export function filterLegacyStudents(list) {
     if (!Array.isArray(list)) return [];
-    return list.filter((name) => !LEGACY_STUDENT_NAME_SET.has(String(name || "").trim()));
+    const HIDDEN_STUDENT_NAME_SET = new Set(
+        loadHiddenStudents().map((item) => normalizeStudentName(item?.name)).filter(Boolean)
+    );
+    return list.filter((name) => {
+        const normalizedName = normalizeStudentName(name);
+        return normalizedName && !LEGACY_STUDENT_NAME_SET.has(normalizedName) && !HIDDEN_STUDENT_NAME_SET.has(normalizedName);
+    });
 }
 
 export function formatLocalDateYmd(dateLike) {
