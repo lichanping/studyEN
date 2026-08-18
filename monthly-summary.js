@@ -32,6 +32,16 @@ function getCurrentMonth() {
     return `${year}-${month}`;
 }
 
+function getPreferredMonthlySummaryMonth() {
+    const statsModeMonth = document.getElementById('statsModeMonth');
+    const statsMonthInput = document.getElementById('statsMonthInput');
+    const selectedMonth = String(statsMonthInput?.value || '').trim();
+    if (statsModeMonth?.checked && /^\d{4}-\d{2}$/.test(selectedMonth)) {
+        return selectedMonth;
+    }
+    return getCurrentMonth();
+}
+
 function getStatsStorage(userName) {
     const statsKey = `${userName}${CLASS_STATS_SUFFIX}`;
     const raw = localStorage.getItem(statsKey);
@@ -580,12 +590,13 @@ export function monthlySummaryOpen() {
         return;
     }
 
+    const initialMonth = getPreferredMonthlySummaryMonth();
     const panel = createModalShell(MONTHLY_MODAL_ID, '月末总结生成器');
-    const autoLeaveCount = getLeaveCount(userName, getCurrentMonth());
+    const autoLeaveCount = getLeaveCount(userName, initialMonth);
     panel.insertAdjacentHTML('beforeend', `
         <div style="display:grid; gap:18px;">
             <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;"><label>学员：</label><strong id="monthlySummaryStudent">${userName}</strong></div>
-            <div style="display:grid;grid-template-columns:84px minmax(180px, 1fr);align-items:center;gap:12px;"><label for="monthlySummaryMonth">月份：</label><input type="month" id="monthlySummaryMonth" value="${getCurrentMonth()}"></div>
+            <div style="display:grid;grid-template-columns:84px minmax(180px, 1fr);align-items:center;gap:12px;"><label for="monthlySummaryMonth">月份：</label><input type="month" id="monthlySummaryMonth" value="${initialMonth}"></div>
             <div style="display:grid;grid-template-columns:184px minmax(160px, 1fr) auto;align-items:center;gap:12px;"><label for="monthlySummaryLeaves">本月请假次数：</label><input type="number" id="monthlySummaryLeaves" min="0" value="${autoLeaveCount}"><span style="color:#cbd5e1;font-size:13px;font-weight:500;">可手动覆盖，清空视为 0</span></div>
             <div style="display:flex; gap:10px;">
                 <button id="monthlySummaryPreviewButton">预览数据</button>

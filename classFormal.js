@@ -11,6 +11,7 @@ import {
     displayToast,
     validateBeforeClassFeedbackSubmit,
     filterLegacyStudents,
+    getStatsDateRangeSelection,
     formatLocalDateYmd,
     parseLocalDateYmd,
     resolveStudentDurationMinutes
@@ -623,25 +624,7 @@ export async function generateReport() {
         return;
     }
 
-    const dayRangeInput = document.getElementById("daysRangeInput");
-    const dayRange = parseInt(dayRangeInput.value, 10) || 7;
-    const statsModeMonth = document.getElementById("statsModeMonth");
-    const statsMonthInput = document.getElementById("statsMonthInput");
-    const useMonthMode = Boolean(statsModeMonth?.checked && statsMonthInput?.value);
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    let startDate = new Date();
-    let endDate = new Date(today);
-    if (useMonthMode) {
-        const [year, month] = statsMonthInput.value.split('-').map(Number);
-        startDate = new Date(year, month - 1, 1);
-        endDate = new Date(year, month, 0);
-    } else {
-        startDate.setDate(today.getDate() - dayRange);
-    }
-    startDate.setHours(0, 0, 0, 0);
-    endDate.setHours(0, 0, 0, 0);
+    const { startDate, endDate } = getStatsDateRangeSelection();
 
     let validEntries = 0;
     let sortedEntries = [];
@@ -820,18 +803,13 @@ function getSalaryHourlyRate(type, platformId) {
 export function generateSalaryReport() {
     const teacherName = document.getElementById("teacherName").value;
     const teacherDisplayName = document.getElementById("teacherName").options[document.getElementById("teacherName").selectedIndex].text;
-    // 获取当前日期
-    const currentDate = new Date();
-    // 获取当前年份
-    const year = currentDate.getFullYear();
-    // 获取当前月份，注意 getMonth() 返回值是 0 - 11，所以要加 1
-    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-    // 组合成 YYYY-MM 格式的日期
-    const defaultMonth = `${year}-${month}`;
-
-    const monthToQuery = prompt("请输入要统计的月份（格式：YYYY-MM，例如2025-02）:", defaultMonth);
-    console.log(monthToQuery);
-    if (!monthToQuery) return;
+    const range = getStatsDateRangeSelection();
+    const statsPeriodLabel = range.mode === 'month'
+        ? range.yearMonth
+        : `${formatLocalDateYmd(range.startDate)} 至 ${formatLocalDateYmd(range.endDate)}`;
+    const filePeriodLabel = range.mode === 'month'
+        ? range.yearMonth
+        : `${formatLocalDateYmd(range.startDate)}_${formatLocalDateYmd(range.endDate)}`;
 
     const allStudents = getMergedStudentNames(teacherName);
 
@@ -840,7 +818,7 @@ export function generateSalaryReport() {
     let totalHoursTrial = 0;     // 体验课总课时
     let totalSalaryAll = 0;
     let reportContent = `【${teacherDisplayName} 综合课工资明细】\n`;
-    reportContent += `统计月份: ${monthToQuery}\n\n`;
+    reportContent += `统计范围: ${statsPeriodLabel}\n\n`;
 
     let allRecords = [];  // 用于存储所有记录
     let studentStats = {};  // 用于存储每个学生的统计数据
@@ -860,12 +838,9 @@ export function generateSalaryReport() {
             }
 
             const recordDate = parseStoredDateToLocalDate(date);
-            const recordYear = recordDate.getFullYear();
-            const recordMonth = recordDate.getMonth() + 1;
+            recordDate.setHours(0, 0, 0, 0);
 
-            const [inputYear, inputMonth] = monthToQuery.split('-').map(Number);
-
-            if (recordYear === inputYear && recordMonth === inputMonth) {
+            if (recordDate >= range.startDate && recordDate <= range.endDate) {
                 let duration = stats.duration;
                 if (typeof duration === 'undefined') {
                     duration = (stats.newWord < 20) ? 0.5 : 1;
@@ -914,6 +889,11 @@ export function generateSalaryReport() {
         studentStats[record.userName].hours += record.duration;
         studentStats[record.userName].fee += lessonFee;
     });
+
+    if (allRecords.length === 0) {
+        alert('所选统计范围内没有找到工资数据。');
+        return;
+    }
 
     // 添加学生总计
     reportContent += "\n学生总计:\n";
@@ -976,7 +956,7 @@ export function generateSalaryReport() {
     const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8'});
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `${teacherDisplayName}_${monthToQuery}_课时工资.csv`;
+    link.download = `${teacherDisplayName}_${filePeriodLabel}_课时工资.csv`;
     link.click();
 }
 
@@ -1020,29 +1000,24 @@ export async function generateWordReport() {
 
         // ===== 关键空值保护 ===== [6,8](@ref)
         const learnedWordsMap = indexDBData?.newLearnedWords || {};
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        const dayRangeInput = document.getElementById("daysRangeInput");
-        const dayRange = parseInt(dayRangeInput?.value) || 7;
-        const startDate = new Date(today);
-        startDate.setDate(today.getDate() - (dayRange - 1)); // 向前推 n-1 天
-        startDate.setHours(0, 0, 0, 0);
+        const range = getStatsDateRangeSelection();
+        const { startDate, endDate } = range;
 
         // ===== 数据过滤增强 ===== [6,8](@ref)
         const filteredNewWordsEntries = Object.entries(learnedWordsMap)
             .filter(([dateStr, words]) => {
-                const date = new Date(dateStr);
+                const date = parseStoredDateToLocalDate(dateStr);
                 date.setHours(0, 0, 0, 0);
                 return date >= startDate &&
-                    date <= today &&
+                    date <= endDate &&
                     typeof words === 'string' &&
                     words.trim().length > 0; // 严格过滤空字符串
             })
             .sort(([a], [b]) => new Date(b) - new Date(a));
 
         if (filteredNewWordsEntries.length === 0) {
-            alert(`在${dayRange}天内未找到学习记录`);
+            const periodLabel = range.mode === 'month' ? `${range.yearMonth}` : `最近${range.dayRange}天`;
+            alert(`在${periodLabel}内未找到学习记录`);
             return;
         }
 
@@ -1385,25 +1360,21 @@ export async function generateForgetWordsReport() {
     });
 
     const forgetWordsMap = indexDBData?.forgetWords || {};
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const dayRangeInput = document.getElementById("daysRangeInput");
-    const dayRange = parseInt(dayRangeInput.value) || 7;
-    const startDate = new Date();
-    startDate.setDate(today.getDate() - dayRange);
-    startDate.setHours(0, 0, 0, 0);
+    const range = getStatsDateRangeSelection();
+    const { startDate, endDate } = range;
 
     const filteredForgetEntries = Object.entries(forgetWordsMap)
         .filter(([dateStr, words]) => {
             if (!words || !words.trim()) return false;
-            const date = new Date(dateStr);
+            const date = parseStoredDateToLocalDate(dateStr);
             date.setHours(0, 0, 0, 0);
-            return date > startDate && date <= today;
+            return date >= startDate && date <= endDate;
         })
         .sort(([a], [b]) => new Date(b) - new Date(a));
 
     if (filteredForgetEntries.length === 0) {
-        alert("No forget word record found for the specified period.");
+        const periodLabel = range.mode === 'month' ? range.yearMonth : `最近${range.dayRange}天`;
+        alert(`在${periodLabel}内未找到遗忘词记录。`);
         return;
     }
 
