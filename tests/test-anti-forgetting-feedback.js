@@ -35,6 +35,7 @@ function extractBlock(source, signature, openChar = '{', closeChar = '}') {
 const commonFunctionsSource = read('commonFunctions.js');
 const countNonEmptyLinesCode = extractBlock(commonFunctionsSource, 'function countNonEmptyLines');
 const handleNewVersionFeedbackClickCode = extractBlock(commonFunctionsSource, 'export async function handleNewVersionFeedbackClick');
+const getStatsDateRangeSelectionCode = extractBlock(commonFunctionsSource, 'export function getStatsDateRangeSelection');
 const formatFeedbackContentCode = extractBlock(commonFunctionsSource, 'async function formatFeedbackContent');
 
 let copiedMessage = '';
@@ -69,7 +70,7 @@ const documentMock = {
             };
         }
         if (id === 'statsModeMonth') {
-            return { checked: false };
+            return { checked: true };
         }
         if (id === 'statsMonthInput') {
             return { value: '2026-08' };
@@ -111,7 +112,7 @@ const handleNewVersionFeedbackClick = new Function(
 
 const formatFeedbackContent = new Function(
     'document',
-    `${formatFeedbackContentCode}\nreturn formatFeedbackContent;`
+    `${getStatsDateRangeSelectionCode.replace('export ', '')}\n${formatFeedbackContentCode}\nreturn formatFeedbackContent;`
 )(documentMock);
 
 (async () => {
