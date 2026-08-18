@@ -124,6 +124,55 @@ export function parseLocalDateYmd(dateLike) {
     return date;
 }
 
+export function getStatsDateRangeSelection(now = new Date()) {
+    const currentDate = now instanceof Date ? new Date(now.getTime()) : new Date(now);
+    if (!Number.isFinite(currentDate.getTime())) {
+        return {
+            mode: 'day',
+            dayRange: 1,
+            yearMonth: '',
+            startDate: new Date(NaN),
+            endDate: new Date(NaN)
+        };
+    }
+
+    currentDate.setHours(0, 0, 0, 0);
+    const statsModeMonth = document.getElementById('statsModeMonth');
+    const statsMonthInput = document.getElementById('statsMonthInput');
+    const dayRangeInput = document.getElementById('daysRangeInput');
+    const dayRange = Math.max(parseInt(dayRangeInput?.value, 10) || 1, 1);
+    const yearMonth = String(statsMonthInput?.value || '').trim();
+    const isMonthMode = Boolean(statsModeMonth?.checked && /^\d{4}-\d{2}$/.test(yearMonth));
+
+    if (isMonthMode) {
+        const [year, month] = yearMonth.split('-').map(Number);
+        const startDate = new Date(year, month - 1, 1);
+        startDate.setHours(0, 0, 0, 0);
+        const endDate = new Date(year, month, 0);
+        endDate.setHours(23, 59, 59, 999);
+        return {
+            mode: 'month',
+            dayRange,
+            yearMonth,
+            startDate,
+            endDate
+        };
+    }
+
+    const startDate = new Date(currentDate);
+    startDate.setDate(currentDate.getDate() - (dayRange - 1));
+    startDate.setHours(0, 0, 0, 0);
+    const endDate = new Date(currentDate);
+    endDate.setHours(23, 59, 59, 999);
+    return {
+        mode: 'day',
+        dayRange,
+        yearMonth: '',
+        startDate,
+        endDate
+    };
+}
+
 export function checkLoginStatus() {
     const storedLoginDate = localStorage.getItem('loginDate');
     const storedLoginTime = Number(storedLoginDate) || Date.parse(storedLoginDate || '');
@@ -1035,24 +1084,7 @@ async function formatFeedbackContent(userData) {
         weekday: "short"
     });
 
-    const statsModeMonth = document.getElementById("statsModeMonth");
-    const statsMonthInput = document.getElementById("statsMonthInput");
-    const dayRangeInput = document.getElementById("daysRangeInput");
-    const dayRange = parseInt(dayRangeInput?.value, 10) || 7;
-
-    const today = new Date();
-    const useMonthMode = Boolean(statsModeMonth?.checked && statsMonthInput?.value);
-    let startDate = new Date();
-    let endDate = new Date(today);
-    if (useMonthMode) {
-        const [year, month] = statsMonthInput.value.split('-').map(Number);
-        startDate = new Date(year, month - 1, 1);
-        endDate = new Date(year, month, 0);
-    } else {
-        startDate.setDate(today.getDate() - dayRange);
-    }
-    startDate.setHours(0, 0, 0, 0);
-    endDate.setHours(23, 59, 59, 999);
+    const { startDate, endDate } = getStatsDateRangeSelection();
 
     // Process forget words
     let forgetWordsContent = '';
@@ -1757,8 +1789,78 @@ export function displayToast(message) {
     });
 }
 
+function getBeijingDateParts(date = new Date()) {
+    const currentDate = date instanceof Date ? new Date(date.getTime()) : new Date(date);
+    if (!Number.isFinite(currentDate.getTime())) {
+        return null;
+    }
+
+    const formatter = new Intl.DateTimeFormat('zh-CN-u-hc-h23', {
+        timeZone: 'Asia/Shanghai',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    });
+    const parts = Object.fromEntries(
+        formatter.formatToParts(currentDate)
+            .filter((part) => part.type !== 'literal')
+            .map((part) => [part.type, part.value])
+    );
+
+    return {
+        year: Number(parts.year),
+        month: Number(parts.month),
+        day: Number(parts.day),
+        hour: Number(parts.hour),
+        minute: Number(parts.minute)
+    };
+}
+
+function createBeijingDate(parts) {
+    return new Date(Date.UTC(parts.year, parts.month - 1, parts.day, parts.hour - 8, parts.minute || 0, 0, 0));
+}
+
+export function resolveSelfReviewDeadline(now = new Date()) {
+    const currentParts = getBeijingDateParts(now);
+    if (!currentParts) {
+        return { dayLabel: '今晚', hour: 22, minute: 20 };
+    }
+
+    const currentBeijingTime = createBeijingDate(currentParts);
+    const fixedDeadline = createBeijingDate({ ...currentParts, hour: 22, minute: 20 });
+    const minimumOffsetDeadline = new Date(currentBeijingTime.getTime() + 2 * 60 * 60 * 1000);
+    let resolvedDeadline = fixedDeadline;
+
+    if (fixedDeadline.getTime() - currentBeijingTime.getTime() < 2 * 60 * 60 * 1000) {
+        resolvedDeadline = minimumOffsetDeadline;
+    }
+
+    let deadlineParts = getBeijingDateParts(resolvedDeadline);
+    const currentDateKey = `${currentParts.year}-${String(currentParts.month).padStart(2, '0')}-${String(currentParts.day).padStart(2, '0')}`;
+    const deadlineDateKey = `${deadlineParts.year}-${String(deadlineParts.month).padStart(2, '0')}-${String(deadlineParts.day).padStart(2, '0')}`;
+
+    if (deadlineDateKey !== currentDateKey && deadlineParts.hour < 10) {
+        resolvedDeadline = createBeijingDate({ ...deadlineParts, hour: 10, minute: 0 });
+        deadlineParts = getBeijingDateParts(resolvedDeadline);
+    }
+
+    return {
+        dayLabel: deadlineDateKey === currentDateKey ? '今晚' : '明天',
+        hour: deadlineParts.hour,
+        minute: deadlineParts.minute
+    };
+}
+
+export function formatSelfReviewDeadlineLabel(now = new Date()) {
+    const { dayLabel, hour, minute } = resolveSelfReviewDeadline(now);
+    return `${dayLabel}${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}前`;
+}
+
 export function selfReviewClick() {
-    const feedbackMessage = `📚 今日作业布置（必做）<br>1. 笔头作业：打印【每日单词表】，看中文版写英文，看英文版写中文；对照批改后拍照发群打卡。建议每天练1遍，落实会拼会写。<br>2. 口头作业：新学单词大声朗读2遍，录音或视频发群打卡。<br><br>⏰ 截止：今晚22:20前<br>📌 复习规则：坚持21天抗遗忘复习，做到看到英文会读、知道中文；当天遗忘的单词及时加入生词本巩固。<br>☀️ 继续加油，坚持会更有收获。`
+    const feedbackMessage = `📚 今日作业布置（必做）<br>1. 笔头作业：打印【每日单词表】，看中文版写英文，看英文版写中文；对照批改后拍照发群打卡。建议每天练1遍，落实会拼会写。<br>2. 口头作业：新学单词大声朗读2遍，录音或视频发群打卡。<br><br>⏰ 截止：${formatSelfReviewDeadlineLabel()}<br>📌 复习规则：坚持21天抗遗忘复习，做到看到英文会读、知道中文；当天遗忘的单词及时加入生词本巩固。<br>☀️ 继续加油，坚持会更有收获。`
     copyToClipboard(feedbackMessage);
     showLongText(`${feedbackMessage}`);
 }

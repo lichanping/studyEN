@@ -101,6 +101,15 @@ assert(/export\s+function\s+resolveLeaveCountOverride/.test(monthlySummarySource
 assert(/export\s+function\s+getMonthDisplay/.test(monthlySummarySource), 'monthly-summary.js 应导出 getMonthDisplay');
 assert(/export\s+function\s+summarizeFeedbackEntries/.test(monthlySummarySource), 'monthly-summary.js 应导出 summarizeFeedbackEntries');
 assert(/export\s+function\s+generateImprovements/.test(monthlySummarySource), 'monthly-summary.js 应导出 generateImprovements');
+assert(
+    monthlySummarySource.includes("function getPreferredMonthlySummaryMonth()")
+        && monthlySummarySource.includes("const statsModeMonth = document.getElementById('statsModeMonth');")
+        && monthlySummarySource.includes("const statsMonthInput = document.getElementById('statsMonthInput');")
+        && monthlySummarySource.includes('const initialMonth = getPreferredMonthlySummaryMonth();')
+        && monthlySummarySource.includes('const autoLeaveCount = getLeaveCount(userName, initialMonth);')
+        && monthlySummarySource.includes('value="${initialMonth}"'),
+    '月末总结按钮打开弹窗时，应优先继承统计区已选择的按月月份'
+);
 assert(/export\s+function\s+getMonthlySummaryStudentDisplayName/.test(monthlySummarySource), 'monthly-summary.js 应导出 getMonthlySummaryStudentDisplayName');
 
 assert(
@@ -114,8 +123,8 @@ assert(
 assert(
     commonFunctionsSource.includes('statsModeMonth')
         && commonFunctionsSource.includes('statsMonthInput')
-        && classFormalSource.includes('statsModeMonth')
-        && classFormalSource.includes('statsMonthInput'),
+        && commonFunctionsSource.includes('getStatsDateRangeSelection')
+        && classFormalSource.includes('getStatsDateRangeSelection'),
     '正课统计和抗遗忘统计都应支持按月模式'
 );
 

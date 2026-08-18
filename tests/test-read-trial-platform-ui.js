@@ -14,7 +14,6 @@ const commonFunctions = read('commonFunctions.js');
 const readJs = read('classRead.js');
 const trialJs = read('classTrial.js');
 const meetingConfig = read('meeting-config.js');
-const expectedSelfReviewMessage = '📚 今日作业布置（必做）<br>1. 笔头作业：打印【每日单词表】，看中文版写英文，看英文版写中文；对照批改后拍照发群打卡。建议每天练1遍，落实会拼会写。<br>2. 口头作业：新学单词大声朗读2遍，录音或视频发群打卡。<br><br>⏰ 截止：今晚22:20前<br>📌 复习规则：坚持21天抗遗忘复习，做到看到英文会读、知道中文；当天遗忘的单词及时加入生词本巩固。<br>☀️ 继续加油，坚持会更有收获。';
 
 function assertSelectWinsAtRuntime(fileContent, label) {
     assert(
@@ -131,8 +130,11 @@ assert(
 );
 
 assert(
-    commonFunctions.includes(expectedSelfReviewMessage),
-    'commonFunctions.selfReviewClick 应与确认后的作业布置文案完全一致，包含空白行'
+    commonFunctions.includes('export function resolveSelfReviewDeadline')
+        && commonFunctions.includes('export function formatSelfReviewDeadlineLabel')
+        && commonFunctions.includes('⏰ 截止：${formatSelfReviewDeadlineLabel()}')
+        && !commonFunctions.includes('⏰ 截止：今晚22:20前'),
+    'commonFunctions.selfReviewClick 应改为接入动态截止时间 helper，不能继续写死今晚22:20前'
 );
 
 assert(
