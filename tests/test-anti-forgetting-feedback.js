@@ -34,6 +34,9 @@ function extractBlock(source, signature, openChar = '{', closeChar = '}') {
 
 const commonFunctionsSource = read('commonFunctions.js');
 const countNonEmptyLinesCode = extractBlock(commonFunctionsSource, 'function countNonEmptyLines');
+const getBeijingDateYmdCode = extractBlock(commonFunctionsSource, 'function getBeijingDateYmd');
+const getReviewDateYmdCode = extractBlock(commonFunctionsSource, 'function getReviewDateYmd');
+const confirmAntiForgettingReviewDateMatchesTodayCode = extractBlock(commonFunctionsSource, 'function confirmAntiForgettingReviewDateMatchesToday');
 const handleNewVersionFeedbackClickCode = extractBlock(commonFunctionsSource, 'export async function handleNewVersionFeedbackClick');
 const getStatsDateRangeSelectionCode = extractBlock(commonFunctionsSource, 'export function getStatsDateRangeSelection');
 const formatFeedbackContentCode = extractBlock(commonFunctionsSource, 'async function formatFeedbackContent');
@@ -90,7 +93,7 @@ const handleNewVersionFeedbackClick = new Function(
     'copyToClipboard',
     'showLongText',
     'storeFeedbackInFile',
-    `${countNonEmptyLinesCode}\n${handleNewVersionFeedbackClickCode.replace('export ', '')}\nreturn handleNewVersionFeedbackClick;`
+    `${countNonEmptyLinesCode}\n${getBeijingDateYmdCode}\n${getReviewDateYmdCode}\n${confirmAntiForgettingReviewDateMatchesTodayCode}\n${handleNewVersionFeedbackClickCode.replace('export ', '')}\nreturn handleNewVersionFeedbackClick;`
 )(
     documentMock,
     async () => {
