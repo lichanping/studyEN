@@ -15,9 +15,10 @@
     "test:meeting-config": "node tests/test-meeting-config.js",
     "test:quota": "node tests/test-quota-check.js",
     "test:stats-mode-and-review-deadline": "node tests/test-stats-mode-and-review-deadline.js",
+    "test:anti-forgetting": "node tests/test-anti-forgetting-review-date-confirm.js && node tests/test-anti-forgetting-feedback.js && node tests/test-anti-forgetting-platform-ui.js && node tests/test-anti-forgetting-bfd-schedule.js && node tests/test-anti-forgetting-schedule.js",
     "test:schedule-match": "node tests/test-schedule-course-match.js",
     "test:schedule-subscription": "node tests/test-schedule-subscription.js && node tests/test-schedule-subscription-ui.js",
-    "test:all": "npm run test:meeting-config && npm run test:quota && npm run test:schedule-match && npm run test:schedule-subscription && npm run test:stats-mode-and-review-deadline && node tests/test-student-name-alias.js",
+    "test:all": "npm run test:meeting-config && npm run test:quota && npm run test:anti-forgetting && npm run test:schedule-match && npm run test:schedule-subscription && npm run test:stats-mode-and-review-deadline && node tests/test-student-name-alias.js",
     "rollback:sync": "bash ./scripts/rollback_sync.sh --target HEAD~1 --yes",
     "rollback:sync:dry": "bash ./scripts/rollback_sync.sh --target HEAD~1 --dry-run"
   },

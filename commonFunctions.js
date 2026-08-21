@@ -709,7 +709,37 @@ function showAllowEmptyConfirm(message) {
     });
 }
 
+function getBeijingDateYmd(now = new Date()) {
+    const parts = new Intl.DateTimeFormat('zh-CN', {
+        timeZone: 'Asia/Shanghai',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    }).formatToParts(now).reduce((result, part) => {
+        result[part.type] = part.value;
+        return result;
+    }, {});
+    return `${parts.year}-${parts.month}-${parts.day}`;
+}
+
+function getReviewDateYmd() {
+    const reviewTime = String(document.getElementById('reviewTime')?.value || '').trim();
+    return reviewTime.split('T')[0] || '';
+}
+
+function confirmAntiForgettingReviewDateMatchesToday(now = new Date()) {
+    const reviewDate = getReviewDateYmd();
+    if (!reviewDate) return true;
+
+    const beijingToday = getBeijingDateYmd(now);
+    if (reviewDate === beijingToday) return true;
+
+    return window.confirm(`当前复习日期是 ${reviewDate}，但现在北京时间是 ${beijingToday}。\n点击【确定】继续按 ${reviewDate} 提交，点击【取消】返回修改为当天日期。`);
+}
+
 export async function handleAntiForgettingFeedbackClick() {
+    if (!confirmAntiForgettingReviewDateMatchesToday()) return;
+
     const userName = document.getElementById("userName").value;
     // Get values from input boxes
     const manualReviewWordCount = Array.from(document.querySelectorAll('.antiForgettingReviewWord'))
@@ -1958,6 +1988,8 @@ export function addRightClickPasteEvent(element) {
 }
 
 export async function handleNewVersionFeedbackClick() {
+    if (!confirmAntiForgettingReviewDateMatchesToday()) return;
+
     const userName = document.getElementById("userName").value;
 
     const reviewInputs = Array.from(document.querySelectorAll('.antiForgettingReviewWord'));
