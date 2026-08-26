@@ -64,6 +64,7 @@
     <button id="navigateToAntiForgettingPage">抗遗忘页</button>
     <button id="wordSelfCheckButton">单词自检</button>
     <button id="navigateToReadingArticlePage">阅读文章页</button>
+    <button id="navigateToExamPrepPage">B证备考</button>
 </div>
 
 <!-- 课堂反馈区 -->
@@ -200,6 +201,7 @@
     document.getElementById("navigateToReadClass").addEventListener("click", commonFunctions.navigateToReadClass);
     document.getElementById("wordSelfCheckButton").addEventListener('click', commonFunctions.navigateToLearnWords);
     document.getElementById("navigateToReadingArticlePage").addEventListener('click', () => { window.location.href = 'reading-articles/index.html'; });
+    document.getElementById("navigateToExamPrepPage").addEventListener('click', () => { window.location.href = 'exam-prep/index.html'; });
     document.getElementById("userName").addEventListener("change", script.updateLabel);
     document.getElementById("groupGreetingButton").addEventListener("click", commonFunctions.handleGroupGreetingClick);
     document.getElementById("setupLxLoginButton").addEventListener("click", commonFunctions.configureLxCredentials);
