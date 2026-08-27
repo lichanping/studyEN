@@ -1,6 +1,7 @@
 const assert = require("assert");
 const {
     buildExam,
+    buildRetryExam,
     getInventory,
     gradeExam,
     validateSettings
@@ -83,7 +84,20 @@ function testGradeExamRequiresExactMultipleChoiceMatchAndUsesCustomScores() {
     assert.strictEqual(exact.score, 3, "answer order should not affect exact matching");
 }
 
+function testBuildRetryExamKeepsOnlyIncorrectAndUnansweredQuestions() {
+    const result = gradeExam(
+        [questions[0], questions[1], questions[3]],
+        { s1: ["A"], s2: ["A"], m1: [] },
+        { single: 1, multiple: 2, boolean: 1 }
+    );
+
+    const retryExam = buildRetryExam(result.items);
+
+    assert.deepStrictEqual(retryExam.map((item) => item.id), ["s2", "m1"]);
+}
+
 testInventoryAndValidationUseQuestionData();
 testBuildExamSamplesWithoutDuplicates();
 testGradeExamRequiresExactMultipleChoiceMatchAndUsesCustomScores();
+testBuildRetryExamKeepsOnlyIncorrectAndUnansweredQuestions();
 console.log("test-exam-prep-core passed");

@@ -30,32 +30,26 @@
             <div class="type-grid">
                 <fieldset class="type-setting" data-type="single">
                     <legend>单选题</legend>
-                    <label for="single-count">题目数量 <span id="single-limit">上限 -</span></label>
-                    <input id="single-count" type="number" min="0" step="1" value="20" inputmode="numeric">
-                    <p class="field-error" id="single-error" role="alert"></p>
-                    <label for="single-score">每题分值</label>
-                    <input id="single-score" type="number" min="1" step="1" value="1" inputmode="numeric">
-                    <p class="field-error" id="single-score-error" role="alert"></p>
+                    <div class="setting-fields">
+                        <div><label for="single-count">题目数量 <span id="single-limit">上限 -</span></label><input id="single-count" type="number" min="0" step="1" value="5" inputmode="numeric"><p class="field-error" id="single-error" role="alert"></p></div>
+                        <div><label for="single-score">每题分值</label><input id="single-score" type="number" min="1" step="1" value="1" inputmode="numeric"><p class="field-error" id="single-score-error" role="alert"></p></div>
+                    </div>
                 </fieldset>
 
                 <fieldset class="type-setting featured" data-type="multiple">
                     <legend>多选题</legend>
-                    <label for="multiple-count">题目数量 <span id="multiple-limit">上限 -</span></label>
-                    <input id="multiple-count" type="number" min="0" step="1" value="10" inputmode="numeric">
-                    <p class="field-error" id="multiple-error" role="alert"></p>
-                    <label for="multiple-score">每题分值</label>
-                    <input id="multiple-score" type="number" min="1" step="1" value="2" inputmode="numeric">
-                    <p class="field-error" id="multiple-score-error" role="alert"></p>
+                    <div class="setting-fields">
+                        <div><label for="multiple-count">题目数量 <span id="multiple-limit">上限 -</span></label><input id="multiple-count" type="number" min="0" step="1" value="5" inputmode="numeric"><p class="field-error" id="multiple-error" role="alert"></p></div>
+                        <div><label for="multiple-score">每题分值</label><input id="multiple-score" type="number" min="1" step="1" value="2" inputmode="numeric"><p class="field-error" id="multiple-score-error" role="alert"></p></div>
+                    </div>
                 </fieldset>
 
                 <fieldset class="type-setting" data-type="boolean">
                     <legend>判断题</legend>
-                    <label for="boolean-count">题目数量 <span id="boolean-limit">上限 -</span></label>
-                    <input id="boolean-count" type="number" min="0" step="1" value="20" inputmode="numeric">
-                    <p class="field-error" id="boolean-error" role="alert"></p>
-                    <label for="boolean-score">每题分值</label>
-                    <input id="boolean-score" type="number" min="1" step="1" value="1" inputmode="numeric">
-                    <p class="field-error" id="boolean-score-error" role="alert"></p>
+                    <div class="setting-fields">
+                        <div><label for="boolean-count">题目数量 <span id="boolean-limit">上限 -</span></label><input id="boolean-count" type="number" min="0" step="1" value="5" inputmode="numeric"><p class="field-error" id="boolean-error" role="alert"></p></div>
+                        <div><label for="boolean-score">每题分值</label><input id="boolean-score" type="number" min="1" step="1" value="1" inputmode="numeric"><p class="field-error" id="boolean-score-error" role="alert"></p></div>
+                    </div>
                 </fieldset>
             </div>
 
@@ -99,6 +93,7 @@
                 <label class="filter-toggle"><input id="incorrect-only" type="checkbox"> 仅看错题与未答</label>
                 <div>
                     <button class="secondary-button" id="reset-exam" type="button">重新设置</button>
+                    <button class="secondary-button" id="retry-incorrect" type="button">重做错题</button>
                     <button class="primary-button" id="retry-exam" type="button">再来一卷</button>
                 </div>
             </div>

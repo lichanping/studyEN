@@ -19,11 +19,12 @@ function testPageContainsRequiredSettingsAndResultControls() {
         "single-score", "multiple-score", "boolean-score",
         "mode-instant", "mode-submit", "start-exam",
         "confirm-answer", "submit-exam", "incorrect-only",
-        "retry-exam", "reset-exam"
+        "retry-exam", "retry-incorrect", "reset-exam"
     ]) {
         assert.ok(html.includes(`id="${id}"`), `missing page control: ${id}`);
     }
-    assert.ok(html.includes('value="20"'), "default count 20 should be present");
+    assert.strictEqual((html.match(/class="setting-fields"/g) || []).length, 3, "each question type should group count and score");
+    assert.strictEqual((html.match(/-count"[^>]*value="5"/g) || []).length, 3, "all default counts should be 5");
     assert.ok(html.includes('id="multiple-score"') && html.includes('value="2"'), "multiple choice should default to 2 points");
     assert.ok(html.includes("core.js?v="));
     assert.ok(html.includes("app.js?v="));
@@ -36,6 +37,8 @@ function testPageSupportsDynamicInventoryAndVersionedQuestionBank() {
     assert.ok(script.includes("countInput.max = state.inventory[type]"), "dynamic inventory should set the native input max");
     assert.ok(script.includes("最多可选"), "over-limit errors should be shown to users");
     assert.ok(script.includes("gradeExam"), "submission should use shared grading logic");
+    assert.ok(script.includes("buildRetryExam"), "wrong and unanswered questions should support retrying");
+    assert.ok(script.includes('state.confirmed.size === state.exam.length'), "instant mode should show results after all questions");
 }
 
 function testStylesCoverWrongAnswersAndPhoneSafeAreas() {
@@ -44,6 +47,7 @@ function testStylesCoverWrongAnswersAndPhoneSafeAreas() {
     assert.ok(/\.option\.selected-wrong[\s\S]*(#|rgb|var\()/.test(css), "selected wrong answers should be red");
     assert.ok(css.includes("env(safe-area-inset-bottom)"), "iPhone safe area should be respected");
     assert.ok(/@media\s*\(max-width:\s*430px\)/.test(css), "phone layout should cover Huawei and iPhone widths");
+    assert.ok(/@media\s*\(max-width:\s*430px\)[\s\S]*\.setting-fields[\s\S]*grid-template-columns:\s*1fr 1fr/.test(css), "count and score should share one row on phones");
 }
 
 function testQuestionBankUsesImmutableCaching() {

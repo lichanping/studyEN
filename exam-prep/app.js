@@ -153,6 +153,7 @@
             return `<article><h3>${TYPE_NAMES[type]}</h3><p>${item.score} / ${item.totalScore} 分 · 答对 ${item.correct} / ${item.total}</p></article>`;
         }).join("");
         byId("incorrect-only").checked = false;
+        byId("retry-incorrect").disabled = !state.result.items.some((item) => item.status !== "correct");
         renderResults();
         showView("results");
     }
@@ -177,6 +178,18 @@
     }
 
     function retryExam() { startExam(); }
+    function retryIncorrect() {
+        const retryQuestions = core.buildRetryExam(state.result.items);
+        if (!retryQuestions.length) return;
+        state.exam = retryQuestions;
+        state.responses = {};
+        state.confirmed = new Set();
+        state.currentIndex = 0;
+        state.result = null;
+        byId("submit-exam").hidden = state.mode === "instant";
+        showView("quiz");
+        renderQuestion();
+    }
     function resetExam() { showView("setup"); }
 
     async function loadQuestionBank() {
@@ -206,6 +219,7 @@
     byId("next-question").addEventListener("click", () => { state.currentIndex += 1; renderQuestion(); });
     byId("exit-exam").addEventListener("click", () => { if (window.confirm("退出后本次答题记录将清空，确认退出吗？")) resetExam(); });
     byId("incorrect-only").addEventListener("change", renderResults);
+    byId("retry-incorrect").addEventListener("click", retryIncorrect);
     byId("retry-exam").addEventListener("click", retryExam);
     byId("reset-exam").addEventListener("click", resetExam);
     TYPES.forEach((type) => {

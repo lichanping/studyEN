@@ -54,6 +54,12 @@
         return shuffle(selected, random);
     }
 
+    function buildRetryExam(resultItems) {
+        return resultItems
+            .filter((item) => item.status !== "correct")
+            .map((item) => item.question);
+    }
+
     function normalizedAnswers(answers) {
         return [...new Set(answers || [])].sort();
     }
@@ -98,5 +104,5 @@
         };
     }
 
-    return { buildExam, getInventory, gradeExam, validateSettings };
+    return { buildExam, buildRetryExam, getInventory, gradeExam, validateSettings };
 }));
