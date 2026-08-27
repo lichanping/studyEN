@@ -31,4 +31,9 @@ assert.ok(
     "登录页按回车提交表单时应与点击 Login 按钮走同一个 validateLogin 处理器"
 );
 
+assert.ok(
+    /<\/form>[\s\S]*<a[^>]*id="exam-prep-entry"[^>]*href="exam-prep\/index\.html"[^>]*>直接进入 B证备考<\/a>/.test(loginHtml),
+    "登录页应在登录表单外提供无需登录的 B证备考入口"
+);
+
 console.log("test-login-session-expiry passed");

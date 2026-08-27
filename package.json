@@ -12,6 +12,7 @@
     "test:reading-article-tooling-docs": "node tests/test-reading-article-tooling-docs.js",
     "test:reading-article-share-token": "node tests/test-reading-article-share-token.js",
     "test:reading-article-share-functions": "node tests/test-reading-article-share-functions.js",
+    "test:exam-prep": "python3 -m pytest -q tests/test_exam_question_bank_converter.py && node tests/test-exam-prep-core.js && node tests/test-exam-prep-page-regression.js",
     "test:meeting-config": "node tests/test-meeting-config.js",
     "test:quota": "node tests/test-quota-check.js",
     "test:stats-mode-and-review-deadline": "node tests/test-stats-mode-and-review-deadline.js",
