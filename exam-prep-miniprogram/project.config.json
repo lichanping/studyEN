@@ -1,0 +1,21 @@
+{
+  "appid": "wx42a450c312168479",
+  "compileType": "miniprogram",
+  "condition": {},
+  "description": "B证备考微信小程序",
+  "isGameTourist": false,
+  "libVersion": "3.10.3",
+  "miniprogramRoot": "./",
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  },
+  "projectname": "B证备考",
+  "srcMiniprogramRoot": "./",
+  "setting": {
+    "checkSiteMap": true,
+    "es6": true,
+    "minified": true,
+    "postcss": true
+  }
+}

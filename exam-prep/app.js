@@ -64,7 +64,6 @@
         state.confirmed = new Set();
         state.currentIndex = 0;
         state.result = null;
-        byId("submit-exam").hidden = state.mode === "instant";
         showView("quiz");
         renderQuestion();
     }
@@ -186,7 +185,6 @@
         state.confirmed = new Set();
         state.currentIndex = 0;
         state.result = null;
-        byId("submit-exam").hidden = state.mode === "instant";
         showView("quiz");
         renderQuestion();
     }

@@ -1,0 +1,93 @@
+<view class="page-shell">
+    <view class="masthead">
+        <view>
+            <text class="eyebrow">B CERTIFICATE PRACTICE</text>
+            <text class="title">B证备考</text>
+        </view>
+        <text class="bank-status">{{bankStatus}}</text>
+    </view>
+
+    <view wx:if="{{view === 'setup'}}" class="panel setup-panel" data-view="setup">
+        <view class="section-heading">
+            <text class="step-label">01 / 组卷</text>
+            <text class="section-title">设置本次练习</text>
+            <text class="section-copy">题目随机抽取，同一份试卷内不会重复。</text>
+        </view>
+        <view class="type-grid">
+            <view wx:for="{{typeSettings}}" wx:key="key" class="type-setting {{item.key === 'multiple' ? 'featured' : ''}}">
+                <text class="type-title">{{item.name}}</text>
+                <view class="setting-fields">
+                    <label class="field">
+                        <view class="field-label"><text>题目数量</text><text>上限 {{item.limit}}</text></view>
+                        <input type="number" value="{{item.count}}" data-type="{{item.key}}" data-field="count" bindinput="updateSetting" />
+                        <text wx:if="{{item.countError}}" class="field-error">{{item.countError}}</text>
+                    </label>
+                    <label class="field">
+                        <view class="field-label"><text>每题分值</text></view>
+                        <input type="number" value="{{item.score}}" data-type="{{item.key}}" data-field="score" bindinput="updateSetting" />
+                        <text wx:if="{{item.scoreError}}" class="field-error">{{item.scoreError}}</text>
+                    </label>
+                </view>
+            </view>
+        </view>
+        <text class="mode-title">批改方式</text>
+        <radio-group class="mode-setting" bindchange="changeMode">
+            <label class="mode-option"><radio value="instant" checked="{{mode === 'instant'}}" color="#176b4d" /><view><text>即时反馈</text><text class="mode-copy">每题确认后显示答案</text></view></label>
+            <label class="mode-option"><radio value="submit" checked="{{mode === 'submit'}}" color="#176b4d" /><view><text>整卷批改</text><text class="mode-copy">交卷后统一查看成绩</text></view></label>
+        </radio-group>
+        <text wx:if="{{formError}}" class="form-error">{{formError}}</text>
+        <button id="start-exam" class="button primary-button wide-button" bindtap="startExam">开始答题</button>
+    </view>
+
+    <view wx:elif="{{view === 'quiz'}}" data-view="quiz">
+        <view class="quiz-toolbar">
+            <button class="text-button" bindtap="exitExam">退出</button>
+            <view class="progress-copy"><text>{{questionProgress}}</text><text>{{answeredProgress}}</text></view>
+            <button class="button submit-button" bindtap="submitExam">交卷</button>
+        </view>
+        <view class="progress-track"><view style="width: {{progressPercent}}%"></view></view>
+        <view class="question-panel">
+            <view class="question-meta"><text>{{currentQuestion.typeName}}</text><text>题库 #{{currentQuestion.sourceNumber}}</text></view>
+            <text class="question-text">{{currentQuestion.question}}</text>
+            <view class="options">
+                <button wx:for="{{currentOptions}}" wx:key="id" class="option {{item.className}}" data-option-id="{{item.id}}" bindtap="chooseOption">
+                    <text class="option-key">{{item.id}}</text><text class="option-copy">{{item.text}}</text>
+                </button>
+            </view>
+            <view wx:if="{{feedbackText}}" class="feedback {{feedbackWrong ? 'wrong' : ''}}">{{feedbackText}}</view>
+        </view>
+        <view class="quiz-actions">
+            <button class="button secondary-button" disabled="{{!canPrevious}}" bindtap="previousQuestion">上一题</button>
+            <button class="button primary-button confirm-button" bindtap="confirmAnswer">{{confirmText}}</button>
+            <button class="button secondary-button" disabled="{{!canNext}}" bindtap="nextQuestion">下一题</button>
+        </view>
+    </view>
+
+    <view wx:elif="{{view === 'results'}}" data-view="results">
+        <view class="score-hero">
+            <text class="step-label">03 / 成绩</text>
+            <view class="score-line"><text>{{result.score}} / {{result.totalScore}}</text><text>{{result.percentage}}%</text></view>
+            <text>{{result.summary}}</text>
+        </view>
+        <view class="type-summary">
+            <view wx:for="{{typeSummary}}" wx:key="name"><text>{{item.name}}</text><text>{{item.score}} / {{item.totalScore}} 分 · 答对 {{item.correct}} / {{item.total}}</text></view>
+        </view>
+        <view class="result-toolbar">
+            <checkbox-group bindchange="toggleIncorrectOnly"><label><checkbox value="incorrect" checked="{{incorrectOnly}}" color="#176b4d" />仅看错题与未答</label></checkbox-group>
+            <view class="result-actions">
+                <button class="button secondary-button" bindtap="resetExam">重新设置</button>
+                <button class="button secondary-button" disabled="{{!canRetryIncorrect}}" bindtap="retryIncorrect">重做错题</button>
+                <button class="button primary-button" bindtap="retryExam">再来一卷</button>
+            </view>
+        </view>
+        <view class="result-list">
+            <view wx:for="{{resultItems}}" wx:key="question.id" class="result-item {{item.status}}">
+                <view class="question-meta"><text>{{item.typeName}}</text><text>题库 #{{item.question.sourceNumber}}</text></view>
+                <text class="result-question">{{item.number}}. {{item.question.question}}</text>
+                <text class="result-status">{{item.statusText}} · {{item.earned}} / {{item.questionScore}} 分</text>
+                <text class="result-answer">你的答案：{{item.answerText}}</text>
+                <text class="result-answer">正确答案：{{item.correctText}}</text>
+            </view>
+        </view>
+    </view>
+</view>

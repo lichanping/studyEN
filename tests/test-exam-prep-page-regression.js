@@ -40,6 +40,7 @@ function testPageSupportsDynamicInventoryAndVersionedQuestionBank() {
     assert.ok(script.includes("gradeExam"), "submission should use shared grading logic");
     assert.ok(script.includes("buildRetryExam"), "wrong and unanswered questions should support retrying");
     assert.ok(script.includes('state.confirmed.size === state.exam.length'), "instant mode should show results after all questions");
+    assert.ok(!script.includes('byId("submit-exam").hidden = state.mode === "instant"'), "instant mode should keep manual submission visible");
 }
 
 function testStylesCoverWrongAnswersAndPhoneSafeAreas() {

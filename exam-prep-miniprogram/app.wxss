@@ -1,0 +1,8 @@
+page {
+    min-width: 320px;
+    color: #20251f;
+    background: #f4f1e8;
+    font-family: "Songti SC", serif;
+}
+
+button::after { border: 0; }
