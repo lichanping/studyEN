@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#f4f1e8">
+    <title>B证备考</title>
+    <link rel="stylesheet" href="style.css?v=20260827-2">
+</head>
+<body>
+    <header class="site-header">
+        <a class="back-link" href="../index.html">返回首页</a>
+        <div>
+            <p class="eyebrow">B CERTIFICATE PRACTICE</p>
+            <h1>B证备考</h1>
+        </div>
+        <span class="bank-status" id="bank-status">题库加载中</span>
+    </header>
+
+    <main>
+        <section class="panel setup-panel" id="setup-view" aria-labelledby="setup-title">
+            <div class="section-heading">
+                <div>
+                    <p class="step-label">01 / 组卷</p>
+                    <h2 id="setup-title">设置本次练习</h2>
+                </div>
+                <p>题目随机抽取，同一份试卷内不会重复。</p>
+            </div>
+
+            <div class="type-grid">
+                <fieldset class="type-setting" data-type="single">
+                    <legend>单选题</legend>
+                    <div class="setting-fields">
+                        <div><label for="single-count">题目数量 <span id="single-limit">上限 -</span></label><input id="single-count" type="number" min="0" step="1" value="5" inputmode="numeric"><p class="field-error" id="single-error" role="alert"></p></div>
+                        <div><label for="single-score">每题分值</label><input id="single-score" type="number" min="1" step="1" value="1" inputmode="numeric"><p class="field-error" id="single-score-error" role="alert"></p></div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="type-setting featured" data-type="multiple">
+                    <legend>多选题</legend>
+                    <div class="setting-fields">
+                        <div><label for="multiple-count">题目数量 <span id="multiple-limit">上限 -</span></label><input id="multiple-count" type="number" min="0" step="1" value="5" inputmode="numeric"><p class="field-error" id="multiple-error" role="alert"></p></div>
+                        <div><label for="multiple-score">每题分值</label><input id="multiple-score" type="number" min="1" step="1" value="2" inputmode="numeric"><p class="field-error" id="multiple-score-error" role="alert"></p></div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="type-setting" data-type="boolean">
+                    <legend>判断题</legend>
+                    <div class="setting-fields">
+                        <div><label for="boolean-count">题目数量 <span id="boolean-limit">上限 -</span></label><input id="boolean-count" type="number" min="0" step="1" value="5" inputmode="numeric"><p class="field-error" id="boolean-error" role="alert"></p></div>
+                        <div><label for="boolean-score">每题分值</label><input id="boolean-score" type="number" min="1" step="1" value="1" inputmode="numeric"><p class="field-error" id="boolean-score-error" role="alert"></p></div>
+                    </div>
+                </fieldset>
+            </div>
+
+            <fieldset class="mode-setting">
+                <legend>批改方式</legend>
+                <label><input id="mode-instant" type="radio" name="mode" value="instant" checked> <span><strong>即时反馈</strong>每题确认后显示答案</span></label>
+                <label><input id="mode-submit" type="radio" name="mode" value="submit"> <span><strong>整卷批改</strong>交卷后统一查看成绩与错题</span></label>
+            </fieldset>
+            <p class="form-error" id="form-error" role="alert"></p>
+            <button class="primary-button" id="start-exam" type="button" disabled>开始答题</button>
+        </section>
+
+        <section class="quiz-view" id="quiz-view" hidden aria-live="polite">
+            <div class="quiz-toolbar">
+                <button class="text-button" id="exit-exam" type="button">退出</button>
+                <div class="progress-copy"><strong id="question-progress">第 1 / 1 题</strong><span id="answered-progress">已答 0 题</span></div>
+                <button class="submit-button" id="submit-exam" type="button">交卷</button>
+            </div>
+            <div class="progress-track" aria-hidden="true"><span id="progress-bar"></span></div>
+            <article class="question-panel">
+                <div class="question-meta"><span id="question-type"></span><span id="source-number"></span></div>
+                <h2 id="question-text"></h2>
+                <div class="options" id="question-options"></div>
+                <div class="answer-feedback" id="answer-feedback" hidden></div>
+            </article>
+            <div class="quiz-actions">
+                <button class="secondary-button" id="previous-question" type="button">上一题</button>
+                <button class="primary-button" id="confirm-answer" type="button">确认本题</button>
+                <button class="secondary-button" id="next-question" type="button">下一题</button>
+            </div>
+        </section>
+
+        <section class="results-view" id="results-view" hidden>
+            <div class="score-hero">
+                <p class="step-label">03 / 成绩</p>
+                <div class="score-line"><strong id="score-value">0 / 0</strong><span id="score-percentage">0%</span></div>
+                <p id="score-summary"></p>
+            </div>
+            <div class="type-summary" id="type-summary"></div>
+            <div class="result-toolbar">
+                <label class="filter-toggle"><input id="incorrect-only" type="checkbox"> 仅看错题与未答</label>
+                <div>
+                    <button class="secondary-button" id="reset-exam" type="button">重新设置</button>
+                    <button class="secondary-button" id="retry-incorrect" type="button">重做错题</button>
+                    <button class="primary-button" id="retry-exam" type="button">再来一卷</button>
+                </div>
+            </div>
+            <div class="result-list" id="result-list"></div>
+        </section>
+    </main>
+
+    <script src="core.js?v=20260827-1"></script>
+    <script src="app.js?v=20260827-1"></script>
+</body>
+</html>

@@ -45,3 +45,19 @@ button {
 button:hover {
     background: #0056b3;
 }
+
+#exam-prep-entry {
+    display: block;
+    margin-top: 12px;
+    padding: 10px 20px;
+    border: 1px solid #007BFF;
+    border-radius: 5px;
+    color: #007BFF;
+    text-align: center;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
+#exam-prep-entry:hover {
+    background: #eef6ff;
+}
