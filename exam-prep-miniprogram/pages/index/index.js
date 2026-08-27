@@ -1,4 +1,4 @@
-const questionsData = require("../../data/questions-v1.js");
+const questionsData = require("../../data/questions-v2.js");
 const sessionApi = require("../../utils/exam-session.js");
 
 const TYPES = ["single", "multiple", "boolean"];

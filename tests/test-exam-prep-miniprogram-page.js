@@ -31,13 +31,13 @@ function testPageContainsSetupQuizAndResultControls() {
 
 function testPageLoadsBundledQuestionBankAndSessionAdapter() {
     const script = read("exam-prep-miniprogram/pages/index/index.js");
-    assert.ok(script.includes('require("../../data/questions-v1.js")'));
+    assert.ok(script.includes('require("../../data/questions-v2.js")'), "page should load the versioned question asset to force a complete upload");
     assert.ok(script.includes('require("../../utils/exam-session.js")'));
     assert.ok(script.includes("wx.showModal"), "unanswered submission and exit should be confirmed");
     assert.ok(script.includes("onShareAppMessage()"), "page should support sharing from the WeChat menu");
     assert.ok(script.includes('path: "/pages/index/index"'), "shared cards should open the exam home page");
 
-    const bank = require(path.resolve(__dirname, "../exam-prep-miniprogram/data/questions-v1.js"));
+    const bank = require(path.resolve(__dirname, "../exam-prep-miniprogram/data/questions-v2.js"));
     assert.strictEqual(bank.questions.length, 984);
 }
 
@@ -47,10 +47,21 @@ function testGeneratedAssetsMatchWebSourcesAndWechatRuntime() {
     const session = read("exam-prep-miniprogram/utils/exam-session.js");
     const page = read("exam-prep-miniprogram/pages/index/index.js");
     const sourceBank = JSON.parse(read("exam-prep/questions-v1.json"));
-    const generatedBank = require(path.resolve(__dirname, "../exam-prep-miniprogram/data/questions-v1.js"));
+    const generatedBank = require(path.resolve(__dirname, "../exam-prep-miniprogram/data/questions-v2.js"));
+    const dataDir = path.resolve(__dirname, "../exam-prep-miniprogram/data");
+    const questionParts = fs.readdirSync(dataDir).filter((name) => name.startsWith("questions-v2-part-"));
+    const generatedBankBytes = questionParts.reduce(
+        (total, fileName) => total + fs.statSync(path.join(dataDir, fileName)).size,
+        fs.statSync(path.join(dataDir, "questions-v2.js")).size
+    );
 
     assert.strictEqual(miniProgramCore, webCore, "generated mini program core should match the Web source");
     assert.deepStrictEqual(generatedBank, sourceBank, "generated mini program bank should match the JSON source");
+    assert.ok(questionParts.length > 1, "question bank should be split into compiler-safe modules");
+    assert.ok(generatedBankBytes < 200 * 1024, "generated question modules should stay below 200 KB in total");
+    for (const fileName of questionParts) {
+        assert.ok(fs.statSync(path.join(dataDir, fileName)).size < 64 * 1024, `${fileName} should stay below 64 KB`);
+    }
     for (const script of [miniProgramCore, session, page]) {
         assert.ok(!script.includes("Object.hasOwn"), "mini program should avoid unsupported Object.hasOwn");
         assert.ok(!script.includes("Object.fromEntries"), "mini program should avoid unsupported Object.fromEntries");
