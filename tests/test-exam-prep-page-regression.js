@@ -26,6 +26,7 @@ function testPageContainsRequiredSettingsAndResultControls() {
     assert.strictEqual((html.match(/class="setting-fields"/g) || []).length, 3, "each question type should group count and score");
     assert.strictEqual((html.match(/-count"[^>]*value="5"/g) || []).length, 3, "all default counts should be 5");
     assert.ok(html.includes('id="multiple-score"') && html.includes('value="2"'), "multiple choice should default to 2 points");
+    assert.ok(html.includes('href="style.css?v=20260827-2"'), "updated mobile styles should use a new cache version");
     assert.ok(html.includes("core.js?v="));
     assert.ok(html.includes("app.js?v="));
 }
@@ -48,6 +49,9 @@ function testStylesCoverWrongAnswersAndPhoneSafeAreas() {
     assert.ok(css.includes("env(safe-area-inset-bottom)"), "iPhone safe area should be respected");
     assert.ok(/@media\s*\(max-width:\s*430px\)/.test(css), "phone layout should cover Huawei and iPhone widths");
     assert.ok(/@media\s*\(max-width:\s*430px\)[\s\S]*\.setting-fields[\s\S]*grid-template-columns:\s*1fr 1fr/.test(css), "count and score should share one row on phones");
+    assert.ok(/@media\s*\(max-width:\s*430px\)[\s\S]*\.type-setting\s*\{[^}]*padding:\s*8px 10px 6px/.test(css), "question type rows should use compact phone padding");
+    assert.ok(/@media\s*\(max-width:\s*430px\)[\s\S]*\.field-error:empty[^}]*min-height:\s*0[^}]*margin:\s*0/.test(css), "empty field errors should not add phone height");
+    assert.ok(/@media\s*\(max-width:\s*430px\)[\s\S]*\.mode-setting\s*\{[^}]*grid-template-columns:\s*1fr 1fr/.test(css), "grading modes should share one row on phones");
 }
 
 function testQuestionBankUsesImmutableCaching() {
