@@ -51,3 +51,4 @@ MissingSounds.txt
 .netlify
 .qoder/repowiki
 deno.lock
+/temp/exam-prep-*

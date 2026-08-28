@@ -6,6 +6,7 @@
     "dev:localhost": "bash ./scripts/dev_localhost.sh",
     "dev:localhost:check": "bash ./scripts/dev_localhost.sh --check",
     "build:reading-manifest": "node scripts/generate_reading_articles_manifest.js",
+    "build:exam-prep-miniprogram": "node scripts/generate_exam_prep_miniprogram_assets.js",
     "fetch:reading-prepare": "node scripts/fetch_course_prepare_articles.js",
     "test:reading-articles": "node tests/test-reading-article-library.js",
     "test:reading-articles-regression": "node tests/test-reading-articles-page-regression.js",
@@ -13,6 +14,8 @@
     "test:reading-article-share-token": "node tests/test-reading-article-share-token.js",
     "test:reading-article-share-functions": "node tests/test-reading-article-share-functions.js",
     "test:exam-prep": "python3 -m pytest -q tests/test_exam_question_bank_converter.py && node tests/test-exam-prep-core.js && node tests/test-exam-prep-page-regression.js",
+    "test:exam-prep-miniprogram": "node tests/test-exam-prep-miniprogram.js && node tests/test-exam-prep-miniprogram-page.js",
+    "test:exam-prep-miniprogram:e2e": "node tests/test-exam-prep-miniprogram-e2e.js",
     "test:meeting-config": "node tests/test-meeting-config.js",
     "test:quota": "node tests/test-quota-check.js",
     "test:stats-mode-and-review-deadline": "node tests/test-stats-mode-and-review-deadline.js",
@@ -27,5 +30,9 @@
     "@andresaya/edge-tts": "^1.8.0",
     "@netlify/blobs": "^8.1.0",
     "nodemailer": "^8.0.11"
+  },
+  "devDependencies": {
+    "fflate": "^0.8.3",
+    "miniprogram-automator": "^0.12.1"
   }
 }
