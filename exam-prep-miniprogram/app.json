@@ -1,0 +1,13 @@
+{
+  "pages": [
+    "pages/index/index"
+  ],
+  "window": {
+    "backgroundColor": "#f4f1e8",
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#f4f1e8",
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "B证备考"
+  },
+  "sitemapLocation": "sitemap.json"
+}
