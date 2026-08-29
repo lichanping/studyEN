@@ -16,8 +16,10 @@ import {
     parseLocalDateYmd,
     resolveStudentDurationMinutes
 } from './commonFunctions.js'
-
-let hasAutoSyncedNewWordFromReviewWord = false;
+import {
+    initFeedbackStatInputs,
+    normalizeFeedbackStatInputs
+} from './feedback-stat-input.mjs';
 
 export function calculateMonthElapsedPercent(date = new Date()) {
     const currentDate = date instanceof Date ? new Date(date.getTime()) : new Date(date);
@@ -56,30 +58,7 @@ const setInitialDateTime = () => {
 };
 
 const initReviewWordFirstBlurAutoSync = () => {
-    const reviewForgetWordInput = document.getElementById('reviewforgetWord');
-    const newWordInput = document.getElementById('newWord');
-    if (!reviewForgetWordInput || !newWordInput) {
-        return;
-    }
-
-    reviewForgetWordInput.addEventListener('blur', () => {
-        if (hasAutoSyncedNewWordFromReviewWord) {
-            return;
-        }
-
-        const reviewForgetWordText = reviewForgetWordInput.value.replace(/\s/g, '');
-        if (!reviewForgetWordText || reviewForgetWordText.includes('+')) {
-            return;
-        }
-
-        const reviewForgetWordNumber = parseInt(reviewForgetWordText, 10);
-        if (Number.isNaN(reviewForgetWordNumber) || reviewForgetWordNumber <= 0) {
-            return;
-        }
-
-        newWordInput.value = reviewForgetWordText;
-        hasAutoSyncedNewWordFromReviewWord = true;
-    });
+    initFeedbackStatInputs(document);
 };
 
 // Define user data
@@ -466,6 +445,11 @@ export function handleLateMeetingReminderClick() {
 
 
 export async function handleClassFeedbackClick() {
+    const normalizedStats = normalizeFeedbackStatInputs(document);
+    if (!normalizedStats.valid) {
+        return;
+    }
+
     const canSubmit = await validateBeforeClassFeedbackSubmit("词汇课");
     if (!canSubmit) {
         return;
