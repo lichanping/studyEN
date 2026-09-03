@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-27T10:42:46.742Z",
+  "generatedAt": "2026-09-03T05:07:53.313Z",
   "albums": [
     {
       "id": "mid50",
@@ -357,6 +357,190 @@
           "textPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/Chapter 50 Future Life 2035（2035 年的未来生活）.txt",
           "audioPath": "user_data/!【5.0】【中级】-中阶-阅读50篇/audio/Chapter 50 Future Life 2035（2035 年的未来生活）.mp3",
           "order": 50
+        }
+      ]
+    },
+    {
+      "id": "midCloze25",
+      "title": "中阶完形填空25篇",
+      "abbr": "W25",
+      "folder": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇",
+      "count": 25,
+      "articles": [
+        {
+          "album": "midCloze25",
+          "title": "Chapter 1 Polluted Rivers",
+          "textPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/Chapter 1 Polluted Rivers.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/audio/Chapter 1 Polluted Rivers.mp3",
+          "order": 1
+        },
+        {
+          "album": "midCloze25",
+          "title": "Chapter 2 Grandfather's Journey",
+          "textPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/Chapter 2 Grandfather's Journey.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/audio/Chapter 2 Grandfather's Journey.mp3",
+          "order": 2
+        },
+        {
+          "album": "midCloze25",
+          "title": "Chapter 3 Sharing Bad Feelings",
+          "textPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/Chapter 3 Sharing Bad Feelings.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/audio/Chapter 3 Sharing Bad Feelings.mp3",
+          "order": 3
+        },
+        {
+          "album": "midCloze25",
+          "title": "Chapter 4 Accepting Imperfections",
+          "textPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/Chapter 4 Accepting Imperfections.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/audio/Chapter 4 Accepting Imperfections.mp3",
+          "order": 4
+        },
+        {
+          "album": "midCloze25",
+          "title": "Chapter 5 Volunteer Farm Experience",
+          "textPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/Chapter 5 Volunteer Farm Experience.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/audio/Chapter 5 Volunteer Farm Experience.mp3",
+          "order": 5
+        },
+        {
+          "album": "midCloze25",
+          "title": "Chapter 6 Electric Car History",
+          "textPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/Chapter 6 Electric Car History.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/audio/Chapter 6 Electric Car History.mp3",
+          "order": 6
+        },
+        {
+          "album": "midCloze25",
+          "title": "Chapter 7 School Trip Education",
+          "textPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/Chapter 7 School Trip Education.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/audio/Chapter 7 School Trip Education.mp3",
+          "order": 7
+        },
+        {
+          "album": "midCloze25",
+          "title": "Chapter 8 Cards for Hospitalized Kids",
+          "textPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/Chapter 8 Cards for Hospitalized Kids.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/audio/Chapter 8 Cards for Hospitalized Kids.mp3",
+          "order": 8
+        },
+        {
+          "album": "midCloze25",
+          "title": "Chapter 9 Be Yourself",
+          "textPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/Chapter 9 Be Yourself.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/audio/Chapter 9 Be Yourself.mp3",
+          "order": 9
+        },
+        {
+          "album": "midCloze25",
+          "title": "Chapter 10 China's Transformation",
+          "textPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/Chapter 10 China's Transformation.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/audio/Chapter 10 China's Transformation.mp3",
+          "order": 10
+        },
+        {
+          "album": "midCloze25",
+          "title": "Chapter 11 Rain Moment",
+          "textPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/Chapter 11 Rain Moment.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/audio/Chapter 11 Rain Moment.mp3",
+          "order": 11
+        },
+        {
+          "album": "midCloze25",
+          "title": "Chapter 12 Young Dayu Story",
+          "textPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/Chapter 12 Young Dayu Story.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/audio/Chapter 12 Young Dayu Story.mp3",
+          "order": 12
+        },
+        {
+          "album": "midCloze25",
+          "title": "Chapter 13 Two Different Sisters",
+          "textPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/Chapter 13 Two Different Sisters.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/audio/Chapter 13 Two Different Sisters.mp3",
+          "order": 13
+        },
+        {
+          "album": "midCloze25",
+          "title": "Chapter 14 Positive Secrets",
+          "textPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/Chapter 14 Positive Secrets.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/audio/Chapter 14 Positive Secrets.mp3",
+          "order": 14
+        },
+        {
+          "album": "midCloze25",
+          "title": "Chapter 15 The Special Giraffe",
+          "textPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/Chapter 15 The Special Giraffe.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/audio/Chapter 15 The Special Giraffe.mp3",
+          "order": 15
+        },
+        {
+          "album": "midCloze25",
+          "title": "Chapter 16 Future Companions",
+          "textPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/Chapter 16 Future Companions.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/audio/Chapter 16 Future Companions.mp3",
+          "order": 16
+        },
+        {
+          "album": "midCloze25",
+          "title": "Chapter 17 Daily English Practice",
+          "textPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/Chapter 17 Daily English Practice.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/audio/Chapter 17 Daily English Practice.mp3",
+          "order": 17
+        },
+        {
+          "album": "midCloze25",
+          "title": "Chapter 18 Inner Confidence",
+          "textPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/Chapter 18 Inner Confidence.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/audio/Chapter 18 Inner Confidence.mp3",
+          "order": 18
+        },
+        {
+          "album": "midCloze25",
+          "title": "Chapter 19 Friendship Wisdom",
+          "textPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/Chapter 19 Friendship Wisdom.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/audio/Chapter 19 Friendship Wisdom.mp3",
+          "order": 19
+        },
+        {
+          "album": "midCloze25",
+          "title": "Chapter 20 From Medicine to Writing",
+          "textPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/Chapter 20 From Medicine to Writing.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/audio/Chapter 20 From Medicine to Writing.mp3",
+          "order": 20
+        },
+        {
+          "album": "midCloze25",
+          "title": "Chapter 21 The Jackal's Trick",
+          "textPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/Chapter 21 The Jackal's Trick.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/audio/Chapter 21 The Jackal's Trick.mp3",
+          "order": 21
+        },
+        {
+          "album": "midCloze25",
+          "title": "Chapter 22 The Dancing Discovery",
+          "textPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/Chapter 22 The Dancing Discovery.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/audio/Chapter 22 The Dancing Discovery.mp3",
+          "order": 22
+        },
+        {
+          "album": "midCloze25",
+          "title": "Chapter 23 My Growth and Transformation_ Education Goes Beyond Good Grades",
+          "textPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/Chapter 23 My Growth and Transformation_ Education Goes Beyond Good Grades.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/audio/Chapter 23 My Growth and Transformation_ Education Goes Beyond Good Grades.mp3",
+          "order": 23
+        },
+        {
+          "album": "midCloze25",
+          "title": "Chapter 24 Finding Self-Acceptance",
+          "textPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/Chapter 24 Finding Self-Acceptance.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/audio/Chapter 24 Finding Self-Acceptance.mp3",
+          "order": 24
+        },
+        {
+          "album": "midCloze25",
+          "title": "Chapter 25 Robots in Action",
+          "textPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/Chapter 25 Robots in Action.txt",
+          "audioPath": "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇/audio/Chapter 25 Robots in Action.mp3",
+          "order": 25
         }
       ]
     },

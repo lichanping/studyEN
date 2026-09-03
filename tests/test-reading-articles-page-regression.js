@@ -15,6 +15,10 @@ function testIndexShouldUseReadingArticleEntry() {
 
 function testReadingArticlesFolderShouldContainEntryFiles() {
     const html = readWorkspaceFile("reading-articles/index.html");
+    const script = readWorkspaceFile("reading-articles/script.js");
+    assert.ok(html.includes('../commonFunctions.js?v=20260903-1'), "reading login check should use the root-login fix");
+    assert.ok(html.includes('src="library.js?v=20260606-3"'), "reading library cache version should include the new album");
+    assert.ok(script.includes('const AUDIO_ASSET_VERSION = "20260903-1"'), "updated MP3 files should bypass stale browser caches");
     assert.ok(/src="script\.js\?v=\d/.test(html), "reading-articles page should use folder-local script");
     assert.ok(/href="style\.css\?v=\d/.test(html), "reading-articles page should use folder-local style");
     assert.ok(html.includes("checkLoginStatus"), "reading-articles page should be protected by login status check");

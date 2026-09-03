@@ -13,6 +13,7 @@ class TextToSpeechConverter:
     CJK_PATTERN = re.compile(r"[\u4e00-\u9fff]")
     SECTION_STOP_PATTERN = re.compile(r"^\s*(主旨大意|文章大意|中心思想|长难句|重点词汇|词汇|答案|解析|参考译文|参考答案)\s*[:：]?")
     HEADER_SKIP_PATTERN = re.compile(r"^\s*(训前准备原文|原文|阅读原文)\s*$")
+    TRANSLATION_HEADER_PATTERN = re.compile(r"^\s*(?:---\s*中文翻译\s*---|【中文翻译】)\s*$")
     CJK_PAREN_SEGMENT_PATTERN = re.compile(r"[（(]([^）)]*[\u4e00-\u9fff][^）)]*)[）)]")
 
     def __init__(self, voice_name=None, rate="-10%"):
@@ -35,10 +36,17 @@ class TextToSpeechConverter:
         """Extract article content for TTS.
 
         Rule 1: Prefer lines like "【1】...".
-        Rule 2: For mixed bilingual texts, keep English content first, then
-        append Chinese explanations before summary/analysis sections.
+        Rule 2: Stop at an explicit Chinese translation header for English-only audio.
+        Rule 3: For other mixed bilingual texts, keep English content and discard
+        Chinese translations and inline glosses.
         """
-        lines = [line.strip() for line in text_content.splitlines() if line.strip()]
+        lines = []
+        for raw_line in text_content.splitlines():
+            line = raw_line.strip()
+            if self.TRANSLATION_HEADER_PATTERN.match(line):
+                break
+            if line:
+                lines.append(line)
 
         numbered_lines = []
         for line in lines:
@@ -50,7 +58,6 @@ class TextToSpeechConverter:
             return "\n".join(numbered_lines)
 
         english_lines = []
-        chinese_lines = []
         started = False
 
         for line in lines:
@@ -72,8 +79,6 @@ class TextToSpeechConverter:
                     if re.search(r"[A-Za-z]", english_part):
                         english_lines.append(english_part)
                         started = True
-                    if started:
-                        chinese_lines.extend(glosses)
                     continue
 
                 first_cjk = self.CJK_PATTERN.search(line)
@@ -90,19 +95,13 @@ class TextToSpeechConverter:
                     if re.search(r"[A-Za-z]", english_part):
                         english_lines.append(english_part)
                         started = True
-
-                    if started:
-                        chinese_lines.extend(glosses)
                     continue
 
                 english_part = line[:first_cjk.start()].strip() if first_cjk else ""
-                chinese_part = suffix.strip()
 
                 if re.search(r"[A-Za-z]", english_part):
                     english_lines.append(english_part)
                     started = True
-                if started and self.CJK_PATTERN.search(chinese_part):
-                    chinese_lines.append(chinese_part)
                 continue
 
             if has_latin:
@@ -110,14 +109,9 @@ class TextToSpeechConverter:
                 started = True
                 continue
 
-            if has_cjk and started:
-                chinese_lines.append(line)
-
         if not english_lines:
             return ""
-        if not chinese_lines:
-            return "\n".join(english_lines).strip()
-        return "\n".join(english_lines + chinese_lines).strip()
+        return "\n".join(english_lines).strip()
 
     def normalize_tts_text(self, text):
         """Clean punctuation to reduce cases where '.' is read as 'dot'."""
