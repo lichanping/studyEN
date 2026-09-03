@@ -1,4 +1,5 @@
 (function () {
+    const AUDIO_ASSET_VERSION = "20260903-1";
     const lib = window.ReadingArticleLib;
     if (!lib) {
         console.error("ReadingArticleLib is not available");
@@ -155,7 +156,7 @@
         if (!article) return;
 
         els.articleTitle.textContent = article.title;
-        els.articleAudio.src = toRootAssetUrl(article.audioPath);
+        els.articleAudio.src = `${toRootAssetUrl(article.audioPath)}?v=${AUDIO_ASSET_VERSION}`;
         els.articleAudio.load();
 
         const textRes = await fetch(toRootAssetUrl(article.textPath));

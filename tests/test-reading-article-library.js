@@ -1,4 +1,6 @@
 const assert = require("assert");
+const fs = require("fs");
+const path = require("path");
 const {
     ALBUM_CONFIG,
     buildAlbumTabs,
@@ -12,8 +14,13 @@ const {
 
 function testBuildAlbumTabsShouldExposeConfiguredAlbumsWithAbbr() {
     const tabs = buildAlbumTabs(ALBUM_CONFIG);
-    assert.strictEqual(tabs.length, 5);
-    assert.deepStrictEqual(tabs.map((item) => item.abbr), ["R50", "CJ", "ZK", "WC", "GY"]);
+    assert.strictEqual(tabs.length, 6);
+    assert.deepStrictEqual(tabs.map((item) => item.abbr), ["R50", "W25", "CJ", "ZK", "WC", "GY"]);
+
+    const clozeAlbum = tabs.find((item) => item.id === "midCloze25");
+    assert.ok(clozeAlbum, "中阶完形填空25篇 album should be exposed");
+    assert.strictEqual(clozeAlbum.title, "中阶完形填空25篇");
+    assert.strictEqual(clozeAlbum.folder, "user_data/!【5.0】【中级】-中阶-分级阅读_完形填空_25篇");
 
     const earlyAlbum = tabs.find((item) => item.id === "early50");
     assert.ok(earlyAlbum, "初阶阅读50篇 album should be exposed");
@@ -43,6 +50,16 @@ function testBuildArticleEntriesShouldKeepOnlyTxtAudioPairsAndSortByChapter() {
         "Chapter 2 A",
         "Chapter 11 C",
     ]);
+}
+
+function testManifestShouldIncludeAllMidClozeArticles() {
+    const manifestPath = path.resolve(__dirname, "../reading-articles/manifest.json");
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+    const album = manifest.albums.find((item) => item.id === "midCloze25");
+
+    assert.ok(album, "中阶完形填空25篇 should be present in manifest");
+    assert.strictEqual(album.count, 25);
+    assert.deepStrictEqual(album.articles.map((item) => item.order), Array.from({ length: 25 }, (_, index) => index + 1));
 }
 
 function testBuildShareUrlShouldAttachAlbumAndArticle() {
@@ -91,6 +108,7 @@ function testShouldEnableContinuousPlayShouldDependOnSearchQuery() {
 function run() {
     testBuildAlbumTabsShouldExposeConfiguredAlbumsWithAbbr();
     testBuildArticleEntriesShouldKeepOnlyTxtAudioPairsAndSortByChapter();
+    testManifestShouldIncludeAllMidClozeArticles();
     testBuildShareUrlShouldAttachAlbumAndArticle();
     testFilterArticlesShouldMatchTitleCaseInsensitive();
     testBuildProgressKeyShouldBeStable();

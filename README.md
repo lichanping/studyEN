@@ -140,7 +140,8 @@ bash ./scripts/rollback_sync.sh --target HEAD~1 --yes --push
 ### 注意事项
 
 - 文章转 MP3 使用 `edge_tts`。
-- 当 txt 内包含中英混排内容时，脚本会优先提取英文正文后再生成音频。
+- 项目统一标准：MP3 只朗读英文正文，不朗读中文翻译、中文释义、重点单词、重点短语或解析。
+- 遇到 `--- 中文翻译 ---` 或 `【中文翻译】` 时立即停止提取；中英混排行会移除中文部分并保留英文原顺序。
 - 若目录下没有生成音频，先检查 txt 是否包含可提取的英文正文。
 
 ### 阅读专辑 TXT + MP3 固化流程
@@ -167,6 +168,8 @@ LXLL_TOKEN_C="<x-course-learn>" LXLL_USER_ID="<userProfile.userId>" \
 ```bash
 bash scripts/generate_article_audio.sh "!【5.0】【中级】-初阶-阅读50篇"
 ```
+
+生成完成后抽查首篇和包含编号段落的文章，确认 MP3 只朗读英文正文、段落顺序与 TXT 一致。
 
 4. 更新阅读页 manifest：
 

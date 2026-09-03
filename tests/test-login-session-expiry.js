@@ -16,6 +16,23 @@ assert.ok(
 );
 
 assert.ok(
+    commonFunctions.includes("window.location.href = '/login.html'"),
+    "子目录页面登录失效时应跳转到站点根目录的登录页"
+);
+
+for (const pageUrl of [
+    "https://study.example.com/index.html",
+    "https://study.example.com/reading-articles/index.html",
+    "https://study.example.com/nested/page/index.html",
+]) {
+    assert.strictEqual(
+        new URL("/login.html", pageUrl).href,
+        "https://study.example.com/login.html",
+        `${pageUrl} 登录失效时应跳转到同一个根登录页`
+    );
+}
+
+assert.ok(
     commonFunctions.includes("localStorage.setItem('loginDate', String(Date.now()))"),
     "登录成功时应保存登录时间戳"
 );
