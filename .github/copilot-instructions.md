@@ -113,6 +113,9 @@ Apply the following behavior by default in all coding tasks:
   - `bash scripts/generate_article_audio.sh "<user_data子目录名>"`
 - Default output location must be:
   - `user_data/<子目录名>/audio/`
+- Reading article MP3 files must contain only the English article body.
+  - Do not read Chinese translations, inline Chinese glosses, vocabulary, phrases, or analysis sections.
+  - Preserve the original English paragraph order and stop at `--- 中文翻译 ---` or `【中文翻译】`.
 - Do not create one-off conversion scripts when `scripts/generate_article_audio.sh` already satisfies the task.
 - If extraction logic is adjusted, add/update pytest coverage in:
   - `tests/test_tool_article_to_mp3.py`

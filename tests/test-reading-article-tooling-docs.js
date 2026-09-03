@@ -33,6 +33,10 @@ function testReadmeShouldDescribeTxtAndMp3GenerationCommands() {
         readme.includes("build:reading-manifest"),
         "README should remind maintainers to rebuild the reading manifest"
     );
+    assert.ok(
+        readme.includes("MP3 只朗读英文正文"),
+        "README should define English-only article audio as the project standard"
+    );
 }
 
 function run() {

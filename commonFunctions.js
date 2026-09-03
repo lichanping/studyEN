@@ -183,7 +183,7 @@ export function checkLoginStatus() {
         // No action needed, user is allowed to stay on the page
     } else {
         // If not logged in or the login has expired, redirect to login.html
-        window.location.href = 'login.html';
+        window.location.href = '/login.html';
     }
 }
 
