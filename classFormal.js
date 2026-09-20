@@ -20,6 +20,10 @@ import {
     initFeedbackStatInputs,
     normalizeFeedbackStatInputs
 } from './feedback-stat-input.mjs';
+import {
+    BFD_EXTRA_REVIEW_FEE_STORAGE_KEY,
+    selectBfdExtraReviewFeeRecords
+} from './bfd-extra-review-fee.mjs';
 
 export function calculateMonthElapsedPercent(date = new Date()) {
     const currentDate = date instanceof Date ? new Date(date.getTime()) : new Date(date);
@@ -753,7 +757,8 @@ function formatDateTimeWeekly(dateTimeString) {
 }
 
 function escapeCsvCell(value) {
-    const text = String(value ?? "");
+    const rawText = String(value ?? "");
+    const text = typeof value === 'string' && /^[=+\-@]/.test(rawText) ? `'${rawText}` : rawText;
     if (/[",\n]/.test(text)) {
         return `"${text.replace(/"/g, '""')}"`;
     }
@@ -795,7 +800,39 @@ export function generateSalaryReport() {
         ? range.yearMonth
         : `${formatLocalDateYmd(range.startDate)}_${formatLocalDateYmd(range.endDate)}`;
 
-    const allStudents = getMergedStudentNames(teacherName);
+    const currentPlatformId = getCurrentPlatformId();
+    const startDateYmd = formatLocalDateYmd(range.startDate);
+    const endDateYmd = formatLocalDateYmd(range.endDate);
+    const extraReviewSelection = currentPlatformId === 'baifendii'
+        ? selectBfdExtraReviewFeeRecords(
+            localStorage.getItem(BFD_EXTRA_REVIEW_FEE_STORAGE_KEY),
+            startDateYmd,
+            endDateYmd
+        )
+        : { ok: true, records: [], warnings: [] };
+    const extraReviewFeeRecords = extraReviewSelection.ok ? extraReviewSelection.records : [];
+    const storedStudentNames = [];
+    for (let index = 0; index < localStorage.length; index += 1) {
+        const key = localStorage.key(index) || '';
+        if (key.endsWith('_classStatistics')) {
+            storedStudentNames.push(key.replace(/_classStatistics$/, '').trim());
+        }
+    }
+    const normalizeSalaryStudentName = (value) => {
+        const trimmed = String(value || '').trim();
+        return globalThis.StudentNameAlias?.normalizeStudentName?.(trimmed) || trimmed;
+    };
+    const allStudents = Array.from(new Set([
+        ...getMergedStudentNames(teacherName),
+        ...storedStudentNames,
+        ...extraReviewFeeRecords.map((record) => record.studentName)
+    ].filter(Boolean)));
+
+    if (!extraReviewSelection.ok) {
+        displayToast(extraReviewSelection.warnings[0] || 'BFD 额外复习计费账本读取失败');
+    } else if (extraReviewSelection.warnings.length > 0) {
+        displayToast(`已跳过 ${extraReviewSelection.warnings.length} 条无效 BFD 复习计费记录`);
+    }
 
     let totalHoursVocab = 0;     // 词汇课总课时
     let totalHoursReading = 0;   // 阅读课总课时
@@ -809,7 +846,8 @@ export function generateSalaryReport() {
 
     allStudents.forEach(userName => {
         // 初始化每个学生的总工资
-        studentStats[userName] = { hours: 0, fee: 0 };
+        const canonicalStudentName = normalizeSalaryStudentName(userName);
+        studentStats[canonicalStudentName] ||= { hours: 0, classFee: 0, extraReviewCount: 0, extraReviewFee: 0, fee: 0 };
 
         const statsKey = `${userName}_classStatistics`;
         const classStats = JSON.parse(localStorage.getItem(statsKey)) || {};
@@ -832,10 +870,11 @@ export function generateSalaryReport() {
 
                 const type = stats.type || "词汇课";
                 const recordPlatform = normalizePlatformId(stats.platform || DEFAULT_PLATFORM_ID);
+                if (recordPlatform !== currentPlatformId) return;
 
                 // 将记录添加到数组中
                 allRecords.push({
-                    userName,
+                    userName: canonicalStudentName,
                     date,
                     type,
                     duration,
@@ -871,12 +910,30 @@ export function generateSalaryReport() {
                 break;
         }
         studentStats[record.userName].hours += record.duration;
+        studentStats[record.userName].classFee += lessonFee;
         studentStats[record.userName].fee += lessonFee;
     });
 
-    if (allRecords.length === 0) {
+    extraReviewFeeRecords.forEach((record) => {
+        const userName = normalizeSalaryStudentName(record.studentName);
+        studentStats[userName] ||= { hours: 0, classFee: 0, extraReviewCount: 0, extraReviewFee: 0, fee: 0 };
+        studentStats[userName].extraReviewCount += 1;
+        studentStats[userName].extraReviewFee += record.feeAmount;
+        studentStats[userName].fee += record.feeAmount;
+    });
+
+    if (allRecords.length === 0 && extraReviewFeeRecords.length === 0) {
         alert('所选统计范围内没有找到工资数据。');
         return;
+    }
+
+    if (extraReviewFeeRecords.length > 0) {
+        reportContent += "\nBFD 额外抗遗忘复习明细:\n";
+        reportContent += "学生姓名 | 复习时间         | 复习词数 | 计费档位 | 费用\n";
+        reportContent += "--------------------------------------------------------------\n";
+        extraReviewFeeRecords.forEach((record) => {
+            reportContent += `${record.studentName.padEnd(6)} | ${record.reviewTime.replace('T', ' ')} | ${record.totalWords} | ${record.pricingTier} | ${record.feeAmount}元\n`;
+        });
     }
 
     // 添加学生总计
@@ -886,7 +943,7 @@ export function generateSalaryReport() {
     const sortedStudentStats = Object.entries(studentStats).sort((a, b) => b[1].fee - a[1].fee);
 
     sortedStudentStats.forEach(([student, stat]) => {
-        reportContent += `${student.padEnd(6)}: ${stat.hours.toFixed(2)}小时, ${stat.fee}元\n`;
+        reportContent += `${student.padEnd(6)}: ${stat.hours.toFixed(2)}小时, 正课${stat.classFee}元, 额外复习${stat.extraReviewCount}次/${stat.extraReviewFee}元, 合计${stat.fee}元\n`;
     });
 
     // 添加总计数据
@@ -900,7 +957,8 @@ export function generateSalaryReport() {
     const salaryTrial = allRecords
         .filter((record) => record.type === "体验课")
         .reduce((sum, record) => sum + record.duration * record.hourlyRate, 0);
-    totalSalaryAll = salaryVocab + salaryReading + salaryTrial;  // 计算总工资
+    const totalExtraReviewFee = extraReviewFeeRecords.reduce((sum, record) => sum + record.feeAmount, 0);
+    totalSalaryAll = salaryVocab + salaryReading + salaryTrial + totalExtraReviewFee;
 
     if (totalHoursVocab > 0) {
         reportContent += `词汇课总课时: ${totalHoursVocab} 小时\n`;
@@ -914,6 +972,10 @@ export function generateSalaryReport() {
         reportContent += `体验课总课时: ${totalHoursTrial} 小时\n`;
         reportContent += `体验课工资（按平台单价）: ${salaryTrial} 元\n`;
     }
+    if (extraReviewFeeRecords.length > 0) {
+        reportContent += `BFD 额外抗遗忘复习: ${extraReviewFeeRecords.length} 次\n`;
+        reportContent += `BFD 额外抗遗忘复习费用: ${totalExtraReviewFee} 元\n`;
+    }
     reportContent += `\n工资总计: ${totalSalaryAll} 元\n`;
 
     const csvRows = [];
@@ -923,10 +985,26 @@ export function generateSalaryReport() {
         csvRows.push([record.userName, record.date, record.type, record.duration, record.hourlyRate, lessonFee]);
     });
 
+    if (extraReviewFeeRecords.length > 0) {
+        csvRows.push([]);
+        csvRows.push(["BFD 额外抗遗忘复习明细"]);
+        csvRows.push(["学生姓名", "复习时间", "复习词数", "计费档位", "次数", "费用(元)"]);
+        extraReviewFeeRecords.forEach((record) => {
+            csvRows.push([record.studentName, record.reviewTime.replace('T', ' '), record.totalWords, record.pricingTier, 1, record.feeAmount]);
+        });
+    }
+
     csvRows.push([]);
-    csvRows.push(["学生总计", "总课时", "工资(元)"]);
+    csvRows.push(["学生总计", "正课总课时", "正课工资(元)", "额外复习次数", "额外复习费用(元)", "工资合计(元)"]);
     sortedStudentStats.forEach(([student, stat]) => {
-        csvRows.push([student, Number(stat.hours.toFixed(2)), Number(stat.fee.toFixed(2))]);
+        csvRows.push([
+            student,
+            Number(stat.hours.toFixed(2)),
+            Number(stat.classFee.toFixed(2)),
+            stat.extraReviewCount,
+            Number(stat.extraReviewFee.toFixed(2)),
+            Number(stat.fee.toFixed(2))
+        ]);
     });
 
     csvRows.push([]);
@@ -934,6 +1012,7 @@ export function generateSalaryReport() {
     if (totalHoursVocab > 0) csvRows.push(["词汇课", totalHoursVocab, "按平台单价", salaryVocab]);
     if (totalHoursReading > 0) csvRows.push(["阅读完型语法课", totalHoursReading, 55, salaryReading]);
     if (totalHoursTrial > 0) csvRows.push(["体验课", totalHoursTrial, "按平台单价", salaryTrial]);
+    if (extraReviewFeeRecords.length > 0) csvRows.push(["BFD 额外抗遗忘复习", extraReviewFeeRecords.length, "按词数档位", totalExtraReviewFee]);
     csvRows.push(["工资总计", "", "", Number(totalSalaryAll.toFixed(2))]);
 
     const csvContent = "\uFEFF" + csvRows.map((row) => row.map(escapeCsvCell).join(",")).join("\n");

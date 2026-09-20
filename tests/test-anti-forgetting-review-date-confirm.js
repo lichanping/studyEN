@@ -34,6 +34,7 @@ function extractBlock(source, signature, openChar = '{', closeChar = '}') {
 
 const commonFunctionsSource = read('commonFunctions.js');
 const countNonEmptyLinesCode = extractBlock(commonFunctionsSource, 'function countNonEmptyLines');
+const calculateAntiForgettingReviewWordsCode = extractBlock(commonFunctionsSource, 'export function calculateAntiForgettingReviewWords');
 const getBeijingDateYmdCode = extractBlock(commonFunctionsSource, 'function getBeijingDateYmd');
 const getReviewDateYmdCode = extractBlock(commonFunctionsSource, 'function getReviewDateYmd');
 const confirmAntiForgettingReviewDateMatchesTodayCode = extractBlock(commonFunctionsSource, 'function confirmAntiForgettingReviewDateMatchesToday');
@@ -99,7 +100,9 @@ function createFeedbackApi({ reviewTime, confirmResult, nowIso }) {
             'copyToClipboard',
             'showLongText',
             'countEnglishWords',
-            `${countNonEmptyLinesCode}\n${getBeijingDateYmdCode}\n${getReviewDateYmdCode}\n${confirmAntiForgettingReviewDateMatchesTodayCode}\n${handleAntiForgettingFeedbackClickCode.replace('export ', '')}\n${handleNewVersionFeedbackClickCode.replace('export ', '')}\nreturn { handleAntiForgettingFeedbackClick, handleNewVersionFeedbackClick };`
+            'syncCurrentBfdExtraReviewFee',
+            'displayToast',
+            `${countNonEmptyLinesCode}\n${calculateAntiForgettingReviewWordsCode.replace('export ', '')}\n${getBeijingDateYmdCode}\n${getReviewDateYmdCode}\n${confirmAntiForgettingReviewDateMatchesTodayCode}\n${handleAntiForgettingFeedbackClickCode.replace('export ', '')}\n${handleNewVersionFeedbackClickCode.replace('export ', '')}\nreturn { handleAntiForgettingFeedbackClick, handleNewVersionFeedbackClick };`
         )(
             createDocumentMock(reviewTime),
             DateCtor,
@@ -116,7 +119,9 @@ function createFeedbackApi({ reviewTime, confirmResult, nowIso }) {
             () => '继续加油',
             () => { events.copied += 1; },
             () => { events.shown += 1; },
-            (text) => String(text || '').split(/\s+/).filter(Boolean).length
+            (text) => String(text || '').split(/\s+/).filter(Boolean).length,
+            () => {},
+            () => {}
         )
     };
 }
