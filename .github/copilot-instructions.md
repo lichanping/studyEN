@@ -14,7 +14,7 @@ These instructions apply to all coding tasks in this repository.
 
 ### 提交和推送前必须确认
 
-在执行 `git commit` 和 `git push` 操作之前，必须先向用户展示将要提交的内容和消息，并获得用户的明确确认后才能执行。
+在执行 `git commit` 和 `git push` 操作之前，必须先向用户展示将要提交的内容和消息，并获得用户的明确确认后才能执行；用户已按下述“一次性授权”明确授权当前任务时除外。
 
 **流程：**
 1. 执行 `git status` 和 `git diff --staged` 展示待提交内容
@@ -30,6 +30,15 @@ These instructions apply to all coding tasks in this repository.
 - 代码分析和调研
 - 文档编写（但最终推送需要确认）
 
+### 一次性授权自动提交和推送
+
+- 当用户在当前任务中明确说“自测通过后自动提交并推送、新建 PR、Preview 自测，无需逐步确认”或同等含义时，视为对本次任务的 `commit`、`push`、创建 PR 和 Preview 验收的一次性明确授权。
+- 获得一次性授权后，仍必须执行测试、`git status`、`git diff --staged` 和敏感信息检查，并在过程更新中展示待提交文件摘要及唯一 commit message，但不需要停下来逐步等待确认。
+- 一次性授权只适用于当前任务和当前工作分支，不延续到后续任务，也不包含合并 PR、强推、删除分支或其他破坏性操作。
+- 若测试失败、暂存内容包含无关文件或敏感信息、目标远程/分支不明确，必须停止自动流程并向用户确认。
+- 未收到上述一次性授权时，继续严格执行默认的 commit 与 push 分步确认流程。
+- 推荐精简指令：`自测通过后，一次性授权：自动提交并推送当前工作分支，新建 PR，等待 Preview 后用 Chrome DevTools MCP 验收；无需逐步确认，不要合并。`
+
 ### 提交远程、新建 PR、获取 Preview URL 流程
 
 当用户要求“提交 remote / 新建 PR / 给 preview URL”时，按以下流程执行：
@@ -43,6 +52,17 @@ These instructions apply to all coding tasks in this repository.
 7. push 成功后新建 PR；若仓库存在 PR 模板，必须按模板填写，否则使用简洁的 Summary / Tests / Regression Scenarios 结构。
 8. PR 创建后获取并返回 PR URL；等待部署服务生成 preview 后，返回 preview URL。如果暂时没有 preview URL，说明已创建 PR，并告知需要等待对应部署检查完成。
 9. 不要把未确认、未自测通过或与本次任务无关的文件提交进 PR。
+
+### Netlify 生产部署核验流程
+
+用户询问“合并后 prod 是否已部署”时，不能只依据 PR 的 Deploy Preview 成功作结论。必须完成以下核验：
+
+1. 执行 `git fetch origin main`，读取 `origin/main` 最新 SHA，并确认目标功能提交已包含在该提交历史中。
+2. 确认 PR 状态为 merged，记录 merge commit SHA；PR 上的 Preview checks 仅作为预览环境证据。
+3. 打开 `https://app.netlify.com/projects/engaid/deploys`，确认最新记录明确显示 `Production: main @<merge SHA>` 且状态为 `Published`。`Deploy Preview #<PR>` 不能替代 Production 记录。
+4. 使用外部 Chrome DevTools MCP 打开 `https://engaid.netlify.app/` 的本次受影响页面，确认页面和新增静态资源返回 200，并执行至少一个能区分新旧版本的关键行为检查。
+5. 检查浏览器 Console 和 Network；区分本次功能错误与既有无关错误，并在结论中说明。
+6. 只有 `origin/main`、Netlify Production deploy 和生产页面行为三者一致时，才报告“prod 已部署”；否则说明当前停在哪一层并附对应 URL 或 SHA。
 
 ## Core Rule
 
