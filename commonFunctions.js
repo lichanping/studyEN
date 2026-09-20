@@ -1,4 +1,5 @@
 import { buildWordAudioBatchRequestPayload, splitWordAudioBatches, WORD_AUDIO_BATCH_SIZE } from './word-audio-format.mjs';
+import { syncBfdExtraReviewFeeRecord } from './bfd-extra-review-fee.mjs';
 
 // JavaScript code for the button click functions
 export function navigateToTiyanClass() {
@@ -737,18 +738,77 @@ function confirmAntiForgettingReviewDateMatchesToday(now = new Date()) {
     return window.confirm(`当前复习日期是 ${reviewDate}，但现在北京时间是 ${beijingToday}。\n点击【确定】继续按 ${reviewDate} 提交，点击【取消】返回修改为当天日期。`);
 }
 
+export function calculateAntiForgettingReviewWords() {
+    const reviewInputs = Array.from(document.querySelectorAll('.antiForgettingReviewWord'));
+    const keyLanguagePoints = (document.getElementById('keyLanguagePoints')?.value || '').trim();
+    const practiceArea = (document.getElementById('practiceArea')?.value || '').trim();
+    let manualReviewWordCount = 0;
+    let hasManualValue = false;
+
+    reviewInputs.forEach((input) => {
+        const rawValue = String(input?.value || '').trim();
+        if (!rawValue) return;
+        hasManualValue = true;
+        if (!/^\d+$/.test(rawValue)) {
+            throw new TypeError('复习词数必须填写非负整数');
+        }
+        manualReviewWordCount += Number(rawValue);
+    });
+
+    const autoReviewWordCount = countNonEmptyLines(keyLanguagePoints) + countNonEmptyLines(practiceArea);
+    return {
+        totalWords: manualReviewWordCount + autoReviewWordCount,
+        hasFilled: hasManualValue || autoReviewWordCount > 0,
+        keyLanguagePoints,
+        practiceArea
+    };
+}
+
+function syncCurrentBfdExtraReviewFee(userName, totalWords) {
+    const platform = globalThis.APP_MEETING_CONFIG?.getCurrentPlatformId?.()
+        || document.getElementById('platformSelect')?.value
+        || '';
+    if (platform !== 'baifendii') return;
+
+    const charged = Boolean(document.getElementById('bfdExtraReviewFeeCheckbox')?.checked);
+    const result = syncBfdExtraReviewFeeRecord(localStorage, {
+        platform,
+        studentName: userName,
+        reviewTime: document.getElementById('reviewTime')?.value,
+        totalWords,
+        charged
+    }, normalizeStudentName);
+
+    if (!result.ok) {
+        displayToast(result.error || 'BFD 额外复习计费记录保存失败');
+        return;
+    }
+    if (charged) {
+        displayToast(`已记录 BFD 额外复习：${totalWords} 词，${result.record.feeAmount} 元`);
+    } else {
+        displayToast('本次复习不额外计费');
+    }
+}
+
 export async function handleAntiForgettingFeedbackClick() {
     if (!confirmAntiForgettingReviewDateMatchesToday()) return;
 
     const userName = document.getElementById("userName").value;
-    // Get values from input boxes
-    const manualReviewWordCount = Array.from(document.querySelectorAll('.antiForgettingReviewWord'))
-        .reduce((sum, input) => sum + (input.value ? parseInt(input.value, 10) : 0), 0);
+    let reviewWordResult;
+    try {
+        reviewWordResult = calculateAntiForgettingReviewWords();
+    } catch (error) {
+        displayToast(error.message);
+        return;
+    }
+    const antiForgettingReviewWord = reviewWordResult.totalWords;
+    const keyLanguagePoints = reviewWordResult.keyLanguagePoints;
+    const practiceArea = reviewWordResult.practiceArea;
 
-    let keyLanguagePoints = (document.getElementById('keyLanguagePoints')?.value || '').trim();
-    let practiceArea = (document.getElementById('practiceArea')?.value || '').trim();
-    const autoReviewWordCount = countNonEmptyLines(keyLanguagePoints) + countNonEmptyLines(practiceArea);
-    const antiForgettingReviewWord = manualReviewWordCount + autoReviewWordCount;
+    if (document.getElementById('bfdExtraReviewFeeCheckbox')?.checked && antiForgettingReviewWord <= 0) {
+        displayToast('额外计费时复习词数必须是正整数');
+        return;
+    }
 
     let skipStats = false;
     if (!antiForgettingReviewWord) {
@@ -844,6 +904,7 @@ export async function handleAntiForgettingFeedbackClick() {
     if (!skipStats) {
         storeFeedbackInFile(userName, correctRate, antiForgettingReviewWord, correctWordsCount);
     }
+    syncCurrentBfdExtraReviewFee(userName, antiForgettingReviewWord);
 }
 
 // 初始化 IndexedDB
@@ -1992,11 +2053,20 @@ export async function handleNewVersionFeedbackClick() {
 
     const userName = document.getElementById("userName").value;
 
-    const reviewInputs = Array.from(document.querySelectorAll('.antiForgettingReviewWord'));
-    const keyLanguagePoints = (document.getElementById('keyLanguagePoints')?.value || '').trim();
-    const practiceArea = (document.getElementById('practiceArea')?.value || '').trim();
-    const autoReviewWordCount = countNonEmptyLines(keyLanguagePoints) + countNonEmptyLines(practiceArea);
-    const hasFilled = reviewInputs.some(input => input && input.value && input.value.trim() !== '') || autoReviewWordCount > 0;
+    let reviewWordResult;
+    try {
+        reviewWordResult = calculateAntiForgettingReviewWords();
+    } catch (error) {
+        displayToast(error.message);
+        return;
+    }
+    const antiForgettingReviewWord = reviewWordResult.totalWords;
+    const hasFilled = reviewWordResult.hasFilled;
+
+    if (document.getElementById('bfdExtraReviewFeeCheckbox')?.checked && antiForgettingReviewWord <= 0) {
+        displayToast('额外计费时复习词数必须是正整数');
+        return;
+    }
 
     let skipStats = false;
     if (!hasFilled) {
@@ -2005,10 +2075,6 @@ export async function handleNewVersionFeedbackClick() {
         skipStats = true;
     }
 
-    const antiForgettingReviewWord = reviewInputs.reduce((sum, input) => {
-        const v = parseInt((input.value || '').trim(), 10);
-        return sum + (Number.isFinite(v) ? v : 0);
-    }, 0) + autoReviewWordCount;
     const forgetCountInput = document.getElementById('antiForgettingForgetWord');
     const parsedForgetCount = parseInt((forgetCountInput?.value || '').trim(), 10);
     const forgetCount = Number.isFinite(parsedForgetCount) && parsedForgetCount >= 0 ? parsedForgetCount : 0;
@@ -2034,6 +2100,7 @@ export async function handleNewVersionFeedbackClick() {
     if (!skipStats) {
         storeFeedbackInFile(userName, correctRate, antiForgettingReviewWord, correctWordsCount);
     }
+    syncCurrentBfdExtraReviewFee(userName, antiForgettingReviewWord);
 }
 
 // =========================

@@ -14,6 +14,9 @@
         commonFunctions.checkLoginStatus();
     </script>
     <style>
+        [hidden] {
+            display: none !important;
+        }
         /* 页面布局覆盖 */
         body {
             /* 覆盖 index.css 的顶部留白，去掉页面顶部空白 */
@@ -313,7 +316,7 @@
             <input type="datetime-local" id="reviewTime">
             <button id="noReviewTodayButton" type="button">今日无复习</button>
         </div>
-        <div id="noReviewTodayNames" class="hint">支持右键粘贴；该页面仅用于快速复制抗遗忘内容，不涉及工资统计。切换学员会自动清空表单。重点语言点和语言点实战区按“每个非空行=1条”自动计入复习词数。</div>
+        <div id="noReviewTodayNames" class="hint">支持右键粘贴；勾选 BFD 额外计费后，本次复习费用会计入工资统计。切换学员会自动清空表单。重点语言点和语言点实战区按“每个非空行=1条”自动计入复习词数。</div>
     </div>
 
     <div class="panel">
@@ -329,6 +332,13 @@
             <button id="addReviewWordInputButton" type="button" aria-label="增加复习词数输入框" title="增加复习词数输入框">+</button>
             <label for="antiForgettingForgetWord">遗忘：</label>
             <input type="text" id="antiForgettingForgetWord" class="mini-input" value="0">
+        </div>
+
+        <div id="bfdExtraReviewFeeContainer" class="row" hidden>
+            <label>
+                <input type="checkbox" id="bfdExtraReviewFeeCheckbox">
+                本次 BFD 抗遗忘复习需要额外计费
+            </label>
         </div>
 
         <div class="actions">
@@ -417,6 +427,7 @@
 
 <script type="module">
     import * as commonFunctions from './commonFunctions.js?v=20260714-1';
+    import { formatBeijingDateTimeLocal } from './bfd-extra-review-fee.mjs';
 
     const SCHEDULE_CONFIG_OVERRIDE_KEY = 'schedule-config-override-v1';
     const CUSTOM_STUDENTS_STORAGE_KEY = 'custom-students-v1';
@@ -594,6 +605,14 @@
     }
 
     const antiForgettingPlatformSelect = document.getElementById('platformSelect');
+    function updateBfdExtraReviewFeeVisibility(platformId) {
+        const container = document.getElementById('bfdExtraReviewFeeContainer');
+        const checkbox = document.getElementById('bfdExtraReviewFeeCheckbox');
+        const isBfd = normalizePlatformId(platformId) === 'baifendii';
+        container.hidden = !isBfd;
+        if (!isBfd) checkbox.checked = false;
+    }
+
     if (antiForgettingPlatformSelect) {
         if (window.APP_MEETING_CONFIG?.populatePlatformSelect) {
             window.APP_MEETING_CONFIG.populatePlatformSelect(antiForgettingPlatformSelect, { selectedValue: getCurrentPlatformId() });
@@ -604,6 +623,7 @@
             localStorage.setItem(CURRENT_PLATFORM_STORAGE_KEY, next);
             await loadStudentOptions();
             clearFormFields();
+            updateBfdExtraReviewFeeVisibility(next);
             renderReviewScheduleHint(next);
             refreshReviewScheduleForCurrentSelection();
         });
@@ -612,14 +632,7 @@
     function setDefaultReviewTime() {
         const input = document.getElementById('reviewTime');
         if (input.value) return;
-        const now = new Date();
-        now.setHours(19, 30, 0, 0);
-        const y = now.getFullYear();
-        const m = String(now.getMonth() + 1).padStart(2, '0');
-        const d = String(now.getDate()).padStart(2, '0');
-        const hh = String(now.getHours()).padStart(2, '0');
-        const mm = String(now.getMinutes()).padStart(2, '0');
-        input.value = `${y}-${m}-${d}T${hh}:${mm}`;
+        input.value = `${formatBeijingDateTimeLocal(new Date()).slice(0, 10)}T19:30`;
     }
 
     // ── 切换学员：自动清空表单 ──
@@ -631,6 +644,7 @@
         document.getElementById('pronounceWords').value = '';
         document.getElementById('keyLanguagePoints').value = '';
         document.getElementById('practiceArea').value = '';
+        document.getElementById('bfdExtraReviewFeeCheckbox').checked = false;
     }
 
     function getReviewWordInputs() {
@@ -1697,6 +1711,9 @@
     document.getElementById('generatePronounceWordsMP3Button').addEventListener('click', commonFunctions.generatePronounceWordsMP3);
     document.getElementById('copyPronounceWordsTaskButton').addEventListener('click', copyPronounceWordsTask);
     document.getElementById('addReviewWordInputButton').addEventListener('click', showNextReviewWordInput);
+    document.getElementById('reviewTime').addEventListener('change', () => {
+        document.getElementById('bfdExtraReviewFeeCheckbox').checked = false;
+    });
     document.getElementById('reviewTime').addEventListener('change', refreshReviewScheduleForCurrentSelection);
     document.getElementById('userName').addEventListener('change', refreshReviewScheduleForCurrentSelection);
 
@@ -1708,6 +1725,7 @@
     commonFunctions.initTtsPrefixMaintenanceUI();
 
     setDefaultReviewTime();
+    updateBfdExtraReviewFeeVisibility(getCurrentPlatformId());
     resetReviewWordInputs();
     setReviewScheduleExpanded(false);
     renderReviewScheduleHint(getCurrentPlatformId());
