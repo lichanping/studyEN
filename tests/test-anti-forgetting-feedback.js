@@ -34,6 +34,7 @@ function extractBlock(source, signature, openChar = '{', closeChar = '}') {
 
 const commonFunctionsSource = read('commonFunctions.js');
 const countNonEmptyLinesCode = extractBlock(commonFunctionsSource, 'function countNonEmptyLines');
+const calculateAntiForgettingReviewWordsCode = extractBlock(commonFunctionsSource, 'export function calculateAntiForgettingReviewWords');
 const getBeijingDateYmdCode = extractBlock(commonFunctionsSource, 'function getBeijingDateYmd');
 const getReviewDateYmdCode = extractBlock(commonFunctionsSource, 'function getReviewDateYmd');
 const confirmAntiForgettingReviewDateMatchesTodayCode = extractBlock(commonFunctionsSource, 'function confirmAntiForgettingReviewDateMatchesToday');
@@ -93,7 +94,9 @@ const handleNewVersionFeedbackClick = new Function(
     'copyToClipboard',
     'showLongText',
     'storeFeedbackInFile',
-    `${countNonEmptyLinesCode}\n${getBeijingDateYmdCode}\n${getReviewDateYmdCode}\n${confirmAntiForgettingReviewDateMatchesTodayCode}\n${handleNewVersionFeedbackClickCode.replace('export ', '')}\nreturn handleNewVersionFeedbackClick;`
+    'syncCurrentBfdExtraReviewFee',
+    'displayToast',
+    `${countNonEmptyLinesCode}\n${calculateAntiForgettingReviewWordsCode.replace('export ', '')}\n${getBeijingDateYmdCode}\n${getReviewDateYmdCode}\n${confirmAntiForgettingReviewDateMatchesTodayCode}\n${handleNewVersionFeedbackClickCode.replace('export ', '')}\nreturn handleNewVersionFeedbackClick;`
 )(
     documentMock,
     async () => {
@@ -110,7 +113,9 @@ const handleNewVersionFeedbackClick = new Function(
     },
     async (...args) => {
         storedArgs = args;
-    }
+    },
+    () => {},
+    () => {}
 );
 
 const formatFeedbackContent = new Function(
