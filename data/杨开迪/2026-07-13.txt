@@ -1,0 +1,50 @@
+absolute	adj 绝对的
+airmail	n 航空邮件
+appliance	n 家电
+attitude	n 态度；姿势
+baggage	n 行李
+bid	n 出价 v 投标
+biscuit	n 饼干；小甜饼
+bucket	n 水桶；大量 v 装在桶里
+carry off	phr 赢得；成功应对
+centimeter	n 厘米
+certainty	n 确信性；必然的事
+cocoa	n 可可粉
+collect	v 收集；领取
+continue	v 继续
+contribution	n 贡献，捐款
+correct	adj 正确的 v 改正
+crowd	n 人群，v 聚集在……周围
+depend on/upon	phr 依靠，相信
+designer	n 设计师
+doubtful	adj 怀疑的
+educate	v 教育，培养
+extinction	n 灭绝
+eyesight	n 视力
+fancy	adj 精致的 n 想象力 v 想象，喜欢
+fry	v 油炸
+gas	n 天然气
+geography	n 地理（学）
+hurricane	n 飓风
+machine	n 机器 v 用机器加工
+mail	n 邮寄 n 邮件
+memorize	v 熟记
+merry	adj 欢乐的
+microphone	n 话筒
+mist	n 薄雾
+mushroom	n 蘑菇 v 迅速发展
+ordinary	adj 普通的
+pioneer	n 先驱 v 开辟
+pleasant	adj 令人愉快的
+proportion	n 比例；v 使成比例；分配
+provincial	adj 地方性的，守旧的；n 乡下人
+raw	adj 生的
+region	n 地区；身体部位
+ribbon	n 丝带
+screen	n 屏幕；影视 v 遮蔽
+subjective	adj 主观的，个人的
+tendency	n 趋向，倾向
+tomb	n 墓穴
+tsunami	n 海啸
+universal	adj 普遍的 n 普遍原则
+worthwhile	adj 值得（花时间、精力等）的

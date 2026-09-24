@@ -1,0 +1,33 @@
+access	n 进入 v 进入；使用；（计算机）访问
+adequately	adv 充分地
+ambiguous	adj 含糊不清的，引起歧义的
+appointment	n 预约；任命
+attack	v 攻击 n 疾病发作；攻击
+belief	n 信任
+belong	v 属于
+discrimination	n 歧视
+disgusting	adj 令人厌恶的
+dread	v 惧怕 n 恐惧 adj 恐怖的
+droop	v 低垂，凋萎，萎靡
+drought	n 干旱，旱灾
+drown	v 淹没
+drunk	adj 喝醉的；陶醉的 n 醉汉
+ease	n 轻松 v 缓解
+efficiency	n 效率
+embarrassed	adj 尴尬的
+endurance	n 忍耐力
+enquire	v 询问
+entertaining	adj 令人愉快的
+newly	adv 最近
+per	prep 每，
+pity	n 遗憾 v 惋惜
+presentation	n 报告；颁奖仪式
+recipe	n 食谱
+resource	n 资源；财力
+retire	v 退休；退役
+strength	n 力量；实力
+tablet	n 药片；碑，匾
+technological	adj 技术的，工艺的
+tip	n 小费 v 给小费
+valuable	adj 有价值的 n（复数）贵重物品
+within	prep 在……之内 adv 在内部

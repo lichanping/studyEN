@@ -1,0 +1,52 @@
+ancestor	n 祖先，祖宗
+athlete	n 运动员
+bare	adj 赤裸的；贫瘠的 v 暴露
+complain	v 抱怨
+content	n 目录 adj 满足的 v 使满意
+cream	n 面霜；奶油
+dial	v 拨（电话号码）n 拨号盘
+dioxide	n 二氧化物
+dislike	v 不喜欢 n 反感，厌恶
+extraordinary	adj 特别的
+folk	adj 民间的 n 民众
+function	n 功能 v 运转
+general	adj 普遍的，总的 n 将军
+German	adj 德国的 n 德语；德国人
+graduate	v 毕业，渐变成为；n 毕业生
+Greece	n 希腊
+handy	adj 方便的；手巧的
+harmful	adj 有害的
+harvest	n 收获 v 收割；采集
+hastily	adv 急速地，慌忙地
+hasty	adj 匆忙的
+hatch	v 孵化 v 孵出
+headline	n 大字标题
+headmistress	n 女校长
+highway	n 公路；高速公路
+hike	v 徒步旅行；n（数量、价格等）上升
+male	n 男性 adj 男性的
+marine	adj 海洋的；航海的 n 海军陆战队
+memorial	adj 记忆的；n 纪念碑
+moral	n 道德；adj道义的
+musical	adj 音乐的；有音乐才能的 n 音乐剧
+naughty	adj 顽皮的
+nutrition	n 营养
+operation	n 手术；运转
+organism	n 生物
+particularly	adv 尤其
+pause	n 暂停；v 暂停播放
+percent	n 百分比
+postage	n 邮费
+principle	n 原则
+proposal	n 建议，求婚
+protection	n 保护，防卫
+publish	v 出版，刊登
+responsible	adj 有责任的，负责的
+salary	n 工资
+sample	n 样品 adj 样品的 v 抽样检查
+sculpture	n 雕刻，雕塑
+shut	v 关上
+significance	n 重要性，意义，含义
+suffering	n 疼痛，苦难
+thoughtful	adj 沉思的；体贴的
+wine	n 葡萄酒

@@ -1,0 +1,40 @@
+check up	（健康）检查
+collapse	v（突然）倒塌 n 倒塌
+delete	v 删除
+devoted	adj 热衷的
+disguise	v 伪装
+disk	n 圆盘；唱片
+dismay	n 失望 v 使惊恐
+disposal	n 销毁，处理
+dispose	v 处理
+dissolve	v（使）溶解
+distinct	adj 独特的
+disturbing	adj 令人不安的
+diversity	n 多样性，差异
+division	n 分配；除法；部门；分裂
+divorce	n 离异 v 离婚
+dizzy	adj 头晕目眩的 v 使头晕目眩
+dormitory	n 宿舍
+dot	n 圆点 v 点缀；微小点记号
+dynamic	adj 有活力的 n 动力
+endangered	adj 濒临灭绝的
+hightech	adj 高科技的 n 高科技
+honor	n 荣誉
+loss	n 失去，失败
+period	n 时期
+potential	n 潜力 adj 潜在的
+predict	v 预言
+prefer	v 更喜欢
+private	adj 私人的
+profit	n 利润 v 有益于
+represent	v 象征；描述
+rescue	v 营救 n 救援
+resident	n 居民 adj 居住的
+reusable	adj 可重复使用
+seek	v 寻找；争取
+source	n 来源
+suspicion	n 怀疑
+talented	adj 有才能的
+technique	n 技术
+trait	n 特征
+until	prep 到……为止 conj 到……为止；直到……才

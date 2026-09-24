@@ -1,0 +1,66 @@
+acre	n 英亩（1英亩≈4047平方米）
+adaptation	n 适应；改编
+alley	n 小巷
+altogether	adv 总而言之；总共
+ambulance	n 救护车
+amusing	adj 引人发笑的
+applaud	v 鼓掌
+apply	v 申请；涂敷
+armchair	n 扶手椅
+botany	n 植物学；（总称）一个地区的植物
+chaos	n 混乱
+chew	v 咀嚼 n 咀嚼
+chip	n 木屑，芯片 v 使碎裂；切下
+coast	n 海岸 v 沿海航行；靠惯性滑行
+constitution	n 宪法
+corrupt	v 使腐败 adj 腐败的
+craftsman	n 手艺人
+criminal	n 罪犯 adj 犯罪的，犯法的
+delight	n 高兴 v 使高兴
+depth	n 深度；深刻
+distinction	n 区分；优秀
+existence	n 存在；生活方式
+export	v 出口，输出 n 出口，输出
+fiction	n 虚构；小说
+flee	v 逃走
+fuel	n 燃料 v 给……加燃料
+gravity	n 重力，引力
+informal	adj 非正式的
+insect	n 昆虫
+Italian	adj 意大利的；意大利人的 n 意大利人
+italic	adj 斜体字（母、数码等）的 n 斜体
+journey	n 旅行 v 旅行
+knock	v 敲击 n 敲；敲门声
+lamb	n 羔羊
+literary	adj 文学的
+mascot	n 吉祥物（动物、物品、人等）
+microwave	n 微波炉
+misleading	adj 误导的
+neighborhood	n 社区，邻近地区
+novel	n 小说 adj 新奇的
+offence	n 犯罪；进攻
+outer	adj 外面的
+package	n 包裹
+perfume	n 香水；香气 v 使充满芳香；洒香水于
+pollution	n 污染
+post	n 邮政；邮件 v 邮寄
+pray	v 祈求
+prejudice	n 偏见；损害 v 使抱有偏见
+radio	n 无线电；收音机
+referee	n 裁判
+release	v 释放；发行 n 解除；释放；发布
+role	n 角色
+sink	v（使）下沉 n 水槽
+subtle	adj 微妙的；精细的
+supply	v 供应 n 供应；供给
+technical	adj 技术的
+temple	n 庙宇，太阳穴
+throat	n 喉咙
+training	n 训练，锻炼
+vase	n 花瓶
+waiter	n 服务员
+weep	v 哭泣；（伤口）化脓
+whole	n 整体 adj 整个的
+willing	adj 愿意的
+wire	n 电线，电缆；导线，金属丝
+youth	n 青年

@@ -1,0 +1,54 @@
+aboard	adv 在（船、飞机、火车、公共汽车）上
+abolish	v 废除
+advancement	n 前进，进展
+agenda	n 议程，议程表
+apologize	v 道歉
+approval	n 赞同
+botanical	adj 植物（学）的
+broom	n 扫把；金雀花
+bunch	v 集中，挤在一起 n 束，串，群，伙
+canteen	n 食堂
+certificate	n 证明，合格证书，文凭；证明书
+clarify	v 澄清
+coincidence	n 巧合
+combat	n 战斗 v 与……斗争
+construct	v 建造；作（图）；构想
+construction	n 建筑，施工；建造物；构造
+contradict	v（与……）发生矛盾，与……抵触
+contribute	v 贡献
+desire	n 渴望
+distribute	v 分配
+generate	v 产生（热等能量）；引起，创造
+gone	adj 逝去的
+insurance	n 保险；保险费；保险业
+interdependence	n 互相依赖
+introduction	n 介绍；引进
+jam	n 果酱 v（使）阻塞，（使）塞满
+look after	phr 照顾
+mature	adj 成熟的 v（使）成熟
+permission	n 准许
+personnel	n 员工
+pint	n 品脱（容量单位，1品脱在美国约合0.473升）
+poison	n 毒物，毒药 v 毒死，毒害
+popcorn	n 爆米花
+ray	n 射线；光线 v 放射，照射
+recreation	n 娱乐活动
+religious	adj 宗教的；虔诚的
+representative	n 代表 adj 典型的，有代表性的
+rooster	n 公鸡；自负的人
+sadness	n 悲伤
+shabby	adj 破烂的；卑鄙的；（人）衣衫褴褛的
+solution	n 解决办法，溶液，溶解
+steadily	adv 稳步地
+suitcase	n 小提箱，手提箱
+sunburnt	adj 晒黑的，晒伤的
+tank	n 坦克；大容器，大罐
+thief	n 小偷
+tiresome	adj 使人疲倦的，讨厌的；无聊的
+tolerate	v 忍受
+trainee	n 实习生
+trigger	n（枪等的）扳机 v 触发，引起，激发
+typical	adj 典型的，有代表性的
+virtue	n 美德
+wallet	n 钱包
+whisper	v 耳语 n 私语

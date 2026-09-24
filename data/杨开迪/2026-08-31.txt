@@ -1,0 +1,60 @@
+abstract	adj 抽象的 n 摘要
+acute	adj 严重的；敏锐的
+aesthetic	adj 美学的，艺术的
+ample	adj 富足的，宽敞的
+annual	adj 年度的，一年一次的 n 年鉴
+astronomy	n 天文学
+bandage	n 绷带 v 用绷带包扎
+bring in	phr 增加，赚取；产生；引进
+Buddhism	n 佛教
+burglar	n 窃贼
+citizenship	n 国籍；公民身份
+Commonwealth	n 国家
+conflict	n 冲突，战斗 v 冲突，抵触
+conscience	n 良知
+crucial	adj 关键的
+destroy	v 摧毁
+donate	v 捐献
+dull	adj 枯燥的
+east	n 东方 adj 朝/向东方的 adv 在东方
+entirely	adv 全部地
+equal	adj 相等的 v 比得上 n 同等的人
+flexible	adj 易弯曲的，柔软的
+immediately	adv 马上
+immigrant	n 移民 adj 移民的；迁入的
+industry	n 工业，产业；勤劳
+kangaroo	n 袋鼠
+lack	v 缺乏 n 缺乏
+likely	adj 有可能的；适合的 adv 很可能
+lip	n 嘴唇；唇状物
+mime	n 默剧表演，默剧 v 表演默剧，做口型
+mineral	adj 矿物的 n 矿物，矿物质
+mouthful	n 满口
+overall	adj 全部的 n 罩衫，工装服
+passer‑by	n 过客
+poetry	n 诗歌
+poisonous	adj 有毒的
+pride	n 自豪；傲慢 v 使得意；为……自豪
+province	n 省；领域，部门
+quality	n 质量 adj 优质的
+question	n 疑问 v 询问
+quotation	n 引文，语录
+radioactive	adj 辐射的，放射性的
+reform	v 改革，改过自新 n 改革，革新
+registration	n 登记，挂号
+regret	n 歉意 v 对……感到后悔
+request	n 请求 v 请求；要求
+resemble	v 像
+revolution	n 革命；旋转
+rid	v 使摆脱
+rigid	adj 坚硬的
+shaver	n 电动剃须刀
+shopkeeper	n 店主
+skyscraper	n 摩天大楼
+staff	n 全体职员；参谋 adj 参谋的；职员的
+starve	v（使）挨饿
+system	n 系统；身体
+tidy	adj 整洁的
+uncertain	adj 不确定的
+vast	adj 辽阔的
+ward	n 病房，受监护人 v 守护

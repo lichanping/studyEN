@@ -1,0 +1,58 @@
+accumulate	v 积累
+alcohol	n 酒精，乙醇
+alien	n 外星人 adj 外国的；外星（人）的
+approximate	adj 近似的 v 接近，近似
+atlas	n 地图集
+ban	v 禁止 n 禁令
+bit	n 少量，小片
+buffet	n 自助餐；（火车内的）餐室 v 反复敲打
+butcher	n 屠夫 v 残杀
+camel	n 骆驼
+clay	n（制砖瓦、陶瓷制品的）黏土
+collection	n 收藏
+culture	n 文化，种植 v 培养（细胞、细菌）
+currency	n 货币；流通；流行
+digest	v 消化 n 摘要
+disappoint	v 使失望
+enjoyable	adj 令人愉快的
+envelope	n 信封
+extensive	adj 广阔的
+form	n 方式 表格 v 形成，成立
+imaginary	adj 想象的，虚构的
+improper	adj 不正确的，不成体统的
+jeans	n 牛仔裤
+lame	adj 瘸的；站不住脚的
+landfill	n 垃圾填埋场
+league	n 社团
+leap	v 跳跃 n 跳跃
+leather	n 皮革；皮制品
+loaf	n（一条）面包 v 虚度光阴
+lounge	n 候机室，休息室 v（懒散地）倚，躺
+magical	adj 有魔力的
+mercy	n 宽恕
+movie	n 电影；电影院
+muddy	adj 泥泞的 v 搅乱
+nephew	n 侄子，外甥
+occasionally	adv 偶尔地
+ownership	n 所有权
+PC	abbr【计】个人计算机
+penny	n 美分
+percentage	n 百分比
+phase	n 阶段 v 使到达平稳阶段
+possess	v 拥有，缠住，迷住
+privately	adv 私下地
+purse	n 钱包（尤指女用的），小钱袋，手袋
+recite	v 背诵，列举
+register	v 登记；（仪表等）显示 n 登记表
+riddle	n 谜语 v 解谜；（使）满是弹孔
+risk	n 风险 v 冒……的危险
+royal	adj 皇家的；盛大的，高贵的
+scene	n 景象；（戏剧的）一场
+sorrow	n 悲伤 v 感到悲伤
+string	n 细绳；一系列
+sunscreen	n 防晒霜
+surplus	adj 过剩的 n 过剩
+trend	n 趋势；趋向；时尚 v 倾向
+verbal	adj 言语的，口头的；动词的
+wedding	n 婚礼
+wheel	n 轮子 v 旋转

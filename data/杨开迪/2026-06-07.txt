@@ -1,0 +1,48 @@
+accord	n 协议 v 授予
+apart	adv 分离地 adj 分隔的
+appreciation	n 感激；鉴赏；增值
+April	n 四月
+association	n 协会，联系
+atmosphere	n 大气；气氛
+average	n 平均数 adj 通常的 v 平均为
+awkward	adj 尴尬的；笨拙的
+basis	n 基础
+billion	num 十亿；大量
+bite	v 咬，叮，蜇
+boast	v 吹嘘；夸耀 n 夸耀
+brain	n 脑
+branch	n 树枝；分支
+cash	n 现金 v 付（或收）现款
+color	n 颜色 v 给……涂色
+contact	n 联系 v 联系
+creation	n 创造，作品
+emotional	adj（感情）冲动的
+feature	n 特征 v 以……为特色
+fond	adj 喜爱的
+fountain	n 泉水，喷泉
+fragile	adj 易碎的；虚弱的
+fragrant	adj 芬芳的；香的
+framework	n 框架
+franc	n 法郎
+freeway	n 高速公路
+freezing	adj 冰冷的
+genuine	adj 真正的
+geological	adj 地质学的
+geologist	n 地质学家
+geology	n 地质学
+geometry	n 几何学；几何形状
+germ	n 细菌；发端，萌芽
+gesture	n 姿势 v 做手势
+get on with	v 与……相处
+giant	adj 巨大的 n 伟人
+gifted	adj 有天赋的
+glance	v 看一下 n 一瞥，扫视
+governor	n 主管，
+ham	n 火腿
+outdrive	n 先驱者；v驾车快于
+own	v 拥有 v 拥有
+scent	n 气味；迹象 v 嗅到；察觉
+tiny	adj 极少的；微小的
+tourist	n 游客
+unexpected	adj 想不到的
+unusual	adj 不寻常的

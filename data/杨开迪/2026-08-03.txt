@@ -1,0 +1,59 @@
+absence	n 缺席；缺乏
+accustom	v 使习惯于
+adventure	n 冒险
+approach	v 靠近 n 接近
+arise	v 起床，起身；由……引起，发生
+autonomous	adj 自动驾驶的；自治的
+baker	n 面包师
+basement	n 地下室；根基
+bent	adj 弯曲的
+bleed	v 流血 n 出血
+boycott	v 抵制 n 抵制
+bridegroom	n 新郎
+cigar	n 雪茄烟
+clue	n 线索，暗示 v 为……提供线索
+commit	v 犯（罪），承诺
+concert	n 音乐会
+condemn	v 谴责
+conservative	adj 保守的；保守党的 n 保守者
+consist	v 由……组成
+conventional	adj 普通的
+cottage	n 村舍
+crop	n 作物，庄稼；（一季的）收成
+erupt	v 喷发
+exhibition	n 展览，表演
+herd	v 放牧 n 牧群
+hydrogen	n 氢，氢气
+indeed	adv 的确
+insert	v 插入 n 插入物
+issue	n 问题；发行物 v 发行；宣布
+lane	n 小径，行车道
+layer	n 阶层
+material	n 材料 adj 物质的，客观存在的
+menu	n 菜单；选单
+mostly	adv 大多
+nazi	n 纳粹党人 adj 纳粹主义的
+nightfall	n 黄昏，日暮
+password	n 密码
+patent	n 专利 adj 有专利的 v 取得专利权
+pattern	n 模型；模式 v 形成图案
+plot	n 情节；阴谋 v 密谋；制订
+psychological	adj 心理的，心理学的
+puzzle	n 拼图；难题 v 迷惑
+recall	v 回想起，记起，回忆
+reservation	n 预订，居留地
+restriction	n 限制
+sensitive	adj 敏感的
+separate	adj 独立的 v 使分开
+shepherd	n 牧羊人 v 带领
+smog	n 烟雾
+soybean	n 大豆；黄豆
+stainless	adj 不生锈的
+suck	v 吮吸 n 吸吮，吸力
+survey	n 调查 v 鉴定
+syndrome	n 综合征；典型表现
+tent	n 帐篷
+terrified	adj 恐惧的
+track	v 跟踪 n 跑道；足迹
+tribe	n 部落
+underdog	n 受害者
