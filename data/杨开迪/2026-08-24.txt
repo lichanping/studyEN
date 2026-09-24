@@ -1,0 +1,54 @@
+account	n 账户 v 做出说明（或解释）；认为是
+acquaintance	n 认识；熟人
+advertisement	n 广告；登广告
+afford	v 承担得起；提供
+agent	n 特工；代理商
+annoyance	n 烦恼
+beard	n（下巴上的）胡须
+bungalow	n 平房，小屋
+Cantonese	n 广东人；粤语 adj 广州人的；广东的
+ceremony	n 典礼
+cheerful	adj 高兴的
+clip	n 回形针，夹子 v 夹住
+comparison	n 比较；比喻
+compromise	n 妥协 v 妥协；使遭受危险
+concern	n 关心，担忧 v 涉及，使担忧
+cushion	n 坐垫；垫子 v 减轻，缓和
+delay	v 推迟，磨蹭
+driverless	adj 无人驾驶的
+electronic	adj 电子学的，使用电子装置的
+embarrass	v（使……）尴尬；困扰
+experiment	n 实验 v 进行实验
+expression	n 表达
+fact	n 事实
+familiar	adj 熟悉的；亲密的
+grab	v 抓取 n 抓取
+hardship	n 艰难，困苦
+immune	adj 免疫的，有免疫力的；免除的
+knight	n 骑士
+marble	n 大理石；（游戏用的）玻璃弹子
+march	v 行军，前进 n 游行示威
+needle	n 针，指针
+overweight	adj 超重的
+photography	n 摄影，摄影术
+pill	n 药丸，药片
+polish	v 磨光，完美 n 擦光剂；销售额；拍卖
+portion	n 部分；分配的责任 v 把……分成若干份
+pot	n 罐；锅
+pregnant	adj 怀孕的，妊娠的
+queue	v 排队等候 n 行列
+regulation	n 规章
+relatively	adv 相对地
+repetition	n 重复
+sale	n 廉价出售；销售额；拍卖
+sector	n（经济等的）部门
+shade	n 树荫 v 遮蔽（光线）
+significant	adj 有重大意义的
+tale	n 故事
+tax	n 税，税款 v 征税
+temple	n 庙宇，太阳穴
+temporary	adj 暂时的
+weightless	adj 失重的
+weightlessly	adv 失重地
+witness	n 目击者 v 目击
+zipper	n 拉链

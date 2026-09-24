@@ -1,0 +1,50 @@
+bachelor	n 学士，单身汉
+bark	v 狗吠 n 树皮
+breakdown	n 故障，倒塌；（关系）破裂
+cater	v 供应饮食；为（集会等）承办酒席
+cave	n 山洞 v 塌落
+clothing	n 衣服
+conductor	n 售票员；指挥
+cone	n 圆锥体；甜筒
+courtroom	n 法庭
+cucumber	n 黄瓜
+data	n 数据；资料
+deliver	v 递送，交付
+destroy	v 摧毁
+dismiss	v 开除，不考虑
+distribute	v 分配
+entrepreneur	n 企业家，创业者
+essay	n 论文，测试
+exploit	v 开发，开拓，剥削；n 辉煌的功绩
+globe	n 地球，地球仪，世界
+immediately	adv 马上
+impair	v 损害
+injury	n 伤害
+lay	v 摆放，放置；下蛋；铺设（lie的过去式）
+mature	adj 成熟的 v（使）成熟
+mime	n 默剧表演，默剧 v 表演默剧，做口型
+motto	n 格言、口号
+nickname	n 绰号；昵称 v 起绰号
+ought modal	v 应该
+paddle	n 桨 v 用脚蹼（手）划水，荡桨
+pea	n 豌豆
+peak	n 顶峰，尖端 v 达到最高点
+permission	n 准许
+plus	prep 加 n 加号；有利因素 adj 正的
+posture	n 姿势；看法 v 装模作样
+prevention	n 防止
+pronunciation	n 发音
+pursue	v 从事；追赶
+pursuit	n 追求，追赶，跟踪；事业，消遣
+rooster	n 公鸡；自负的人
+selflessly	adv 无私地
+starvation	n 饥饿
+steady	adj 坚定的 v（使）稳固
+submit	v 提交
+subscribe	v 订阅；申请
+suitcase	n 小提箱，手提箱
+sustainable	adj 可持续的
+vulnerable	adj 易受伤的；脆弱的；易受攻击的
+walnut	n 核桃，胡桃
+weave	v 编织，织布 n 织造；织物
+worship	v 崇拜；做礼拜 n 礼拜

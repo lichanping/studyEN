@@ -1,0 +1,60 @@
+affair	n 事务
+alternative	adj 可供选择的 n 可供选择的事物
+apology	n 道歉
+artwork	n 艺术制品
+ashamed	adj 羞愧的
+assignment	n 任务
+beast	n 野兽
+borderless	adj 无边界的
+chef	n 厨师
+communism	n 共产主义
+concrete	n 混凝土 adj 具体的
+crop	n 作物，庄稼；（一季的）收成
+curious	adj 好奇的
+extinguisher	n 灭火器
+forgive	v 原谅
+government	n 政府；治理
+horror	n 惊恐，令人惊恐的事
+impressive	adj 深刻印象的
+individually	adv 单独地
+inexpensive	adj 廉价的
+institution	n 机构
+lace	n 鞋带；花边 v 加以修饰
+legal	adj 合法的，法律的
+link	n 链接 v 连接
+manipulation	n 操纵
+millionaire	n 百万富翁
+monument	n 纪念碑，遗址
+motivation	n 动机，动力
+occupation	n 职业
+optimistic	adj 乐观的
+orchestra	n 管弦乐队
+pipe	n 导管
+population	n 人口
+pour	v 注
+programmer	n 程序员
+pump	v 抽取 n 打气筒
+quarter	n 四分之一；一个季度；一刻钟
+rapids	n 急流
+regretful	adj 后悔的
+relief	n 减轻
+rhyme	n 押韵 v 押韵
+robbery	n 抢劫
+sake	n 理由
+salad	n 沙拉，凉拌菜
+seaside	n 海滨 adj 海边的
+service	n 服务
+skeptical	adj 表示怀疑的
+slice	v 切开，大幅度削减，n 薄片
+statistic	n 统计，统计学
+stir	v 搅拌
+sweep	v 打扫 n 清扫
+taxation	n 税款
+temporarily	adv 暂时地
+terror	n 恐怖
+thriller	n 惊险小说
+treatment	n 治疗
+typist	n 打字员
+upset	adj 苦恼的 v 使苦恼
+urban	adj 城市的
+variety	n 种类
