@@ -1,33 +1,37 @@
-access	n 进入 v 进入；使用；（计算机）访问
-adequately	adv 充分地
-ambiguous	adj 含糊不清的，引起歧义的
-appointment	n 预约；任命
-attack	v 攻击 n 疾病发作；攻击
-belief	n 信任
-belong	v 属于
-discrimination	n 歧视
-disgusting	adj 令人厌恶的
-dread	v 惧怕 n 恐惧 adj 恐怖的
-droop	v 低垂，凋萎，萎靡
-drought	n 干旱，旱灾
-drown	v 淹没
-drunk	adj 喝醉的；陶醉的 n 醉汉
-ease	n 轻松 v 缓解
-efficiency	n 效率
-embarrassed	adj 尴尬的
-endurance	n 忍耐力
-enquire	v 询问
-entertaining	adj 令人愉快的
-newly	adv 最近
-per	prep 每，
-pity	n 遗憾 v 惋惜
-presentation	n 报告；颁奖仪式
-recipe	n 食谱
-resource	n 资源；财力
-retire	v 退休；退役
-strength	n 力量；实力
-tablet	n 药片；碑，匾
-technological	adj 技术的，工艺的
-tip	n 小费 v 给小费
-valuable	adj 有价值的 n（复数）贵重物品
-within	prep 在……之内 adv 在内部
+abandon	v 舍弃；沉溺于 (某种情感)
+above	adj 上面的 adv 在…… 上面 prep 在…… 之上
+compassionate	adj 有同情心的
+cooperative	adj 协作的 n 合作社
+demanding	adj 要求高的
+departure	n 离开
+determined	adj 有决心的；决定了的
+dignity	n 尊严
+dip	v 浸，蘸 n 倾斜；下降
+download	v 下载 n 下载的文件
+drawback	n 缺点；障碍
+economical	adj 节约的；经济的
+edition	n 版本
+employee	n 雇员
+enthusiast	n 爱好者
+faint	v 昏倒 adj 微弱的
+glow	n 喜悦 v 发光
+grind	v 折磨 n 苦差事
+hip	n 髋部
+industrial	adj 工业的
+ingredient	n（烹调的）原料；（构成的）要素
+intelligence	n 智力，理解力
+intent	n 意图
+kindergarten	n 幼儿园
+lean	v 倾斜 adj 瘦且健康的
+polar	adj 极地的；南极的，北极的；截然对立的
+recycle	v 回收利用
+renewal	n 更新
+residence	n 住宅
+soften	v（使）变柔软
+sort	v 分类 n 种类
+south	adj 南方的 n 南方 adv 向南方
+tolerant	adj 容忍的
+unknown	adj 未知的
+urge	v 催促 n 冲动，强烈的欲望
+vital	adj 必不可少的，有活力的
+wonderment	n 惊奇
