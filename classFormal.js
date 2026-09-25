@@ -22,8 +22,10 @@ import {
 } from './feedback-stat-input.mjs';
 import {
     BFD_EXTRA_REVIEW_FEE_STORAGE_KEY,
-    selectBfdExtraReviewFeeRecords
+    selectBfdExtraReviewFeeRecords,
+    syncBfdHistoryReviewResults
 } from './bfd-extra-review-fee.mjs';
+import { createYangKaidiWordReviewRepository } from './yang-kaidi-word-review-db.mjs';
 
 export function calculateMonthElapsedPercent(date = new Date()) {
     const currentDate = date instanceof Date ? new Date(date.getTime()) : new Date(date);
@@ -789,7 +791,7 @@ function getSalaryHourlyRate(type, platformId) {
     return 50;
 }
 
-export function generateSalaryReport() {
+export async function generateSalaryReport() {
     const teacherName = document.getElementById("teacherName").value;
     const teacherDisplayName = document.getElementById("teacherName").options[document.getElementById("teacherName").selectedIndex].text;
     const range = getStatsDateRangeSelection();
@@ -803,6 +805,15 @@ export function generateSalaryReport() {
     const currentPlatformId = getCurrentPlatformId();
     const startDateYmd = formatLocalDateYmd(range.startDate);
     const endDateYmd = formatLocalDateYmd(range.endDate);
+    if (currentPlatformId === 'baifendii') {
+        try {
+            const historyResults = await createYangKaidiWordReviewRepository().getAllResults();
+            const historySync = syncBfdHistoryReviewResults(localStorage, '杨开迪', historyResults);
+            if (!historySync.ok) displayToast(historySync.error || '模式 2 工资数据同步失败');
+        } catch (error) {
+            displayToast(`模式 2 工资数据读取失败：${error.message}`);
+        }
+    }
     const extraReviewSelection = currentPlatformId === 'baifendii'
         ? selectBfdExtraReviewFeeRecords(
             localStorage.getItem(BFD_EXTRA_REVIEW_FEE_STORAGE_KEY),

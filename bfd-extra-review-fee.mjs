@@ -81,35 +81,116 @@ export function syncBfdExtraReviewFeeRecord(storage, input, normalizeStudentName
         return { ok: false, action: 'rejected', error: parsed.warnings[0] };
     }
 
+    const source = input.source || 'antiForgetting';
+    if (!['antiForgetting', 'yangKaidiHistory'].includes(source)) {
+        return { ok: false, action: 'rejected', error: '额外复习计费来源无效' };
+    }
+
     const businessKey = `${BFD_PLATFORM_ID}|${studentName}|${reviewDateBeijing}`;
+    const existingRecord = parsed.records.find((record) => createBusinessKey(record) === businessKey);
     const records = parsed.records.filter((record) => createBusinessKey(record) !== businessKey);
+    const sources = existingRecord?.sources
+        ? { ...existingRecord.sources }
+        : existingRecord
+            ? {
+                antiForgetting: {
+                    totalWords: existingRecord.totalWords,
+                    reviewTime: existingRecord.reviewTime,
+                    updatedAt: existingRecord.updatedAt
+                }
+            }
+            : {};
 
     if (!input.charged) {
+        delete sources[source];
+        if (Object.keys(sources).length > 0) {
+            const totalWords = Object.values(sources).reduce((sum, item) => sum + item.totalWords, 0);
+            const pricing = calculateBfdExtraReviewFee(totalWords);
+            const record = {
+                platform: BFD_PLATFORM_ID,
+                studentName,
+                reviewTime: String(input.reviewTime),
+                reviewDateBeijing,
+                totalWords,
+                pricingTier: pricing.pricingTier,
+                pricingVersion: PRICING_VERSION,
+                feeAmount: pricing.feeAmount,
+                updatedAt: input.updatedAt || new Date().toISOString(),
+                sources
+            };
+            records.push(record);
+            storage.setItem(BFD_EXTRA_REVIEW_FEE_STORAGE_KEY, JSON.stringify({ version: 1, records }));
+            return { ok: true, action: 'upserted', record };
+        }
         storage.setItem(BFD_EXTRA_REVIEW_FEE_STORAGE_KEY, JSON.stringify({ version: 1, records }));
         return { ok: true, action: 'removed' };
     }
 
-    let pricing;
+    let sourcePricing;
     try {
-        pricing = calculateBfdExtraReviewFee(input.totalWords);
+        sourcePricing = calculateBfdExtraReviewFee(input.totalWords);
     } catch (error) {
         return { ok: false, action: 'rejected', error: error.message };
     }
+    const updatedAt = input.updatedAt || new Date().toISOString();
+    sources[source] = {
+        totalWords: input.totalWords,
+        reviewTime: String(input.reviewTime),
+        updatedAt
+    };
+    const totalWords = Object.values(sources).reduce((sum, item) => sum + item.totalWords, 0);
+    const pricing = Object.keys(sources).length === 1 ? sourcePricing : calculateBfdExtraReviewFee(totalWords);
 
     const record = {
         platform: BFD_PLATFORM_ID,
         studentName,
         reviewTime: String(input.reviewTime),
         reviewDateBeijing,
-        totalWords: input.totalWords,
+        totalWords,
         pricingTier: pricing.pricingTier,
         pricingVersion: PRICING_VERSION,
         feeAmount: pricing.feeAmount,
-        updatedAt: input.updatedAt || new Date().toISOString()
+        updatedAt,
+        sources
     };
     records.push(record);
     storage.setItem(BFD_EXTRA_REVIEW_FEE_STORAGE_KEY, JSON.stringify({ version: 1, records }));
     return { ok: true, action: 'upserted', record };
+}
+
+export function syncBfdHistoryReviewResults(storage, studentName, results) {
+    const dailyResults = new Map();
+    for (const result of results || []) {
+        const reviewDateBeijing = String(result?.reviewDateBeijing || '');
+        const testedCount = Number(result?.testedCount) || 0;
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(reviewDateBeijing) || testedCount <= 0) continue;
+        const current = dailyResults.get(reviewDateBeijing) || { totalWords: 0, latestCompletedAt: '' };
+        current.totalWords += testedCount;
+        if (String(result.completedAt || '') > current.latestCompletedAt) {
+            current.latestCompletedAt = String(result.completedAt || '');
+        }
+        dailyResults.set(reviewDateBeijing, current);
+    }
+
+    const records = [];
+    for (const [reviewDateBeijing, daily] of dailyResults) {
+        const completedAt = new Date(daily.latestCompletedAt);
+        const hasValidCompletedAt = !Number.isNaN(completedAt.getTime());
+        const syncResult = syncBfdExtraReviewFeeRecord(storage, {
+            platform: BFD_PLATFORM_ID,
+            studentName,
+            reviewTime: hasValidCompletedAt
+                ? formatBeijingDateTimeLocal(completedAt)
+                : `${reviewDateBeijing}T23:59`,
+            totalWords: daily.totalWords,
+            charged: true,
+            source: 'yangKaidiHistory',
+            updatedAt: hasValidCompletedAt ? completedAt.toISOString() : `${reviewDateBeijing}T15:59:00.000Z`
+        });
+        if (!syncResult.ok) return syncResult;
+        records.push(syncResult.record);
+    }
+    return { ok: true, records };
 }
 
 export function selectBfdExtraReviewFeeRecords(raw, startDateYmd, endDateYmd) {

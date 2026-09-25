@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>杨开迪历史单词复习</title>
+    <link rel="stylesheet" href="yang-kaidi-word-review.css">
+</head>
+<body>
+    <header class="topbar">
+        <div>
+            <p class="eyebrow">HISTORY REVIEW · 杨开迪</p>
+            <h1>30 册单词复习台</h1>
+        </div>
+        <a class="back-link" href="anti-forgetting.html">返回抗遗忘复习</a>
+    </header>
+
+    <main>
+        <section id="bookListView" class="view">
+            <div class="summary-band">
+                <div>
+                    <span>整体进度</span>
+                    <strong id="overallProgress">正在读取词库...</strong>
+                </div>
+                <div class="summary-actions">
+                    <button id="showForgottenButton" class="secondary" type="button">全部遗忘词</button>
+                    <button id="showReportsButton" class="secondary" type="button">生成报告</button>
+                </div>
+            </div>
+            <div id="bookList" class="book-list" aria-live="polite"></div>
+        </section>
+
+        <section id="reviewView" class="view" hidden>
+            <div class="review-toolbar">
+                <button id="backToBooksButton" class="icon-button" type="button" title="返回册列表" aria-label="返回册列表">←</button>
+                <div>
+                    <p id="currentBookLabel" class="eyebrow"></p>
+                    <h2 id="reviewProgress">0 / 0</h2>
+                </div>
+                <div class="review-stats">
+                    <span id="forgottenCount">遗忘 0</span>
+                    <span id="accuracyValue">正确率 --</span>
+                </div>
+                <button id="jumpToUntestedButton" class="secondary" type="button">定位未测试</button>
+                <button id="completeBookButton" class="primary" type="button">完成本册</button>
+            </div>
+            <p id="reviewHint" class="hint">首次点击只播放英文；再次点击显示释义，并再次播放英文。</p>
+            <div id="wordList" class="word-list"></div>
+        </section>
+
+        <section id="forgottenView" class="view" hidden>
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">FORGOTTEN WORDS</p>
+                    <h2>全部遗忘词</h2>
+                </div>
+                <button class="secondary back-to-books" type="button">返回册列表</button>
+            </div>
+            <div class="forgotten-controls">
+                <button id="forgottenByBookButton" class="primary" type="button" aria-pressed="true">按册 Mapping</button>
+                <button id="forgottenUniqueButton" class="secondary" type="button" aria-pressed="false">全列表（去重）</button>
+                <span class="control-spacer"></span>
+                <button id="copyForgottenButton" class="secondary" type="button">复制按册 Mapping</button>
+                <button id="downloadForgottenButton" class="secondary" type="button">下载按册 Mapping TXT</button>
+            </div>
+            <div id="forgottenSummary" class="forgotten-summary"></div>
+        </section>
+
+        <section id="reportView" class="view" hidden>
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">REPORT CENTER</p>
+                    <h2>复习报告</h2>
+                </div>
+                <button class="secondary back-to-books" type="button">返回册列表</button>
+            </div>
+            <div class="report-controls">
+                <label for="reportDate">北京时间日期</label>
+                <input id="reportDate" type="date">
+                <button id="generateDailyReportButton" class="primary" type="button" aria-pressed="true">生成当日报告</button>
+                <button id="generateSummaryButton" class="secondary" type="button" aria-pressed="false">生成 Summary</button>
+            </div>
+            <p id="reportStatus" class="status" aria-live="polite">点击任一生成按钮后，将自动复制并下载 TXT</p>
+            <textarea id="reportOutput" readonly aria-label="生成的报告内容" placeholder="生成后的完整文案会显示在这里"></textarea>
+        </section>
+    </main>
+
+    <div id="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="yang-kaidi-word-review.js"></script>
+</body>
+</html>
