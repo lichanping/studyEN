@@ -26,6 +26,7 @@ import {
     syncBfdHistoryReviewResults
 } from './bfd-extra-review-fee.mjs';
 import { createYangKaidiWordReviewRepository } from './yang-kaidi-word-review-db.mjs';
+import { buildSalaryStudentStats } from './salary-student-summary.mjs';
 
 export function calculateMonthElapsedPercent(date = new Date()) {
     const currentDate = date instanceof Date ? new Date(date.getTime()) : new Date(date);
@@ -853,12 +854,9 @@ export async function generateSalaryReport() {
     reportContent += `统计范围: ${statsPeriodLabel}\n\n`;
 
     let allRecords = [];  // 用于存储所有记录
-    let studentStats = {};  // 用于存储每个学生的统计数据
 
     allStudents.forEach(userName => {
-        // 初始化每个学生的总工资
         const canonicalStudentName = normalizeSalaryStudentName(userName);
-        studentStats[canonicalStudentName] ||= { hours: 0, classFee: 0, extraReviewCount: 0, extraReviewFee: 0, fee: 0 };
 
         const statsKey = `${userName}_classStatistics`;
         const classStats = JSON.parse(localStorage.getItem(statsKey)) || {};
@@ -878,6 +876,8 @@ export async function generateSalaryReport() {
                 if (typeof duration === 'undefined') {
                     duration = (stats.newWord < 20) ? 0.5 : 1;
                 }
+                duration = Number(duration);
+                if (!Number.isFinite(duration) || duration <= 0) return;
 
                 const type = stats.type || "词汇课";
                 const recordPlatform = normalizePlatformId(stats.platform || DEFAULT_PLATFORM_ID);
@@ -920,17 +920,13 @@ export async function generateSalaryReport() {
                 totalHoursTrial += record.duration;
                 break;
         }
-        studentStats[record.userName].hours += record.duration;
-        studentStats[record.userName].classFee += lessonFee;
-        studentStats[record.userName].fee += lessonFee;
     });
 
-    extraReviewFeeRecords.forEach((record) => {
-        const userName = normalizeSalaryStudentName(record.studentName);
-        studentStats[userName] ||= { hours: 0, classFee: 0, extraReviewCount: 0, extraReviewFee: 0, fee: 0 };
-        studentStats[userName].extraReviewCount += 1;
-        studentStats[userName].extraReviewFee += record.feeAmount;
-        studentStats[userName].fee += record.feeAmount;
+    const studentStats = buildSalaryStudentStats({
+        classRecords: allRecords,
+        extraReviewRecords: extraReviewFeeRecords,
+        platformId: currentPlatformId,
+        normalizeStudentName: normalizeSalaryStudentName
     });
 
     if (allRecords.length === 0 && extraReviewFeeRecords.length === 0) {
