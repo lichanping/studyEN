@@ -32,7 +32,7 @@ layer	n 阶层
 material	n 材料 adj 物质的，客观存在的
 menu	n 菜单；选单
 mostly	adv 大多
-nazi	n 纳粹党人 adj 纳粹主义的
+Nazi	n 纳粹党人 adj 纳粹主义的
 nightfall	n 黄昏，日暮
 password	n 密码
 patent	n 专利 adj 有专利的 v 取得专利权
