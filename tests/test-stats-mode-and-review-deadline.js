@@ -244,7 +244,7 @@ assert(
 );
 
 // Verify generateSalaryReport uses getStatsDateRangeSelection
-const generateSalaryBlock = extractBlock(classFormalSource, 'export function generateSalaryReport');
+const generateSalaryBlock = extractBlock(classFormalSource, 'export async function generateSalaryReport');
 assert(
     generateSalaryBlock.includes('getStatsDateRangeSelection'),
     'generateSalaryReport 应使用 getStatsDateRangeSelection'

@@ -1,5 +1,6 @@
 import { buildWordAudioBatchRequestPayload, splitWordAudioBatches, WORD_AUDIO_BATCH_SIZE } from './word-audio-format.mjs';
 import { syncBfdExtraReviewFeeRecord } from './bfd-extra-review-fee.mjs';
+import { createYangKaidiWordReviewRepository } from './yang-kaidi-word-review-db.mjs';
 
 // JavaScript code for the button click functions
 export function navigateToTiyanClass() {
@@ -784,7 +785,7 @@ function syncCurrentBfdExtraReviewFee(userName, totalWords) {
         return;
     }
     if (charged) {
-        displayToast(`已记录 BFD 额外复习：${totalWords} 词，${result.record.feeAmount} 元`);
+        displayToast(`已记录 BFD 额外复习：当日合计 ${result.record.totalWords} 词，${result.record.feeAmount} 元`);
     } else {
         displayToast('本次复习不额外计费');
     }
@@ -1121,6 +1122,59 @@ function getDayOfWeek(dateStr) {
     return daysOfWeek[dateObj.getDay()];
 }
 
+export function mergeYangKaidiHistoryResults(userData, historyResults) {
+    const dailyStats = new Map();
+    const unmatchedEntries = [];
+    const forgetWords = { ...(userData?.forgetWords || {}) };
+
+    for (const entry of userData?.feedbackEntries || []) {
+        const dateMatch = String(entry).match(/^(\d{4}-\d{2}-\d{2})(?:\(([^)]+)\))?/);
+        const parts = String(entry).split('|');
+        const reviewed = Number.parseInt(parts[1], 10);
+        const correct = Number.parseInt(parts[2], 10);
+        if (!dateMatch || !Number.isFinite(reviewed) || !Number.isFinite(correct)) {
+            unmatchedEntries.push(entry);
+            continue;
+        }
+        dailyStats.set(dateMatch[1], {
+            weekday: dateMatch[2] || getDayOfWeek(dateMatch[1]),
+            reviewed,
+            correct
+        });
+    }
+
+    for (const result of historyResults || []) {
+        const date = result.reviewDateBeijing;
+        const reviewed = Number(result.testedCount) || 0;
+        const correct = Number.isFinite(Number(result.correctCount))
+            ? Number(result.correctCount)
+            : reviewed - (Number(result.forgottenCount) || 0);
+        if (!date || reviewed <= 0) continue;
+        const current = dailyStats.get(date) || { weekday: getDayOfWeek(date), reviewed: 0, correct: 0 };
+        dailyStats.set(date, {
+            ...current,
+            reviewed: current.reviewed + reviewed,
+            correct: current.correct + correct
+        });
+
+        const forgottenLines = (result.forgottenWords || [])
+            .map((word) => `${word.english}\t${word.meaning || ''}`.trimEnd());
+        if (forgottenLines.length) {
+            forgetWords[date] = [forgetWords[date], ...forgottenLines].filter(Boolean).join('\n');
+        }
+    }
+
+    const feedbackEntries = [...dailyStats.entries()].map(([date, stats]) => {
+        const rate = Number((stats.correct / stats.reviewed * 100).toFixed(2));
+        return `${date}(${stats.weekday}): ${rate}% | ${stats.reviewed}|${stats.correct}`;
+    });
+    return {
+        ...(userData || {}),
+        feedbackEntries: [...feedbackEntries, ...unmatchedEntries],
+        forgetWords
+    };
+}
+
 
 export async function downloadFeedbackFile() {
     const userName = document.getElementById("userName").value;
@@ -1136,13 +1190,16 @@ export async function downloadFeedbackFile() {
             request.onerror = () => reject(request.error);
         });
 
-        if (!userData) {
+        const historyResults = normalizeStudentName(userName) === '杨开迪'
+            ? await createYangKaidiWordReviewRepository().getAllResults()
+            : [];
+        if (!userData && historyResults.length === 0) {
             alert("没有找到数据可供下载！");
             return;
         }
 
-        const rawContent = userData.feedbackEntries.join('\n');
-        const formattedContent = await formatFeedbackContent(userData);
+        const mergedUserData = mergeYangKaidiHistoryResults(userData, historyResults);
+        const formattedContent = await formatFeedbackContent(mergedUserData);
 
         // Copy the formatted content to the clipboard
         copyToClipboard(formattedContent);
@@ -1318,13 +1375,18 @@ export function getRandomFeedback() {
 }
 
 export function copyToClipboard(text) {
-    const filteredText = text.replace(/<br><br>/g, '\n\n').replace(/<br>/g, '\n');
+    const filteredText = String(text).replace(/<br><br>/g, '\n\n').replace(/<br>/g, '\n');
     const textarea = document.createElement('textarea');
     textarea.value = filteredText;
     document.body.appendChild(textarea);
     textarea.select();
-    document.execCommand('copy');
-    document.body.removeChild(textarea);
+    try {
+        return document.execCommand('copy') === true;
+    } catch (_) {
+        return false;
+    } finally {
+        document.body.removeChild(textarea);
+    }
 }
 
 export function handleAppointmentSchedulingClick({classType} = {}) {

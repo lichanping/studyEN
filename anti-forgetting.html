@@ -299,6 +299,7 @@
         <button id="navigateToSchedulePage" type="button">排课总览</button>
         <button id="navigateToReadClass" type="button">阅读课</button>
         <button id="wordSelfCheckButton" type="button">单词自检</button>
+        <button id="yangKaidiWordReviewButton" type="button">杨开迪历史单词复习</button>
     </div>
 
 
@@ -1704,6 +1705,9 @@
     });
     document.getElementById('navigateToReadClass').addEventListener('click', commonFunctions.navigateToReadClass);
     document.getElementById('wordSelfCheckButton').addEventListener('click', commonFunctions.navigateToLearnWords);
+    document.getElementById('yangKaidiWordReviewButton').addEventListener('click', () => {
+        window.location.href = 'yang-kaidi-word-review.html';
+    });
 
     document.getElementById('antiForgettingFeedbackButton').addEventListener('click', commonFunctions.handleAntiForgettingFeedbackClick);
     document.getElementById('newFeedbackButton').addEventListener('click', commonFunctions.handleNewVersionFeedbackClick);
