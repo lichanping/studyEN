@@ -11,7 +11,8 @@ const {
     formatBeijingDateTimeLocal,
     parseBfdExtraReviewFeeLedger,
     selectBfdExtraReviewFeeRecords,
-    syncBfdExtraReviewFeeRecord
+    syncBfdExtraReviewFeeRecord,
+    syncBfdHistoryReviewResults
 } = await import('../bfd-extra-review-fee.mjs');
 
 function createStorage(initialValue = null) {
@@ -81,7 +82,14 @@ assert.deepEqual(overwrittenLedger.records[0], {
     pricingTier: '100-199',
     pricingVersion: 'bfd-review-v1',
     feeAmount: 5,
-    updatedAt: '2026-09-20T13:00:00.000Z'
+    updatedAt: '2026-09-20T13:00:00.000Z',
+    sources: {
+        antiForgetting: {
+            totalWords: 120,
+            reviewTime: '2026-09-20T20:30',
+            updatedAt: '2026-09-20T13:00:00.000Z'
+        }
+    }
 });
 
 const removeSync = syncBfdExtraReviewFeeRecord(storage, {
@@ -94,6 +102,118 @@ const removeSync = syncBfdExtraReviewFeeRecord(storage, {
 }, normalizeStudentName);
 assert.equal(removeSync.action, 'removed');
 assert.equal(parseBfdExtraReviewFeeLedger(storage.snapshot()).records.length, 0);
+
+const combinedStorage = createStorage();
+syncBfdExtraReviewFeeRecord(combinedStorage, {
+    platform: 'baifendii',
+    studentName: '杨开迪',
+    reviewTime: '2026-09-25T18:00',
+    totalWords: 86,
+    charged: true,
+    source: 'antiForgetting',
+    updatedAt: '2026-09-25T10:00:00.000Z'
+});
+const combined = syncBfdExtraReviewFeeRecord(combinedStorage, {
+    platform: 'baifendii',
+    studentName: '杨开迪',
+    reviewTime: '2026-09-25T20:00',
+    totalWords: 112,
+    charged: true,
+    source: 'yangKaidiHistory',
+    updatedAt: '2026-09-25T12:00:00.000Z'
+});
+assert.equal(combined.ok, true);
+assert.equal(combined.record.totalWords, 198, '模式 1 和模式 2 应按同一北京时间日期合计');
+assert.equal(combined.record.feeAmount, 5, '合计词数只计算一次费用档位');
+assert.deepEqual(combined.record.sources, {
+    antiForgetting: {
+        totalWords: 86,
+        reviewTime: '2026-09-25T18:00',
+        updatedAt: '2026-09-25T10:00:00.000Z'
+    },
+    yangKaidiHistory: {
+        totalWords: 112,
+        reviewTime: '2026-09-25T20:00',
+        updatedAt: '2026-09-25T12:00:00.000Z'
+    }
+});
+
+const updatedHistory = syncBfdExtraReviewFeeRecord(combinedStorage, {
+    platform: 'baifendii',
+    studentName: '杨开迪',
+    reviewTime: '2026-09-25T21:00',
+    totalWords: 62,
+    charged: true,
+    source: 'yangKaidiHistory',
+    updatedAt: '2026-09-25T13:00:00.000Z'
+});
+assert.equal(updatedHistory.record.totalWords, 148, '更新模式 2 不得覆盖模式 1');
+assert.equal(updatedHistory.record.sources.antiForgetting.totalWords, 86);
+
+const removeHistory = syncBfdExtraReviewFeeRecord(combinedStorage, {
+    platform: 'baifendii',
+    studentName: '杨开迪',
+    reviewTime: '2026-09-25T21:30',
+    totalWords: 0,
+    charged: false,
+    source: 'yangKaidiHistory',
+    updatedAt: '2026-09-25T13:30:00.000Z'
+});
+assert.equal(removeHistory.action, 'upserted', '删除一个来源后仍有另一个来源时应保留日账本');
+assert.equal(removeHistory.record.totalWords, 86);
+assert.deepEqual(Object.keys(removeHistory.record.sources), ['antiForgetting']);
+
+const historyBackfillStorage = createStorage();
+syncBfdExtraReviewFeeRecord(historyBackfillStorage, {
+    platform: 'baifendii',
+    studentName: '杨开迪',
+    reviewTime: '2026-09-25T18:00',
+    totalWords: 20,
+    charged: true,
+    source: 'antiForgetting',
+    updatedAt: '2026-09-25T10:00:00.000Z'
+});
+const historyResults = [
+    { bookNumber: 1, reviewDateBeijing: '2026-09-25', testedCount: 37, completedAt: '2026-09-25T11:00:00.000Z' },
+    { bookNumber: 2, reviewDateBeijing: '2026-09-25', testedCount: 33, completedAt: '2026-09-25T12:00:00.000Z' },
+    { bookNumber: 3, reviewDateBeijing: '2026-09-24', testedCount: 40, completedAt: '2026-09-24T12:00:00.000Z' }
+];
+assert.equal(syncBfdHistoryReviewResults(historyBackfillStorage, '杨开迪', historyResults).ok, true);
+assert.equal(syncBfdHistoryReviewResults(historyBackfillStorage, '杨开迪', historyResults).ok, true, '回填必须幂等');
+const backfilledLedger = parseBfdExtraReviewFeeLedger(historyBackfillStorage.snapshot());
+assert.equal(backfilledLedger.records.length, 2, '应按复习日期生成模式2工资记录');
+const september25Record = backfilledLedger.records.find((record) => record.reviewDateBeijing === '2026-09-25');
+assert.equal(september25Record.totalWords, 90, '应保留模式1并合计同日两册模式2词数');
+assert.equal(september25Record.sources.antiForgetting.totalWords, 20, '不得覆盖模式1来源');
+assert.equal(september25Record.sources.yangKaidiHistory.totalWords, 70, '模式2应按日期汇总完成册');
+assert.equal(september25Record.sources.yangKaidiHistory.reviewTime, '2026-09-25T20:00', '应使用当日最后完成时间');
+
+const legacyStorage = createStorage(JSON.stringify({
+    version: 1,
+    records: [{
+        platform: 'baifendii',
+        studentName: '杨开迪',
+        reviewTime: '2026-09-26T18:00',
+        reviewDateBeijing: '2026-09-26',
+        totalWords: 90,
+        pricingTier: '1-99',
+        pricingVersion: 'bfd-review-v1',
+        feeAmount: 3,
+        updatedAt: '2026-09-26T10:00:00.000Z'
+    }]
+}));
+const migratedLegacy = syncBfdExtraReviewFeeRecord(legacyStorage, {
+    platform: 'baifendii',
+    studentName: '杨开迪',
+    reviewTime: '2026-09-26T20:00',
+    totalWords: 50,
+    charged: true,
+    source: 'yangKaidiHistory',
+    updatedAt: '2026-09-26T12:00:00.000Z'
+});
+assert.equal(migratedLegacy.record.totalWords, 140);
+assert.equal(migratedLegacy.record.sources.antiForgetting.totalWords, 90);
+assert.equal(migratedLegacy.record.sources.yangKaidiHistory.totalWords, 50);
 
 const nonBfdStorage = createStorage();
 const nonBfdSync = syncBfdExtraReviewFeeRecord(nonBfdStorage, {
@@ -148,7 +268,13 @@ assert(
 );
 assert(commonFunctions.includes('calculateAntiForgettingReviewWords'));
 assert(commonFunctions.includes('syncBfdExtraReviewFeeRecord'));
+assert(
+    commonFunctions.includes('当日合计 ${result.record.totalWords} 词，${result.record.feeAmount} 元'),
+    '模式 1 toast 应展示模式 1 + 模式 2 的当日合计词数和工资'
+);
 assert(classFormal.includes('selectBfdExtraReviewFeeRecords'));
+assert(classFormal.includes('createYangKaidiWordReviewRepository'));
+assert(classFormal.includes("syncBfdHistoryReviewResults(localStorage, '杨开迪', historyResults)"));
 assert(classFormal.includes('extraReviewFee'));
 assert(classFormal.includes('recordPlatform !== currentPlatformId'));
 assert(classFormal.includes('额外抗遗忘复习明细'));

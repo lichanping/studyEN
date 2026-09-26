@@ -40,6 +40,8 @@ const getReviewDateYmdCode = extractBlock(commonFunctionsSource, 'function getRe
 const confirmAntiForgettingReviewDateMatchesTodayCode = extractBlock(commonFunctionsSource, 'function confirmAntiForgettingReviewDateMatchesToday');
 const handleNewVersionFeedbackClickCode = extractBlock(commonFunctionsSource, 'export async function handleNewVersionFeedbackClick');
 const getStatsDateRangeSelectionCode = extractBlock(commonFunctionsSource, 'export function getStatsDateRangeSelection');
+const getDayOfWeekCode = extractBlock(commonFunctionsSource, 'function getDayOfWeek');
+const mergeYangKaidiHistoryResultsCode = extractBlock(commonFunctionsSource, 'export function mergeYangKaidiHistoryResults');
 const formatFeedbackContentCode = extractBlock(commonFunctionsSource, 'async function formatFeedbackContent');
 
 let copiedMessage = '';
@@ -52,7 +54,8 @@ const elements = {
     keyLanguagePoints: { value: '重点1\n\n重点2' },
     practiceArea: { value: '闯关1' },
     antiForgettingForgetWord: { value: '1' },
-    forgetWords: { value: 'apple 苹果\nbanana 香蕉' }
+    forgetWords: { value: 'apple 苹果\nbanana 香蕉' },
+    statsMonthInput: { value: '2026-08' }
 };
 
 const reviewInputs = [
@@ -75,9 +78,6 @@ const documentMock = {
         }
         if (id === 'statsModeMonth') {
             return { checked: true };
-        }
-        if (id === 'statsMonthInput') {
-            return { value: '2026-08' };
         }
         if (id === 'daysRangeInput') {
             return { value: '7' };
@@ -123,6 +123,10 @@ const formatFeedbackContent = new Function(
     `${getStatsDateRangeSelectionCode.replace('export ', '')}\n${formatFeedbackContentCode}\nreturn formatFeedbackContent;`
 )(documentMock);
 
+const mergeYangKaidiHistoryResults = new Function(
+    `${getDayOfWeekCode}\n${mergeYangKaidiHistoryResultsCode.replace('export ', '')}\nreturn mergeYangKaidiHistoryResults;`
+)();
+
 (async () => {
     await handleNewVersionFeedbackClick();
 
@@ -146,6 +150,44 @@ const formatFeedbackContent = new Function(
 
     assert(formattedContent.includes('平均正确率: 100 %'), '抗遗忘统计详情应按汇总结果并沿用全局四舍五入口径显示 100%');
     assert(formattedContent.includes('总复习词汇: 220 词'), '抗遗忘统计详情应正确汇总复习词总数');
+
+    const mergedData = mergeYangKaidiHistoryResults({
+        forgetWords: {},
+        feedbackEntries: [
+            '2026-09-25(五): 90% | 30|27',
+            '2026-09-25(五): 100% | 70|70'
+        ]
+    }, [
+        {
+            reviewDateBeijing: '2026-09-25',
+            testedCount: 40,
+            correctCount: 39,
+            forgottenWords: [{ english: 'unmanned', meaning: 'adj 无人驾驶的' }]
+        },
+        {
+            reviewDateBeijing: '2026-09-25',
+            testedCount: 30,
+            correctCount: 28,
+            forgottenWords: [{ english: 'fragrant', meaning: 'adj 芬芳的；香的' }]
+        }
+    ]);
+
+    assert.deepStrictEqual(
+        mergedData.feedbackEntries,
+        ['2026-09-25(五): 97.86% | 140|137'],
+        '模式1同日多次应覆盖，模式2同日多册应累加后再跨模式合并'
+    );
+    assert.strictEqual(
+        mergedData.forgetWords['2026-09-25'],
+        'unmanned\tadj 无人驾驶的\nfragrant\tadj 芬芳的；香的',
+        '模式2同日多册遗忘词都应进入抗遗忘统计建议区'
+    );
+    documentMock.getElementById('statsMonthInput').value = '2026-09';
+    const mergedContent = await formatFeedbackContent(mergedData);
+    assert(mergedContent.includes('137/140(97.86%)'), '下载文本应展示跨模式合并后的当日正确率');
+    assert(mergedContent.includes('总复习词汇: 140 词'), '下载文本应展示模式1覆盖值加模式2多册累计词数');
+    assert(mergedContent.includes('unmanned\tadj 无人驾驶的'), '下载文本应展示历史词库遗忘词');
+    assert(mergedContent.includes('fragrant\tadj 芬芳的；香的'), '下载文本应展示模式2另一册遗忘词');
     console.log('test-anti-forgetting-feedback passed');
 })().catch((error) => {
     console.error(error);
