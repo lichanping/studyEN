@@ -1,5 +1,9 @@
 import assert from 'node:assert/strict';
-import { buildSalaryStudentStats } from '../salary-student-summary.mjs';
+import fs from 'node:fs';
+import path from 'node:path';
+import * as salaryStudentSummary from '../salary-student-summary.mjs';
+
+const { buildSalaryStudentStats, formatSalaryStudentDisplayName } = salaryStudentSummary;
 
 const normalizeStudentName = (name) => name === '开迪' ? '杨开迪' : String(name).trim();
 const classRecords = [
@@ -46,5 +50,16 @@ assert.equal(stats['非 BFD 学生'], undefined);
 assert.equal(stats['零课时学生'], undefined);
 assert.equal(stats['无工资黑名单学生'], undefined);
 assert.equal(stats['其他平台复习'], undefined);
+
+assert.equal(typeof formatSalaryStudentDisplayName, 'function', '应提供黑名单工资姓名展示函数');
+assert.equal(
+    formatSalaryStudentDisplayName('已退学但有工资', new Set(['已退学但有工资'])),
+    '已退学但有工资（已退学·当月有工资）'
+);
+assert.equal(formatSalaryStudentDisplayName('张舒睿', new Set(['已退学但有工资'])), '张舒睿');
+
+const classFormalSource = fs.readFileSync(path.join(import.meta.dirname, '..', 'classFormal.js'), 'utf8');
+assert(classFormalSource.includes('loadHiddenStudents'), '工资报表应读取黑名单');
+assert(classFormalSource.includes('formatSalaryStudentDisplayName'), '工资报表应使用黑名单工资姓名展示函数');
 
 console.log('test-bfd-salary-student-filter passed');

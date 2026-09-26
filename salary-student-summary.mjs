@@ -8,6 +8,14 @@ function createEmptySalaryStat() {
     };
 }
 
+export function formatSalaryStudentDisplayName(studentName, hiddenStudentNames = new Set()) {
+    const normalizedName = String(studentName || '').trim();
+    if (!normalizedName) return '';
+    return hiddenStudentNames.has(normalizedName)
+        ? `${normalizedName}（已退学·当月有工资）`
+        : normalizedName;
+}
+
 export function buildSalaryStudentStats({
     classRecords = [],
     extraReviewRecords = [],
