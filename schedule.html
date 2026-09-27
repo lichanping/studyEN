@@ -2208,6 +2208,15 @@ sourceId: 上课记录唯一标识（用于去重）</span>
         const durationMinutes = resolveDurationMinutes(entry, dateValue);
         const classTimeText = selectedClock || (entry.time ? normalizeClockInput(entry.time) : null) || (entry.period || "待确认");
 
+        if (window.APP_MEETING_CONFIG?.isSmartTrainingCabinRegularClassPlatform(resolveEntryPlatform(entry))) {
+            return "【" + year + "-" + month + "-" + day + "（周" + weekDay + "）" + classTimeText + "】\n" +
+                "亲爱的 ✨ " + entry.student + " 家长您好！\n" +
+                "🔤 课程：《" + courseText + "》｜⏰ 预计时长：" + toHoursText(durationMinutes) + "\n" +
+                "🚪 上课入口：【智练舱】（正课固定使用智练舱，不使用腾讯会议）\n" +
+                "🔔 如需调课或取消，请至少提前4小时联系学员服务中心，否则仍会消耗课时。\n" +
+                "💬 请看到消息后回复上课安排：可以正常上课请回复“确认”；无法参加请回复“请假/调课”。";
+        }
+
         return "【" + year + "-" + month + "-" + day + "（周" + weekDay + "）" + classTimeText + "】\n" +
             "亲爱的 ✨ " + entry.student + " 家长您好！\n" +
             "🔤 课程名称：《" + courseText + "》\n" +
