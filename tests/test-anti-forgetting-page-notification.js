@@ -79,8 +79,9 @@ for (const [platformId, meetingTag] of Object.entries(expectedMeetingTags)) {
         '2026-09-27T19:30',
         platformId
     );
+    assert(message.startsWith('【抗遗忘温馨提醒-19:30】'), `${platformId} 通知标题应包含复习时间`);
     assert(message.includes('验收学生'), `${platformId} 通知应包含学员姓名`);
-    assert(message.includes('2026-09-27 19:30'), `${platformId} 通知应包含复习日期和时间`);
+    assert(!message.includes('2026-09-27'), `${platformId} 通知不应包含日期`);
     assert(message.includes(meetingTag), `${platformId} 通知应使用平台对应的抗遗忘会议号`);
 }
 

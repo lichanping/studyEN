@@ -649,9 +649,9 @@
     }
 
     function buildAntiForgettingPageNoticeMessage(studentName, reviewTime, platformId) {
-        const [reviewDate, reviewClock] = String(reviewTime || '').split('T');
+        const [, reviewClock] = String(reviewTime || '').split('T');
         const meetingTag = window.APP_MEETING_CONFIG.getAntiForgettingTencentMeetingTagByPlatform(platformId);
-        return `【抗遗忘复习通知】\n亲爱的 ${studentName} 家长您好！\n复习时间：${reviewDate} ${reviewClock}\n👍 ${meetingTag}\n⏰ 请准时参加复习，如有特殊情况无法参加，请提前告知！`;
+        return `【抗遗忘温馨提醒-${reviewClock}】\n亲爱的 ${studentName} 家长您好！\n👍 ${meetingTag}\n⏰ 请准时参加复习，如有特殊情况无法参加，请提前告知！`;
     }
 
     function sendAntiForgettingNotice() {
