@@ -606,6 +606,17 @@
     }
 
     const antiForgettingPlatformSelect = document.getElementById('platformSelect');
+    function shouldDefaultBfdExtraReviewFee(platformId, studentName) {
+        return String(platformId || '').trim().toLowerCase() === 'baifendii'
+            && String(studentName || '').trim() === '杨开迪';
+    }
+
+    function syncBfdExtraReviewFeeDefault() {
+        const checkbox = document.getElementById('bfdExtraReviewFeeCheckbox');
+        const studentName = document.getElementById('userName')?.value;
+        checkbox.checked = shouldDefaultBfdExtraReviewFee(getCurrentPlatformId(), studentName);
+    }
+
     function updateBfdExtraReviewFeeVisibility(platformId) {
         const container = document.getElementById('bfdExtraReviewFeeContainer');
         const checkbox = document.getElementById('bfdExtraReviewFeeCheckbox');
@@ -645,7 +656,7 @@
         document.getElementById('pronounceWords').value = '';
         document.getElementById('keyLanguagePoints').value = '';
         document.getElementById('practiceArea').value = '';
-        document.getElementById('bfdExtraReviewFeeCheckbox').checked = false;
+        syncBfdExtraReviewFeeDefault();
     }
 
     function getReviewWordInputs() {
@@ -1733,7 +1744,10 @@
     resetReviewWordInputs();
     setReviewScheduleExpanded(false);
     renderReviewScheduleHint(getCurrentPlatformId());
-    loadStudentOptions().then(refreshReviewScheduleForCurrentSelection);
+    loadStudentOptions().then(() => {
+        syncBfdExtraReviewFeeDefault();
+        refreshReviewScheduleForCurrentSelection();
+    });
 </script>
 </body>
 </html>
