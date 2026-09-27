@@ -1,8 +1,22 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
+const vm = require('vm');
 
 const content = fs.readFileSync(path.join(__dirname, '..', 'anti-forgetting.html'), 'utf8');
+
+function extractFunction(source, signature) {
+    const start = source.indexOf(signature);
+    assert(start >= 0, `缺少函数：${signature}`);
+    const braceStart = source.indexOf('{', start);
+    let depth = 0;
+    for (let index = braceStart; index < source.length; index += 1) {
+        if (source[index] === '{') depth += 1;
+        if (source[index] === '}') depth -= 1;
+        if (depth === 0) return source.slice(start, index + 1);
+    }
+    throw new Error(`函数未闭合：${signature}`);
+}
 
 assert(
     content.includes('id="platformSelect"'),
@@ -101,6 +115,22 @@ assert(
         && content.includes('结合「智能记忆灯塔」系统，以下单词需要重点强化发音，请${studentName ? `${studentName}` : ""}大声朗读 2 遍，并录音或拍视频发群打卡：')
         && content.includes('document.getElementById(\'copyPronounceWordsTaskButton\').addEventListener(\'click\', copyPronounceWordsTask);'),
     'anti-forgetting.html 应提供发音打卡任务按钮，并使用更短按钮文案保证两个按钮可同行显示'
+);
+
+const defaultExtraReviewFeeCode = extractFunction(content, 'function shouldDefaultBfdExtraReviewFee(');
+const defaultExtraReviewFeeContext = {};
+vm.runInNewContext(
+    `${defaultExtraReviewFeeCode}; this.shouldDefaultBfdExtraReviewFee = shouldDefaultBfdExtraReviewFee;`,
+    defaultExtraReviewFeeContext
+);
+assert.equal(defaultExtraReviewFeeContext.shouldDefaultBfdExtraReviewFee('baifendii', '杨开迪'), true);
+assert.equal(defaultExtraReviewFeeContext.shouldDefaultBfdExtraReviewFee('baifendii', '其他学员'), false);
+assert.equal(defaultExtraReviewFeeContext.shouldDefaultBfdExtraReviewFee('lixiaolaila', '杨开迪'), false);
+assert(
+    content.includes("document.getElementById('userName').addEventListener('change', clearFormFields);")
+        && content.includes('loadStudentOptions().then(() => {')
+        && content.includes('syncBfdExtraReviewFeeDefault();'),
+    '切换学员和首次加载学员后都应同步杨开迪的额外计费默认值'
 );
 
 console.log('test-anti-forgetting-platform-ui passed');

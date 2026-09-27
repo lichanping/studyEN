@@ -315,6 +315,7 @@
             </select>
             <label for="reviewTime">复习时间：</label>
             <input type="datetime-local" id="reviewTime">
+            <button id="sendAntiForgettingNoticeButton" type="button">发送复习通知</button>
             <button id="noReviewTodayButton" type="button">今日无复习</button>
         </div>
         <div id="noReviewTodayNames" class="hint">支持右键粘贴；勾选 BFD 额外计费后，本次复习费用会计入工资统计。切换学员会自动清空表单。重点语言点和语言点实战区按“每个非空行=1条”自动计入复习词数。</div>
@@ -606,6 +607,17 @@
     }
 
     const antiForgettingPlatformSelect = document.getElementById('platformSelect');
+    function shouldDefaultBfdExtraReviewFee(platformId, studentName) {
+        return String(platformId || '').trim().toLowerCase() === 'baifendii'
+            && String(studentName || '').trim() === '杨开迪';
+    }
+
+    function syncBfdExtraReviewFeeDefault() {
+        const checkbox = document.getElementById('bfdExtraReviewFeeCheckbox');
+        const studentName = document.getElementById('userName')?.value;
+        checkbox.checked = shouldDefaultBfdExtraReviewFee(getCurrentPlatformId(), studentName);
+    }
+
     function updateBfdExtraReviewFeeVisibility(platformId) {
         const container = document.getElementById('bfdExtraReviewFeeContainer');
         const checkbox = document.getElementById('bfdExtraReviewFeeCheckbox');
@@ -636,6 +648,25 @@
         input.value = `${formatBeijingDateTimeLocal(new Date()).slice(0, 10)}T19:30`;
     }
 
+    function buildAntiForgettingPageNoticeMessage(studentName, reviewTime, platformId) {
+        const [, reviewClock] = String(reviewTime || '').split('T');
+        const meetingTag = window.APP_MEETING_CONFIG.getAntiForgettingTencentMeetingTagByPlatform(platformId);
+        return `【抗遗忘温馨提醒-${reviewClock}】\n亲爱的 ${studentName} 家长您好！\n👍 ${meetingTag}\n⏰ 请准时参加复习，如有特殊情况无法参加，请提前告知！`;
+    }
+
+    function sendAntiForgettingNotice() {
+        const studentName = String(document.getElementById('userName')?.value || '').trim();
+        const reviewTime = String(document.getElementById('reviewTime')?.value || '').trim();
+        if (!studentName || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(reviewTime)) {
+            window.alert('请先选择学员和有效的复习时间');
+            return;
+        }
+
+        const message = buildAntiForgettingPageNoticeMessage(studentName, reviewTime, getCurrentPlatformId());
+        commonFunctions.copyToClipboard(message);
+        commonFunctions.showLongText(message, { useHtml: false });
+    }
+
     // ── 切换学员：自动清空表单 ──
     function clearFormFields() {
         document.querySelectorAll('.antiForgettingReviewWord').forEach(el => { el.value = ''; });
@@ -645,7 +676,7 @@
         document.getElementById('pronounceWords').value = '';
         document.getElementById('keyLanguagePoints').value = '';
         document.getElementById('practiceArea').value = '';
-        document.getElementById('bfdExtraReviewFeeCheckbox').checked = false;
+        syncBfdExtraReviewFeeDefault();
     }
 
     function getReviewWordInputs() {
@@ -1710,6 +1741,7 @@
     });
 
     document.getElementById('antiForgettingFeedbackButton').addEventListener('click', commonFunctions.handleAntiForgettingFeedbackClick);
+    document.getElementById('sendAntiForgettingNoticeButton').addEventListener('click', sendAntiForgettingNotice);
     document.getElementById('newFeedbackButton').addEventListener('click', commonFunctions.handleNewVersionFeedbackClick);
     document.getElementById('generateForgetWordsMP3Button').addEventListener('click', commonFunctions.generateForgetWordsMP3);
     document.getElementById('generatePronounceWordsMP3Button').addEventListener('click', commonFunctions.generatePronounceWordsMP3);
@@ -1733,7 +1765,10 @@
     resetReviewWordInputs();
     setReviewScheduleExpanded(false);
     renderReviewScheduleHint(getCurrentPlatformId());
-    loadStudentOptions().then(refreshReviewScheduleForCurrentSelection);
+    loadStudentOptions().then(() => {
+        syncBfdExtraReviewFeeDefault();
+        refreshReviewScheduleForCurrentSelection();
+    });
 </script>
 </body>
 </html>
