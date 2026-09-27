@@ -120,6 +120,10 @@
         return getAntiForgettingTencentMeetingTagByPlatform(getCurrentPlatformId());
     }
 
+    function isSmartTrainingCabinRegularClassPlatform(platformId) {
+        return String(platformId || "").trim().toLowerCase() === "lixiaolaila";
+    }
+
     global.APP_MEETING_CONFIG = Object.freeze({
         CURRENT_PLATFORM_STORAGE_KEY,
         defaultPlatformId: DEFAULT_PLATFORM_ID,
@@ -136,6 +140,7 @@
         getAntiForgettingTencentMeetingTagByPlatform,
         getCurrentTencentMeetingTag,
         getCurrentAntiForgettingTencentMeetingTag,
+        isSmartTrainingCabinRegularClassPlatform,
         get meetingId() {
             return getMeetingIdByPlatform(getCurrentPlatformId());
         },

@@ -401,6 +401,7 @@ function showTodayReviewDates(userName) {
 export function handleScheduleNotificationClick() {
     const userName = document.getElementById("userName").value;
     const course = document.getElementById('courseLabel').textContent;
+    const usesSmartTrainingCabin = window.APP_MEETING_CONFIG?.isSmartTrainingCabinRegularClassPlatform(getCurrentPlatformId());
 
     // Get the date and time from the input field
     const classDateTime = document.getElementById("classDateTime").value;
@@ -414,7 +415,21 @@ export function handleScheduleNotificationClick() {
     let notificationMessage;
     if (timeDifference > 0 && timeDifference <= 30) {
         // Calculate the countdown time
-        notificationMessage = `【${thisDateTime}】<br><br>⏳我们的在线课程还有【${timeDifference}】分钟开始了，请做好准备，及时进入会议室哦`;
+        notificationMessage = usesSmartTrainingCabin
+            ? `【${thisDateTime}】<br><br>⏳我们的在线课程还有【${timeDifference}】分钟开始了，请做好准备，及时进入【智练舱】上课。<br><br>⚠️ 单词正课固定使用智练舱，不使用腾讯会议，请勿进入腾讯会议室。`
+            : `【${thisDateTime}】<br><br>⏳我们的在线课程还有【${timeDifference}】分钟开始了，请做好准备，及时进入会议室哦`;
+    } else if (usesSmartTrainingCabin) {
+        notificationMessage =
+            `【${thisDateTime}】
+亲爱的 ✨ ${userName} 用户您好！
+🔤 课程名称：《单词记忆训练课》
+🔔 重要提醒：
+如需取消或调整上课时间，请至少提前4小时告知学员服务中心负责人，否则系统将无法更改，仍会消耗课时。
+🚪 上课入口：请进入【智练舱】上课。
+⚠️ 单词正课固定使用智练舱，不使用腾讯会议，请勿进入腾讯会议室。
+🗣️ 上课小贴士：
+请准备好摄像头。
+💬 请看到消息后回复上课安排：可以正常上课请回复“确认”；无法参加请回复“请假/调课”。`;
     } else {
         notificationMessage =
             `【${thisDateTime}】
@@ -446,7 +461,10 @@ export function handleStopNotificationClick() {
 export function handleLateMeetingReminderClick() {
     const userName = document.getElementById("userName").value;
     // Create the reminder message
-    const reminderMessage = `我们的在线课程已经开始了，请 ✨  ${userName} 同学抓紧时间及时进入会议室，并且务必确保摄像头📷 📷 开启。感谢您的配合！🔥`
+    const usesSmartTrainingCabin = window.APP_MEETING_CONFIG?.isSmartTrainingCabinRegularClassPlatform(getCurrentPlatformId());
+    const reminderMessage = usesSmartTrainingCabin
+        ? `我们的在线课程已经开始了，请 ✨ ${userName} 同学立即进入【智练舱】上课。单词正课固定使用智练舱，不使用腾讯会议，请勿进入腾讯会议室。请务必确保摄像头📷开启，感谢您的配合！🔥`
+        : `我们的在线课程已经开始了，请 ✨  ${userName} 同学抓紧时间及时进入会议室，并且务必确保摄像头📷 📷 开启。感谢您的配合！🔥`;
     copyToClipboard(reminderMessage);
     showLongText(`${reminderMessage}`);
 }

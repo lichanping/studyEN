@@ -249,7 +249,10 @@ export function handleScheduleNotificationClick() {
     const classDateTime = document.getElementById("classDateTime").value;
 
     // Create the notification message with the dynamic date and time
-    const notificationMessage = `【体验课-${formatDateTime(classDateTime)}】<br><br>亲爱的 ${userName} 用户您好!<br><br>我们为您安排的语言体验课程即将到来，请提前做好时间安排。以下是您的会议室链接：<br><br>${(window.APP_MEETING_CONFIG?.getCurrentTencentMeetingTag?.() || window.APP_MEETING_CONFIG.tencentMeetingTag)}<br><br>🔔 温馨提醒：<br><br>- 请提前下载并安装【腾讯会议】应用，方便顺利进入课堂。 <br><br>- 电脑🖥️、笔记本💻、平板📱都可使用。<br><br>- 请提前检查 摄像头 和 音频设备，确保它们正常工作。台式电脑用户请务必佩戴耳机和音响。<br><br>我们期待与您一起开启这段精彩的语言学习体验之旅！`;
+    const usesSmartTrainingCabin = window.APP_MEETING_CONFIG?.isSmartTrainingCabinRegularClassPlatform(getCurrentPlatformId());
+    const notificationMessage = usesSmartTrainingCabin
+        ? `【体验课-${formatDateTime(classDateTime)}】<br><br>亲爱的 ${userName} 用户您好！<br><br>我们为您安排的语言体验课程即将到来，请提前做好时间安排。<br><br>🚪 上课入口：请进入【智练舱】上课。<br>⚠️ 体验课固定使用智练舱，不使用腾讯会议，请勿进入腾讯会议室。<br><br>🔔 温馨提醒：<br><br>- 请提前确认可以正常进入【智练舱】。<br>- 电脑🖥️、笔记本💻、平板📱都可使用。<br>- 请提前检查摄像头和音频设备，确保它们正常工作。台式电脑用户请务必佩戴耳机和音响。<br><br>我们期待与您一起开启这段精彩的语言学习体验之旅！<br>💬 请看到消息后回复上课安排：可以正常上课请回复“确认”；无法参加请回复“请假/调课”。`
+        : `【体验课-${formatDateTime(classDateTime)}】<br><br>亲爱的 ${userName} 用户您好!<br><br>我们为您安排的语言体验课程即将到来，请提前做好时间安排。以下是您的会议室链接：<br><br>${(window.APP_MEETING_CONFIG?.getCurrentTencentMeetingTag?.() || window.APP_MEETING_CONFIG.tencentMeetingTag)}<br><br>🔔 温馨提醒：<br><br>- 请提前下载并安装【腾讯会议】应用，方便顺利进入课堂。 <br><br>- 电脑🖥️、笔记本💻、平板📱都可使用。<br><br>- 请提前检查 摄像头 和 音频设备，确保它们正常工作。台式电脑用户请务必佩戴耳机和音响。<br><br>我们期待与您一起开启这段精彩的语言学习体验之旅！`;
 
     copyToClipboard(notificationMessage);
     showLongText(`${notificationMessage}`);
@@ -263,7 +266,15 @@ export function handlePreMeetingReminderClick() {
     const classDateTime = document.getElementById("classDateTime").value;
 
     // Create the reminder message
-    const reminderMessage = `亲爱的 ${userName} 用户和家长，我们的体验服务时间为: ${formatDateTime(classDateTime)}。请 ${userName} 同学准时进入会议室哦。🎉🎉🎉<br><br>
+    const usesSmartTrainingCabin = window.APP_MEETING_CONFIG?.isSmartTrainingCabinRegularClassPlatform(getCurrentPlatformId());
+    const reminderMessage = usesSmartTrainingCabin
+        ? `亲爱的 ${userName} 用户和家长，我们的体验服务时间为：${formatDateTime(classDateTime)}。请 ${userName} 同学准时进入【智练舱】上课。🎉🎉🎉<br><br>
+⚠️ 体验课固定使用智练舱，不使用腾讯会议，请勿进入腾讯会议室。<br><br>
+同时我们需要做好以下陪练前准备：<br>
+- 给孩子准备平板或者电脑，适当的屏幕和距离有利于保护孩子的眼睛和提升专注力；<br>
+- 请提前确认可以正常进入【智练舱】，并检查好摄像头和音频；笔记本电脑和平板无需佩戴耳机，台式电脑须佩戴耳机和音响；<br>
+- 体验服务家长要全程陪伴，但切勿打扰孩子，保持环境安静。`
+        : `亲爱的 ${userName} 用户和家长，我们的体验服务时间为: ${formatDateTime(classDateTime)}。请 ${userName} 同学准时进入会议室哦。🎉🎉🎉<br><br>
 同时我们需要做好以下陪练前准备:
 - 给孩子准备平板或者电脑，适当的屏幕和距离有利于保护孩子的眼睛和提升专注力;
 - 请提前提前下载好腾讯会议APP，检查好摄像头，检测好音频。笔记本电脑和平板无需佩戴耳机，台式电脑须佩戴耳机和音响;
@@ -278,7 +289,10 @@ ${(window.APP_MEETING_CONFIG?.getCurrentTencentMeetingTag?.() || window.APP_MEET
 
 export function handleOnTimeReminderClick() {
     const userName = document.getElementById("userName").value;
-    const onTimeReminderMessage = `亲爱的${userName}用户和家长，我们的体验服务马上开始了，请做好准备，及时进入会议室哦~⏰🚀`;
+    const usesSmartTrainingCabin = window.APP_MEETING_CONFIG?.isSmartTrainingCabinRegularClassPlatform(getCurrentPlatformId());
+    const onTimeReminderMessage = usesSmartTrainingCabin
+        ? `亲爱的 ${userName} 用户和家长，我们的体验服务马上开始了，请立即进入【智练舱】上课。体验课固定使用智练舱，不使用腾讯会议，请勿进入腾讯会议室哦～⏰🚀`
+        : `亲爱的${userName}用户和家长，我们的体验服务马上开始了，请做好准备，及时进入会议室哦~⏰🚀`;
 
     copyToClipboard(onTimeReminderMessage);
     showLongText(`${onTimeReminderMessage}`);
