@@ -284,6 +284,7 @@ export function updateLabel2() {
 export function handleScheduleNotificationClick() {
     const userName = document.getElementById("userName").value;
     const courseLabel = document.getElementById("courseLabel").textContent.trim();
+    const usesSmartTrainingCabin = window.APP_MEETING_CONFIG?.isSmartTrainingCabinRegularClassPlatform(getCurrentPlatformId());
 
     // Get the date and time from the input field
     const classDateTime = document.getElementById("classDateTime").value;
@@ -296,7 +297,11 @@ export function handleScheduleNotificationClick() {
 
     let notificationMessage;
     if (timeDifference > 0 && timeDifference <= 30) {
-        notificationMessage = `【${thisDateTime}】<br><br>⏰我们的在线课程还有 **${timeDifference}** 分钟开始了，请做好准备，及时进入会议室哦🔥<br><br>👍${(window.APP_MEETING_CONFIG?.getCurrentTencentMeetingTag?.() || window.APP_MEETING_CONFIG.tencentMeetingTag)}`;
+        notificationMessage = usesSmartTrainingCabin
+            ? `【${thisDateTime}】<br><br>⏰我们的在线课程还有 **${timeDifference}** 分钟开始了，请做好准备，及时进入【智练舱】上课🔥<br><br>⚠️ 阅读正课固定使用智练舱，不使用腾讯会议，请勿进入腾讯会议室。`
+            : `【${thisDateTime}】<br><br>⏰我们的在线课程还有 **${timeDifference}** 分钟开始了，请做好准备，及时进入会议室哦🔥<br><br>👍${(window.APP_MEETING_CONFIG?.getCurrentTencentMeetingTag?.() || window.APP_MEETING_CONFIG.tencentMeetingTag)}`;
+    } else if (usesSmartTrainingCabin) {
+        notificationMessage = `【${thisDateTime}】<br><br>亲爱的 ⭐ ${userName} 用户您好！我们的英语《${courseLabel}》学习时间安排在${formattedDateTime}。<br><br>🚪 上课入口：请准时进入【智练舱】上课，并确保摄像头🎥开启。<br>⚠️ 阅读正课固定使用智练舱，不使用腾讯会议，请勿进入腾讯会议室。感谢您的配合！<br>💬 请看到消息后回复上课安排：可以正常上课请回复“确认”；无法参加请回复“请假/调课”。`;
     } else {
         notificationMessage = `【${thisDateTime}】<br><br>亲爱的 ⭐ ${userName} 用户您好! 我们的英语《${courseLabel}》学习时间安排在${formattedDateTime}。<br><br>⏰请学员及家长准时进入会议室上课，并确保摄像头🎥开启。感谢您的配合！<br><br>👍${(window.APP_MEETING_CONFIG?.getCurrentTencentMeetingTag?.() || window.APP_MEETING_CONFIG.tencentMeetingTag)}`;
     }
@@ -308,7 +313,10 @@ export function handleScheduleNotificationClick() {
 export function handleLateMeetingReminderClick() {
     const userName = document.getElementById("userName").value;
     // Create the reminder message
-    const reminderMessage = `我们的在线课程已经开始了，请 ⭐  ${userName} 同学抓紧时间及时进入会议室，并且务必确保摄像头🎥🎥开启。感谢您的配合！🔥`
+    const usesSmartTrainingCabin = window.APP_MEETING_CONFIG?.isSmartTrainingCabinRegularClassPlatform(getCurrentPlatformId());
+    const reminderMessage = usesSmartTrainingCabin
+        ? `我们的在线课程已经开始了，请 ⭐ ${userName} 同学立即进入【智练舱】上课。阅读正课固定使用智练舱，不使用腾讯会议，请勿进入腾讯会议室。请务必确保摄像头🎥开启，感谢您的配合！🔥`
+        : `我们的在线课程已经开始了，请 ⭐  ${userName} 同学抓紧时间及时进入会议室，并且务必确保摄像头🎥🎥开启。感谢您的配合！🔥`;
     copyToClipboard(reminderMessage);
     showLongText(`${reminderMessage}`);
 }
