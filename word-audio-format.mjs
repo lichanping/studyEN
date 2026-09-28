@@ -2,6 +2,36 @@ function normalizeWordAudioText(value) {
     return String(value || "").trim();
 }
 
+const WORD_CLASS_PATTERN = "abbr|adj|adv|det\\/pron|n|num|phr|prep|v";
+
+export function parseVocabularyLine(rawLine) {
+    const line = String(rawLine || "").trim();
+    const tabIndex = line.indexOf("\t");
+    if (tabIndex >= 0) {
+        return {
+            english: line.slice(0, tabIndex).trim(),
+            meaning: line.slice(tabIndex + 1).trim()
+        };
+    }
+
+    const wordClassMatch = line.match(
+        new RegExp(`^(.+?)\\s+((?:${WORD_CLASS_PATTERN})(?=\\s|[\\u3400-\\u9fff（(【〈]).*)$`, "i")
+    );
+        const meaningIndex = line.search(/[\u3400-\u9fff（]/u);
+        if (wordClassMatch && (meaningIndex < 0 || wordClassMatch[1].length < meaningIndex)) {
+        return { english: wordClassMatch[1].trim(), meaning: wordClassMatch[2].trim() };
+    }
+
+    if (meaningIndex >= 0) {
+        return {
+            english: line.slice(0, meaningIndex).trim(),
+            meaning: line.slice(meaningIndex).trim()
+        };
+    }
+
+    return { english: line, meaning: "" };
+}
+
 export const WORD_AUDIO_SPELLING_LETTER_ASSET_DIR = "static/sounds/spelling-letters";
 export const WORD_AUDIO_BATCH_SIZE = 30;
 
@@ -47,19 +77,21 @@ function buildNormalizedWordAudioWordPair(wordPair) {
     };
 }
 
-export function buildWordAudioRequestPayload(wordPair, spellingEnabled = false, spellingSpeedPreset = "medium") {
+export function buildWordAudioRequestPayload(wordPair, spellingEnabled = false, spellingSpeedPreset = "medium", earTrainingEnabled = false) {
     return {
         ...buildNormalizedWordAudioWordPair(wordPair),
         spellingEnabled: Boolean(spellingEnabled),
-        spellingSpeedPreset: normalizeWordAudioSpellingSpeedPreset(spellingSpeedPreset)
+        spellingSpeedPreset: normalizeWordAudioSpellingSpeedPreset(spellingSpeedPreset),
+        earTrainingEnabled: Boolean(earTrainingEnabled)
     };
 }
 
-export function buildWordAudioBatchRequestPayload(wordPairs, spellingEnabled = false, spellingSpeedPreset = "medium") {
+export function buildWordAudioBatchRequestPayload(wordPairs, spellingEnabled = false, spellingSpeedPreset = "medium", earTrainingEnabled = false) {
     return {
         wordPairs: Array.isArray(wordPairs) ? wordPairs.map(buildNormalizedWordAudioWordPair).filter((wordPair) => wordPair.english) : [],
         spellingEnabled: Boolean(spellingEnabled),
-        spellingSpeedPreset: normalizeWordAudioSpellingSpeedPreset(spellingSpeedPreset)
+        spellingSpeedPreset: normalizeWordAudioSpellingSpeedPreset(spellingSpeedPreset),
+        earTrainingEnabled: Boolean(earTrainingEnabled)
     };
 }
 
@@ -80,12 +112,23 @@ export function splitWordAudioBatches(wordPairs, maxBatchSize = WORD_AUDIO_BATCH
     return batches;
 }
 
-export function buildWordAudioSegments({ english, chinese, spellingWord, spellingEnabled = false }) {
+export function buildWordAudioSegments({ english, chinese, spellingWord, spellingEnabled = false, earTrainingEnabled = false }) {
     const normalizedEnglish = normalizeWordAudioText(english);
     const normalizedChinese = normalizeWordAudioText(chinese);
     const normalizedSpellingWord = normalizeWordAudioText(spellingWord) || normalizedEnglish;
 
     if (!normalizedEnglish) return [];
+
+    if (earTrainingEnabled) {
+        const englishSegments = Array.from({ length: 6 }, () => ({
+            kind: "english",
+            lang: "en",
+            text: normalizedEnglish
+        }));
+        return normalizedChinese
+            ? [{ kind: "chinese", lang: "zh", text: normalizedChinese }, ...englishSegments]
+            : englishSegments;
+    }
 
     const segments = [
         { kind: "english", lang: "en", text: normalizedEnglish },

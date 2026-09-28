@@ -1,4 +1,4 @@
-import { buildWordAudioBatchRequestPayload, splitWordAudioBatches, WORD_AUDIO_BATCH_SIZE } from './word-audio-format.mjs';
+import { buildWordAudioBatchRequestPayload, parseVocabularyLine, splitWordAudioBatches, WORD_AUDIO_BATCH_SIZE } from './word-audio-format.mjs';
 import { syncBfdExtraReviewFeeRecord } from './bfd-extra-review-fee.mjs';
 import { createYangKaidiWordReviewRepository } from './yang-kaidi-word-review-db.mjs';
 
@@ -1664,8 +1664,8 @@ export function parseForgetWordsForAudio(text) {
     const wordPairs = [];
 
     const CHINESE_ONLY = /^[\u4e00-\u9fa5\s，。！？；、""''（）【】《》·…—]+$/;
-    const FULL_EN = /^[\w\s.,;:()'"\-…\?!]+$/;
-    const MIXED = /^([\w\s.,;:()'"\-…\?!]+)([\u4e00-\u9fa5\uFF08\uFF09；].*)$/;
+    const FULL_EN = /^[\w\s.,;:()'"\-\u2011…\?!\/]+$/;
+    const MIXED = /^([\w\s.,;:()'"\-\u2011…\?!\/]+)([\u4e00-\u9fa5\uFF08\uFF09；【〈].*)$/;
 
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
@@ -1688,9 +1688,10 @@ export function parseForgetWordsForAudio(text) {
 
         const mixedMatch = line.match(MIXED);
         if (mixedMatch) {
+            const parsedLine = parseVocabularyLine(line);
             wordPairs.push({
-                english: mixedMatch[1].trim(),
-                chinese: mixedMatch[2].trim()
+                english: parsedLine.english,
+                chinese: parsedLine.meaning
             });
         }
     }
@@ -1718,13 +1719,17 @@ function getWordAudioSpellingSpeedPreset() {
     return document.getElementById('wordAudioSpellingSpeedPreset')?.value || 'medium';
 }
 
-async function fetchWordAudioBatch(wordPairs, spellingEnabled, spellingSpeedPreset) {
+function isWordAudioEarTrainingEnabled() {
+    return document.getElementById('wordAudioEarTrainingEnabled')?.checked === true;
+}
+
+async function fetchWordAudioBatch(wordPairs, spellingEnabled, spellingSpeedPreset, earTrainingEnabled) {
     for (let attempt = 0; attempt < 3; attempt++) {
         try {
             const resp = await fetch('/.netlify/functions/generate-forget-words-audio', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(buildWordAudioBatchRequestPayload(wordPairs, spellingEnabled, spellingSpeedPreset))
+                body: JSON.stringify(buildWordAudioBatchRequestPayload(wordPairs, spellingEnabled, spellingSpeedPreset, earTrainingEnabled))
             });
             if (!resp.ok) throw new Error('server error');
             return await resp.blob();
@@ -1735,8 +1740,13 @@ async function fetchWordAudioBatch(wordPairs, spellingEnabled, spellingSpeedPres
     }
 }
 
+export function buildWordAudioFileName(userName, fileLabel, today, earTrainingEnabled, spellingEnabled) {
+    const modeLabel = earTrainingEnabled ? '磨耳朵' : spellingEnabled ? '拼写' : '';
+    return [userName, fileLabel, modeLabel, today].filter(Boolean).join('_') + '.mp3';
+}
+
 // 通用：从 textarea 解析词汇并生成 MP3 下载
-async function generateWordsMP3({ textareaId, btnId, statusId, fileLabel, emptyMsg }) {
+async function generateWordsMP3({ textareaId, btnId, statusId, fileLabel, emptyMsg, earTrainingEnabled = false }) {
     const text = document.getElementById(textareaId).value.trim();
     if (!text) {
         displayToast(emptyMsg);
@@ -1776,14 +1786,14 @@ async function generateWordsMP3({ textareaId, btnId, statusId, fileLabel, emptyM
             if (statusEl && batches.length > 1) {
                 statusEl.textContent = `自动分批生成中：第 ${batchIndex + 1}/${batches.length} 批`;
             }
-            batchBlobs.push(await fetchWordAudioBatch(batchWordPairs, spellingEnabled, spellingSpeedPreset));
+            batchBlobs.push(await fetchWordAudioBatch(batchWordPairs, spellingEnabled, spellingSpeedPreset, earTrainingEnabled));
         }
 
         const combined = new Blob(batchBlobs, { type: 'audio/mpeg' });
         const userName = document.getElementById('userName').value || '学生';
         const now = new Date();
         const today = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-        const fileName = `${userName}_${fileLabel}_${today}.mp3`;
+        const fileName = buildWordAudioFileName(userName, fileLabel, today, earTrainingEnabled, spellingEnabled);
 
         const link = document.createElement('a');
         link.href = URL.createObjectURL(combined);
@@ -1812,7 +1822,8 @@ export function generateForgetWordsMP3() {
         btnId: 'generateForgetWordsMP3Button',
         statusId: 'generateForgetWordsMP3Status',
         fileLabel: '遗忘词',
-        emptyMsg: '遗忘词为空，无法生成MP3'
+        emptyMsg: '遗忘词为空，无法生成MP3',
+        earTrainingEnabled: isWordAudioEarTrainingEnabled()
     });
 }
 
@@ -1822,7 +1833,8 @@ export function generatePronounceWordsMP3() {
         btnId: 'generatePronounceWordsMP3Button',
         statusId: 'generatePronounceWordsMP3Status',
         fileLabel: '发音纠正',
-        emptyMsg: '发音不标准的词为空，无法生成MP3'
+        emptyMsg: '发音不标准的词为空，无法生成MP3',
+        earTrainingEnabled: isWordAudioEarTrainingEnabled()
     });
 }
 

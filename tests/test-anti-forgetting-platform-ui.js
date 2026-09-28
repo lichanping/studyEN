@@ -58,6 +58,24 @@ assert(
     'anti-forgetting.html 应默认选中 medium spelling 档位'
 );
 
+assert(
+    content.includes('id="wordAudioEarTrainingEnabled"')
+        && content.includes('磨耳朵模式（中文1遍 → 英文6遍，同时作用于以上两个 MP3）'),
+    'anti-forgetting.html 应提供磨耳朵模式开关，并明确音序及适用范围'
+);
+
+assert(
+    /<input id="wordAudioEarTrainingEnabled" type="checkbox">/.test(content),
+    '磨耳朵模式应默认关闭且不持久化勾选状态'
+);
+
+assert(
+    content.includes('syncWordAudioModeControls')
+        && content.includes("document.getElementById('wordAudioSpellingEnabled').checked = false;")
+        && content.includes("document.getElementById('wordAudioSpellingEnabled').disabled = earTrainingEnabled;"),
+    '开启磨耳朵模式时应关闭并禁用拼写模式'
+);
+
 const reviewWordInputs = content.match(/class="antiForgettingReviewWord mini-input"/g) || [];
 assert.strictEqual(
     reviewWordInputs.length,
