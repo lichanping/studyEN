@@ -15,13 +15,13 @@ export function parseVocabularyLine(rawLine) {
     }
 
     const wordClassMatch = line.match(
-        new RegExp(`^(.+?)\\s+((?:${WORD_CLASS_PATTERN})(?=\\s|[\\u3400-\\u9fff（(]).*)$`, "i")
+        new RegExp(`^(.+?)\\s+((?:${WORD_CLASS_PATTERN})(?=\\s|[\\u3400-\\u9fff（(【〈]).*)$`, "i")
     );
-    if (wordClassMatch) {
+        const meaningIndex = line.search(/[\u3400-\u9fff（]/u);
+        if (wordClassMatch && (meaningIndex < 0 || wordClassMatch[1].length < meaningIndex)) {
         return { english: wordClassMatch[1].trim(), meaning: wordClassMatch[2].trim() };
     }
 
-    const meaningIndex = line.search(/[\u3400-\u9fff（]/u);
     if (meaningIndex >= 0) {
         return {
             english: line.slice(0, meaningIndex).trim(),

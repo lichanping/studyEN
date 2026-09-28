@@ -88,6 +88,62 @@ assert.deepStrictEqual(
     { english: 'in person', meaning: 'phr 亲自；当面' },
     '英文短语应完整保留到首个词性标记之前'
 );
+assert.deepStrictEqual(
+    parseVocabularyLine('upright 垂直的；正直的 adv 直立地'),
+    { english: 'upright', meaning: '垂直的；正直的 adv 直立地' },
+    '首个释义缺少词性时，应按更早出现的中文边界分隔中英文'
+);
+assert.deepStrictEqual(
+    parseVocabularyLine('take off 起飞'),
+    { english: 'take off', meaning: '起飞' },
+    '无词性的英文词组应完整保留到首个中文边界之前'
+);
+assert.deepStrictEqual(
+    parseForgetWordsForAudio('take off 起飞'),
+    [{ english: 'take off', chinese: '起飞' }],
+    '遗忘词批量解析应保留无词性的英文词组'
+);
+
+[
+    ['magpie n【鸟类】喜鹊；饶舌者', 'magpie', 'n【鸟类】喜鹊；饶舌者'],
+    ['postcode n〈英〉邮政编码', 'postcode', 'n〈英〉邮政编码'],
+    ['PC abbr【计】个人计算机', 'PC', 'abbr【计】个人计算机'],
+    ['tadpole n【动】蝌蚪', 'tadpole', 'n【动】蝌蚪']
+].forEach(([line, english, meaning]) => {
+    assert.deepStrictEqual(
+        parseVocabularyLine(line),
+        { english, meaning },
+        `词性后紧跟分类括号时应正确拆分：${line}`
+    );
+});
+
+const vocabularyDirectory = path.join(__dirname, '..', 'data', '杨开迪');
+const vocabularyFiles = fs.readdirSync(vocabularyDirectory)
+    .filter((fileName) => fileName.endsWith('.txt'))
+    .sort();
+let corpusEntryCount = 0;
+vocabularyFiles.forEach((fileName) => {
+    const lines = fs.readFileSync(path.join(vocabularyDirectory, fileName), 'utf8').split(/\r?\n/);
+    lines.forEach((rawLine, index) => {
+        if (!rawLine.trim()) return;
+        const columns = rawLine.split('\t');
+        assert.equal(columns.length, 2, `${fileName}:${index + 1} 应且仅应包含一个 Tab`);
+        const expected = { english: columns[0].trim(), meaning: columns[1].trim() };
+        assert.deepStrictEqual(
+            parseVocabularyLine(rawLine),
+            expected,
+            `${fileName}:${index + 1} 原始 Tab 格式应正确拆分`
+        );
+        assert.deepStrictEqual(
+            parseVocabularyLine(`${expected.english} ${expected.meaning}`),
+            expected,
+            `${fileName}:${index + 1} 普通空格粘贴格式应正确拆分`
+        );
+        corpusEntryCount += 1;
+    });
+});
+assert.equal(vocabularyFiles.length, 30, '应扫描杨开迪目录下全部 30 个 TXT 词表');
+assert.equal(corpusEntryCount, 1528, '应验证全部 1528 条词汇记录');
 
 console.log('test-forget-words-audio-parser passed');
 }
