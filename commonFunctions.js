@@ -1719,13 +1719,17 @@ function getWordAudioSpellingSpeedPreset() {
     return document.getElementById('wordAudioSpellingSpeedPreset')?.value || 'medium';
 }
 
-async function fetchWordAudioBatch(wordPairs, spellingEnabled, spellingSpeedPreset) {
+function isWordAudioEarTrainingEnabled() {
+    return document.getElementById('wordAudioEarTrainingEnabled')?.checked === true;
+}
+
+async function fetchWordAudioBatch(wordPairs, spellingEnabled, spellingSpeedPreset, earTrainingEnabled) {
     for (let attempt = 0; attempt < 3; attempt++) {
         try {
             const resp = await fetch('/.netlify/functions/generate-forget-words-audio', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(buildWordAudioBatchRequestPayload(wordPairs, spellingEnabled, spellingSpeedPreset))
+                body: JSON.stringify(buildWordAudioBatchRequestPayload(wordPairs, spellingEnabled, spellingSpeedPreset, earTrainingEnabled))
             });
             if (!resp.ok) throw new Error('server error');
             return await resp.blob();
@@ -1737,7 +1741,7 @@ async function fetchWordAudioBatch(wordPairs, spellingEnabled, spellingSpeedPres
 }
 
 // 通用：从 textarea 解析词汇并生成 MP3 下载
-async function generateWordsMP3({ textareaId, btnId, statusId, fileLabel, emptyMsg }) {
+async function generateWordsMP3({ textareaId, btnId, statusId, fileLabel, emptyMsg, earTrainingEnabled = false }) {
     const text = document.getElementById(textareaId).value.trim();
     if (!text) {
         displayToast(emptyMsg);
@@ -1777,7 +1781,7 @@ async function generateWordsMP3({ textareaId, btnId, statusId, fileLabel, emptyM
             if (statusEl && batches.length > 1) {
                 statusEl.textContent = `自动分批生成中：第 ${batchIndex + 1}/${batches.length} 批`;
             }
-            batchBlobs.push(await fetchWordAudioBatch(batchWordPairs, spellingEnabled, spellingSpeedPreset));
+            batchBlobs.push(await fetchWordAudioBatch(batchWordPairs, spellingEnabled, spellingSpeedPreset, earTrainingEnabled));
         }
 
         const combined = new Blob(batchBlobs, { type: 'audio/mpeg' });
@@ -1813,7 +1817,8 @@ export function generateForgetWordsMP3() {
         btnId: 'generateForgetWordsMP3Button',
         statusId: 'generateForgetWordsMP3Status',
         fileLabel: '遗忘词',
-        emptyMsg: '遗忘词为空，无法生成MP3'
+        emptyMsg: '遗忘词为空，无法生成MP3',
+        earTrainingEnabled: isWordAudioEarTrainingEnabled()
     });
 }
 

@@ -400,6 +400,10 @@
             </div>
             <div class="tools-cell">
                 <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+                    <label for="wordAudioEarTrainingEnabled" style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted-text);">
+                        <input id="wordAudioEarTrainingEnabled" type="checkbox">
+                        <span>磨耳朵模式（中文1遍 → 英文6遍）</span>
+                    </label>
                     <label for="wordAudioSpellingEnabled" style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted-text);">
                         <input id="wordAudioSpellingEnabled" type="checkbox">
                         <span>MP3包含拼写（同时作用于以上两个 MP3）</span>
@@ -1746,6 +1750,16 @@
     document.getElementById('generateForgetWordsMP3Button').addEventListener('click', commonFunctions.generateForgetWordsMP3);
     document.getElementById('generatePronounceWordsMP3Button').addEventListener('click', commonFunctions.generatePronounceWordsMP3);
     document.getElementById('copyPronounceWordsTaskButton').addEventListener('click', copyPronounceWordsTask);
+    function syncWordAudioModeControls() {
+        const earTrainingEnabled = document.getElementById('wordAudioEarTrainingEnabled').checked;
+        if (earTrainingEnabled) {
+            document.getElementById('wordAudioSpellingEnabled').checked = false;
+        }
+        document.getElementById('wordAudioSpellingEnabled').disabled = earTrainingEnabled;
+        document.getElementById('wordAudioSpellingSpeedPreset').disabled = earTrainingEnabled;
+    }
+    document.getElementById('wordAudioEarTrainingEnabled').addEventListener('change', syncWordAudioModeControls);
+    syncWordAudioModeControls();
     document.getElementById('addReviewWordInputButton').addEventListener('click', showNextReviewWordInput);
     document.getElementById('reviewTime').addEventListener('change', () => {
         document.getElementById('bfdExtraReviewFeeCheckbox').checked = false;

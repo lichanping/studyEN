@@ -53,6 +53,37 @@ async function testWordAudioSegmentsShouldOmitChineseWhenMissing() {
     );
 }
 
+async function testEarTrainingModeShouldPlayChineseOnceThenEnglishSixTimes() {
+    const { buildWordAudioSegments } = await loadWordAudioFormatModule();
+    const segments = buildWordAudioSegments({
+        english: "book",
+        chinese: "书本",
+        spellingEnabled: true,
+        earTrainingEnabled: true,
+    });
+
+    assert.deepStrictEqual(
+        segments.map((segment) => segment.text || segment.letter),
+        ["书本", "book", "book", "book", "book", "book", "book"],
+        "磨耳朵模式应先播放一遍中文，再播放六遍英文，并忽略拼写片段"
+    );
+}
+
+async function testEarTrainingModeShouldRepeatEnglishWhenChineseIsMissing() {
+    const { buildWordAudioSegments } = await loadWordAudioFormatModule();
+    const segments = buildWordAudioSegments({
+        english: "book",
+        chinese: "",
+        earTrainingEnabled: true,
+    });
+
+    assert.deepStrictEqual(
+        segments.map((segment) => segment.text),
+        ["book", "book", "book", "book", "book", "book"],
+        "磨耳朵模式缺少中文时仍应播放六遍英文"
+    );
+}
+
 async function testWordAudioSegmentsShouldUseBaseWordForSpellingWhenTtsPrefixExists() {
     const { buildWordAudioSegments } = await loadWordAudioFormatModule();
     const segments = buildWordAudioSegments({
@@ -127,6 +158,11 @@ async function testSpellingSpeedPresetShouldControlPayloadRateAndPause() {
         "批量 payload 应一次性携带整份词表"
     );
     assert.strictEqual(batchPayload.spellingEnabled, true, "批量 payload 应共享 spellingEnabled 开关");
+    assert.strictEqual(batchPayload.earTrainingEnabled, false, "现有调用应默认关闭磨耳朵模式");
+    const earTrainingPayload = buildWordAudioBatchRequestPayload([
+        { english: "book", chinese: "书本" },
+    ], false, "medium", true);
+    assert.strictEqual(earTrainingPayload.earTrainingEnabled, true, "批量 payload 应透传磨耳朵模式");
     assert.strictEqual(normalizeWordAudioSpellingSpeedPreset("unknown"), "medium", "非法 preset 应回退到 medium");
     assert.strictEqual(getWordAudioPauseFramesAfterSegment(segments[2], segments[3], "slow"), 3, "slow 档字母停顿应更长");
     assert.strictEqual(getWordAudioPauseFramesAfterSegment(segments[2], segments[3], "fast"), 0, "fast 档字母间不应再额外停顿");
@@ -213,6 +249,8 @@ async function run() {
     await testWordAudioSegmentsShouldKeepLegacyOrderWhenSpellingDisabled();
     await testWordAudioSegmentsShouldInsertSpellingBetweenEnglishAndChinese();
     await testWordAudioSegmentsShouldOmitChineseWhenMissing();
+    await testEarTrainingModeShouldPlayChineseOnceThenEnglishSixTimes();
+    await testEarTrainingModeShouldRepeatEnglishWhenChineseIsMissing();
     await testWordAudioSegmentsShouldUseBaseWordForSpellingWhenTtsPrefixExists();
     await testSpellingSegmentShouldUseLocalAssetInsteadOfTtsVoiceAndRate();
     await testSpellingBoundariesShouldUseShorterPauseThanNormalSegments();

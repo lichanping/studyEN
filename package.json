@@ -22,7 +22,7 @@
     "test:quota": "node tests/test-quota-check.js",
     "test:class-feedback": "node tests/test-class-feedback-stat-input.js",
     "test:stats-mode-and-review-deadline": "node tests/test-stats-mode-and-review-deadline.js",
-    "test:anti-forgetting": "node tests/test-forget-words-audio-parser.js && node tests/test-anti-forgetting-review-date-confirm.js && node tests/test-anti-forgetting-feedback.js && node tests/test-anti-forgetting-platform-ui.js && node tests/test-anti-forgetting-page-notification.js && node tests/test-anti-forgetting-bfd-schedule.js && node tests/test-anti-forgetting-schedule.js",
+    "test:anti-forgetting": "node tests/test-forget-words-audio-parser.js && node tests/test-ear-training-mode.mjs && node tests/test-anti-forgetting-review-date-confirm.js && node tests/test-anti-forgetting-feedback.js && node tests/test-anti-forgetting-platform-ui.js && node tests/test-anti-forgetting-page-notification.js && node tests/test-anti-forgetting-bfd-schedule.js && node tests/test-anti-forgetting-schedule.js",
     "test:bfd-extra-review-fee": "node tests/test-bfd-extra-review-fee.mjs",
     "test:bfd-salary-students": "node tests/test-bfd-salary-student-filter.mjs",
     "test:yang-kaidi-word-review": "node tests/test-yang-kaidi-word-review.mjs && node tests/test-yang-kaidi-word-review-db.mjs && node tests/test-generate-word-pronunciation.mjs && node tests/test-copy-to-clipboard.js && node tests/test-yang-kaidi-word-review-ui.js",
