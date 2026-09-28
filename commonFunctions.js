@@ -1,4 +1,4 @@
-import { buildWordAudioBatchRequestPayload, splitWordAudioBatches, WORD_AUDIO_BATCH_SIZE } from './word-audio-format.mjs';
+import { buildWordAudioBatchRequestPayload, parseVocabularyLine, splitWordAudioBatches, WORD_AUDIO_BATCH_SIZE } from './word-audio-format.mjs';
 import { syncBfdExtraReviewFeeRecord } from './bfd-extra-review-fee.mjs';
 import { createYangKaidiWordReviewRepository } from './yang-kaidi-word-review-db.mjs';
 
@@ -1688,9 +1688,10 @@ export function parseForgetWordsForAudio(text) {
 
         const mixedMatch = line.match(MIXED);
         if (mixedMatch) {
+            const parsedLine = parseVocabularyLine(line);
             wordPairs.push({
-                english: mixedMatch[1].trim(),
-                chinese: mixedMatch[2].trim()
+                english: parsedLine.english,
+                chinese: parsedLine.meaning
             });
         }
     }

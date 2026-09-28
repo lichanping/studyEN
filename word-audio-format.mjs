@@ -2,6 +2,36 @@ function normalizeWordAudioText(value) {
     return String(value || "").trim();
 }
 
+const WORD_CLASS_PATTERN = "abbr|adj|adv|det\\/pron|n|num|phr|prep|v";
+
+export function parseVocabularyLine(rawLine) {
+    const line = String(rawLine || "").trim();
+    const tabIndex = line.indexOf("\t");
+    if (tabIndex >= 0) {
+        return {
+            english: line.slice(0, tabIndex).trim(),
+            meaning: line.slice(tabIndex + 1).trim()
+        };
+    }
+
+    const wordClassMatch = line.match(
+        new RegExp(`^(.+?)\\s+((?:${WORD_CLASS_PATTERN})(?=\\s|[\\u3400-\\u9fff（(]).*)$`, "i")
+    );
+    if (wordClassMatch) {
+        return { english: wordClassMatch[1].trim(), meaning: wordClassMatch[2].trim() };
+    }
+
+    const meaningIndex = line.search(/[\u3400-\u9fff（]/u);
+    if (meaningIndex >= 0) {
+        return {
+            english: line.slice(0, meaningIndex).trim(),
+            meaning: line.slice(meaningIndex).trim()
+        };
+    }
+
+    return { english: line, meaning: "" };
+}
+
 export const WORD_AUDIO_SPELLING_LETTER_ASSET_DIR = "static/sounds/spelling-letters";
 export const WORD_AUDIO_BATCH_SIZE = 30;
 

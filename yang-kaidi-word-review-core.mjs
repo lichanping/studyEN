@@ -1,3 +1,5 @@
+import { parseVocabularyLine } from './word-audio-format.mjs';
+
 function formatPercent(value) {
     const numericValue = Number(value);
     if (!Number.isFinite(numericValue)) return '--';
@@ -50,9 +52,7 @@ export function parseTabbedWordList(text, bookId) {
         if (tabCount > 1) {
             throw new Error(`第 ${index + 1} 行包含多个 Tab`);
         }
-        const separatorIndex = rawLine.indexOf('\t');
-        const english = rawLine.slice(0, separatorIndex).trim();
-        const meaning = rawLine.slice(separatorIndex + 1).trim();
+        const { english, meaning } = parseVocabularyLine(rawLine);
         if (!english) {
             throw new Error(`第 ${index + 1} 行英文为空`);
         }
