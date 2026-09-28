@@ -1740,6 +1740,11 @@ async function fetchWordAudioBatch(wordPairs, spellingEnabled, spellingSpeedPres
     }
 }
 
+export function buildWordAudioFileName(userName, fileLabel, today, earTrainingEnabled, spellingEnabled) {
+    const modeLabel = earTrainingEnabled ? '磨耳朵' : spellingEnabled ? '拼写' : '';
+    return [userName, fileLabel, modeLabel, today].filter(Boolean).join('_') + '.mp3';
+}
+
 // 通用：从 textarea 解析词汇并生成 MP3 下载
 async function generateWordsMP3({ textareaId, btnId, statusId, fileLabel, emptyMsg, earTrainingEnabled = false }) {
     const text = document.getElementById(textareaId).value.trim();
@@ -1788,7 +1793,7 @@ async function generateWordsMP3({ textareaId, btnId, statusId, fileLabel, emptyM
         const userName = document.getElementById('userName').value || '学生';
         const now = new Date();
         const today = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-        const fileName = `${userName}_${fileLabel}_${today}.mp3`;
+        const fileName = buildWordAudioFileName(userName, fileLabel, today, earTrainingEnabled, spellingEnabled);
 
         const link = document.createElement('a');
         link.href = URL.createObjectURL(combined);
@@ -1828,7 +1833,8 @@ export function generatePronounceWordsMP3() {
         btnId: 'generatePronounceWordsMP3Button',
         statusId: 'generatePronounceWordsMP3Status',
         fileLabel: '发音纠正',
-        emptyMsg: '发音不标准的词为空，无法生成MP3'
+        emptyMsg: '发音不标准的词为空，无法生成MP3',
+        earTrainingEnabled: isWordAudioEarTrainingEnabled()
     });
 }
 

@@ -60,8 +60,8 @@ assert(
 
 assert(
     content.includes('id="wordAudioEarTrainingEnabled"')
-        && content.includes('磨耳朵模式（中文1遍 → 英文6遍）'),
-    'anti-forgetting.html 应提供磨耳朵模式开关并明确音序'
+        && content.includes('磨耳朵模式（中文1遍 → 英文6遍，同时作用于以上两个 MP3）'),
+    'anti-forgetting.html 应提供磨耳朵模式开关，并明确音序及适用范围'
 );
 
 assert(
