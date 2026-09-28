@@ -130,7 +130,7 @@ export default async (req) => {
         });
     }
 
-    const { english, chinese, spellingEnabled, spellingWord, spellingSpeedPreset } = body;
+    const { english, chinese, spellingEnabled, spellingWord, spellingSpeedPreset, earTrainingEnabled } = body;
     const requestWordPairs = Array.isArray(body?.wordPairs) && body.wordPairs.length > 0
         ? body.wordPairs
         : [{ english, chinese, spellingWord }];
@@ -150,6 +150,7 @@ export default async (req) => {
                 .map((wordPair) => buildSingleWordAudioBuffer({
                     ...wordPair,
                     spellingEnabled: Boolean(spellingEnabled),
+                    earTrainingEnabled: Boolean(earTrainingEnabled),
                 }, normalizedSpellingSpeedPreset, req.url))
         );
 
