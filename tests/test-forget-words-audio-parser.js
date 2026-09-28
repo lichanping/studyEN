@@ -139,6 +139,11 @@ vocabularyFiles.forEach((fileName) => {
             expected,
             `${fileName}:${index + 1} 普通空格粘贴格式应正确拆分`
         );
+        assert.deepStrictEqual(
+            parseForgetWordsForAudio(`${expected.english} ${expected.meaning}`),
+            [{ english: expected.english, chinese: expected.meaning }],
+            `${fileName}:${index + 1} 遗忘词批量入口不应丢失词条`
+        );
         corpusEntryCount += 1;
     });
 });

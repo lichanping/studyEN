@@ -1664,8 +1664,8 @@ export function parseForgetWordsForAudio(text) {
     const wordPairs = [];
 
     const CHINESE_ONLY = /^[\u4e00-\u9fa5\s，。！？；、""''（）【】《》·…—]+$/;
-    const FULL_EN = /^[\w\s.,;:()'"\-…\?!]+$/;
-    const MIXED = /^([\w\s.,;:()'"\-…\?!]+)([\u4e00-\u9fa5\uFF08\uFF09；].*)$/;
+    const FULL_EN = /^[\w\s.,;:()'"\-\u2011…\?!\/]+$/;
+    const MIXED = /^([\w\s.,;:()'"\-\u2011…\?!\/]+)([\u4e00-\u9fa5\uFF08\uFF09；【〈].*)$/;
 
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
