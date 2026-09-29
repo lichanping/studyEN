@@ -37,6 +37,7 @@ const countNonEmptyLinesCode = extractBlock(commonFunctionsSource, 'function cou
 const calculateAntiForgettingReviewWordsCode = extractBlock(commonFunctionsSource, 'export function calculateAntiForgettingReviewWords');
 const getBeijingDateYmdCode = extractBlock(commonFunctionsSource, 'function getBeijingDateYmd');
 const getReviewDateYmdCode = extractBlock(commonFunctionsSource, 'function getReviewDateYmd');
+const buildAntiForgettingFeedbackTitleCode = extractBlock(commonFunctionsSource, 'export function buildAntiForgettingFeedbackTitle');
 const confirmAntiForgettingReviewDateMatchesTodayCode = extractBlock(commonFunctionsSource, 'function confirmAntiForgettingReviewDateMatchesToday');
 const handleNewVersionFeedbackClickCode = extractBlock(commonFunctionsSource, 'export async function handleNewVersionFeedbackClick');
 const getStatsDateRangeSelectionCode = extractBlock(commonFunctionsSource, 'export function getStatsDateRangeSelection');
@@ -127,7 +128,23 @@ const mergeYangKaidiHistoryResults = new Function(
     `${getDayOfWeekCode}\n${mergeYangKaidiHistoryResultsCode.replace('export ', '')}\nreturn mergeYangKaidiHistoryResults;`
 )();
 
+const buildAntiForgettingFeedbackTitle = new Function(
+    `${getBeijingDateYmdCode}\n${buildAntiForgettingFeedbackTitleCode.replace('export ', '')}\nreturn buildAntiForgettingFeedbackTitle;`
+)();
+
 (async () => {
+    const beijingToday = new Date('2026-09-29T04:00:00.000Z');
+    assert.strictEqual(
+        buildAntiForgettingFeedbackTitle('2026-09-29', beijingToday),
+        '【今日抗遗忘复习反馈】',
+        '复习日期为北京时间今日时应保留“今日”标题'
+    );
+    assert.strictEqual(
+        buildAntiForgettingFeedbackTitle('2026-09-28', beijingToday),
+        '【2026/9/28 · 抗遗忘复习反馈】',
+        '复习日期非今日时应使用间隔符分隔简短年月日和标题'
+    );
+
     await handleNewVersionFeedbackClick();
 
     assert.strictEqual(allowEmptyPrompted, false, '有复习词数时新版反馈不应弹出跳过统计确认');
