@@ -729,6 +729,16 @@ function getReviewDateYmd() {
     return reviewTime.split('T')[0] || '';
 }
 
+export function buildAntiForgettingFeedbackTitle(reviewDate, now = new Date()) {
+    const normalizedReviewDate = String(reviewDate || '').trim();
+    if (!normalizedReviewDate || normalizedReviewDate === getBeijingDateYmd(now)) {
+        return '【今日抗遗忘复习反馈】';
+    }
+
+    const [year, month, day] = normalizedReviewDate.split('-');
+    return `【${year}/${Number(month)}/${Number(day)}抗遗忘复习反馈】`;
+}
+
 function confirmAntiForgettingReviewDateMatchesToday(now = new Date()) {
     const reviewDate = getReviewDateYmd();
     if (!reviewDate) return true;
@@ -866,7 +876,7 @@ export async function handleAntiForgettingFeedbackClick() {
     const NUM = ['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣'];
     let n = 0;
 
-    let message = '【今日抗遗忘复习反馈】<br>\n';
+    let message = `${buildAntiForgettingFeedbackTitle(getReviewDateYmd())}<br>\n`;
     if (!skipStats) {
         message += `${NUM[n++]}复习${antiForgettingReviewWord} 词，遗忘${antiForgettingForgetWord} 词，发音不标准${numberOfWrongWords} 词，正确率${correctRate}% 💯<br>\n`;
     }
