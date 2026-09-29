@@ -141,8 +141,8 @@ const buildAntiForgettingFeedbackTitle = new Function(
     );
     assert.strictEqual(
         buildAntiForgettingFeedbackTitle('2026-09-28', beijingToday),
-        '【2026/9/28抗遗忘复习反馈】',
-        '复习日期非今日时应显示简短年月日标题'
+        '【2026/9/28 · 抗遗忘复习反馈】',
+        '复习日期非今日时应使用间隔符分隔简短年月日和标题'
     );
 
     await handleNewVersionFeedbackClick();

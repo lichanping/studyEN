@@ -736,7 +736,7 @@ export function buildAntiForgettingFeedbackTitle(reviewDate, now = new Date()) {
     }
 
     const [year, month, day] = normalizedReviewDate.split('-');
-    return `【${year}/${Number(month)}/${Number(day)}抗遗忘复习反馈】`;
+    return `【${year}/${Number(month)}/${Number(day)} · 抗遗忘复习反馈】`;
 }
 
 function confirmAntiForgettingReviewDateMatchesToday(now = new Date()) {
