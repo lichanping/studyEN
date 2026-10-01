@@ -189,6 +189,80 @@ export function checkLoginStatus() {
     }
 }
 
+function promptForMaskedPassword(message) {
+    return new Promise((resolve) => {
+        const dialog = document.createElement('dialog');
+        const form = document.createElement('form');
+        const label = document.createElement('label');
+        const input = document.createElement('input');
+        const actions = document.createElement('div');
+        const cancelButton = document.createElement('button');
+        const submitButton = document.createElement('button');
+        const viewport = window.visualViewport;
+        let settled = false;
+
+        dialog.style.cssText = 'position:fixed;margin:0;box-sizing:border-box;width:360px;border:1px solid #8b929b;border-radius:8px;padding:20px;overflow:auto;color:CanvasText;background:Canvas;';
+        form.style.cssText = 'display:grid;gap:16px;min-width:0;';
+        actions.style.cssText = 'display:flex;justify-content:flex-end;gap:8px;';
+        label.textContent = message;
+        label.style.overflowWrap = 'anywhere';
+        label.htmlFor = 'lxMaskedPassword';
+        input.id = 'lxMaskedPassword';
+        input.type = 'password';
+        input.autocomplete = 'current-password';
+        input.required = true;
+        input.setAttribute('aria-label', message);
+        input.style.cssText = 'box-sizing:border-box;width:100%;padding:10px;border:1px solid #8b929b;border-radius:4px;font:inherit;';
+        cancelButton.type = 'button';
+        cancelButton.textContent = '取消';
+        submitButton.type = 'submit';
+        submitButton.textContent = '确认';
+
+        const positionDialog = () => {
+            const width = viewport?.width || window.innerWidth;
+            const height = viewport?.height || window.innerHeight;
+            dialog.style.maxWidth = `${Math.max(0, width - 32)}px`;
+            dialog.style.maxHeight = `${Math.max(0, height - 32)}px`;
+            const bounds = dialog.getBoundingClientRect();
+            dialog.style.left = `${(viewport?.offsetLeft || 0) + (width - bounds.width) / 2}px`;
+            dialog.style.top = `${(viewport?.offsetTop || 0) + (height - bounds.height) / 2}px`;
+        };
+
+        const finish = (value) => {
+            if (settled) return;
+            settled = true;
+            viewport?.removeEventListener('resize', positionDialog);
+            viewport?.removeEventListener('scroll', positionDialog);
+            window.removeEventListener('resize', positionDialog);
+            dialog.close();
+            dialog.remove();
+            resolve(value);
+        };
+
+        cancelButton.addEventListener('click', () => finish(null));
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const password = input.value.trim();
+            if (password) finish(password);
+        });
+        dialog.addEventListener('cancel', (event) => {
+            event.preventDefault();
+            finish(null);
+        });
+
+        actions.append(cancelButton, submitButton);
+        form.append(label, input, actions);
+        dialog.append(form);
+        document.body.append(dialog);
+        dialog.showModal();
+        input.focus();
+        positionDialog();
+        viewport?.addEventListener('resize', positionDialog);
+        viewport?.addEventListener('scroll', positionDialog);
+        window.addEventListener('resize', positionDialog);
+    });
+}
+
 
 export function validateLogin() {
     const username = document.getElementById('username').value;
@@ -255,7 +329,7 @@ export async function loginApp() {
             return null;
         }
 
-        const inputPassword = prompt('请填写登录密码（仅保存在本机 localStorage）:');
+        const inputPassword = await promptForMaskedPassword('请填写登录密码（仅保存在本机 localStorage）:');
         const normalizedPassword = String(inputPassword || '').trim();
         if (!normalizedPassword) {
             alert('未填写密码，已取消登录。');
@@ -320,7 +394,7 @@ export async function configureLxCredentials() {
         return false;
     }
 
-    const inputPassword = prompt('请输入登录密码（将保存到本机）:');
+    const inputPassword = await promptForMaskedPassword('请输入登录密码（将保存到本机）:');
     const normalizedPassword = String(inputPassword || '').trim();
     if (!normalizedPassword) {
         alert('未填写密码，已取消。');
@@ -351,7 +425,7 @@ export async function loginMaisuiApp() {
             return null;
         }
 
-        const inputPassword = prompt('请输入麦穗英语登录密码（仅保存在本机 localStorage）:');
+        const inputPassword = await promptForMaskedPassword('请输入麦穗英语登录密码（仅保存在本机 localStorage）:');
         const normalizedPassword = String(inputPassword || '').trim();
         if (!normalizedPassword) {
             alert('未填写密码，已取消登录。');
@@ -408,7 +482,7 @@ export async function configureMaisuiCredentials() {
         return false;
     }
 
-    const inputPassword = prompt('请输入麦穗英语登录密码（将保存到本机）:');
+    const inputPassword = await promptForMaskedPassword('请输入麦穗英语登录密码（将保存到本机）:');
     const normalizedPassword = String(inputPassword || '').trim();
     if (!normalizedPassword) {
         alert('未填写密码，已取消。');

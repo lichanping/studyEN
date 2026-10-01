@@ -3759,7 +3759,17 @@ sourceId: 上课记录唯一标识（用于去重）</span>
                 });
 
             if (!response.ok) {
-                throw new Error("上课记录接口失败: " + response.status);
+                const responseError = await response.json().catch(() => ({}));
+                const upstreamStatus = Number(responseError?.status || 0);
+                const upstreamCode = String(responseError?.payload?.code || "");
+                const upstreamErrorCode = String(responseError?.payload?.errorCode || "");
+                if ([401, 403].includes(response.status)
+                    || [401, 403].includes(upstreamStatus)
+                    || upstreamCode === "3"
+                    || upstreamErrorCode === "TOKEN_INVALID") {
+                    throw new Error("登录状态已失效，请点击“设置登录信息”重新登录后重试");
+                }
+                throw new Error(`上课记录接口请求失败（HTTP ${response.status}），请稍后重试`);
             }
 
             const data = await response.json();
@@ -4407,10 +4417,19 @@ sourceId: 上课记录唯一标识（用于去重）</span>
 
     const generateScheduleSalaryButton = document.getElementById("generateScheduleSalaryButton");
     generateScheduleSalaryButton?.addEventListener("click", async () => {
+        if (generateScheduleSalaryButton.disabled) return;
+
+        const originalButtonText = generateScheduleSalaryButton.textContent;
+        generateScheduleSalaryButton.disabled = true;
+        generateScheduleSalaryButton.textContent = "生成中...";
+        const summaryEl = document.getElementById("scheduleSalarySummary");
+        if (summaryEl) {
+            summaryEl.textContent = "正在查询已完成上课记录，请勿重复点击。";
+        }
+
         try {
             const currentPlatformId = getCurrentPlatformId();
             if (currentPlatformId === "baifendii") {
-                const summaryEl = document.getElementById("scheduleSalarySummary");
                 if (summaryEl) {
                     summaryEl.textContent = "工资统计口径：百分缔平台暂不支持工资统计。";
                 }
@@ -4426,7 +4445,6 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             const { rows, dateRangeText } = await getSalaryRowsFromCompletedApi(periodType, monthValue, yearValue);
 
             if (rows.length === 0) {
-                const summaryEl = document.getElementById("scheduleSalarySummary");
                 if (summaryEl) {
                     summaryEl.textContent = `工资统计口径：按已完成上课记录（status=COMPLETED）统计。${periodLabel} 在 ${dateRangeText} 无可统计课时。`;
                 }
@@ -4437,14 +4455,21 @@ sourceId: 上课记录唯一标识（用于去重）</span>
             const { content, summary } = buildScheduleSalaryReport(periodLabel, rows);
             downloadCsv(`schedule_${fileTag}_工资.csv`, content);
             await copyToClipboard(content);
-            const summaryEl = document.getElementById("scheduleSalarySummary");
             if (summaryEl) {
                 summaryEl.textContent = `工资统计口径：按已完成上课记录（status=COMPLETED）统计。${periodLabel} 在 ${dateRangeText} 共 ${rows.length} 节，收入 ${summary.total} 元。`;
             }
             window.showToast?.(`已生成工资统计：${summary.total}元（${rows.length}节）`, 4200);
         } catch (error) {
+            const errorMessage = String(error?.message || "");
+            const userMessage = /Failed to fetch|NetworkError|Load failed/i.test(errorMessage)
+                ? "生成工资统计失败：网络连接异常，请检查网络后重试。"
+                : `生成工资统计失败：${errorMessage || "请稍后重试"}`;
             console.error("按实际上课生成工资统计失败:", error);
-            window.showToast?.("生成失败，请检查登录状态与月份格式");
+            if (summaryEl) summaryEl.textContent = userMessage;
+            window.showToast?.(userMessage, 6000);
+        } finally {
+            generateScheduleSalaryButton.disabled = false;
+            generateScheduleSalaryButton.textContent = originalButtonText;
         }
     });
 
