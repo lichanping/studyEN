@@ -72,4 +72,24 @@ assert(
     'schedule.html 百分缔平台仍应提示本期暂不支持实际课次工资统计'
 );
 
+assert(
+    scheduleContent.includes('generateScheduleSalaryButton.disabled = true')
+        && scheduleContent.includes('生成中...')
+        && scheduleContent.includes('generateScheduleSalaryButton.disabled = false'),
+    '工资统计请求期间应显示处理中并禁用按钮，完成后恢复以避免重复下载'
+);
+
+assert(
+    scheduleContent.includes('登录状态已失效，请点击“设置登录信息”重新登录后重试')
+        && scheduleContent.includes('生成工资统计失败：'),
+    '工资统计失败时应在页面显示可行动的错误提示'
+);
+
+assert(
+    scheduleContent.includes('const responseError = await response.json().catch(() => ({}));')
+        && scheduleContent.includes('upstreamStatus')
+        && scheduleContent.includes('upstreamErrorCode === "TOKEN_INVALID"'),
+    '工资统计应识别代理响应中包装的上游 token 失效错误'
+);
+
 console.log('test-schedule-salary-ui passed');
