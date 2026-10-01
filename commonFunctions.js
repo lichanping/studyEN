@@ -198,12 +198,14 @@ function promptForMaskedPassword(message) {
         const actions = document.createElement('div');
         const cancelButton = document.createElement('button');
         const submitButton = document.createElement('button');
+        const viewport = window.visualViewport;
         let settled = false;
 
-        dialog.style.cssText = 'border:1px solid #8b929b;border-radius:8px;padding:20px;max-width:calc(100vw - 40px);color:CanvasText;background:Canvas;';
-        form.style.cssText = 'display:grid;gap:16px;min-width:min(320px,calc(100vw - 80px));';
+        dialog.style.cssText = 'position:fixed;margin:0;box-sizing:border-box;width:360px;border:1px solid #8b929b;border-radius:8px;padding:20px;overflow:auto;color:CanvasText;background:Canvas;';
+        form.style.cssText = 'display:grid;gap:16px;min-width:0;';
         actions.style.cssText = 'display:flex;justify-content:flex-end;gap:8px;';
         label.textContent = message;
+        label.style.overflowWrap = 'anywhere';
         label.htmlFor = 'lxMaskedPassword';
         input.id = 'lxMaskedPassword';
         input.type = 'password';
@@ -216,9 +218,22 @@ function promptForMaskedPassword(message) {
         submitButton.type = 'submit';
         submitButton.textContent = '确认';
 
+        const positionDialog = () => {
+            const width = viewport?.width || window.innerWidth;
+            const height = viewport?.height || window.innerHeight;
+            dialog.style.maxWidth = `${Math.max(0, width - 32)}px`;
+            dialog.style.maxHeight = `${Math.max(0, height - 32)}px`;
+            const bounds = dialog.getBoundingClientRect();
+            dialog.style.left = `${(viewport?.offsetLeft || 0) + (width - bounds.width) / 2}px`;
+            dialog.style.top = `${(viewport?.offsetTop || 0) + (height - bounds.height) / 2}px`;
+        };
+
         const finish = (value) => {
             if (settled) return;
             settled = true;
+            viewport?.removeEventListener('resize', positionDialog);
+            viewport?.removeEventListener('scroll', positionDialog);
+            window.removeEventListener('resize', positionDialog);
             dialog.close();
             dialog.remove();
             resolve(value);
@@ -241,6 +256,10 @@ function promptForMaskedPassword(message) {
         document.body.append(dialog);
         dialog.showModal();
         input.focus();
+        positionDialog();
+        viewport?.addEventListener('resize', positionDialog);
+        viewport?.addEventListener('scroll', positionDialog);
+        window.addEventListener('resize', positionDialog);
     });
 }
 

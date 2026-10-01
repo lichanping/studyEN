@@ -96,6 +96,15 @@ assert(
     '李校和麦穗的密码输入应使用带遮罩和 current-password 自动填充的输入框，而不是原生明文 prompt'
 );
 
+const maskedPasswordBody = getFunctionBody(commonFunctionsContent, 'promptForMaskedPassword');
+assert(
+    maskedPasswordBody.includes('window.visualViewport')
+        && maskedPasswordBody.includes('dialog.style.left')
+        && maskedPasswordBody.includes('dialog.style.maxWidth')
+        && maskedPasswordBody.includes("removeEventListener('resize'"),
+    '密码框应适配手机实际可见视口，并在关闭后清理视口监听'
+);
+
 assert(
     runScheduleQuotaCheckBody.includes('currentPlatformId !== "lixiaolaila"')
         && runScheduleQuotaCheckBody.includes('return;')
