@@ -33,7 +33,9 @@ const runScheduleQuotaCheckBody = getFunctionBody(content, 'runScheduleQuotaChec
 const checkQuotaFromScheduleBody = getFunctionBody(content, 'checkQuotaFromSchedule');
 const getCourseScheduleStateBody = getFunctionBody(content, 'getCourseScheduleState');
 const getQuotaScopeByDateBody = getFunctionBody(content, 'getQuotaScopeByDate');
+const loginLxBody = getFunctionBody(commonFunctionsContent, 'loginApp');
 const configureLxBody = getFunctionBody(commonFunctionsContent, 'configureLxCredentials');
+const loginMaisuiBody = getFunctionBody(commonFunctionsContent, 'loginMaisuiApp');
 const configureMaisuiBody = getFunctionBody(commonFunctionsContent, 'configureMaisuiCredentials');
 
 assert(
@@ -82,6 +84,16 @@ assert(
         && configureMaisuiBody.includes("localStorage.removeItem('maisui-access-token')")
         && !configureMaisuiBody.includes('x-token-c'),
     '麦穗重新设置登录信息时只应覆盖麦穗凭据/token，不应清理李校 token'
+);
+
+assert(
+    loginLxBody.includes('await promptForMaskedPassword(')
+        && configureLxBody.includes('await promptForMaskedPassword(')
+        && loginMaisuiBody.includes('await promptForMaskedPassword(')
+        && configureMaisuiBody.includes('await promptForMaskedPassword(')
+        && commonFunctionsContent.includes("input.type = 'password'")
+        && commonFunctionsContent.includes("input.autocomplete = 'current-password'"),
+    '李校和麦穗的密码输入应使用带遮罩和 current-password 自动填充的输入框，而不是原生明文 prompt'
 );
 
 assert(
