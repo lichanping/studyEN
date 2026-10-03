@@ -80,8 +80,9 @@ const dayHomework = homeworkContext.summarizeIncompleteHomework(homeworkContext.
 assert.deepStrictEqual(Array.from(dayHomework.dates), ['2026-10-02'], '日期边界包含首尾，不按登记日期归属');
 const monthlyDisclosure = homeworkContext.buildIncompleteHomeworkReport('杨开迪', monthHomework, { yearMonth: '2026-10' });
 const standaloneDisclosure = homeworkContext.buildIncompleteHomeworkReport('杨开迪', monthHomework, { startDate: '2026-10-01', endDate: '2026-10-31' });
+assert.strictEqual(monthlyDisclosure, '一、课后复习提交情况\n本月登记未交作业 2 次，正课日期：\n1. 2026-10-01\n2. 2026-10-02', '月末披露应只包含精简 section、次数及正课日期');
+assert.strictEqual(standaloneDisclosure, '【未交作业统计】\n学员：杨开迪\n统计范围：2026-10-01 至 2026-10-31\n未提交课后复习作业共 2 次，对应正课日期：\n1. 2026-10-01\n2. 2026-10-02\n以上根据当前保留的登记记录汇总。', '独立统计全文保持不变');
 for (const report of [monthlyDisclosure, standaloneDisclosure]) {
-    assert(report.includes('共 2 次，对应正课日期：'));
     assert(report.includes('1. 2026-10-01\n2. 2026-10-02'));
     assert(!/平台|baifendii|百分缔/.test(report));
     assert(!report.includes('正课的课后复习未提交'), '明细不重复未交说明');
@@ -138,7 +139,11 @@ async function testHomeworkReportOutputs() {
     await homeworkContext.generateMonthlySummary();
     assert.deepStrictEqual(outputs.map(output => output.action), ['copy', 'download', 'show']);
     assert.strictEqual(outputs[1].name, '杨开迪_2026-10_月末总结.txt', '月末总结文件名继续使用完整姓名');
-    assert(outputs[0].text.startsWith('【本月课后复习提交情况】'), '零课堂数据仍在报告最前面披露');
+    const expectedMonthlyReport = outputs[0].text;
+    const expectedTitleAndDisclosure = '开迪学员10🈷️月末总结\n\n一、课后复习提交情况\n本月登记未交作业 2 次，正课日期：\n1. 2026-10-01\n2. 2026-10-02\n\n二、本月核心学习数据📊';
+    assert(expectedMonthlyReport.startsWith(expectedTitleAndDisclosure), '零课堂数据仍应在标题下第一节披露');
+    assert.deepStrictEqual(expectedMonthlyReport.match(/^[一二三四五]、/gm), ['一、', '二、', '三、', '四、', '五、'], '零课堂报告 section 应顺延且连续');
+    assert(!/学员：|月份：|以上根据|【本月课后复习提交情况】/.test(expectedMonthlyReport), '月末披露不重复上下文和尾注');
     assert(outputs[0].text.includes('1. 2026-10-01\n2. 2026-10-02'));
     assert(outputs.every(output => output.text === outputs[0].text), '所有输出采用同一完整报告');
     assert(!/平台|baifendii|百分缔/.test(outputs[0].text + outputs[1].name));
@@ -148,14 +153,39 @@ async function testHomeworkReportOutputs() {
     assert(outputs.length === 1 && outputs[0].action === 'alert', '异步读取期间切换平台，不生成混合报告');
     inputs.platformSelect.value = 'baifendii';
     homeworkContext.calculateMonthlyAntiForgettingStats = async () => noFeedback;
-    const previewNode = { style: {}, innerHTML: '', prepend(element) { this.prefix = element.textContent; } };
+    const previewNode = { style: {}, innerHTML: '', textContent: '', prepend(element) { this.prefix = element.textContent; } };
     inputs.monthlySummaryPreview = previewNode;
     const createDownloadElement = homeworkContext.document.createElement;
     homeworkContext.document.createElement = tag => tag === 'div' ? { style: {}, textContent: '' } : createDownloadElement();
     await homeworkContext.previewMonthlySummaryData();
-    assert(typeof previewNode.prefix === 'string' && previewNode.prefix.startsWith('【本月课后复习提交情况】'), '预览数据也必须置顶披露');
-    assert(previewNode.prefix.includes('1. 2026-10-01\n2. 2026-10-02'));
-    assert(!/平台|baifendii|百分缔/.test(previewNode.prefix));
+    assert.strictEqual(previewNode.textContent, expectedMonthlyReport, '有记录时预览应与完整报告使用同一顺序和内容');
+    const zeroClassStats = homeworkContext.calculateMonthlyClassStats;
+    homeworkContext.calculateMonthlyClassStats = () => ({ classCount: 2, totalWords: 30, totalDuration: 8, totalNewWords: 20, totalReviewWords: 10, totalForgetNewWords: 1, newWordMasteryRate: 95 });
+    outputs.length = 0;
+    await homeworkContext.generateMonthlySummary();
+    assert(outputs[0].text.startsWith(expectedTitleAndDisclosure), '有课堂数据时仍在标题下第一节披露');
+    assert.deepStrictEqual(outputs[0].text.match(/^[一二三四五]、/gm), ['一、', '二、', '三、', '四、', '五、']);
+    assert(outputs[0].text.includes('本月正课次数：2节，共8小时'), '原学习统计正文不变');
+    assert(!outputs[0].text.includes('课后能主动打卡'), '编号调整不影响已有表扬屏蔽规则');
+    await homeworkContext.previewMonthlySummaryData();
+    assert.strictEqual(previewNode.textContent, outputs[0].text, '有课堂数据时预览与输出也保持一致');
+    homeworkContext.calculateMonthlyClassStats = zeroClassStats;
+    const retainedRecords = homeworkStorage.get('homework-review-incomplete-v1');
+    homeworkStorage.set('homework-review-incomplete-v1', JSON.stringify({ version: 1, records: [] }));
+    outputs.length = 0;
+    await homeworkContext.generateMonthlySummary();
+    const originalMonthlyReport = expectedMonthlyReport
+        .replace(`${monthlyDisclosure}\n\n`, '')
+        .replace(/^二、本月核心学习数据/m, '一、本月核心学习数据')
+        .replace(/^三、本月表现点评/m, '二、本月表现点评')
+        .replace(/^四、下月小目标/m, '三、下月小目标')
+        .replace(/^五、教练暖心寄语/m, '四、教练暖心寄语');
+    assert.strictEqual(outputs[0].text, originalMonthlyReport, '无记录时原标题、编号和正文逐字不变');
+    assert.deepStrictEqual(outputs[0].text.match(/^[一二三四五]、/gm), ['一、', '二、', '三、', '四、']);
+    await homeworkContext.previewMonthlySummaryData();
+    assert.strictEqual(previewNode.innerHTML, homeworkContext.buildPreviewHtml(zeroClassStats(), noFeedback), '无记录时预览保留原数据摘要');
+    assert.strictEqual(previewNode.textContent, '', '删除全部记录后预览不得保留之前的披露');
+    homeworkStorage.set('homework-review-incomplete-v1', retainedRecords);
     outputs.length = 0;
     homeworkContext.getStatsDateRangeSelection = () => ({ startDate: new Date(2026, 9, 1), endDate: new Date(2026, 9, 31) });
     homeworkContext.downloadIncompleteHomeworkStats();

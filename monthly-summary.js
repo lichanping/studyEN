@@ -74,9 +74,12 @@ export function summarizeIncompleteHomework(records, platformId, studentName, st
 export function buildIncompleteHomeworkReport(userName, summary, options = {}) {
     const { yearMonth, startDate, endDate } = options;
     if (yearMonth && summary.totalCount === 0) return '';
-    const title = yearMonth ? '【本月课后复习提交情况】' : '【未交作业统计】';
-    const context = yearMonth ? `学员：${userName}；月份：${yearMonth}` : `学员：${userName}\n统计范围：${startDate} 至 ${endDate}`;
-    const count = `${yearMonth ? '本月' : ''}未提交课后复习作业共 ${summary.totalCount} 次`;
+    if (yearMonth) {
+        return `一、课后复习提交情况\n本月登记未交作业 ${summary.totalCount} 次，正课日期：\n${summary.dates.map((date, index) => `${index + 1}. ${date}`).join('\n')}`;
+    }
+    const title = '【未交作业统计】';
+    const context = `学员：${userName}\n统计范围：${startDate} 至 ${endDate}`;
+    const count = `未提交课后复习作业共 ${summary.totalCount} 次`;
     const details = summary.totalCount > 0
         ? `${count}，对应正课日期：\n${summary.dates.map((date, index) => `${index + 1}. ${date}`).join('\n')}`
         : `${count}（所选范围暂无登记记录）`;
@@ -624,22 +627,25 @@ function buildMonthlySummaryReport(options) {
         highlights,
         improvements,
         goals,
-        allStats
+        allStats,
+        disclosure = ''
     } = options;
 
+    const sectionNumbers = disclosure ? ['二', '三', '四', '五'] : ['一', '二', '三', '四'];
     let report = `${reportStudentName}学员${monthDisplay}月末总结\n\n`;
-    report += '一、本月核心学习数据📊\n\n';
+    if (disclosure) report += `${disclosure}\n\n`;
+    report += `${sectionNumbers[0]}、本月核心学习数据📊\n\n`;
 
     if (classStats.classCount === 0 && classStats.totalWords === 0 && antiForgettingStats.totalReviewed === 0) {
         const leaveText = leaveCount > 0 ? `学员本月请假${leaveCount}次，` : '';
         report += `✅ 本月暂无课堂与复习数据，${leaveText}当前以学习安排衔接和下月节奏准备为主。\n\n`;
-        report += '二、本月表现点评🌟\n\n';
+        report += `${sectionNumbers[1]}、本月表现点评🌟\n\n`;
         report += '本月暂无可统计的课堂与复习表现，本段先不做表现评价。\n\n';
-        report += '三、下月小目标🎯\n\n';
+        report += `${sectionNumbers[2]}、下月小目标🎯\n\n`;
         goals.forEach((goal, index) => {
             report += `${index + 1}. ${goal}\n`;
         });
-        report += '\n四、教练暖心寄语💌\n\n';
+        report += `\n${sectionNumbers[3]}、教练暖心寄语💌\n\n`;
         report += buildWarmMessage(reportStudentName, allStats);
         return report;
     }
@@ -648,7 +654,7 @@ function buildMonthlySummaryReport(options) {
     report += `✅ ${getFormalStudyText(classStats)}\n`;
     report += `✅ 本月抗遗忘复盘：${antiForgettingStats.totalReviewed}个单词，${antiForgettingStats.totalReviewed === 0 ? '本月暂无抗遗忘复盘记录。' : getAntiForgettingText(antiForgettingStats.correctRate, antiForgettingStats.forgetCount)}\n\n`;
 
-    report += '二、本月表现点评🌟\n\n';
+    report += `${sectionNumbers[1]}、本月表现点评🌟\n\n`;
     report += '👍 闪光点\n\n';
     const defaultHighlights = classStats.classCount === 0 && antiForgettingStats.totalReviewed === 0
         ? ['▫️ 这个月我们先稍作调整，期待下个月一起把学习节奏慢慢找回来，继续稳稳往前走。']
@@ -662,12 +668,12 @@ function buildMonthlySummaryReport(options) {
         report += `${line}\n`;
     });
 
-    report += '\n三、下月小目标🎯\n\n';
+    report += `\n${sectionNumbers[2]}、下月小目标🎯\n\n`;
     goals.forEach((goal, index) => {
         report += `${index + 1}. ${goal}\n`;
     });
 
-    report += '\n四、教练暖心寄语💌\n\n';
+    report += `\n${sectionNumbers[3]}、教练暖心寄语💌\n\n`;
     report += buildWarmMessage(reportStudentName, allStats);
     return report;
 }
@@ -687,6 +693,32 @@ function buildPreviewHtml(classStats, antiForgettingStats) {
     ];
 
     return lines.map((line) => `<div style="color:#e5e7eb;font-size:15px;font-weight:600;">${line}</div>`).join('');
+}
+
+function buildMonthlySummaryForStudent({ userName, yearMonth, classStats, antiForgettingStats, leaveCount, homeworkSummary }) {
+    const allStats = {
+        ...classStats,
+        incompleteHomeworkCount: homeworkSummary.totalCount,
+        antiForgettingTotalReviewed: antiForgettingStats.totalReviewed,
+        antiForgettingCorrectRate: antiForgettingStats.correctRate,
+        antiForgettingSessionCount: antiForgettingStats.sessionCount,
+        antiForgettingTrend: antiForgettingStats.trend,
+        antiForgettingForgetCount: antiForgettingStats.forgetCount,
+        leaveCount
+    };
+
+    return buildMonthlySummaryReport({
+        reportStudentName: getMonthlySummaryStudentDisplayName(userName),
+        monthDisplay: getMonthDisplay(yearMonth),
+        classStats,
+        antiForgettingStats,
+        leaveCount,
+        highlights: generateHighlights(allStats),
+        improvements: generateImprovements(allStats),
+        goals: buildGoals(allStats),
+        allStats,
+        disclosure: buildIncompleteHomeworkReport(userName, homeworkSummary, { yearMonth })
+    });
 }
 
 export async function generateMonthlySummary() {
@@ -734,37 +766,14 @@ export async function generateMonthlySummary() {
         return;
     }
 
-    const allStats = {
-        ...classStats,
-        incompleteHomeworkCount: homeworkSummary.totalCount,
-        antiForgettingTotalReviewed: antiForgettingStats.totalReviewed,
-        antiForgettingCorrectRate: antiForgettingStats.correctRate,
-        antiForgettingSessionCount: antiForgettingStats.sessionCount,
-        antiForgettingTrend: antiForgettingStats.trend,
-        antiForgettingForgetCount: antiForgettingStats.forgetCount,
-        leaveCount
-    };
-
-    const highlights = generateHighlights(allStats);
-    const improvements = generateImprovements(allStats);
-    const goals = buildGoals(allStats);
-    const monthDisplay = getMonthDisplay(yearMonth);
-    const reportStudentName = getMonthlySummaryStudentDisplayName(userName);
-
-    const baseReport = buildMonthlySummaryReport({
-        reportStudentName,
-        monthDisplay,
+    const report = buildMonthlySummaryForStudent({
+        userName,
+        yearMonth,
         classStats,
         antiForgettingStats,
         leaveCount,
-        highlights,
-        improvements,
-        goals,
-        allStats
+        homeworkSummary
     });
-
-    const disclosure = buildIncompleteHomeworkReport(context.studentName, homeworkSummary, { yearMonth });
-    const report = disclosure ? `${disclosure}\n\n${baseReport}` : baseReport;
     outputHomeworkReport(report, `${userName}_${yearMonth}_月末总结.txt`);
 }
 
@@ -782,12 +791,14 @@ async function previewMonthlySummaryData() {
         alert(error.message);
         return;
     }
+    const autoLeaveCount = getLeaveCount(userName, yearMonth);
+    const leaveCount = resolveLeaveCountOverride(document.getElementById('monthlySummaryLeaves')?.value, autoLeaveCount);
     const classStats = calculateMonthlyClassStats(userName, yearMonth);
     let antiForgettingStats;
     try {
         antiForgettingStats = await calculateMonthlyAntiForgettingStats(userName, yearMonth);
     } catch (_) {
-        antiForgettingStats = { totalReviewed: 0, correctRate: 0 };
+        antiForgettingStats = { totalReviewed: 0, totalCorrect: 0, correctRate: 0, forgetCount: 0, sessionCount: 0, trend: 'stable' };
     }
     try {
         assertHomeworkContext(context);
@@ -799,15 +810,18 @@ async function previewMonthlySummaryData() {
     const preview = document.getElementById('monthlySummaryPreview');
     if (preview) {
         preview.style.display = 'block';
-        preview.innerHTML = buildPreviewHtml(classStats, antiForgettingStats);
-        const disclosure = buildIncompleteHomeworkReport(context.studentName, homeworkSummary, { yearMonth });
-        if (disclosure) {
-            const block = document.createElement('div');
-            block.textContent = disclosure;
-            block.style.whiteSpace = 'pre-wrap';
-            block.style.overflowWrap = 'anywhere';
-            block.style.marginBottom = '16px';
-            preview.prepend(block);
+        preview.textContent = '';
+        if (homeworkSummary.totalCount > 0) {
+            preview.innerHTML = '';
+            preview.style.whiteSpace = 'pre-wrap';
+            preview.style.overflowWrap = 'anywhere';
+            preview.style.color = '#e5e7eb';
+            preview.textContent = buildMonthlySummaryForStudent({ userName, yearMonth, classStats, antiForgettingStats, leaveCount, homeworkSummary });
+        } else {
+            preview.style.whiteSpace = '';
+            preview.style.overflowWrap = '';
+            preview.style.color = '';
+            preview.innerHTML = buildPreviewHtml(classStats, antiForgettingStats);
         }
     }
 }
