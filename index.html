@@ -136,6 +136,8 @@
     <div class="form-row">
         <button id="recordLeaveButton">记录请假</button>
         <button id="viewLeaveRecordsButton">查看请假记录</button>
+        <button id="recordIncompleteHomeworkButton">记录未交作业</button>
+        <button id="viewIncompleteHomeworkRecordsButton">查看未交记录</button>
     </div>
     <div class="form-row">
         <label id="todayReviewDates"></label>
@@ -152,6 +154,7 @@
         <label><input type="radio" id="statsModeMonth" name="statsMode" value="month">按月</label>
         <input type="month" id="statsMonthInput" style="padding:4px;">
         <button id="downloadFileButton">抗遗忘统计</button>
+        <button id="incompleteHomeworkStatsButton">未交作业统计</button>
         <button id="downloadFormalButton">正课统计</button>
         <button id="downloadSalaryButton">工资统计</button>
     </div>
@@ -225,6 +228,9 @@
     document.getElementById("monthlySummaryButton").addEventListener("click", monthlySummary.monthlySummaryOpen);
     document.getElementById("recordLeaveButton").addEventListener("click", monthlySummary.recordLeaveOpen);
     document.getElementById("viewLeaveRecordsButton").addEventListener("click", monthlySummary.viewLeaveRecordsOpen);
+    document.getElementById("recordIncompleteHomeworkButton").addEventListener("click", monthlySummary.recordIncompleteHomeworkOpen);
+    document.getElementById("viewIncompleteHomeworkRecordsButton").addEventListener("click", monthlySummary.viewIncompleteHomeworkRecordsOpen);
+    document.getElementById("incompleteHomeworkStatsButton").addEventListener("click", monthlySummary.downloadIncompleteHomeworkStats);
 
     const statsMonthInput = document.getElementById("statsMonthInput");
     if (statsMonthInput) {

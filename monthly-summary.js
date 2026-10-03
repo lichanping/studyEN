@@ -1,4 +1,5 @@
-import { copyToClipboard, showLongText, formatLocalDateYmd } from './commonFunctions.js';
+import { copyToClipboard, showLongText, formatLocalDateYmd, getStatsDateRangeSelection } from './commonFunctions.js';
+import './student-name-alias.js';
 
 const LEAVES_STORAGE_SUFFIX = '_leaves';
 const CLASS_STATS_SUFFIX = '_classStatistics';
@@ -8,6 +9,79 @@ const MONTHLY_MODAL_ID = 'monthlySummaryModal';
 const LEAVE_MODAL_ID = 'leaveRecordModal';
 const LEAVE_LIST_MODAL_ID = 'leaveRecordsListModal';
 const CLASS_TYPES_FOR_MONTHLY_STATS = new Set(['词汇课', '阅读完型语法课', '体验课']);
+const INCOMPLETE_HOMEWORK_STORAGE_KEY = 'homework-review-incomplete-v1';
+
+function normalizeStudentName(value) {
+    return globalThis.StudentNameAlias?.normalizeStudentName(value) ?? String(value || '').trim();
+}
+
+function validateHomeworkDate(value) {
+    if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+        throw new Error('请选择有效的正课日期');
+    }
+    const [year, month, day] = value.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    if (formatLocalDateYmd(date) !== value) throw new Error('请选择有效的正课日期');
+    return value;
+}
+
+function normalizeHomeworkRecord(record) {
+    const platformId = typeof record?.platformId === 'string' ? record.platformId.trim() : '';
+    const studentName = typeof record?.studentName === 'string' ? normalizeStudentName(record.studentName.trim()) : '';
+    if (!platformId || !studentName) throw new Error('请先选择平台和学员');
+    return { platformId, studentName, classDate: validateHomeworkDate(record.classDate) };
+}
+
+export function readIncompleteHomeworkRecords() {
+    const raw = localStorage.getItem(INCOMPLETE_HOMEWORK_STORAGE_KEY);
+    if (raw === null) return [];
+    try {
+        const data = JSON.parse(raw);
+        if (data?.version !== 1 || !Array.isArray(data.records)) throw new Error('invalid records');
+        return data.records.map(normalizeHomeworkRecord);
+    } catch {
+        throw new Error('未交作业记录读取失败，请检查本机数据；未覆盖原记录');
+    }
+}
+
+function matchesHomeworkRecord(record, target) {
+    return record.platformId === target.platformId && record.studentName === target.studentName && record.classDate === target.classDate;
+}
+
+export function saveIncompleteHomeworkRecord(record, now = new Date()) {
+    const target = normalizeHomeworkRecord(record);
+    if (target.classDate > formatLocalDateYmd(now)) throw new Error('正课日期不能晚于今天');
+    const records = readIncompleteHomeworkRecords().filter(item => !matchesHomeworkRecord(item, target));
+    records.push(target);
+    localStorage.setItem(INCOMPLETE_HOMEWORK_STORAGE_KEY, JSON.stringify({ version: 1, records }));
+}
+
+export function deleteIncompleteHomeworkRecord(record) {
+    const target = normalizeHomeworkRecord(record);
+    const records = readIncompleteHomeworkRecords().filter(item => !matchesHomeworkRecord(item, target));
+    localStorage.setItem(INCOMPLETE_HOMEWORK_STORAGE_KEY, JSON.stringify({ version: 1, records }));
+}
+
+export function summarizeIncompleteHomework(records, platformId, studentName, startDate, endDate) {
+    validateHomeworkDate(startDate);
+    validateHomeworkDate(endDate);
+    if (startDate > endDate) throw new Error('统计日期范围无效');
+    const normalizedName = normalizeStudentName(String(studentName || '').trim());
+    const dates = [...new Set(records.filter(record => record.platformId === platformId && record.studentName === normalizedName && record.classDate >= startDate && record.classDate <= endDate).map(record => record.classDate))].sort();
+    return { totalCount: dates.length, dates };
+}
+
+export function buildIncompleteHomeworkReport(userName, summary, options = {}) {
+    const { yearMonth, startDate, endDate } = options;
+    if (yearMonth && summary.totalCount === 0) return '';
+    const title = yearMonth ? '【本月课后复习提交情况】' : '【未交作业统计】';
+    const context = yearMonth ? `学员：${userName}；月份：${yearMonth}` : `学员：${userName}\n统计范围：${startDate} 至 ${endDate}`;
+    const count = `${yearMonth ? '本月' : ''}未提交课后复习作业共 ${summary.totalCount} 次`;
+    const details = summary.totalCount > 0
+        ? `${count}，对应正课日期：\n${summary.dates.map((date, index) => `${index + 1}. ${date}`).join('\n')}`
+        : `${count}（所选范围暂无登记记录）`;
+    return `${title}\n${context}\n${details}\n以上根据当前保留的登记记录汇总。`;
+}
 
 function parseLocalDateYmd(dateStr) {
     if (!dateStr) return new Date(NaN);
@@ -141,6 +215,134 @@ function styleModalControls(panel) {
 
 function getSelectedUserName() {
     return document.getElementById('userName')?.value || '';
+}
+
+function getHomeworkContext() {
+    const config = window.APP_MEETING_CONFIG;
+    const platformId = document.getElementById('platformSelect')?.value || config?.getCurrentPlatformId?.() || localStorage.getItem('current-platform-v1') || 'lixiaolaila';
+    const studentName = normalizeStudentName(getSelectedUserName());
+    if (!studentName) throw new Error('请先选择学员');
+    return { platformId: config?.normalizePlatformId?.(platformId) || platformId, studentName };
+}
+
+function assertHomeworkContext(context) {
+    const current = getHomeworkContext();
+    if (context.platformId !== current.platformId || context.studentName !== current.studentName) {
+        throw new Error('所选学员或平台已变化，请关闭后重新打开');
+    }
+}
+
+function addHomeworkContextLabel(panel, context) {
+    const label = document.createElement('div');
+    label.textContent = `学员：${context.studentName}；平台：${context.platformId}`;
+    label.style.overflowWrap = 'anywhere';
+    label.style.marginBottom = '16px';
+    panel.appendChild(label);
+}
+
+export function recordIncompleteHomeworkOpen() {
+    try {
+        const context = getHomeworkContext();
+        const panel = createModalShell('incompleteHomeworkModal', '记录未交作业');
+        addHomeworkContextLabel(panel, context);
+        const today = formatLocalDateYmd(new Date());
+        panel.insertAdjacentHTML('beforeend', `
+            <div style="display:grid;gap:16px;">
+                <label for="incompleteHomeworkDate">正课日期</label>
+                <input type="date" id="incompleteHomeworkDate" value="${today}" max="${today}">
+                <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                    <button id="saveIncompleteHomeworkButton">保存</button>
+                    <button id="closeIncompleteHomeworkButton">关闭</button>
+                </div>
+            </div>
+        `);
+        styleModalControls(panel);
+        panel.querySelector('#saveIncompleteHomeworkButton').addEventListener('click', () => {
+            try {
+                assertHomeworkContext(context);
+                const classDate = panel.querySelector('#incompleteHomeworkDate').value;
+                saveIncompleteHomeworkRecord({ ...context, classDate });
+                safeRemoveElementById('incompleteHomeworkModal');
+                showLongText(`已记录 ${context.studentName} ${classDate} 的未交作业。`, { useHtml: false });
+            } catch (error) {
+                alert(error.message);
+            }
+        });
+        panel.querySelector('#closeIncompleteHomeworkButton').addEventListener('click', () => safeRemoveElementById('incompleteHomeworkModal'));
+    } catch (error) {
+        alert(error.message);
+    }
+}
+
+export function viewIncompleteHomeworkRecordsOpen() {
+    try {
+        const context = getHomeworkContext();
+        const records = readIncompleteHomeworkRecords();
+        const panel = createModalShell('incompleteHomeworkListModal', '查看未交记录');
+        addHomeworkContextLabel(panel, context);
+        const list = document.createElement('div');
+        list.style.display = 'grid';
+        list.style.gap = '8px';
+        panel.appendChild(list);
+        const render = currentRecords => {
+            list.replaceChildren();
+            const dates = [...new Set(currentRecords.filter(record => record.platformId === context.platformId && record.studentName === context.studentName).map(record => record.classDate))].sort();
+            if (dates.length === 0) list.textContent = '暂无未交作业记录';
+            dates.forEach(classDate => {
+                const row = document.createElement('div');
+                row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;';
+                const text = document.createElement('span');
+                text.textContent = `${classDate} 正课`;
+                const button = document.createElement('button');
+                button.textContent = '删除';
+                button.addEventListener('click', () => {
+                    try {
+                        assertHomeworkContext(context);
+                        deleteIncompleteHomeworkRecord({ ...context, classDate });
+                        render(readIncompleteHomeworkRecords());
+                    } catch (error) {
+                        alert(error.message);
+                    }
+                });
+                row.append(text, button);
+                list.appendChild(row);
+            });
+            styleModalControls(panel);
+        };
+        const close = document.createElement('button');
+        close.textContent = '关闭';
+        close.style.marginTop = '16px';
+        close.addEventListener('click', () => safeRemoveElementById('incompleteHomeworkListModal'));
+        panel.appendChild(close);
+        render(records);
+    } catch (error) {
+        alert(error.message);
+    }
+}
+
+function outputHomeworkReport(report, filename) {
+    copyToClipboard(report);
+    const url = URL.createObjectURL(new Blob([report], { type: 'text/plain;charset=utf-8' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(url);
+    showLongText(report, { useHtml: false });
+}
+
+export function downloadIncompleteHomeworkStats() {
+    try {
+        const context = getHomeworkContext();
+        const range = getStatsDateRangeSelection();
+        const startDate = formatLocalDateYmd(range.startDate);
+        const endDate = formatLocalDateYmd(range.endDate);
+        const summary = summarizeIncompleteHomework(readIncompleteHomeworkRecords(), context.platformId, context.studentName, startDate, endDate);
+        const report = buildIncompleteHomeworkReport(context.studentName, summary, { startDate, endDate });
+        outputHomeworkReport(report, `${context.studentName}_${startDate}_${endDate}_未交作业统计.txt`);
+    } catch (error) {
+        alert(error.message);
+    }
 }
 
 function getSelectedMonthInputValue() {
@@ -323,7 +525,7 @@ const HIGHLIGHTS_LIBRARY = [
     { condition: (stats) => stats.antiForgettingCorrectRate >= 90, text: '▫️ 抗遗忘意识足，主动配合复盘，旧词巩固到位✅' },
     { condition: (stats) => stats.classCount >= 4, text: '▫️ 课堂专注认真，积极互动，单词疑问及时问，态度超赞👍' },
     { condition: (stats) => stats.antiForgettingTrend === 'rising', text: '▫️ 易混词/易错词能及时订正，二次出错率低，进步超明显✨' },
-    { condition: (stats) => stats.totalDuration >= 8, text: '▫️ 自主学习性强，课后能主动打卡，坚持超给力🌟' },
+    { condition: (stats) => stats.totalDuration >= 8 && !(stats.incompleteHomeworkCount > 0), text: '▫️ 自主学习性强，课后能主动打卡，坚持超给力🌟' },
     { condition: (stats) => stats.newWordMasteryRate >= 90, text: '▫️ 本月新学内容掌握得比较扎实，课堂吸收效率不错👏' }
 ];
 
@@ -495,8 +697,19 @@ export async function generateMonthlySummary() {
     }
 
     const yearMonth = getSelectedMonthInputValue();
-    if (!/^\d{4}-\d{2}$/.test(yearMonth)) {
+    if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(yearMonth)) {
         alert('请输入有效的月份（格式：YYYY-MM）');
+        return;
+    }
+
+    let context;
+    let homeworkSummary;
+    try {
+        context = getHomeworkContext();
+        const range = getMonthRange(yearMonth);
+        homeworkSummary = summarizeIncompleteHomework(readIncompleteHomeworkRecords(), context.platformId, context.studentName, formatLocalDateYmd(range.startDate), formatLocalDateYmd(range.endDate));
+    } catch (error) {
+        alert(error.message);
         return;
     }
 
@@ -513,8 +726,17 @@ export async function generateMonthlySummary() {
         antiForgettingStats = { totalReviewed: 0, totalCorrect: 0, correctRate: 0, forgetCount: 0, sessionCount: 0, trend: 'stable' };
     }
 
+    try {
+        assertHomeworkContext(context);
+        if (yearMonth !== getSelectedMonthInputValue()) throw new Error('所选月份已变化，请重新生成');
+    } catch (error) {
+        alert(error.message);
+        return;
+    }
+
     const allStats = {
         ...classStats,
+        incompleteHomeworkCount: homeworkSummary.totalCount,
         antiForgettingTotalReviewed: antiForgettingStats.totalReviewed,
         antiForgettingCorrectRate: antiForgettingStats.correctRate,
         antiForgettingSessionCount: antiForgettingStats.sessionCount,
@@ -529,7 +751,7 @@ export async function generateMonthlySummary() {
     const monthDisplay = getMonthDisplay(yearMonth);
     const reportStudentName = getMonthlySummaryStudentDisplayName(userName);
 
-    const report = buildMonthlySummaryReport({
+    const baseReport = buildMonthlySummaryReport({
         reportStudentName,
         monthDisplay,
         classStats,
@@ -541,20 +763,25 @@ export async function generateMonthlySummary() {
         allStats
     });
 
-    copyToClipboard(report);
-
-    const blob = new Blob([report], { type: 'text/plain;charset=utf-8' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `${userName}_${yearMonth}_月末总结.txt`;
-    link.click();
-
-    showLongText(report.replace(/\n/g, '<br>'));
+    const disclosure = buildIncompleteHomeworkReport(context.studentName, homeworkSummary, { yearMonth });
+    const report = disclosure ? `${disclosure}\n\n${baseReport}` : baseReport;
+    outputHomeworkReport(report, `${userName}_${yearMonth}_月末总结.txt`);
 }
 
 async function previewMonthlySummaryData() {
     const userName = getSelectedUserName();
     const yearMonth = getSelectedMonthInputValue();
+    let context;
+    let homeworkSummary;
+    try {
+        context = getHomeworkContext();
+        if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(yearMonth)) throw new Error('请输入有效的月份');
+        const range = getMonthRange(yearMonth);
+        homeworkSummary = summarizeIncompleteHomework(readIncompleteHomeworkRecords(), context.platformId, context.studentName, formatLocalDateYmd(range.startDate), formatLocalDateYmd(range.endDate));
+    } catch (error) {
+        alert(error.message);
+        return;
+    }
     const classStats = calculateMonthlyClassStats(userName, yearMonth);
     let antiForgettingStats;
     try {
@@ -562,10 +789,26 @@ async function previewMonthlySummaryData() {
     } catch (_) {
         antiForgettingStats = { totalReviewed: 0, correctRate: 0 };
     }
+    try {
+        assertHomeworkContext(context);
+        if (yearMonth !== getSelectedMonthInputValue()) throw new Error('所选月份已变化，请重新预览');
+    } catch (error) {
+        alert(error.message);
+        return;
+    }
     const preview = document.getElementById('monthlySummaryPreview');
     if (preview) {
         preview.style.display = 'block';
         preview.innerHTML = buildPreviewHtml(classStats, antiForgettingStats);
+        const disclosure = buildIncompleteHomeworkReport(context.studentName, homeworkSummary, { yearMonth });
+        if (disclosure) {
+            const block = document.createElement('div');
+            block.textContent = disclosure;
+            block.style.whiteSpace = 'pre-wrap';
+            block.style.overflowWrap = 'anywhere';
+            block.style.marginBottom = '16px';
+            preview.prepend(block);
+        }
     }
 }
 
