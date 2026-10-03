@@ -245,30 +245,29 @@ function runSelfReview(platformId, studentName, now = beijingDate(2026, 10, 3, 1
 }
 
 const expectedHomeworkText = [
-    '课后复习要求',
+    '开迪妈妈您好，今日作业如下：',
     '',
-    '开迪妈妈您好：',
+    '1. 抄写：每个单词三遍，边写边读。',
+    '2. 默写：英翻中、中翻英各默写一遍，再对照订正。',
+    '3. 朗读：全部单词朗读两遍。',
+    '4. 遗忘或写错的词记入生词本，次日复习自测。',
     '',
-    '开迪目前正在进行已学词汇的第二轮巩固。为了把学过的单词记稳、读准、写熟，请您协助她完成以下课后作业：',
-    '',
-    '1. 书写作业：当天布置的单词，每个抄写三遍，无论课堂上是否答对，都需要完成。边写边读、对应中文意思，完成后核对订正，拍照发到学习群。',
-    '2. 语音打卡：当天作业单词大声朗读两遍，将朗读语音发到学习群。',
-    '3. 遗忘词复习：当天遗忘或写错的单词加入生词本，次日继续复习、自测，确认能够独立认读、理解和拼写。',
-    '',
-    '截止：今晚22:20前',
-    '',
-    '请在本次作业截止时间前，将作业照片和朗读语音全部提交到群里，两项都完成才算完成本次打卡。课堂上回答正确，也不能代替课后练习。',
-    '',
-    '如有特殊情况，请提前在群里说明。未提交的课后复习作业，我们会按对应的正课日期如实记录，并在月末总结中反馈，请您协助开迪按要求完成。',
-    '',
-    '感谢您的配合，让我们一起帮助开迪把学过的单词真正掌握。'
+    '请于今晚22:20前在群内交齐抄写、默写照片及朗读语音。',
+    '特殊情况提前说明；未交作业按正课日期登记，月末反馈。'
 ].join('\n');
 
+const approvedHomeworkText = read('docs/PRD-homework-incomplete-records.md')
+    .match(/```text\n(开迪妈妈您好[\s\S]*?)\n```/)[1];
+assert.strictEqual(
+    expectedHomeworkText.replace('今晚22:20前', '【动态截止时间】'),
+    approvedHomeworkText,
+    '专项作业测试全文应与已确认 PRD 一致'
+);
 assert.strictEqual(runSelfReview('baifendii', '杨开迪'), expectedHomeworkText, 'BFD 杨开迪应输出已确认的专项作业全文');
 assert.strictEqual(runSelfReview('baifendii', ' 杨开迪 '), expectedHomeworkText, '姓名首尾空白不影响专项匹配');
 assert.strictEqual(
     runSelfReview('baifendii', '杨开迪', beijingDate(2026, 10, 3, 22, 0)),
-    expectedHomeworkText.replace('截止：今晚22:20前', '截止：明天10:00前'),
+    expectedHomeworkText.replace('今晚22:20前', '明天10:00前'),
     '专项文案应沿用动态截止时间'
 );
 
@@ -280,6 +279,7 @@ for (const [platformId, studentName] of [
     ['baifendii', ''],
     ['baifendii', null],
     ['lixiaolaila', '杨开迪'],
+    ['maisuiyingyu', '杨开迪'],
     ['maisui', '杨开迪']
 ]) {
     assert.strictEqual(runSelfReview(platformId, studentName), normalHomeworkText, '非目标组合的全文应保持不变');
