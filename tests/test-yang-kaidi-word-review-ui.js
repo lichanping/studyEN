@@ -1,6 +1,7 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
+const vm = require('vm');
 
 const root = path.join(__dirname, '..');
 const read = (fileName) => fs.readFileSync(path.join(root, fileName), 'utf8');
@@ -14,6 +15,9 @@ assert(antiForgettingHtml.includes('id="yangKaidiWordReviewButton"'));
 assert(antiForgettingHtml.includes("window.location.href = 'yang-kaidi-word-review.html'"));
 
 for (const id of [
+    'myCoachSourceButton',
+    'oldCoachSourceButton',
+    'sourceLabel',
     'bookListView',
     'reviewView',
     'forgottenView',
@@ -36,15 +40,18 @@ assert(!page.includes('id="copyReportButton"'), '生成后会自动复制，不�
 assert(!page.includes('id="downloadReportButton"'), '生成后会自动下载，不应保留重复的下载按钮');
 assert(page.includes('yang-kaidi-word-review.css'));
 assert(page.includes('type="module" src="yang-kaidi-word-review.js"'));
-assert.equal((controller.match(/'2026-\d{2}-\d{2}'/g) || []).length, 30, '应登记 30 个源 TXT 文件');
-assert(controller.includes("fetch(`data/杨开迪/${bookId}.txt`)"));
+assert(controller.includes('getSourceBooks(activeSourceId)'));
+assert(controller.includes('fetch(book.path)'));
+assert(controller.includes('activeSourceId = DEFAULT_REVIEW_SOURCE'));
+assert(controller.includes('switchReviewSource'));
 assert(controller.includes('createYangKaidiWordReviewRepository'));
 assert(controller.includes('sourceFingerprint'));
 assert(controller.includes('repository.completeBook'));
 assert(controller.includes("elements.completeBookButton.textContent = '保存中...'"));
 assert(controller.includes("elements.completeBookButton.textContent = '已保存 ✓'"));
 assert(controller.includes("source: 'yangKaidiHistory'"));
-assert(controller.includes('syncBfdHistoryReviewResults(localStorage, STUDENT_NAME, loadedResults)'));
+assert(controller.includes("selectSourceRecords(loadedResults, 'old-coach')"));
+assert(controller.includes("if (getRecordSourceId(result) === 'old-coach')"));
 assert(controller.includes('showReportText(currentReportText)'));
 assert(controller.includes('copyToClipboard(currentReportText)'));
 assert(controller.includes('downloadText(currentReportText'));
@@ -92,4 +99,126 @@ assert(
     '窄屏和平板下单词列表应保持一行一个单词'
 );
 
-console.log('test-yang-kaidi-word-review-ui passed');
+async function verifySourceController() {
+    const core = await import('../yang-kaidi-word-review-core.mjs');
+    const historyBook = core.getSourceBooks('old-coach')[0];
+    const lessonBook = core.getSourceBooks('my-coach')[0];
+    const historyResult = { bookId: historyBook.bookId, bookNumber: 1, testedCount: 1, forgottenCount: 0, forgottenWords: [] };
+    const lessonResult = { bookId: lessonBook.bookId, sourceId: 'my-coach', bookNumber: 1, testedCount: 2, forgottenCount: 0, forgottenWords: [] };
+    const storedResults = new Map([[historyResult.bookId, historyResult], [lessonResult.bookId, lessonResult]]);
+    const salarySyncs = [];
+    const draftReads = [];
+    const context = vm.createContext({
+        ...core,
+        activeSourceId: 'my-coach',
+        STUDENT_NAME: '杨开迪',
+        books: [], results: [], currentResult: null,
+        elements: { currentBookLabel: {}, overallProgress: {} },
+        draftWriteQueue: Promise.resolve(), draftWriteError: null,
+        localStorage: {},
+        repository: {
+            getAllResults: async () => [...storedResults.values()],
+            getDraft: async (bookId) => { draftReads.push(bookId); return null; },
+            completeBook: async (result) => storedResults.set(result.bookId, result)
+        },
+        fetch: async (fileName) => ({ ok: true, text: async () => read(fileName) }),
+        syncBfdHistoryReviewResults: (_storage, _student, results) => { salarySyncs.push(results); return { ok: true }; },
+        syncHistorySalary: () => salarySyncs.push('completion'),
+        renderBookList: () => {}, showToast: () => {}, openBook: async () => {},
+        window: { confirm: () => true }, Date
+    });
+    const loadCode = controller.slice(controller.indexOf('async function loadBooks('), controller.indexOf('\nfunction renderBookList('));
+    vm.runInContext(`${loadCode}; this.loadBooks = loadBooks;`, context);
+    await context.loadBooks();
+    assert.equal(salarySyncs.length, 0, '默认加载正课不得补同步历史工资');
+    assert.equal(context.books.length, 1);
+    assert.equal(context.books[0].totalWords, 75);
+    assert.equal(context.results.length, 1);
+    assert.equal(context.results[0].bookId, lessonBook.bookId);
+    assert.deepEqual(draftReads, [lessonBook.bookId]);
+
+    context.currentBook = context.books[0];
+    context.currentEntries = context.currentBook.entries.map((entry, index) => ({ ...entry, tested: index < 2, forgotten: index === 0 }));
+    const completeCode = controller.slice(controller.indexOf('async function completeCurrentBook('), controller.indexOf('\nfunction syncHistorySalary('));
+    vm.runInContext(`${completeCode}; this.completeCurrentBook = completeCurrentBook;`, context);
+    await context.completeCurrentBook();
+    assert.equal(salarySyncs.length, 0, '完成正课不得写入工资');
+    assert.equal(storedResults.get(lessonBook.bookId).testedCount, 2);
+    assert.equal(storedResults.get(lessonBook.bookId).forgottenCount, 1);
+    assert.equal(storedResults.get(lessonBook.bookId).sourceId, 'my-coach');
+    assert.strictEqual(storedResults.get(historyBook.bookId), historyResult, '正课保存不覆盖旧结果');
+    assert.equal(context.results.length, 1, '完成后仍只展示当前来源');
+
+    context.fetch = async () => ({ ok: true, text: async () => 'broken no tab' });
+    await assert.rejects(context.loadBooks(), /正课.*2026-10-02.*第 1 行缺少 Tab/);
+    context.fetch = async (fileName) => ({ ok: true, text: async () => read(fileName) });
+    context.activeSourceId = 'old-coach';
+    await context.loadBooks();
+    assert.equal(context.books.length, 30, '新来源加载失败不影响切换历史');
+    assert.equal(context.results.length, 1);
+    assert.equal(salarySyncs.length, 1);
+    assert.deepEqual(salarySyncs[0].map((result) => result.bookId), [historyBook.bookId], '历史补同步排除正课结果');
+    assert(draftReads.includes(historyBook.bookId), '历史草稿仍按原主键读取');
+
+    context.currentResult = null;
+    context.currentBook = context.books[0];
+    context.currentEntries = context.currentBook.entries.map((entry, index) => ({ ...entry, tested: index === 0 }));
+    await context.completeCurrentBook();
+    assert.equal(salarySyncs[salarySyncs.length - 1], 'completion', '历史完成仍触发原工资同步');
+
+    context.activeSourceId = 'my-coach';
+    context.currentResult = null;
+    context.currentBook = { ...lessonBook, entries: core.parseTabbedWordList(read(lessonBook.path), lessonBook.bookId), draft: {} };
+    context.currentEntries = context.currentBook.entries.map((entry, index) => ({ ...entry, tested: index === 0 }));
+    context.changingSource = false;
+    context.savingBook = false;
+    context.view = 'reviewView';
+    context.showView = (view) => { context.view = view; };
+    context.elements.sourceLabel = { textContent: '正课词库' };
+    context.elements.reportOutput = { textContent: '正课报告' };
+    context.elements.reportStatus = {};
+    context.elements.forgottenSummary = { replaceChildren: () => {} };
+    context.elements.bookList = { replaceChildren: () => {} };
+    context.elements.myCoachSourceButton = {};
+    context.elements.oldCoachSourceButton = {};
+    context.sourceButtons = [context.elements.myCoachSourceButton, context.elements.oldCoachSourceButton];
+    context.setSourceButtonsDisabled = (disabled) => context.sourceButtons.forEach((button) => { button.disabled = disabled; });
+    context.setActiveButton = () => {};
+    context.repository.putDraft = async () => { throw new Error('storage write failed'); };
+    const draftCode = controller.slice(controller.indexOf('function queueDraftSave('), controller.indexOf('\nasync function completeCurrentBook('));
+    vm.runInContext(draftCode, context);
+    await context.switchReviewSource('old-coach');
+    assert.equal(context.activeSourceId, 'my-coach', '草稿写入失败不得切换来源');
+    assert.equal(context.view, 'reviewView');
+    assert.equal(context.currentEntries[0].tested, true, '写入失败保留当前测试状态');
+    assert.equal(context.sourceButtons[0].disabled, false);
+    let recoveredDraft;
+    context.repository.putDraft = async (draft) => { recoveredDraft = draft; };
+    await context.switchReviewSource('old-coach');
+    assert.equal(context.activeSourceId, 'old-coach', '重试保存成功后可切换');
+    assert.equal(recoveredDraft.bookId, lessonBook.bookId);
+    assert.equal(recoveredDraft.sourceId, 'my-coach');
+    assert.equal(context.elements.reportOutput.textContent, '', '切换来源清除旧报告');
+    assert.equal(context.elements.sourceLabel.textContent, '历史词库');
+
+    const played = [];
+    context.audioCache = new Map();
+    context.Audio = class {
+        constructor(url) { this.url = url; }
+        async play() {
+            if (!['sounds/Abroad.mp3', 'sounds/Engineer.mp3'].includes(this.url)) throw new Error('missing case-sensitive path');
+            played.push(this.url);
+        }
+    };
+    context.fetch = async () => { throw new Error('已有静态音频不应请求TTS'); };
+    const playCode = controller.slice(controller.indexOf('async function playEnglish('), controller.indexOf('\nfunction renderForgottenWords('));
+    vm.runInContext(`${playCode}; this.playEnglish = playEnglish;`, context);
+    await context.playEnglish('abroad');
+    await context.playEnglish('engineer');
+    assert.deepEqual(played, ['sounds/Abroad.mp3', 'sounds/Engineer.mp3']);
+}
+
+verifySourceController().then(() => console.log('test-yang-kaidi-word-review-ui passed')).catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+});

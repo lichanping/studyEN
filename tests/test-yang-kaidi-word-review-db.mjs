@@ -150,4 +150,19 @@ assert(
     '读取已有不完整结果时应自动回写修复后的完整记录'
 );
 
+const sameDayHistoryDraft = { ...draft, bookId: '2026-10-02' };
+const sameDayLessonDraft = { ...draft, bookId: 'my-coach:2026-10-02', sourceId: 'my-coach', bookDate: '2026-10-02' };
+await repository.putDraft(sameDayHistoryDraft);
+await repository.putDraft(sameDayLessonDraft);
+assert.deepEqual(await repository.getDraft('2026-10-02'), sameDayHistoryDraft);
+assert.deepEqual(await repository.getDraft('my-coach:2026-10-02'), sameDayLessonDraft);
+await repository.completeBook({ ...result, bookId: sameDayLessonDraft.bookId, sourceId: 'my-coach', bookDate: '2026-10-02' });
+assert.equal(await repository.getDraft(sameDayLessonDraft.bookId), undefined);
+assert.deepEqual(await repository.getDraft(sameDayHistoryDraft.bookId), sameDayHistoryDraft, '完成正课只删除本来源草稿');
+await repository.completeBook({ ...result, bookId: sameDayHistoryDraft.bookId });
+const historyBeforeLessonEdit = await repository.getResult(sameDayHistoryDraft.bookId);
+await repository.putResult({ ...await repository.getResult(sameDayLessonDraft.bookId), forgottenWords: [] });
+assert.equal((await repository.getResult(sameDayLessonDraft.bookId)).forgottenCount, 0);
+assert.deepEqual(await repository.getResult(sameDayHistoryDraft.bookId), historyBeforeLessonEdit, '修改正课遗忘词不改历史同日结果');
+
 console.log('test-yang-kaidi-word-review-db passed');

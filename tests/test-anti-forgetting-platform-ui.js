@@ -141,7 +141,8 @@ vm.runInNewContext(
     `${defaultExtraReviewFeeCode}; this.shouldDefaultBfdExtraReviewFee = shouldDefaultBfdExtraReviewFee;`,
     defaultExtraReviewFeeContext
 );
-assert.equal(defaultExtraReviewFeeContext.shouldDefaultBfdExtraReviewFee('baifendii', '杨开迪'), true);
+assert.equal(defaultExtraReviewFeeContext.shouldDefaultBfdExtraReviewFee('baifendii', '杨开迪'), false, '杨开迪已接入正课，默认不额外计费');
+assert.equal(defaultExtraReviewFeeContext.shouldDefaultBfdExtraReviewFee('baifendii', ' 杨开迪 '), false);
 assert.equal(defaultExtraReviewFeeContext.shouldDefaultBfdExtraReviewFee('baifendii', '其他学员'), false);
 assert.equal(defaultExtraReviewFeeContext.shouldDefaultBfdExtraReviewFee('lixiaolaila', '杨开迪'), false);
 assert(
