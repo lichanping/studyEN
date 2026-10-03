@@ -2109,7 +2109,11 @@ export function formatSelfReviewDeadlineLabel(now = new Date()) {
 }
 
 export function selfReviewClick() {
-    const feedbackMessage = `📚 今日作业布置（必做）<br>1. 笔头作业：打印【每日单词表】，看中文版写英文，看英文版写中文；对照批改后拍照发群打卡。建议每天练1遍，落实会拼会写。<br>2. 口头作业：新学单词大声朗读2遍，录音或视频发群打卡。<br><br>⏰ 截止：${formatSelfReviewDeadlineLabel()}<br>📌 复习规则：坚持21天抗遗忘复习，做到看到英文会读、知道中文；当天遗忘的单词及时加入生词本巩固。<br>☀️ 继续加油，坚持会更有收获。`
+    const userName = String(document.getElementById('userName')?.value || '').trim();
+    const isBfdYangKaidi = getCurrentSchedulePlatformId() === 'baifendii' && userName === '杨开迪';
+    const feedbackMessage = isBfdYangKaidi
+        ? `课后复习要求<br><br>开迪妈妈您好：<br><br>开迪目前正在进行已学词汇的第二轮巩固。为了把学过的单词记稳、读准、写熟，请您协助她完成以下课后作业：<br><br>1. 书写作业：当天布置的单词，每个抄写三遍，无论课堂上是否答对，都需要完成。边写边读、对应中文意思，完成后核对订正，拍照发到学习群。<br>2. 语音打卡：当天作业单词大声朗读两遍，将朗读语音发到学习群。<br>3. 遗忘词复习：当天遗忘或写错的单词加入生词本，次日继续复习、自测，确认能够独立认读、理解和拼写。<br><br>截止：${formatSelfReviewDeadlineLabel()}<br><br>请在本次作业截止时间前，将作业照片和朗读语音全部提交到群里，两项都完成才算完成本次打卡。课堂上回答正确，也不能代替课后练习。<br><br>如有特殊情况，请提前在群里说明。未提交或提交不完整的作业，我们会继续提醒补交，请您协助开迪按要求完成。<br><br>感谢您的配合，让我们一起帮助开迪把学过的单词真正掌握。`
+        : `📚 今日作业布置（必做）<br>1. 笔头作业：打印【每日单词表】，看中文版写英文，看英文版写中文；对照批改后拍照发群打卡。建议每天练1遍，落实会拼会写。<br>2. 口头作业：新学单词大声朗读2遍，录音或视频发群打卡。<br><br>⏰ 截止：${formatSelfReviewDeadlineLabel()}<br>📌 复习规则：坚持21天抗遗忘复习，做到看到英文会读、知道中文；当天遗忘的单词及时加入生词本巩固。<br>☀️ 继续加油，坚持会更有收获。`
     copyToClipboard(feedbackMessage);
     showLongText(`${feedbackMessage}`);
 }

@@ -224,6 +224,67 @@ assert(
     'selfReviewClick 不应再硬编码 今晚22:20前'
 );
 
+const selfReviewClickCode = extractBlock(commonFunctionsSource, 'export function selfReviewClick');
+const currentPlatformCode = extractBlock(commonFunctionsSource, 'function getCurrentSchedulePlatformId');
+
+function runSelfReview(platformId, studentName, now = beijingDate(2026, 10, 3, 10, 0)) {
+    const output = [];
+    vm.runInNewContext(`${currentPlatformCode}\n${selfReviewClickCode.replace('export ', '')}\nselfReviewClick();`, {
+        window: { APP_MEETING_CONFIG: { getCurrentPlatformId: () => platformId } },
+        document: {
+            getElementById: (id) => id === 'userName' && studentName !== null ? { value: studentName } : null,
+            createElement: () => assert.fail('文案更新不应增加下载或其他 DOM 操作')
+        },
+        formatSelfReviewDeadlineLabel: () => formatLabelFunc(now),
+        copyToClipboard: (text) => output.push({ action: 'copy', text }),
+        showLongText: (text) => output.push({ action: 'show', text })
+    });
+    assert.deepStrictEqual(output.map((entry) => entry.action), ['copy', 'show'], '保持原有复制和提示行为');
+    assert.strictEqual(output[0].text, output[1].text, '复制和提示应使用同一份文案');
+    return output[0].text.replace(/<br>/g, '\n');
+}
+
+const expectedHomeworkText = [
+    '课后复习要求',
+    '',
+    '开迪妈妈您好：',
+    '',
+    '开迪目前正在进行已学词汇的第二轮巩固。为了把学过的单词记稳、读准、写熟，请您协助她完成以下课后作业：',
+    '',
+    '1. 书写作业：当天布置的单词，每个抄写三遍，无论课堂上是否答对，都需要完成。边写边读、对应中文意思，完成后核对订正，拍照发到学习群。',
+    '2. 语音打卡：当天作业单词大声朗读两遍，将朗读语音发到学习群。',
+    '3. 遗忘词复习：当天遗忘或写错的单词加入生词本，次日继续复习、自测，确认能够独立认读、理解和拼写。',
+    '',
+    '截止：今晚22:20前',
+    '',
+    '请在本次作业截止时间前，将作业照片和朗读语音全部提交到群里，两项都完成才算完成本次打卡。课堂上回答正确，也不能代替课后练习。',
+    '',
+    '如有特殊情况，请提前在群里说明。未提交或提交不完整的作业，我们会继续提醒补交，请您协助开迪按要求完成。',
+    '',
+    '感谢您的配合，让我们一起帮助开迪把学过的单词真正掌握。'
+].join('\n');
+
+assert.strictEqual(runSelfReview('baifendii', '杨开迪'), expectedHomeworkText, 'BFD 杨开迪应输出已确认的专项作业全文');
+assert.strictEqual(runSelfReview('baifendii', ' 杨开迪 '), expectedHomeworkText, '姓名首尾空白不影响专项匹配');
+assert.strictEqual(
+    runSelfReview('baifendii', '杨开迪', beijingDate(2026, 10, 3, 22, 0)),
+    expectedHomeworkText.replace('截止：今晚22:20前', '截止：明天10:00前'),
+    '专项文案应沿用动态截止时间'
+);
+
+const normalHomeworkText = runSelfReview('lixiaolaila', '其他学生');
+assert(normalHomeworkText.includes('今日作业布置（必做）'), '普通场景保留原文案');
+for (const [platformId, studentName] of [
+    ['baifendii', '其他学生'],
+    ['baifendii', '杨开迪同学'],
+    ['baifendii', ''],
+    ['baifendii', null],
+    ['lixiaolaila', '杨开迪'],
+    ['maisui', '杨开迪']
+]) {
+    assert.strictEqual(runSelfReview(platformId, studentName), normalHomeworkText, '非目标组合的全文应保持不变');
+}
+
 // ========================================
 // 7. classFormal.js uses getStatsDateRangeSelection
 // ========================================
