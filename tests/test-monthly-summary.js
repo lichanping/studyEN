@@ -1,6 +1,7 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
+const vm = require('vm');
 
 function read(fileName) {
     return fs.readFileSync(path.join(__dirname, '..', fileName), 'utf8');
@@ -38,6 +39,174 @@ const classFormalSource = read('classFormal.js');
 const classReadSource = read('classRead.js');
 const commonFunctionsSource = read('commonFunctions.js');
 const prdPath = path.join(__dirname, '..', 'docs', 'PRD-monthly-summary.md');
+
+assert(monthlySummarySource.includes('export function saveIncompleteHomeworkRecord'), '应先实现按正课日期登记未交作业');
+assert(!monthlySummarySource.includes("import { normalizeStudentName } from './student-name-alias.js'"), '姓名库为全局脚本，不能使用不存在的命名 export');
+const homeworkStorage = new Map();
+const homeworkContext = vm.createContext({
+    Date,
+    localStorage: {
+        getItem: key => homeworkStorage.get(key) ?? null,
+        setItem: (key, value) => homeworkStorage.set(key, value)
+    },
+    normalizeStudentName: value => String(value || '').trim(),
+    formatLocalDateYmd: date => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+});
+vm.runInContext(read('student-name-alias.js'), homeworkContext);
+vm.runInContext(monthlySummarySource.replace(/^import .*;$/gm, '').replace(/export /g, ''), homeworkContext);
+const homeworkNow = new Date(2026, 9, 3);
+const homeworkRecord = { platformId: 'baifendii', studentName: '杨开迪', classDate: '2026-10-01' };
+homeworkContext.saveIncompleteHomeworkRecord(homeworkRecord, homeworkNow);
+homeworkContext.saveIncompleteHomeworkRecord({ ...homeworkRecord, studentName: ' 杨开迪 ' }, homeworkNow);
+homeworkContext.saveIncompleteHomeworkRecord({ ...homeworkRecord, classDate: '2026-10-02' }, homeworkNow);
+homeworkContext.saveIncompleteHomeworkRecord({ ...homeworkRecord, platformId: 'other' }, homeworkNow);
+homeworkContext.saveIncompleteHomeworkRecord({ ...homeworkRecord, studentName: '其他学生' }, homeworkNow);
+homeworkContext.saveIncompleteHomeworkRecord({ ...homeworkRecord, classDate: '2026-09-30' }, homeworkNow);
+assert.strictEqual(homeworkContext.readIncompleteHomeworkRecords().length, 5, '同日去重，但不同平台、学生应独立保存');
+homeworkContext.saveIncompleteHomeworkRecord({ ...homeworkRecord, studentName: '硕硕' }, homeworkNow);
+homeworkContext.saveIncompleteHomeworkRecord({ ...homeworkRecord, studentName: '俞新硕' }, homeworkNow);
+assert.strictEqual(homeworkContext.summarizeIncompleteHomework(homeworkContext.readIncompleteHomeworkRecords(), 'baifendii', '硕硕', '2026-10-01', '2026-10-31').totalCount, 1, '复用真实姓名别名，同日不重复');
+homeworkContext.deleteIncompleteHomeworkRecord({ ...homeworkRecord, studentName: '俞新硕' });
+const storedHomework = JSON.parse(homeworkStorage.get('homework-review-incomplete-v1'));
+assert.deepStrictEqual(Object.keys(storedHomework.records[0]).sort(), ['classDate', 'platformId', 'studentName']);
+for (const classDate of ['', '2026-02-30', '2026-13-01', '2026-10-04', '2026-10-01extra']) {
+    assert.throws(() => homeworkContext.saveIncompleteHomeworkRecord({ ...homeworkRecord, classDate }, homeworkNow), undefined, '无效和未来正课日期应拒绝保存');
+}
+assert.throws(() => homeworkContext.saveIncompleteHomeworkRecord({ ...homeworkRecord, studentName: '' }, homeworkNow));
+const monthHomework = homeworkContext.summarizeIncompleteHomework(homeworkContext.readIncompleteHomeworkRecords(), 'baifendii', '杨开迪', '2026-10-01', '2026-10-31');
+assert.strictEqual(monthHomework.totalCount, 2);
+assert.deepStrictEqual(Array.from(monthHomework.dates), ['2026-10-01', '2026-10-02']);
+const dayHomework = homeworkContext.summarizeIncompleteHomework(homeworkContext.readIncompleteHomeworkRecords(), 'baifendii', '杨开迪', '2026-10-02', '2026-10-03');
+assert.deepStrictEqual(Array.from(dayHomework.dates), ['2026-10-02'], '日期边界包含首尾，不按登记日期归属');
+const monthlyDisclosure = homeworkContext.buildIncompleteHomeworkReport('杨开迪', monthHomework, { yearMonth: '2026-10' });
+const standaloneDisclosure = homeworkContext.buildIncompleteHomeworkReport('杨开迪', monthHomework, { startDate: '2026-10-01', endDate: '2026-10-31' });
+assert.strictEqual(monthlyDisclosure, '一、课后复习提交情况\n本月登记未交作业 2 次，正课日期：\n1. 2026-10-01\n2. 2026-10-02', '月末披露应只包含精简 section、次数及正课日期');
+assert.strictEqual(standaloneDisclosure, '【未交作业统计】\n学员：杨开迪\n统计范围：2026-10-01 至 2026-10-31\n未提交课后复习作业共 2 次，对应正课日期：\n1. 2026-10-01\n2. 2026-10-02\n以上根据当前保留的登记记录汇总。', '独立统计全文保持不变');
+for (const report of [monthlyDisclosure, standaloneDisclosure]) {
+    assert(report.includes('1. 2026-10-01\n2. 2026-10-02'));
+    assert(!/平台|baifendii|百分缔/.test(report));
+    assert(!report.includes('正课的课后复习未提交'), '明细不重复未交说明');
+}
+const emptyHomework = { totalCount: 0, dates: [] };
+assert.strictEqual(homeworkContext.buildIncompleteHomeworkReport('杨开迪', emptyHomework, { yearMonth: '2026-10' }), '');
+assert(homeworkContext.buildIncompleteHomeworkReport('杨开迪', emptyHomework, { startDate: '2026-10-01', endDate: '2026-10-31' }).includes('共 0 次（所选范围暂无登记记录）'));
+homeworkContext.deleteIncompleteHomeworkRecord(homeworkRecord);
+assert.strictEqual(homeworkContext.readIncompleteHomeworkRecords().length, 4);
+assert.strictEqual(homeworkContext.summarizeIncompleteHomework(homeworkContext.readIncompleteHomeworkRecords(), 'baifendii', '杨开迪', '2026-10-01', '2026-10-31').totalCount, 1);
+assert.strictEqual(homeworkContext.summarizeIncompleteHomework(homeworkContext.readIncompleteHomeworkRecords(), 'other', '杨开迪', '2026-10-01', '2026-10-31').totalCount, 1);
+const homeworkBeforeCorruption = homeworkStorage.get('homework-review-incomplete-v1');
+for (const invalidRaw of ['{', '{"version":2,"records":[]}', '{"version":1,"records":[{}]}']) {
+    homeworkStorage.set('homework-review-incomplete-v1', invalidRaw);
+    assert.throws(() => homeworkContext.readIncompleteHomeworkRecords(), undefined, '损坏数据不能降级成零记录');
+    assert.throws(() => homeworkContext.saveIncompleteHomeworkRecord(homeworkRecord, homeworkNow));
+    assert.strictEqual(homeworkStorage.get('homework-review-incomplete-v1'), invalidRaw);
+}
+homeworkStorage.set('homework-review-incomplete-v1', homeworkBeforeCorruption);
+homeworkContext.localStorage.setItem = () => { throw new Error('quota'); };
+assert.throws(() => homeworkContext.saveIncompleteHomeworkRecord(homeworkRecord, homeworkNow));
+assert.strictEqual(homeworkStorage.get('homework-review-incomplete-v1'), homeworkBeforeCorruption, '写入失败不得改变原数据');
+
+assert(indexSource.includes('id="recordIncompleteHomeworkButton"') && indexSource.includes('id="viewIncompleteHomeworkRecordsButton"'), '首页应提供精简登记和查看入口');
+assert(indexSource.indexOf('id="viewLeaveRecordsButton"') < indexSource.indexOf('id="recordIncompleteHomeworkButton"'));
+assert(indexSource.indexOf('id="downloadFileButton"') < indexSource.indexOf('id="incompleteHomeworkStatsButton"') && indexSource.indexOf('id="incompleteHomeworkStatsButton"') < indexSource.indexOf('id="downloadFormalButton"'), '未交统计紧接抗遗忘统计');
+for (const handler of ['recordIncompleteHomeworkOpen', 'viewIncompleteHomeworkRecordsOpen', 'downloadIncompleteHomeworkStats']) {
+    assert(indexSource.includes(`monthlySummary.${handler}`), '新增入口必须绑定实际处理函数');
+    assert(monthlySummarySource.includes(`export function ${handler}`));
+}
+const homeworkHighlightStats = { totalDuration: 8, classCount: 1, antiForgettingCorrectRate: 80, antiForgettingTrend: 'stable', newWordMasteryRate: 95 };
+const normalHomeworkHighlights = homeworkContext.generateHighlights(homeworkHighlightStats);
+assert(normalHomeworkHighlights.some(line => line.includes('课后能主动打卡')));
+assert.deepStrictEqual(Array.from(homeworkContext.generateHighlights({ ...homeworkHighlightStats, incompleteHomeworkCount: 2 })), Array.from(normalHomeworkHighlights).filter(line => !line.includes('课后能主动打卡')), '有记录时仅去掉冲突表扬');
+
+async function testHomeworkReportOutputs() {
+    homeworkContext.localStorage.setItem = (key, value) => homeworkStorage.set(key, value);
+    homeworkContext.saveIncompleteHomeworkRecord(homeworkRecord, homeworkNow);
+    const outputs = [];
+    const inputs = { userName: { value: '杨开迪' }, monthlySummaryMonth: { value: '2026-10' }, monthlySummaryLeaves: { value: '0' }, platformSelect: { value: 'baifendii' } };
+    homeworkContext.document = {
+        getElementById: id => inputs[id] || null,
+        createElement: () => ({ click() { outputs.push({ action: 'download', text: homeworkContext.lastBlob.parts.join(''), name: this.download }); } })
+    };
+    homeworkContext.window = { APP_MEETING_CONFIG: { getCurrentPlatformId: () => inputs.platformSelect.value } };
+    homeworkContext.alert = message => outputs.push({ action: 'alert', text: message });
+    homeworkContext.copyToClipboard = text => outputs.push({ action: 'copy', text });
+    homeworkContext.showLongText = text => outputs.push({ action: 'show', text: text.replace(/<br>/g, '\n') });
+    homeworkContext.Blob = class { constructor(parts) { this.parts = parts; homeworkContext.lastBlob = this; } };
+    homeworkContext.URL = { createObjectURL: () => 'blob:test', revokeObjectURL() {} };
+    homeworkContext.calculateMonthlyClassStats = () => ({ classCount: 0, totalWords: 0, totalDuration: 0, totalNewWords: 0, totalReviewWords: 0, totalForgetNewWords: 0, newWordMasteryRate: null });
+    const noFeedback = { totalReviewed: 0, totalCorrect: 0, correctRate: 0, forgetCount: 0, sessionCount: 0, trend: 'stable' };
+    homeworkContext.calculateMonthlyAntiForgettingStats = async () => noFeedback;
+    await homeworkContext.generateMonthlySummary();
+    assert.deepStrictEqual(outputs.map(output => output.action), ['copy', 'download', 'show']);
+    assert.strictEqual(outputs[1].name, '杨开迪_2026-10_月末总结.txt', '月末总结文件名继续使用完整姓名');
+    const expectedMonthlyReport = outputs[0].text;
+    const expectedTitleAndDisclosure = '开迪学员10🈷️月末总结\n\n一、课后复习提交情况\n本月登记未交作业 2 次，正课日期：\n1. 2026-10-01\n2. 2026-10-02\n\n二、本月核心学习数据📊';
+    assert(expectedMonthlyReport.startsWith(expectedTitleAndDisclosure), '零课堂数据仍应在标题下第一节披露');
+    assert.deepStrictEqual(expectedMonthlyReport.match(/^[一二三四五]、/gm), ['一、', '二、', '三、', '四、', '五、'], '零课堂报告 section 应顺延且连续');
+    assert(!/学员：|月份：|以上根据|【本月课后复习提交情况】/.test(expectedMonthlyReport), '月末披露不重复上下文和尾注');
+    assert(outputs[0].text.includes('1. 2026-10-01\n2. 2026-10-02'));
+    assert(outputs.every(output => output.text === outputs[0].text), '所有输出采用同一完整报告');
+    assert(!/平台|baifendii|百分缔/.test(outputs[0].text + outputs[1].name));
+    outputs.length = 0;
+    homeworkContext.calculateMonthlyAntiForgettingStats = async () => { inputs.platformSelect.value = 'other'; return noFeedback; };
+    await homeworkContext.generateMonthlySummary();
+    assert(outputs.length === 1 && outputs[0].action === 'alert', '异步读取期间切换平台，不生成混合报告');
+    inputs.platformSelect.value = 'baifendii';
+    homeworkContext.calculateMonthlyAntiForgettingStats = async () => noFeedback;
+    const previewNode = { style: {}, innerHTML: '', textContent: '', prepend(element) { this.prefix = element.textContent; } };
+    inputs.monthlySummaryPreview = previewNode;
+    const createDownloadElement = homeworkContext.document.createElement;
+    homeworkContext.document.createElement = tag => tag === 'div' ? { style: {}, textContent: '' } : createDownloadElement();
+    await homeworkContext.previewMonthlySummaryData();
+    assert.strictEqual(previewNode.textContent, expectedMonthlyReport, '有记录时预览应与完整报告使用同一顺序和内容');
+    const zeroClassStats = homeworkContext.calculateMonthlyClassStats;
+    homeworkContext.calculateMonthlyClassStats = () => ({ classCount: 2, totalWords: 30, totalDuration: 8, totalNewWords: 20, totalReviewWords: 10, totalForgetNewWords: 1, newWordMasteryRate: 95 });
+    outputs.length = 0;
+    await homeworkContext.generateMonthlySummary();
+    assert(outputs[0].text.startsWith(expectedTitleAndDisclosure), '有课堂数据时仍在标题下第一节披露');
+    assert.deepStrictEqual(outputs[0].text.match(/^[一二三四五]、/gm), ['一、', '二、', '三、', '四、', '五、']);
+    assert(outputs[0].text.includes('本月正课次数：2节，共8小时'), '原学习统计正文不变');
+    assert(!outputs[0].text.includes('课后能主动打卡'), '编号调整不影响已有表扬屏蔽规则');
+    await homeworkContext.previewMonthlySummaryData();
+    assert.strictEqual(previewNode.textContent, outputs[0].text, '有课堂数据时预览与输出也保持一致');
+    homeworkContext.calculateMonthlyClassStats = zeroClassStats;
+    const retainedRecords = homeworkStorage.get('homework-review-incomplete-v1');
+    homeworkStorage.set('homework-review-incomplete-v1', JSON.stringify({ version: 1, records: [] }));
+    outputs.length = 0;
+    await homeworkContext.generateMonthlySummary();
+    const originalMonthlyReport = expectedMonthlyReport
+        .replace(`${monthlyDisclosure}\n\n`, '')
+        .replace(/^二、本月核心学习数据/m, '一、本月核心学习数据')
+        .replace(/^三、本月表现点评/m, '二、本月表现点评')
+        .replace(/^四、下月小目标/m, '三、下月小目标')
+        .replace(/^五、教练暖心寄语/m, '四、教练暖心寄语');
+    assert.strictEqual(outputs[0].text, originalMonthlyReport, '无记录时原标题、编号和正文逐字不变');
+    assert.deepStrictEqual(outputs[0].text.match(/^[一二三四五]、/gm), ['一、', '二、', '三、', '四、']);
+    await homeworkContext.previewMonthlySummaryData();
+    assert.strictEqual(previewNode.innerHTML, homeworkContext.buildPreviewHtml(zeroClassStats(), noFeedback), '无记录时预览保留原数据摘要');
+    assert.strictEqual(previewNode.textContent, '', '删除全部记录后预览不得保留之前的披露');
+    homeworkStorage.set('homework-review-incomplete-v1', retainedRecords);
+    outputs.length = 0;
+    homeworkContext.getStatsDateRangeSelection = () => ({ startDate: new Date(2026, 9, 1), endDate: new Date(2026, 9, 31) });
+    homeworkContext.downloadIncompleteHomeworkStats();
+    assert.deepStrictEqual(outputs.map(output => output.action), ['copy', 'download', 'show']);
+    assert(outputs[0].text.includes('共 2 次，对应正课日期：'));
+    assert(outputs.every(output => output.text === outputs[0].text));
+    outputs.length = 0;
+    homeworkContext.getStatsDateRangeSelection = () => ({ startDate: new Date(2026, 9, 2), endDate: new Date(2026, 9, 3) });
+    homeworkContext.downloadIncompleteHomeworkStats();
+    assert(outputs[0].text.includes('共 1 次，对应正课日期：\n1. 2026-10-02'));
+    outputs.length = 0;
+    homeworkContext.getStatsDateRangeSelection = () => ({ startDate: new Date(2026, 8, 1), endDate: new Date(2026, 8, 29) });
+    homeworkContext.downloadIncompleteHomeworkStats();
+    assert(outputs[0].text.includes('共 0 次（所选范围暂无登记记录）'));
+    outputs.length = 0;
+    homeworkStorage.set('homework-review-incomplete-v1', '{');
+    await homeworkContext.generateMonthlySummary();
+    assert(outputs.length === 1 && outputs[0].action === 'alert', '损坏记录不得遗漏披露后生成报告');
+    console.log('homework report integration passed');
+}
+testHomeworkReportOutputs().catch(error => { console.error(error); process.exitCode = 1; });
 
 assert(fs.existsSync(prdPath), 'docs/PRD-monthly-summary.md 应存在于当前分支');
 
@@ -291,11 +460,6 @@ assert(
     reportText.includes('课后作业和每日复习打卡还需要继续落实，尽量把当天作业按时完成、及时巩固，记得会更牢🔄'),
     '月末总结小提升点应强调课后作业落实，而不是要求提高系统复盘次数'
 );
-assert(
-    monthlySummarySource.includes('link.download = `${userName}_${yearMonth}_月末总结.txt`;'),
-    '月末总结下载文件名应继续使用学员完整姓名'
-);
-
 const previewHtml = buildPreviewHtml({
     classCount: 2,
     totalDuration: 1.5,
