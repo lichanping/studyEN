@@ -3,19 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>杨开迪历史单词复习</title>
+    <title>杨开迪单词复习</title>
     <link rel="stylesheet" href="yang-kaidi-word-review.css">
 </head>
 <body>
     <header class="topbar">
         <div>
-            <p class="eyebrow">HISTORY REVIEW · 杨开迪</p>
-            <h1>30 册单词复习台</h1>
+            <p class="eyebrow">WORD REVIEW · 杨开迪</p>
+            <h1>杨开迪单词复习</h1>
         </div>
         <a class="back-link" href="anti-forgetting.html">返回抗遗忘复习</a>
     </header>
 
     <main>
+        <div class="source-tabs" role="group" aria-label="词库来源">
+            <button id="myCoachSourceButton" class="primary" type="button" aria-pressed="true">正课</button>
+            <button id="oldCoachSourceButton" class="secondary" type="button" aria-pressed="false">历史</button>
+            <strong id="sourceLabel">正课词库</strong>
+        </div>
         <section id="bookListView" class="view">
             <div class="summary-band">
                 <div>

@@ -299,7 +299,7 @@
         <button id="navigateToSchedulePage" type="button">排课总览</button>
         <button id="navigateToReadClass" type="button">阅读课</button>
         <button id="wordSelfCheckButton" type="button">单词自检</button>
-        <button id="yangKaidiWordReviewButton" type="button">杨开迪历史单词复习</button>
+        <button id="yangKaidiWordReviewButton" type="button">杨开迪单词复习</button>
     </div>
 
 
@@ -612,8 +612,7 @@
 
     const antiForgettingPlatformSelect = document.getElementById('platformSelect');
     function shouldDefaultBfdExtraReviewFee(platformId, studentName) {
-        return String(platformId || '').trim().toLowerCase() === 'baifendii'
-            && String(studentName || '').trim() === '杨开迪';
+        return false;
     }
 
     function syncBfdExtraReviewFeeDefault() {

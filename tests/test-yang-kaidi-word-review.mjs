@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import * as reviewCore from '../yang-kaidi-word-review-core.mjs';
 
 import {
     applyWordClick,
@@ -22,6 +23,65 @@ import {
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.join(__dirname, '..');
+
+const lessonEntries = parseTabbedWordList(
+    fs.readFileSync(path.join(repoRoot, 'data/杨开迪-我的/2026-10-02.txt'), 'utf8'),
+    'my-coach:2026-10-02'
+);
+assert.equal(lessonEntries.length, 75, '首节正课词库应完整解析75条');
+assert(lessonEntries.every((entry) => entry.english && entry.meaning));
+assert.equal(lessonEntries.find((entry) => entry.english === 'wound').meaning, 'n 伤口 v 受伤');
+assert.equal(lessonEntries.find((entry) => entry.english === 'address').meaning, 'n 地址 v 解决');
+
+assert.equal(typeof reviewCore.getSourceBooks, 'function', '词库清单应支持正课和历史两个来源');
+assert.equal(reviewCore.DEFAULT_REVIEW_SOURCE, 'my-coach', '默认打开正课词库');
+const historyBooks = reviewCore.getSourceBooks('old-coach');
+const lessonBooks = reviewCore.getSourceBooks('my-coach');
+assert.equal(historyBooks.length, 30);
+assert.equal(historyBooks[0].bookId, '2026-05-09', '历史册主键保持不变');
+assert.equal(historyBooks[0].path, 'data/杨开迪/2026-05-09.txt');
+assert.equal(lessonBooks.length, 1);
+assert.equal(lessonBooks[0].bookId, 'my-coach:2026-10-02');
+assert.equal(lessonBooks[0].bookDate, '2026-10-02');
+assert.equal(lessonBooks[0].bookNumber, 1);
+assert.equal(lessonBooks[0].path, 'data/杨开迪-我的/2026-10-02.txt');
+assert.equal(reviewCore.getRecordSourceId({ bookId: '2026-10-02' }), 'old-coach');
+assert.equal(reviewCore.getRecordSourceId({ bookId: 'my-coach:2026-10-02' }), 'my-coach');
+const lessonResult = createCompletedResult({
+    book: { ...lessonBooks[0], totalWords: 75, sourceFingerprint: 'lesson-fp' },
+    entries: lessonEntries.map((entry, index) => ({ ...entry, tested: index < 2, forgotten: index === 0 })),
+    completedAt: new Date('2026-10-03T01:00:00Z')
+});
+assert.equal(lessonResult.sourceId, 'my-coach');
+assert.equal(lessonResult.bookDate, '2026-10-02');
+assert.equal(lessonResult.reviewDateBeijing, '2026-10-03');
+const sameDateHistoryResult = {
+    ...lessonResult,
+    bookId: '2026-10-02',
+    sourceId: undefined,
+    forgottenWords: [{ entryId: 'old-only', english: 'old-only', meaning: '仅历史' }]
+};
+const mixedSourceResults = [sameDateHistoryResult, lessonResult];
+assert.deepEqual(reviewCore.selectSourceRecords(mixedSourceResults, 'my-coach'), [lessonResult]);
+assert.deepEqual(reviewCore.selectSourceRecords(mixedSourceResults, 'old-coach'), [sameDateHistoryResult]);
+const lessonDaily = buildDailyReviewReport(mixedSourceResults, '2026-10-03', 'my-coach');
+assert(lessonDaily.includes('词库来源：正课'));
+assert(lessonDaily.includes('复习：2 词'));
+assert(lessonDaily.includes('词库日期：2026-10-02'));
+assert(!lessonDaily.includes('old-only'));
+const lessonSummary = buildReviewSummaryReport(mixedSourceResults, [
+    { ...historyBooks[0], totalWords: 37 }, { ...lessonBooks[0], totalWords: 75 }
+], new Date('2026-10-03T01:00:00Z'), 'my-coach');
+assert(lessonSummary.includes('正课词库复习 Summary'));
+assert(lessonSummary.includes('已完成：1 / 1 册'));
+assert(lessonSummary.includes('已复习：2 / 75 词'));
+for (const builder of [buildForgottenWordsByBookExport, buildUniqueForgottenWordsExport]) {
+    const output = builder(mixedSourceResults, '杨开迪', new Date('2026-10-03T01:00:00Z'), 'my-coach');
+    assert(output.includes('正课单词复习遗忘词'));
+    assert(output.includes('regard'));
+    assert(!output.includes('old-only'));
+}
+assert.equal(buildDailyReviewReport([sameDateHistoryResult], '2026-10-03', 'my-coach'), null);
 
 function expectThrowsMessage(callback, expectedMessage) {
     assert.throws(callback, (error) => error instanceof Error && error.message.includes(expectedMessage));

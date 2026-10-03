@@ -5,6 +5,7 @@ import {
     syncBfdHistoryReviewResults
 } from './bfd-extra-review-fee.mjs';
 import {
+    DEFAULT_REVIEW_SOURCE,
     applyWordClick,
     buildBookFingerprint,
     buildDailyReviewReport,
@@ -14,25 +15,25 @@ import {
     calculateBookStats,
     createCompletedResult,
     formatForgottenWordSources,
+    getBookDate,
     getBeijingDateYmd,
+    getRecordSourceId,
+    getReviewSource,
+    getSourceBooks,
     parseTabbedWordList,
+    selectSourceRecords,
     toSpeechText,
     toggleForgotten,
     updateCompletedResult
 } from './yang-kaidi-word-review-core.mjs';
 import { createYangKaidiWordReviewRepository } from './yang-kaidi-word-review-db.mjs';
 
-const BOOK_IDS = [
-    '2026-05-09', '2026-05-15', '2026-05-16', '2026-05-22', '2026-05-23',
-    '2026-05-29', '2026-05-30', '2026-06-01', '2026-06-07', '2026-06-13',
-    '2026-06-14', '2026-06-20', '2026-06-26', '2026-06-27', '2026-07-13',
-    '2026-07-22', '2026-07-24', '2026-08-03', '2026-08-05', '2026-08-12',
-    '2026-08-14', '2026-08-20', '2026-08-24', '2026-08-26', '2026-08-28',
-    '2026-08-31', '2026-09-04', '2026-09-06', '2026-09-12', '2026-09-18'
-];
 const STUDENT_NAME = '杨开迪';
 const repository = createYangKaidiWordReviewRepository();
 const audioCache = new Map();
+let activeSourceId = DEFAULT_REVIEW_SOURCE;
+let changingSource = false;
+let savingBook = false;
 let books = [];
 let results = [];
 let currentBook = null;
@@ -42,9 +43,19 @@ let currentReportText = '';
 let currentForgottenExportText = '';
 let forgottenExportMode = 'byBook';
 let draftWriteQueue = Promise.resolve();
+let draftWriteError = null;
 let toastTimer;
 
 const elements = Object.fromEntries([...document.querySelectorAll('[id]')].map((element) => [element.id, element]));
+const sourceButtons = [elements.myCoachSourceButton, elements.oldCoachSourceButton];
+
+function setSourceButtonsDisabled(disabled) {
+    sourceButtons.forEach((button) => { button.disabled = disabled; });
+}
+
+function bookLabel(book) {
+    return `${getReviewSource(getRecordSourceId(book)).label} · 第 ${book.bookNumber} 册 · ${getBookDate(book)}`;
+}
 
 function showToast(message) {
     elements.toast.textContent = message;
@@ -65,26 +76,66 @@ function resultFor(bookId) {
 }
 
 async function loadBooks() {
+    const source = getReviewSource(activeSourceId);
     const loadedResults = await repository.getAllResults();
-    results = loadedResults;
-    const historySalarySync = syncBfdHistoryReviewResults(localStorage, STUDENT_NAME, loadedResults);
-    if (!historySalarySync.ok) showToast(historySalarySync.error || '模式 2 工资数据同步失败');
-    books = await Promise.all(BOOK_IDS.map(async (bookId, index) => {
-        const response = await fetch(`data/杨开迪/${bookId}.txt`);
-        if (!response.ok) throw new Error(`${bookId} 词库读取失败`);
-        const sourceText = await response.text();
-        const entries = parseTabbedWordList(sourceText, bookId);
-        const draft = await repository.getDraft(bookId);
-        return {
-            bookId,
-            bookNumber: index + 1,
-            totalWords: entries.length,
-            sourceFingerprint: buildBookFingerprint(sourceText),
-            entries,
-            draft
-        };
+    results = selectSourceRecords(loadedResults, activeSourceId);
+    if (activeSourceId === 'old-coach') {
+        const historySalarySync = syncBfdHistoryReviewResults(localStorage, STUDENT_NAME, selectSourceRecords(loadedResults, 'old-coach'));
+        if (!historySalarySync.ok) showToast(historySalarySync.error || '模式 2 工资数据同步失败');
+    }
+    books = await Promise.all(getSourceBooks(activeSourceId).map(async (book) => {
+        try {
+            const response = await fetch(book.path);
+            if (!response.ok) throw new Error('词库读取失败');
+            const sourceText = await response.text();
+            const entries = parseTabbedWordList(sourceText, book.bookId);
+            const draft = await repository.getDraft(book.bookId);
+            return {
+                ...book,
+                totalWords: entries.length,
+                sourceFingerprint: buildBookFingerprint(sourceText),
+                entries,
+                draft
+            };
+        } catch (error) {
+            throw new Error(`${source.label} · ${book.bookDate}.txt：${error.message}`);
+        }
     }));
     renderBookList();
+}
+
+async function switchReviewSource(sourceId) {
+    if (changingSource || savingBook || sourceId === activeSourceId) return;
+    changingSource = true;
+    setSourceButtonsDisabled(true);
+    try {
+        if (currentBook?.draft && !currentResult) queueDraftSave();
+        await draftWriteQueue;
+        if (draftWriteError) throw new Error('进度保存失败，请重试切换');
+        activeSourceId = sourceId;
+        books = [];
+        results = [];
+        currentBook = null;
+        currentResult = null;
+        currentEntries = [];
+        currentReportText = '';
+        currentForgottenExportText = '';
+        elements.reportOutput.textContent = '';
+        elements.reportStatus.textContent = '';
+        elements.forgottenSummary.replaceChildren();
+        elements.bookList.replaceChildren();
+        elements.overallProgress.textContent = '正在读取词库...';
+        elements.sourceLabel.textContent = `${getReviewSource(sourceId).label}词库`;
+        setActiveButton(sourceButtons, sourceId === 'my-coach' ? elements.myCoachSourceButton : elements.oldCoachSourceButton);
+        showView('bookListView');
+        await loadBooks();
+    } catch (error) {
+        if (!currentBook) elements.overallProgress.textContent = error.message;
+        showToast(error.message);
+    } finally {
+        changingSource = false;
+        setSourceButtonsDisabled(false);
+    }
 }
 
 function renderBookList() {
@@ -100,7 +151,7 @@ function renderBookList() {
         item.className = 'book-item';
         item.dataset.status = status;
         const title = document.createElement('h3');
-        title.textContent = `第 ${book.bookNumber} 册 · ${book.bookId}`;
+        title.textContent = bookLabel(book);
         const meta = document.createElement('p');
         meta.className = 'book-meta';
         meta.textContent = result
@@ -146,7 +197,7 @@ async function openBook(book) {
     } else {
         currentEntries = book.entries.map((entry) => ({ ...entry }));
     }
-    elements.currentBookLabel.textContent = `第 ${book.bookNumber} 册 · ${book.bookId}`;
+    elements.currentBookLabel.textContent = bookLabel(book);
     elements.completeBookButton.textContent = currentResult ? '保存修改' : '完成本册';
     elements.reviewHint.textContent = currentResult
         ? '已完成结果仅允许调整原测试词中的遗忘标记；测试词数、日期和工资保持不变。'
@@ -214,6 +265,8 @@ function handleForgottenClick(index) {
 function queueDraftSave() {
     const draft = {
         bookId: currentBook.bookId,
+        sourceId: getRecordSourceId(currentBook),
+        bookDate: getBookDate(currentBook),
         sourceFingerprint: currentBook.sourceFingerprint,
         entries: Object.fromEntries(currentEntries.map((entry) => [entry.entryId, {
             tested: entry.tested,
@@ -224,7 +277,10 @@ function queueDraftSave() {
         updatedAt: new Date().toISOString()
     };
     currentBook.draft = draft;
-    draftWriteQueue = draftWriteQueue.then(() => repository.putDraft(draft)).catch(() => {
+    draftWriteQueue = draftWriteQueue.then(() => repository.putDraft(draft)).then(() => {
+        draftWriteError = null;
+    }).catch((error) => {
+        draftWriteError = error;
         showToast('进度保存失败，请稍后重试');
     });
 }
@@ -266,12 +322,14 @@ async function completeCurrentBook() {
     const result = createCompletedResult({ book: currentBook, entries: currentEntries, completedAt: new Date() });
     await draftWriteQueue;
     await repository.completeBook(result);
-    results = await repository.getAllResults();
+    results = selectSourceRecords(await repository.getAllResults(), activeSourceId);
     currentBook.draft = null;
     currentResult = result;
     renderBookList();
     try {
-        syncHistorySalary(result.reviewDateBeijing, result.completedAt);
+        if (getRecordSourceId(result) === 'old-coach') {
+            syncHistorySalary(result.reviewDateBeijing, result.completedAt);
+        }
         showToast('本册结果已保存');
     } catch (_) {
         showToast('结果已保存，工资同步失败，请重试');
@@ -302,7 +360,8 @@ async function playEnglish(speechText) {
     }
     const staticUrls = [...new Set([
         `sounds/${encodeURIComponent(speechText.toLowerCase())}.mp3`,
-        `sounds/${encodeURIComponent(speechText)}.mp3`
+        `sounds/${encodeURIComponent(speechText)}.mp3`,
+        `sounds/${encodeURIComponent(speechText.charAt(0).toUpperCase() + speechText.slice(1))}.mp3`
     ])];
     for (const staticUrl of staticUrls) {
         try {
@@ -332,7 +391,7 @@ function renderForgottenWords() {
         const section = document.createElement('section');
         section.className = 'forgotten-book';
         const heading = document.createElement('h3');
-        heading.textContent = `第 ${result.bookNumber} 册 · ${result.bookId}`;
+        heading.textContent = bookLabel(result);
         const content = document.createElement('p');
         content.textContent = result.forgottenWords.length
             ? result.forgottenWords.map((word) => `${word.english}\t${word.meaning}`).join('\n')
@@ -365,8 +424,8 @@ function renderUniqueForgottenWords() {
 function refreshForgottenExportText() {
     const isUnique = forgottenExportMode === 'unique';
     currentForgottenExportText = isUnique
-        ? buildUniqueForgottenWordsExport(results, STUDENT_NAME, new Date())
-        : buildForgottenWordsExport(results, STUDENT_NAME, new Date());
+        ? buildUniqueForgottenWordsExport(results, STUDENT_NAME, new Date(), activeSourceId)
+        : buildForgottenWordsExport(results, STUDENT_NAME, new Date(), activeSourceId);
     if (isUnique) {
         elements.copyForgottenButton.textContent = '复制全列表';
         elements.downloadForgottenButton.textContent = '下载全列表 TXT';
@@ -414,6 +473,8 @@ function setActiveButton(buttons, activeButton) {
 }
 
 elements.backToBooksButton.addEventListener('click', () => showView('bookListView'));
+elements.myCoachSourceButton.addEventListener('click', () => switchReviewSource('my-coach'));
+elements.oldCoachSourceButton.addEventListener('click', () => switchReviewSource('old-coach'));
 document.querySelectorAll('.back-to-books').forEach((button) => button.addEventListener('click', () => showView('bookListView')));
 elements.showForgottenButton.addEventListener('click', () => {
     forgottenExportMode = 'byBook';
@@ -440,33 +501,48 @@ elements.copyForgottenButton.addEventListener('click', () => {
 });
 elements.downloadForgottenButton.addEventListener('click', () => {
     const label = forgottenExportMode === 'unique' ? '全列表' : '按册Mapping';
-    downloadText(currentForgottenExportText, `杨开迪-历史单词复习遗忘词-${label}-${getBeijingDateYmd()}.txt`);
+    downloadText(currentForgottenExportText, `杨开迪-${getReviewSource(activeSourceId).label}单词复习遗忘词-${label}-${getBeijingDateYmd()}.txt`);
 });
 elements.showReportsButton.addEventListener('click', () => showView('reportView'));
-elements.completeBookButton.addEventListener('click', () => completeCurrentBook().catch((error) => showToast(error.message)));
+elements.completeBookButton.addEventListener('click', () => {
+    if (changingSource || savingBook) return;
+    savingBook = true;
+    setSourceButtonsDisabled(true);
+    elements.completeBookButton.disabled = true;
+    completeCurrentBook().catch((error) => showToast(error.message)).finally(() => {
+        savingBook = false;
+        setSourceButtonsDisabled(false);
+        elements.completeBookButton.disabled = false;
+    });
+});
 elements.jumpToUntestedButton.addEventListener('click', () => {
     const entry = currentEntries.find((item) => !item.tested);
     document.querySelector(`[data-entry-id="${CSS.escape(entry?.entryId || '')}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 });
 elements.generateDailyReportButton.addEventListener('click', () => {
     publishReport(
-        buildDailyReviewReport(results, elements.reportDate.value),
-        `杨开迪-历史单词复习-当日报告-${elements.reportDate.value}.txt`
+        buildDailyReviewReport(results, elements.reportDate.value, activeSourceId),
+        `杨开迪-${getReviewSource(activeSourceId).label}单词复习-当日报告-${elements.reportDate.value}.txt`
     );
     setActiveButton([elements.generateDailyReportButton, elements.generateSummaryButton], elements.generateDailyReportButton);
 });
 elements.generateSummaryButton.addEventListener('click', () => {
     publishReport(
-        buildReviewSummaryReport(results, books, new Date()),
-        `杨开迪-历史单词复习-Summary-${getBeijingDateYmd()}.txt`
+        buildReviewSummaryReport(results, books, new Date(), activeSourceId),
+        `杨开迪-${getReviewSource(activeSourceId).label}单词复习-Summary-${getBeijingDateYmd()}.txt`
     );
     setActiveButton([elements.generateDailyReportButton, elements.generateSummaryButton], elements.generateSummaryButton);
 });
 
 elements.reportDate.value = getBeijingDateYmd();
+changingSource = true;
+setSourceButtonsDisabled(true);
 loadBooks().catch((error) => {
     elements.overallProgress.textContent = error.message;
     showToast(error.message);
+}).finally(() => {
+    changingSource = false;
+    setSourceButtonsDisabled(false);
 });
 
 window.addEventListener('beforeunload', () => {

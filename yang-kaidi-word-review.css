@@ -47,6 +47,10 @@ h2 { font-family: "Songti SC", "Noto Serif SC", serif; letter-spacing: 0; }
 main { width: min(1180px, calc(100% - 32px)); margin: 28px auto 64px; }
 .view[hidden] { display: none; }
 
+.source-tabs { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+.source-tabs button { min-width: 76px; }
+.source-tabs strong { margin-left: 8px; font-size: 14px; color: var(--muted); }
+
 .summary-band, .review-toolbar, .section-heading, .report-controls {
     display: flex;
     align-items: center;

@@ -1,10 +1,10 @@
-import { readFile, readdir, rename, writeFile } from 'node:fs/promises';
+import { readFile, readdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 import { EdgeTTS } from '@andresaya/edge-tts';
 
-import { toSpeechText } from '../yang-kaidi-word-review-core.mjs';
+import { WORD_REVIEW_SOURCES, toSpeechText } from '../yang-kaidi-word-review-core.mjs';
 
 export async function collectAudioPlan(sourceDir, soundsDir) {
     const sourceFiles = (await readdir(sourceDir)).filter((fileName) => fileName.endsWith('.txt')).sort();
@@ -56,25 +56,21 @@ async function generateAudio(speechText, outputPath) {
 
 async function main() {
     const shouldGenerate = process.argv.includes('--generate');
-    const sourceDir = path.resolve('data/杨开迪');
     const soundsDir = path.resolve('sounds');
-    const plan = await collectAudioPlan(sourceDir, soundsDir);
-
-    console.log(`词库条目 ${plan.entryCount}，唯一发音 ${plan.uniqueCount}`);
-    console.log(`已覆盖 ${plan.covered.length}，待规范大小写 ${plan.caseRenames.length}，缺失 ${plan.missing.length}`);
-    if (!shouldGenerate) {
-        console.log('仅审计；使用 --generate 补齐静态 MP3。');
-        return;
+    for (const source of WORD_REVIEW_SOURCES) {
+        const plan = await collectAudioPlan(path.resolve(source.directory), soundsDir);
+        console.log(`【${source.label}】词库条目 ${plan.entryCount}，唯一发音 ${plan.uniqueCount}`);
+        console.log(`已覆盖 ${plan.covered.length}，已有大小写变体 ${plan.caseRenames.length}，缺失 ${plan.missing.length}`);
+        if (!shouldGenerate) continue;
+        for (const item of plan.caseRenames) {
+            console.log(`复用 ${item.from}`);
+        }
+        for (const [index, item] of plan.missing.entries()) {
+            await generateAudio(item.speechText, path.join(soundsDir, item.fileName));
+            console.log(`[${index + 1}/${plan.missing.length}] 已生成 ${item.fileName}`);
+        }
     }
-
-    for (const item of plan.caseRenames) {
-        await rename(path.join(soundsDir, item.from), path.join(soundsDir, item.to));
-        console.log(`重命名 ${item.from} -> ${item.to}`);
-    }
-    for (const [index, item] of plan.missing.entries()) {
-        await generateAudio(item.speechText, path.join(soundsDir, item.fileName));
-        console.log(`[${index + 1}/${plan.missing.length}] 已生成 ${item.fileName}`);
-    }
+    if (!shouldGenerate) console.log('仅审计；使用 --generate 补齐静态 MP3。');
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
