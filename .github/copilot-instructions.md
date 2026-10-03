@@ -76,6 +76,7 @@ These instructions apply to all coding tasks in this repository.
 
 ## Testing Expectations
 
+- 本项目没有 Figma MCP 连接需求。UI 实施以仓库现有 HTML、CSS 和交互规约为准，不主动连接 Figma MCP、不请求 Figma 授权，也不将 Figma 连接作为实施或验收前置条件；仅在用户另行明确要求 Figma 工作时使用。
 - Prefer small, focused tests close to the changed behavior.
 - Add regression tests for bug fixes.
 - If there is no existing test file, create one using the project's current test style.
