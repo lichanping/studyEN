@@ -34,13 +34,13 @@ try {
 }
 
 const auditOutput = execFileSync(process.execPath, ['scripts/generate_yang_kaidi_word_audio.mjs'], { encoding: 'utf8' });
-assert(auditOutput.includes('【正课】词库条目 75'), '默认音频命令必须审计新正课词库');
+assert(auditOutput.includes('【正课】词库条目 146'), '默认音频命令必须审计两册正课词库');
 assert(auditOutput.includes('【历史】词库条目 1528'));
 const lessonPlan = await collectAudioPlan('data/杨开迪-我的', 'sounds');
-assert.equal(lessonPlan.entryCount, 75);
-assert.equal(lessonPlan.uniqueCount, 75);
+assert.equal(lessonPlan.entryCount, 146);
+assert.equal(lessonPlan.uniqueCount, 146);
 assert.equal(lessonPlan.missing.length, 0, '新正课全部词应有静态 MP3');
-assert.equal(lessonPlan.covered.length + lessonPlan.caseRenames.length, 75, '包含可兼容的已有大写音频');
+assert.equal(lessonPlan.covered.length + lessonPlan.caseRenames.length, 146, '包含可兼容的已有大写音频');
 for (const fileName of [...lessonPlan.covered, ...lessonPlan.caseRenames.map((item) => item.from)]) {
     assert((await stat(path.join('sounds', fileName))).size > 0, `音频为空：${fileName}`);
 }

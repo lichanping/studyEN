@@ -15,7 +15,7 @@ export const WORD_REVIEW_SOURCES = [
     },
     {
         sourceId: 'my-coach', label: '正课', directory: 'data/杨开迪-我的',
-        bookDates: ['2026-10-02']
+        bookDates: ['2026-10-02', '2026-10-04']
     }
 ];
 

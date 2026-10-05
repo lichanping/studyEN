@@ -137,3 +137,10 @@ Apply the following behavior by default in all coding tasks:
 - Do not create one-off conversion scripts when `scripts/generate_article_audio.sh` already satisfies the task.
 - If extraction logic is adjusted, add/update pytest coverage in:
   - `tests/test_tool_article_to_mp3.py`
+
+## 杨开迪词表日期规约
+
+- 为杨开迪根据图片制作词表时，图片里的打印日期就是上课日期。TXT 文件名、词库日期、MP3 文件名及任务分支名均使用该日期，不使用操作当天日期或其他推测日期。例如打印时间 `2026-10-04 22:06` 对应 `2026-10-04.txt` 和含 `2026-10-04` 的任务分支名。
+- 多张图片必须先核对打印日期一致；缺少日期、日期不一致或用户指定日期与图片冲突时，先向用户确认，不自行猜测。
+- 正课词表保存至 `data/杨开迪-我的/`，每条使用 `英文<TAB>释义` 且恰好一个 Tab，保留图片中的拼写、释义和词目顺序。图片未标词性时不自行添加词性；同步登记正课册目录，不修改已有册的记录标识。
+- 磨耳朵 MP3 沿用项目规则：每词中文 1 遍，再英文 6 遍。音频不朗读图片标题、打印时间、手机号或复习计划；输出完整、可直接分享给学生的 MP3，并核验全部词目的顺序与音频可播放性。
