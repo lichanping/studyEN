@@ -131,10 +131,12 @@ async function verifySourceController() {
     vm.runInContext(`${loadCode}; this.loadBooks = loadBooks;`, context);
     await context.loadBooks();
     assert.equal(salarySyncs.length, 0, '默认加载正课不得补同步历史工资');
-    assert.equal(context.books.length, 2);
+    assert.equal(context.books.length, 3);
     assert.equal(context.books[0].totalWords, 75);
     assert.equal(context.books[1].totalWords, 71);
     assert.equal(context.books[1].bookId, 'my-coach:2026-10-04');
+    assert.equal(context.books[2].totalWords, 55);
+    assert.equal(context.books[2].bookId, 'my-coach:2026-10-05');
     assert.equal(context.results.length, 1);
     assert.equal(context.results[0].bookId, lessonBook.bookId);
     assert.deepEqual(draftReads, core.getSourceBooks('my-coach').map((book) => book.bookId));
