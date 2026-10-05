@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { execFileSync } from 'node:child_process';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import * as reviewCore from '../yang-kaidi-word-review-core.mjs';
 
 import {
@@ -23,6 +25,41 @@ import {
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.join(__dirname, '..');
+
+const manifestScript = path.join(repoRoot, 'scripts/generate_yang_kaidi_word_manifest.mjs');
+assert(fs.existsSync(manifestScript), '词库清单应通过构建脚本自动扫描可用TXT');
+const manifestRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'yang-kaidi-manifest-'));
+try {
+    for (const directory of ['data/杨开迪', 'data/杨开迪-我的']) {
+        fs.mkdirSync(path.join(manifestRoot, directory), { recursive: true });
+    }
+    fs.writeFileSync(path.join(manifestRoot, 'data/杨开迪/2026-05-09.txt'), 'history\t历史\n');
+    fs.writeFileSync(path.join(manifestRoot, 'data/杨开迪-我的/2026-10-04.txt'), 'second\t第二\n');
+    fs.writeFileSync(path.join(manifestRoot, 'data/杨开迪-我的/2026-10-02.txt'), 'first\t第一\n');
+    fs.writeFileSync(path.join(manifestRoot, 'data/杨开迪-我的/单词表.png'), 'image');
+    fs.writeFileSync(path.join(manifestRoot, 'data/杨开迪-我的/draft.txt'), 'draft');
+    fs.mkdirSync(path.join(manifestRoot, 'data/杨开迪-我的/2026-10-03.txt'));
+    const generateManifest = () => execFileSync(process.execPath, [manifestScript, manifestRoot], { encoding: 'utf8' });
+    const readManifest = async (version) => (await import(`${pathToFileURL(path.join(manifestRoot, 'yang-kaidi-word-review-books.mjs')).href}?v=${version}`)).WORD_REVIEW_BOOK_DATES;
+    generateManifest();
+    assert.deepEqual(await readManifest(1), {
+        'old-coach': ['2026-05-09'],
+        'my-coach': ['2026-10-02', '2026-10-04']
+    }, '只扫描日期TXT文件，不读取图片、非日期TXT和同名目录');
+    fs.writeFileSync(path.join(manifestRoot, 'data/杨开迪-我的/2026-10-06.txt'), 'new\t新增\n');
+    generateManifest();
+    assert.deepEqual((await readManifest(2))['my-coach'], ['2026-10-02', '2026-10-04', '2026-10-06'], '新增TXT后无需编辑日期数组');
+    fs.unlinkSync(path.join(manifestRoot, 'data/杨开迪-我的/2026-10-06.txt'));
+    generateManifest();
+    assert.deepEqual((await readManifest(3))['my-coach'], ['2026-10-02', '2026-10-04'], '已删除TXT不再列入可用册');
+    const firstOutput = fs.readFileSync(path.join(manifestRoot, 'yang-kaidi-word-review-books.mjs'), 'utf8');
+    generateManifest();
+    assert.equal(fs.readFileSync(path.join(manifestRoot, 'yang-kaidi-word-review-books.mjs'), 'utf8'), firstOutput, '生成清单应可重复，不产生时间戳变动');
+} finally {
+    fs.rmSync(manifestRoot, { recursive: true, force: true });
+}
+assert(!fs.readFileSync(path.join(repoRoot, 'yang-kaidi-word-review-core.mjs'), 'utf8').includes('bookDates: ['), '运行时册目录不再手动维护日期数组');
+assert(fs.readFileSync(path.join(repoRoot, 'netlify.toml'), 'utf8').includes('command = "npm run build:yang-kaidi-word-manifest"'), '部署时必须自动生成词库清单');
 
 const lessonEntries = parseTabbedWordList(
     fs.readFileSync(path.join(repoRoot, 'data/杨开迪-我的/2026-10-02.txt'), 'utf8'),
