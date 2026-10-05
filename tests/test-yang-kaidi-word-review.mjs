@@ -40,11 +40,58 @@ const lessonBooks = reviewCore.getSourceBooks('my-coach');
 assert.equal(historyBooks.length, 30);
 assert.equal(historyBooks[0].bookId, '2026-05-09', '历史册主键保持不变');
 assert.equal(historyBooks[0].path, 'data/杨开迪/2026-05-09.txt');
-assert.equal(lessonBooks.length, 1);
+assert.equal(lessonBooks.length, 2);
 assert.equal(lessonBooks[0].bookId, 'my-coach:2026-10-02');
 assert.equal(lessonBooks[0].bookDate, '2026-10-02');
 assert.equal(lessonBooks[0].bookNumber, 1);
 assert.equal(lessonBooks[0].path, 'data/杨开迪-我的/2026-10-02.txt');
+assert.deepEqual(lessonBooks[1], {
+    sourceId: 'my-coach',
+    bookId: 'my-coach:2026-10-04',
+    bookDate: '2026-10-04',
+    bookNumber: 2,
+    path: 'data/杨开迪-我的/2026-10-04.txt'
+});
+const secondLessonText = fs.readFileSync(path.join(repoRoot, lessonBooks[1].path), 'utf8');
+const secondLessonEntries = parseTabbedWordList(secondLessonText, lessonBooks[1].bookId);
+assert.equal(secondLessonEntries.length, 71, '两张图片的60+11条词目应完整录入');
+assert.deepEqual(secondLessonEntries.map((entry) => entry.english), [
+    'marriage', 'theatre', 'guest', 'accent', 'trousers',
+    'rat', 'wheel', 'towel', 'risk', 'coal',
+    'cent', 'cotton', 'murder', 'cheese', 'purse',
+    'force', 'fetch', 'certain', 'heat', 'rope',
+    'separate', 'whether', 'count', 'instruction', 'lock',
+    'kick', 'condition', 'steal', 'object', 'blind',
+    'pioneer', 'chest', 'message', 'path', 'information',
+    'hang', 'salt', 'drug', 'row', 'concert',
+    'humorous', 'stamp', 'worth', 'sick', 'bitter',
+    'available', 'vehicle', 'stick', 'war', 'prove',
+    'license', 'till', 'treatment', 'bell', 'retell',
+    'repeat', 'round', 'state', 'total', 'president',
+    'granny', 'least', 'composition', 'abundance', 'beg',
+    'bounce', 'brand', 'defend', 'devotion', 'dialect', 'diamond'
+], '按图片每组从左到右、组内从上到下保留原拼写');
+assert.deepEqual(secondLessonEntries.map((entry) => entry.meaning), [
+    '结婚', '剧院', '客人', '口音', '裤子',
+    '老鼠', '车轮', '毛巾', '冒险', '煤',
+    '美分', '棉花', '谋杀', '奶酪', '钱包',
+    '强迫', '拿取', '确定的', '热；加热', '绳子',
+    '分开', '是否', '数数', '用法说明', '锁',
+    '踢', '条件；状况', '偷', '物体', '失明的',
+    '先锋', '胸部', '信息', '路', '信息',
+    '悬挂', '盐', '毒品', '一排', '音乐会',
+    '幽默的', '邮票', '值得', '生病的', '苦的',
+    '可用的', '车辆', '粘贴；刺', '战争', '证明',
+    '证件', '直到', '治疗', '铃', '复述',
+    '重复', '圆的', '状态', '总共', '总统',
+    '奶奶', '最少', '构成', '大量', '乞求',
+    '弹跳', '品牌', '保卫', '热爱', '方言', '钻石'
+], '释义应与图片一致，不自行添加词性或改写');
+assert(secondLessonText.endsWith('\n'));
+assert(!secondLessonText.includes('\r'));
+assert(secondLessonText.trimEnd().split('\n').every((line) => line.split('\t').length === 2));
+assert(secondLessonEntries.every((entry) => entry.entryId.startsWith('my-coach:2026-10-04:')));
+assert.equal(new Set(secondLessonEntries.map((entry) => entry.english)).size, 71);
 assert.equal(reviewCore.getRecordSourceId({ bookId: '2026-10-02' }), 'old-coach');
 assert.equal(reviewCore.getRecordSourceId({ bookId: 'my-coach:2026-10-02' }), 'my-coach');
 const lessonResult = createCompletedResult({
