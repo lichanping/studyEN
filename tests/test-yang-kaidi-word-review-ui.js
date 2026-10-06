@@ -141,6 +141,35 @@ async function verifySourceController() {
     assert.equal(context.results[0].bookId, lessonBook.bookId);
     assert.deepEqual(draftReads, core.getSourceBooks('my-coach').map((book) => book.bookId));
 
+    const clickCode = controller.slice(controller.indexOf('async function handleWordClick('), controller.indexOf('\nfunction handleForgottenClick('));
+    vm.runInContext(`${clickCode}; this.handleWordClick = handleWordClick;`, context);
+    const clickedAudio = [];
+    let clickDraftWrites = 0;
+    context.renderReview = () => {};
+    context.playEnglish = async (speechText) => clickedAudio.push(speechText);
+    context.queueDraftSave = () => { clickDraftWrites += 1; };
+    context.currentResult = lessonResult;
+    context.currentEntries = context.books[0].entries.map((entry, index) => ({ ...entry, tested: index < 2 }));
+    const resultBeforeClick = JSON.stringify(lessonResult);
+    await context.handleWordClick(2);
+    assert.equal(context.currentEntries[2].revealed, true, '已完成册的未测试词点击后也应显示中文');
+    assert.equal(context.currentEntries[2].tested, false, '查看已完成册释义不得增加原测试词数');
+    await context.handleWordClick(0);
+    assert.equal(context.currentEntries[0].revealed, true, '已完成册的原测试词点击后显示中文');
+    assert.equal(core.calculateBookStats(context.currentEntries).testedCount, 2);
+    assert.equal(clickDraftWrites, 0, '查看已完成结果不得写草稿');
+    assert.equal(JSON.stringify(lessonResult), resultBeforeClick, '查看释义不得修改已存结果');
+    assert.equal(salarySyncs.length, 0, '查看释义不得同步工资');
+    context.currentResult = null;
+    context.currentEntries = [{ ...context.books[0].entries[2], tested: false, revealed: false }];
+    await context.handleWordClick(0);
+    assert.equal(context.currentEntries[0].tested, true);
+    assert.equal(context.currentEntries[0].revealed, false, '未完成册首次点击仍只播放英文');
+    await context.handleWordClick(0);
+    assert.equal(context.currentEntries[0].revealed, true, '未完成册再次点击才显示中文');
+    assert.equal(clickDraftWrites, 2);
+    assert.equal(clickedAudio.length, 4, '查看释义仍播放英文');
+
     context.currentBook = context.books[0];
     context.currentEntries = context.currentBook.entries.map((entry, index) => ({ ...entry, tested: index < 2, forgotten: index === 0 }));
     const completeCode = controller.slice(controller.indexOf('async function completeCurrentBook('), controller.indexOf('\nfunction syncHistorySalary('));
