@@ -245,7 +245,10 @@ function renderReview() {
 async function handleWordClick(index) {
     const previous = currentEntries[index];
     const next = applyWordClick(previous);
-    if (currentResult && !previous.tested) next.tested = false;
+    if (currentResult) {
+        next.tested = previous.tested;
+        next.revealed = true;
+    }
     currentEntries[index] = next;
     renderReview();
     if (!currentResult) queueDraftSave();
