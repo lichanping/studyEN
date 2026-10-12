@@ -1,6 +1,7 @@
 const assert = require("assert");
 const fs = require("fs");
 const path = require("path");
+const vm = require("vm");
 
 function readWorkspaceFile(relativePath) {
     return fs.readFileSync(path.join(__dirname, "..", relativePath), "utf8");
@@ -40,6 +41,20 @@ assert(
     legacyNamesSection.includes("悦慧") &&
     legacyNamesSection.includes("Joe"),
     "commonFunctions.js 中的 legacy 名单应包含需过滤学员：季筱雯、施博睿、于熠凡、陈怡睿、徐崇楷、闫奕洁、喻书涵、悦慧、Joe"
+);
+
+const filteringSource = commonFunctionsContent.slice(
+    commonFunctionsContent.indexOf("export const LEGACY_STUDENT_NAMES"),
+    commonFunctionsContent.indexOf("export function formatLocalDateYmd")
+).replace(/\bexport /g, "");
+const filteredStudents = JSON.parse(vm.runInNewContext(
+    `${filteringSource}\nJSON.stringify(filterLegacyStudents(["杨开迪", "史楚晏", "张予然", " 史楚晏 ", " 张予然 ", "李敏维"]));`,
+    { localStorage: { getItem: () => null } }
+));
+assert.deepStrictEqual(
+    filteredStudents,
+    ["杨开迪"],
+    "抗遗忘下拉框使用的共享过滤器应排除史楚晏、张予然及原有 legacy 学生，保留正常学生"
 );
 
 assert(

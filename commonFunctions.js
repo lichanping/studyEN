@@ -33,7 +33,7 @@ export function navigateToReadClass() {
     window.location.href = "class-read.html";
 }
 
-export const LEGACY_STUDENT_NAMES = Object.freeze(["李敏维", "季筱雯", "施博睿", "于熠凡", "陈怡睿", "徐崇楷", "闫奕洁", "喻书涵", "悦慧", "Joe"]);
+export const LEGACY_STUDENT_NAMES = Object.freeze(["李敏维", "季筱雯", "施博睿", "于熠凡", "陈怡睿", "徐崇楷", "闫奕洁", "喻书涵", "悦慧", "Joe", "史楚晏", "张予然"]);
 export const HIDDEN_STUDENTS_STORAGE_KEY = "hidden-students-v1";
 
 function normalizeStudentName(value) {

@@ -32,7 +32,7 @@ These instructions apply to all coding tasks in this repository.
 - 用户要求创建或更新 PR 并验证 Preview URL，即授权当前任务自动完成相关的 `commit`、`push`、创建/更新 PR、等待 Preview 和浏览器验收，无需逐步确认。
 - 提交前仍必须运行相关测试，核对 `git status`、`git diff --staged`，确认仅包含本次相关文件并完成敏感信息检查；在过程更新中告知待提交文件摘要、唯一 commit message 和目标远程分支，但不暂停等待确认。
 - 推送当前任务工作分支到其已确认的 upstream；已有对应 PR 时更新该 PR，不存在时创建 PR。随后等待 Preview 部署完成，按下方“词库更新验证范围”选择检查方式，并报告 PR URL、Preview URL、已执行检查与未验证项；取得 Preview URL 不等于必须执行浏览器验收。
-- 此授权仅适用于当前任务和当前工作分支，不延续到后续任务；不包含合并 PR、强推、删除分支或其他破坏性操作。PR 合并必须另行得到用户明确指示。
+- 此授权仅适用于当前任务和当前工作分支，不延续到后续任务；不包含合并 PR、强推、删除分支或其他破坏性操作。用户回复“验收通过”“验收pass”“验收 pass”即另行授权本次已验收 PR 的合并与分支清理，按“Preview 验收后的合并与收尾”执行，无需再要求用户说 merge。
 - 若测试失败、暂存内容包含无关文件或敏感信息、工作区存在无法安全归属的改动、目标分支/远程不明确、推送冲突或出现其他安全风险，停止自动流程并向用户说明阻塞点。
 - Preview 尚未生成时，继续等待对应部署检查；若部署失败或无法取得 Preview URL，应报告 PR 状态和具体阻塞，不得将其表述为验收通过。
 
@@ -50,16 +50,27 @@ These instructions apply to all coding tasks in this repository.
 8. PR 创建后获取并返回 PR URL；等待部署服务生成 preview 后，返回 preview URL。如果暂时没有 preview URL，说明已创建 PR，并告知需要等待对应部署检查完成。
 9. 不要把未确认、未自测通过或与本次任务无关的文件提交进 PR。
 
+### Preview 验收后的合并与收尾
+
+用户对本次 Preview 回复“验收通过”“验收pass”“验收 pass”或“验收pass，你继续”，即授权连续完成本次已验收 PR 的合并与对应远端、本地工作分支清理，无需再要求用户说 merge，也无需逐步确认。Preview 已验收后明确要求“merge”“合并”或“合并并继续后续操作”同样授权执行此流程。
+
+1. 核验 PR 的 base 为 `main`、head SHA 与验收 SHA 一致、检查通过且可合并。复用已有测试、CI 和 Preview 验收证据，不重复触发测试或部署；SHA 或范围发生变化时停止，不合并未验收提交。
+2. 使用验收 head SHA 作为并发保护合并 PR，确认 PR 状态为 merged，并记录 merge commit SHA。
+3. 只删除本次已合并 PR 的远端 head 分支。删除前确认远端 SHA 仍是验收 SHA，并使用 SHA 并发保护；已删除则跳过，发现新提交则停止。
+4. 执行 `fetch --prune`，切到 `main` 并 `pull --ff-only`，确认本次验收内容已包含在 `main`。核对本地工作分支 SHA 后安全删除；不得删除当前分支或其他 worktree 使用的分支。安全删除失败时停止并报告，不强制删除。
+5. 确认工作区干净、本地 `main` 与 `origin/main` 一致，本次远端、本地及远端跟踪工作分支已清理。不得丢弃未提交改动或删除其他任务分支；有无法安全处理的改动时停止并说明。
+6. 报告 PR URL、合并 SHA、`main` 同步状态及分支清理结果。默认到此结束，不等待生产部署、不执行生产 MCP 测试；只有用户明确要求生产验证时才按下节执行。
+
 ### Netlify 生产部署核验流程
 
-用户询问“合并后 prod 是否已部署”时，不能只依据 PR 的 Deploy Preview 成功作结论。必须完成以下核验：
+仅在用户询问生产部署状态或明确要求生产验证时执行，不因 Preview 已验收后的合并自动触发。部署状态核对与生产 MCP 验收分开，不能只依据 PR 的 Deploy Preview 成功作结论。
 
 1. 执行 `git fetch origin main`，读取 `origin/main` 最新 SHA，并确认目标功能提交已包含在该提交历史中。
 2. 确认 PR 状态为 merged，记录 merge commit SHA；PR 上的 Preview checks 仅作为预览环境证据。
-3. 打开 `https://app.netlify.com/projects/engaid/deploys`，确认最新记录明确显示 `Production: main @<merge SHA>` 且状态为 `Published`。`Deploy Preview #<PR>` 不能替代 Production 记录。
-4. 使用外部 Chrome DevTools MCP 打开 `https://engaid.netlify.app/` 的本次受影响页面，确认页面和新增静态资源返回 200，并执行至少一个能区分新旧版本的关键行为检查。
-5. 检查浏览器 Console 和 Network；区分本次功能错误与既有无关错误，并在结论中说明。
-6. 只有 `origin/main`、Netlify Production deploy 和生产页面行为三者一致时，才报告“prod 已部署”；否则说明当前停在哪一层并附对应 URL 或 SHA。
+3. 通过 Netlify 部署 API 或已有发布记录，确认生产部署来自 `main`、提交为目标 merge SHA，且状态为 `Published`（API 对应 `ready`）。管理页入口为 `https://app.netlify.com/projects/engaid/deploys`；`Deploy Preview #<PR>` 不能替代 Production 记录。无法取得生产证据时说明未核实，不自动启动 MCP 浏览器。
+4. 只有用户明确要求在生产环境进行 MCP/浏览器测试时，才使用外部 Chrome DevTools MCP 打开 `https://engaid.netlify.app/` 的本次受影响页面，确认页面和新增静态资源返回 200，并执行能区分新旧版本的关键行为检查。只验证本次受影响路径，不重复整套 Preview 回归。
+5. 执行生产 MCP 测试时检查 Console 和 Network，区分本次功能错误与既有无关错误，并在结论中说明。
+6. `origin/main` 与 Netlify Production 发布记录一致时，可报告“生产部署已发布”，并说明是否执行生产 MCP 验收。只有明确要求的生产行为检查也通过时，才报告“生产 MCP 验收通过”；缺少证据或检查失败时说明当前停在哪一层并附对应 URL 或 SHA。
 
 ## Core Rule
 
@@ -162,4 +173,4 @@ Apply the following behavior by default in all coding tasks:
 4. 检查逐词英文音频覆盖，缺失时使用已有脚本 `npm run build:yang-kaidi-word-audio` 补齐。默认不生成整份磨耳朵 MP3，只有用户另行明确要求时才生成。
 5. 按“词库更新验证范围”运行本次相关检查，通过后仅提交本次文件，推送工作分支，创建或更新对应 PR，等待 Netlify Preview。GitHub 工具若要求用户提交交互表单，应说明阻塞，不将待提交表单当作已创建 PR。
 6. 纯数据更新确认清单和对应提交部署成功即可，不执行 Chrome MCP 浏览器验收；有相关代码改动或用户明确要求时，再对改变的路径做窄范围浏览器检查。报告 PR URL、Preview URL、实际检查结果及未验证项。
-- 不自动合并 PR，不强推或删除分支；合并仍需用户另行明确授权。Preview 尚未生成、部署失败或自测失败时，不报告验收通过。
+- 此快捷流程的 PR + Preview 授权不包括合并或分支清理。用户回复“验收通过”“验收pass”“验收 pass”即授权按“Preview 验收后的合并与收尾”执行，无需另行要求合并；不强推。Preview 尚未生成、部署失败或自测失败时，不报告验收通过。
