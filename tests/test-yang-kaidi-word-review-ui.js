@@ -131,13 +131,44 @@ async function verifySourceController() {
     vm.runInContext(`${loadCode}; this.loadBooks = loadBooks;`, context);
     await context.loadBooks();
     assert.equal(salarySyncs.length, 0, '默认加载正课不得补同步历史工资');
-    assert.equal(context.books.length, 2);
+    assert.equal(context.books.length, 3);
     assert.equal(context.books[0].totalWords, 75);
     assert.equal(context.books[1].totalWords, 71);
     assert.equal(context.books[1].bookId, 'my-coach:2026-10-04');
+    assert.equal(context.books[2].totalWords, 55);
+    assert.equal(context.books[2].bookId, 'my-coach:2026-10-05');
     assert.equal(context.results.length, 1);
     assert.equal(context.results[0].bookId, lessonBook.bookId);
     assert.deepEqual(draftReads, core.getSourceBooks('my-coach').map((book) => book.bookId));
+
+    const clickCode = controller.slice(controller.indexOf('async function handleWordClick('), controller.indexOf('\nfunction handleForgottenClick('));
+    vm.runInContext(`${clickCode}; this.handleWordClick = handleWordClick;`, context);
+    const clickedAudio = [];
+    let clickDraftWrites = 0;
+    context.renderReview = () => {};
+    context.playEnglish = async (speechText) => clickedAudio.push(speechText);
+    context.queueDraftSave = () => { clickDraftWrites += 1; };
+    context.currentResult = lessonResult;
+    context.currentEntries = context.books[0].entries.map((entry, index) => ({ ...entry, tested: index < 2 }));
+    const resultBeforeClick = JSON.stringify(lessonResult);
+    await context.handleWordClick(2);
+    assert.equal(context.currentEntries[2].revealed, true, '已完成册的未测试词点击后也应显示中文');
+    assert.equal(context.currentEntries[2].tested, false, '查看已完成册释义不得增加原测试词数');
+    await context.handleWordClick(0);
+    assert.equal(context.currentEntries[0].revealed, true, '已完成册的原测试词点击后显示中文');
+    assert.equal(core.calculateBookStats(context.currentEntries).testedCount, 2);
+    assert.equal(clickDraftWrites, 0, '查看已完成结果不得写草稿');
+    assert.equal(JSON.stringify(lessonResult), resultBeforeClick, '查看释义不得修改已存结果');
+    assert.equal(salarySyncs.length, 0, '查看释义不得同步工资');
+    context.currentResult = null;
+    context.currentEntries = [{ ...context.books[0].entries[2], tested: false, revealed: false }];
+    await context.handleWordClick(0);
+    assert.equal(context.currentEntries[0].tested, true);
+    assert.equal(context.currentEntries[0].revealed, false, '未完成册首次点击仍只播放英文');
+    await context.handleWordClick(0);
+    assert.equal(context.currentEntries[0].revealed, true, '未完成册再次点击才显示中文');
+    assert.equal(clickDraftWrites, 2);
+    assert.equal(clickedAudio.length, 4, '查看释义仍播放英文');
 
     context.currentBook = context.books[0];
     context.currentEntries = context.currentBook.entries.map((entry, index) => ({ ...entry, tested: index < 2, forgotten: index === 0 }));
@@ -220,7 +251,64 @@ async function verifySourceController() {
     assert.deepEqual(played, ['sounds/Abroad.mp3', 'sounds/Engineer.mp3']);
 }
 
-verifySourceController().then(() => console.log('test-yang-kaidi-word-review-ui passed')).catch((error) => {
+function verifyBackToBooksRefresh() {
+    const actions = [];
+    let returnToBooks;
+    const context = vm.createContext({
+        elements: {
+            backToBooksButton: {
+                addEventListener: (event, handler) => {
+                    assert.equal(event, 'click');
+                    returnToBooks = handler;
+                }
+            }
+        },
+        renderBookList: () => actions.push('renderBookList'),
+        showView: (view) => actions.push(view)
+    });
+    const returnCode = controller.slice(
+        controller.indexOf('elements.backToBooksButton.addEventListener('),
+        controller.indexOf('\nelements.myCoachSourceButton.addEventListener(')
+    );
+    vm.runInContext(returnCode, context);
+    returnToBooks();
+    assert.deepEqual(actions, ['renderBookList', 'bookListView'], '返回册列表必须先刷新已保存的草稿状态');
+}
+
+function verifyEmptyReportClearsPreviousReport() {
+    const copies = [];
+    const downloads = [];
+    const context = vm.createContext({
+        currentReportText: '',
+        elements: { reportOutput: { textContent: '' }, reportStatus: { textContent: '' } },
+        copyToClipboard: (text) => { copies.push(text); return true; },
+        downloadText: (text, fileName) => downloads.push({ text, fileName })
+    });
+    const reportCode = controller.slice(
+        controller.indexOf('function showReportText('),
+        controller.indexOf('\nfunction setActiveButton(')
+    );
+    vm.runInContext(reportCode, context);
+    context.publishReport('previous report', 'previous.txt');
+    assert.equal(context.elements.reportOutput.textContent, 'previous report');
+    context.publishReport('', 'empty.txt');
+    assert.equal(context.elements.reportOutput.textContent, '', '无记录日期必须清除上一份报告内容');
+    assert.equal(context.currentReportText, '', '无记录日期必须清除内部旧报告文本');
+    assert.equal(context.elements.reportStatus.textContent, '该日期暂无已完成复习记录');
+    assert.deepEqual(copies, ['previous report'], '空报告不得复制旧报告');
+    assert.deepEqual(downloads, [{ text: 'previous report', fileName: 'previous.txt' }], '空报告不得下载旧报告');
+    context.publishReport('next report', 'next.txt');
+    assert.equal(context.elements.reportOutput.textContent, 'next report', '重新选择有记录日期后应正常生成报告');
+    assert.equal(context.currentReportText, 'next report');
+    assert.equal(copies.length, 2);
+    assert.equal(downloads.length, 2);
+}
+
+verifySourceController().then(() => {
+    verifyBackToBooksRefresh();
+    verifyEmptyReportClearsPreviousReport();
+    console.log('test-yang-kaidi-word-review-ui passed');
+}).catch((error) => {
     console.error(error);
     process.exitCode = 1;
 });

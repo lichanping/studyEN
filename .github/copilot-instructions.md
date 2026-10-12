@@ -31,7 +31,7 @@ These instructions apply to all coding tasks in this repository.
 
 - 用户要求创建或更新 PR 并验证 Preview URL，即授权当前任务自动完成相关的 `commit`、`push`、创建/更新 PR、等待 Preview 和浏览器验收，无需逐步确认。
 - 提交前仍必须运行相关测试，核对 `git status`、`git diff --staged`，确认仅包含本次相关文件并完成敏感信息检查；在过程更新中告知待提交文件摘要、唯一 commit message 和目标远程分支，但不暂停等待确认。
-- 推送当前任务工作分支到其已确认的 upstream；已有对应 PR 时更新该 PR，不存在时创建 PR。随后等待 Preview 部署完成，使用外部 Chrome DevTools MCP 执行本次功能的关键浏览器验收，并报告 PR URL、Preview URL、测试与验收结果。
+- 推送当前任务工作分支到其已确认的 upstream；已有对应 PR 时更新该 PR，不存在时创建 PR。随后等待 Preview 部署完成，按下方“词库更新验证范围”选择检查方式，并报告 PR URL、Preview URL、已执行检查与未验证项；取得 Preview URL 不等于必须执行浏览器验收。
 - 此授权仅适用于当前任务和当前工作分支，不延续到后续任务；不包含合并 PR、强推、删除分支或其他破坏性操作。PR 合并必须另行得到用户明确指示。
 - 若测试失败、暂存内容包含无关文件或敏感信息、工作区存在无法安全归属的改动、目标分支/远程不明确、推送冲突或出现其他安全风险，停止自动流程并向用户说明阻塞点。
 - Preview 尚未生成时，继续等待对应部署检查；若部署失败或无法取得 Preview URL，应报告 PR 状态和具体阻塞，不得将其表述为验收通过。
@@ -83,6 +83,7 @@ These instructions apply to all coding tasks in this repository.
 - For Python code, prefer `pytest` style tests unless the target area already uses another framework.
 - For schedule or quota logic changes, run `npm run test:quota` before and after implementation, and report both results.
 - For any MCP-driven UI verification, always launch and inspect the page in an external Chrome browser via Chrome DevTools MCP. Do not use VS Code embedded pages for UI acceptance checks, because the viewport is too small for reliable review.
+- 验证范围由实际改动决定，不因创建 PR、生成 Preview 或更换词库日期而重复完整浏览器回归。纯词库数据更新遵循下方轻量检查规则；用户明确要求浏览器验收时才覆盖该默认规则。
 - 当用户要求“给我回归验证用例 / 验证点 / 验收场景 / regression cases”时，在完成 coding 和相关自测后，输出必须优先使用表格格式。
 - 该表格应只描述“本次改动对应的验证点”，不要把通用历史测试清单或整仓库固定测试样例直接写入规约或直接整段复用给用户。
 - 推荐表头：`模块 | 回归点 | 操作步骤 | 预期结果 | 已跑自动化（可选）`。
@@ -142,15 +143,23 @@ Apply the following behavior by default in all coding tasks:
 
 - 为杨开迪根据图片制作词表时，图片里的打印日期就是上课日期。TXT 文件名、词库日期、MP3 文件名及任务分支名均使用该日期，不使用操作当天日期或其他推测日期。例如打印时间 `2026-10-04 22:06` 对应 `2026-10-04.txt` 和含 `2026-10-04` 的任务分支名。
 - 多张图片必须先核对打印日期一致；缺少日期、日期不一致或用户指定日期与图片冲突时，先向用户确认，不自行猜测。
-- 正课词表保存至 `data/杨开迪-我的/`，每条使用 `英文<TAB>释义` 且恰好一个 Tab，保留图片中的拼写、释义和词目顺序。图片未标词性时不自行添加词性；同步登记正课册目录，不修改已有册的记录标识。
+- 正课词表保存至 `data/杨开迪-我的/`，每条使用 `英文<TAB>释义` 且恰好一个 Tab，保留图片中的拼写、释义和词目顺序。图片未标词性时不自行添加词性；运行 `npm run build:yang-kaidi-word-manifest` 自动生成册目录，无需手动编辑 `bookDates`，不修改已有册的记录标识。
+- 词库清单 `yang-kaidi-word-review-books.mjs` 由构建脚本扫描正课和历史目录中的 `YYYY-MM-DD.txt` 生成，不手工维护。Netlify 部署、本地 npm 启动和复习测试会自动生成；直接使用普通静态服务器时，新增或删除 TXT 后先运行清单构建命令。PNG、非日期 TXT 和目录不作为词库册。
+
+### 词库更新验证范围
+
+- 仅新增、替换或删除词库 TXT/PNG、补齐逐词 MP3，或重新生成册目录清单时，属于纯数据更新：默认不启动 Chrome、不调用 Chrome DevTools MCP、不重测既有播放交互、草稿恢复、完成记录、报告、来源隔离、工资或响应式布局。生成清单中的日期变化不属于业务代码变更。
+- 纯数据更新只检查本次图片日期、词目/释义/顺序、单 Tab 格式、清单生成结果及旧册标识、逐词音频覆盖，复用已有脚本和相关数据测试。不要为每册复制一套交互测试，也不要为未改动的逻辑重复运行整套回归；同一内容和提交已通过的检查不重复运行。
+- 需要 PR/Preview 时仍核对提交范围、敏感信息和对应提交的部署状态；必要时用少量 HTTP 请求检查新 TXT、音频或清单可访问，不用浏览器遍历词目，也不重复下载所有已有音频。报告“数据检查通过”，不冒称“浏览器验收通过”。
+- 页面、交互、解析/加载、清单生成脚本、构建/缓存、存储或计费逻辑发生变化，或用户明确要求浏览器验收时，才评估是否需要 Chrome MCP；只验证本次改变的关键路径，不自动扩展为全部历史功能回归。
 
 ### 快捷触发流程
 
 - 用户输入 `杨开迪词表更新` 时，按以下流程执行，无需用户重复长提示词。该提示词包含本次任务的 PR + Preview 一次性端到端授权，提交和推送仍遵守上文的测试、范围及敏感信息检查要求。
 1. 读取 `data/杨开迪-我的/` 中本次新增或替换的 PNG；无法确定本次图片范围时先确认，避免重复处理旧图片。核对全部图片的打印日期一致，以该日期作为上课日期；缺少日期或存在冲突时先询问。
 2. 按分支规约核对当前任务及上一 PR 状态。独立新任务从已同步的 `main` 创建含上课日期的工作分支；同一未合并任务的小修复复用原工作分支，不在 `main` 修改。
-3. 按 TDD first，先添加词目、释义、顺序、单 Tab 格式及册目录的失败测试，再创建 `data/杨开迪-我的/YYYY-MM-DD.txt` 并登记正课册目录。保留图片原内容，不自行添加词性，不改变已有册编号、记录标识或工资逻辑；已有同日词表不擅自覆盖。
+3. 按 TDD first，先添加词目、释义、顺序、单 Tab 格式及册目录的失败测试，再创建 `data/杨开迪-我的/YYYY-MM-DD.txt` 并运行 `npm run build:yang-kaidi-word-manifest` 自动更新清单，不手改 `bookDates`。保留图片原内容，不自行添加词性，不改变已有册编号、记录标识或工资逻辑；已有同日词表不擅自覆盖。
 4. 检查逐词英文音频覆盖，缺失时使用已有脚本 `npm run build:yang-kaidi-word-audio` 补齐。默认不生成整份磨耳朵 MP3，只有用户另行明确要求时才生成。
-5. 运行相关复习及逐词音频测试，通过后仅提交本次文件，推送工作分支，创建或更新对应 PR，等待 Netlify Preview。GitHub 工具若要求用户提交交互表单，应说明阻塞，不将待提交表单当作已创建 PR。
-6. 使用外部 Chrome DevTools MCP 在实际 Preview 验证新册加载、词目及释义、英文播放、遗忘标记、草稿恢复、完成记录持久化和来源隔离；核对旧册未受影响、正课不影响工资，并检查 Console 和 Network。报告 PR URL、Preview URL、测试结果及未验证项。
+5. 按“词库更新验证范围”运行本次相关检查，通过后仅提交本次文件，推送工作分支，创建或更新对应 PR，等待 Netlify Preview。GitHub 工具若要求用户提交交互表单，应说明阻塞，不将待提交表单当作已创建 PR。
+6. 纯数据更新确认清单和对应提交部署成功即可，不执行 Chrome MCP 浏览器验收；有相关代码改动或用户明确要求时，再对改变的路径做窄范围浏览器检查。报告 PR URL、Preview URL、实际检查结果及未验证项。
 - 不自动合并 PR，不强推或删除分支；合并仍需用户另行明确授权。Preview 尚未生成、部署失败或自测失败时，不报告验收通过。

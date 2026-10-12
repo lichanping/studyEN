@@ -1,4 +1,5 @@
 [build]
+  command = "npm run build:yang-kaidi-word-manifest"
   publish = "."
 
 [functions]
@@ -16,6 +17,12 @@
 
 [[headers]]
   for = "/*.js"
+  [headers.values]
+    Content-Type = "application/javascript; charset=utf-8"
+    Cache-Control = "no-store, no-cache, must-revalidate"
+
+[[headers]]
+  for = "/yang-kaidi-word-review-books.mjs"
   [headers.values]
     Content-Type = "application/javascript; charset=utf-8"
     Cache-Control = "no-store, no-cache, must-revalidate"

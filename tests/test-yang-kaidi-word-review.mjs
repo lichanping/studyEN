@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { execFileSync } from 'node:child_process';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import * as reviewCore from '../yang-kaidi-word-review-core.mjs';
 
 import {
@@ -24,6 +26,41 @@ import {
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.join(__dirname, '..');
 
+const manifestScript = path.join(repoRoot, 'scripts/generate_yang_kaidi_word_manifest.mjs');
+assert(fs.existsSync(manifestScript), '词库清单应通过构建脚本自动扫描可用TXT');
+const manifestRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'yang-kaidi-manifest-'));
+try {
+    for (const directory of ['data/杨开迪', 'data/杨开迪-我的']) {
+        fs.mkdirSync(path.join(manifestRoot, directory), { recursive: true });
+    }
+    fs.writeFileSync(path.join(manifestRoot, 'data/杨开迪/2026-05-09.txt'), 'history\t历史\n');
+    fs.writeFileSync(path.join(manifestRoot, 'data/杨开迪-我的/2026-10-04.txt'), 'second\t第二\n');
+    fs.writeFileSync(path.join(manifestRoot, 'data/杨开迪-我的/2026-10-02.txt'), 'first\t第一\n');
+    fs.writeFileSync(path.join(manifestRoot, 'data/杨开迪-我的/单词表.png'), 'image');
+    fs.writeFileSync(path.join(manifestRoot, 'data/杨开迪-我的/draft.txt'), 'draft');
+    fs.mkdirSync(path.join(manifestRoot, 'data/杨开迪-我的/2026-10-03.txt'));
+    const generateManifest = () => execFileSync(process.execPath, [manifestScript, manifestRoot], { encoding: 'utf8' });
+    const readManifest = async (version) => (await import(`${pathToFileURL(path.join(manifestRoot, 'yang-kaidi-word-review-books.mjs')).href}?v=${version}`)).WORD_REVIEW_BOOK_DATES;
+    generateManifest();
+    assert.deepEqual(await readManifest(1), {
+        'old-coach': ['2026-05-09'],
+        'my-coach': ['2026-10-02', '2026-10-04']
+    }, '只扫描日期TXT文件，不读取图片、非日期TXT和同名目录');
+    fs.writeFileSync(path.join(manifestRoot, 'data/杨开迪-我的/2026-10-06.txt'), 'new\t新增\n');
+    generateManifest();
+    assert.deepEqual((await readManifest(2))['my-coach'], ['2026-10-02', '2026-10-04', '2026-10-06'], '新增TXT后无需编辑日期数组');
+    fs.unlinkSync(path.join(manifestRoot, 'data/杨开迪-我的/2026-10-06.txt'));
+    generateManifest();
+    assert.deepEqual((await readManifest(3))['my-coach'], ['2026-10-02', '2026-10-04'], '已删除TXT不再列入可用册');
+    const firstOutput = fs.readFileSync(path.join(manifestRoot, 'yang-kaidi-word-review-books.mjs'), 'utf8');
+    generateManifest();
+    assert.equal(fs.readFileSync(path.join(manifestRoot, 'yang-kaidi-word-review-books.mjs'), 'utf8'), firstOutput, '生成清单应可重复，不产生时间戳变动');
+} finally {
+    fs.rmSync(manifestRoot, { recursive: true, force: true });
+}
+assert(!fs.readFileSync(path.join(repoRoot, 'yang-kaidi-word-review-core.mjs'), 'utf8').includes('bookDates: ['), '运行时册目录不再手动维护日期数组');
+assert(fs.readFileSync(path.join(repoRoot, 'netlify.toml'), 'utf8').includes('command = "npm run build:yang-kaidi-word-manifest"'), '部署时必须自动生成词库清单');
+
 const lessonEntries = parseTabbedWordList(
     fs.readFileSync(path.join(repoRoot, 'data/杨开迪-我的/2026-10-02.txt'), 'utf8'),
     'my-coach:2026-10-02'
@@ -40,7 +77,7 @@ const lessonBooks = reviewCore.getSourceBooks('my-coach');
 assert.equal(historyBooks.length, 30);
 assert.equal(historyBooks[0].bookId, '2026-05-09', '历史册主键保持不变');
 assert.equal(historyBooks[0].path, 'data/杨开迪/2026-05-09.txt');
-assert.equal(lessonBooks.length, 2);
+assert.equal(lessonBooks.length, 3);
 assert.equal(lessonBooks[0].bookId, 'my-coach:2026-10-02');
 assert.equal(lessonBooks[0].bookDate, '2026-10-02');
 assert.equal(lessonBooks[0].bookNumber, 1);
@@ -92,6 +129,47 @@ assert(!secondLessonText.includes('\r'));
 assert(secondLessonText.trimEnd().split('\n').every((line) => line.split('\t').length === 2));
 assert(secondLessonEntries.every((entry) => entry.entryId.startsWith('my-coach:2026-10-04:')));
 assert.equal(new Set(secondLessonEntries.map((entry) => entry.english)).size, 71);
+assert.deepEqual(lessonBooks[2], {
+    sourceId: 'my-coach',
+    bookId: 'my-coach:2026-10-05',
+    bookDate: '2026-10-05',
+    bookNumber: 3,
+    path: 'data/杨开迪-我的/2026-10-05.txt'
+});
+const thirdLessonText = fs.readFileSync(path.join(repoRoot, lessonBooks[2].path), 'utf8');
+const thirdLessonEntries = parseTabbedWordList(thirdLessonText, lessonBooks[2].bookId);
+assert.equal(thirdLessonEntries.length, 55, '图片中的11组词目应完整录入');
+assert.deepEqual(thirdLessonEntries.map((entry) => entry.english), [
+    'evaluate', 'evolution', 'fascination', 'gather', 'handful',
+    'hunch', 'independence', 'infer', 'invest', 'look out',
+    'measure', 'occupy', 'on average', 'spatial', 'straw',
+    'struggle', 'undertake', 'yell', 'cage', 'claim',
+    'description', 'extinct', 'factual', 'female', 'fierce',
+    'forbid', 'laboratory', 'military', 'motor', 'native',
+    'relate', 'tram', 'trunk', 'unrest', 'access',
+    'adequately', 'ambiguous', 'appointment', 'attack', 'discrimination',
+    'disgusting', 'dread', 'droop', 'drought', 'drunk',
+    'efficiency', 'embarrassed', 'endurance', 'entertaining', 'newly',
+    'per', 'pity', 'presentation', 'recipe', 'resource'
+], '保留图片每组从左到右、组内从上到下的词目顺序');
+assert.deepEqual(thirdLessonEntries.map((entry) => entry.meaning), [
+    '评价', '进化', '入迷', '聚集', '一把',
+    '直觉', '独立', '推断', '投资', '当心',
+    '方法', '占据', '平均', '空间的', '稻草',
+    '挣扎', '承担', '大喊', '笼子', '宣告',
+    '描述', '灭绝的', '事实的', '女性的', '凶猛的',
+    '禁止', '实验室', '军事的', '发动机', '本地的',
+    '联系', '电车', '树干；行李箱', '不安', '进入；通道',
+    '足够地', '模糊的', '预约', '攻击', '歧视',
+    '令人厌恶的', '畏惧', '下垂', '干旱', '醉的',
+    '效率', '尴尬的', '忍耐力', '有趣的', '新近',
+    '每', '可惜', '展示', '烹饪；食谱', '资源'
+], '保留原释义，包括measure的方法，不自行添加词性');
+assert(thirdLessonText.endsWith('\n'));
+assert(!thirdLessonText.includes('\r'));
+assert(thirdLessonText.trimEnd().split('\n').every((line) => line.split('\t').length === 2));
+assert(thirdLessonEntries.every((entry) => entry.entryId.startsWith('my-coach:2026-10-05:')));
+assert.equal(new Set(thirdLessonEntries.map((entry) => entry.english)).size, 55);
 assert.equal(reviewCore.getRecordSourceId({ bookId: '2026-10-02' }), 'old-coach');
 assert.equal(reviewCore.getRecordSourceId({ bookId: 'my-coach:2026-10-02' }), 'my-coach');
 const lessonResult = createCompletedResult({

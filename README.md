@@ -191,6 +191,18 @@ npm run test:reading-article-tooling-docs
 node scripts/fetch_course_prepare_articles.js --help
 ```
 
+### 杨开迪词库自动发现
+
+复习页的册目录由构建脚本扫描 `data/杨开迪-我的/`（正课）和 `data/杨开迪/`（历史）生成。新增 `YYYY-MM-DD.txt` 后无需编辑 `bookDates`；PNG、非日期 TXT 和同名目录不会被收录。日期按升序排列，正课使用 `my-coach:日期` 记录 ID，历史保留原日期 ID。
+
+Netlify 部署、`npm run dev:local`、`npm run dev:localhost` 和复习测试会自动更新清单。直接使用普通静态服务器时，新增或删除 TXT 后先执行：
+
+```bash
+npm run build:yang-kaidi-word-manifest
+```
+
+生成的 `yang-kaidi-word-review-books.mjs` 随代码提交，不手工维护。此步骤只更新册目录，不生成音频；逐词音频仍使用 `npm run build:yang-kaidi-word-audio`。
+
 ### 唯一的 Python 调用入口
 
 ```python

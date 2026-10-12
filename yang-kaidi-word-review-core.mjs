@@ -1,21 +1,15 @@
 import { parseVocabularyLine } from './word-audio-format.mjs';
+import { WORD_REVIEW_BOOK_DATES } from './yang-kaidi-word-review-books.mjs';
 
 export const DEFAULT_REVIEW_SOURCE = 'my-coach';
 export const WORD_REVIEW_SOURCES = [
     {
         sourceId: 'old-coach', label: '历史', directory: 'data/杨开迪',
-        bookDates: [
-            '2026-05-09', '2026-05-15', '2026-05-16', '2026-05-22', '2026-05-23',
-            '2026-05-29', '2026-05-30', '2026-06-01', '2026-06-07', '2026-06-13',
-            '2026-06-14', '2026-06-20', '2026-06-26', '2026-06-27', '2026-07-13',
-            '2026-07-22', '2026-07-24', '2026-08-03', '2026-08-05', '2026-08-12',
-            '2026-08-14', '2026-08-20', '2026-08-24', '2026-08-26', '2026-08-28',
-            '2026-08-31', '2026-09-04', '2026-09-06', '2026-09-12', '2026-09-18'
-        ]
+        bookDates: WORD_REVIEW_BOOK_DATES['old-coach']
     },
     {
         sourceId: 'my-coach', label: '正课', directory: 'data/杨开迪-我的',
-        bookDates: ['2026-10-02', '2026-10-04']
+        bookDates: WORD_REVIEW_BOOK_DATES['my-coach']
     }
 ];
 
