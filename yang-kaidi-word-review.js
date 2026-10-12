@@ -454,6 +454,8 @@ function showReportText(reportText) {
 
 function publishReport(reportText, fileName) {
     if (!reportText) {
+        currentReportText = '';
+        showReportText(currentReportText);
         elements.reportStatus.textContent = '该日期暂无已完成复习记录';
         return;
     }
@@ -475,7 +477,10 @@ function setActiveButton(buttons, activeButton) {
     });
 }
 
-elements.backToBooksButton.addEventListener('click', () => showView('bookListView'));
+elements.backToBooksButton.addEventListener('click', () => {
+    renderBookList();
+    showView('bookListView');
+});
 elements.myCoachSourceButton.addEventListener('click', () => switchReviewSource('my-coach'));
 elements.oldCoachSourceButton.addEventListener('click', () => switchReviewSource('old-coach'));
 document.querySelectorAll('.back-to-books').forEach((button) => button.addEventListener('click', () => showView('bookListView')));

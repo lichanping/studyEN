@@ -251,7 +251,64 @@ async function verifySourceController() {
     assert.deepEqual(played, ['sounds/Abroad.mp3', 'sounds/Engineer.mp3']);
 }
 
-verifySourceController().then(() => console.log('test-yang-kaidi-word-review-ui passed')).catch((error) => {
+function verifyBackToBooksRefresh() {
+    const actions = [];
+    let returnToBooks;
+    const context = vm.createContext({
+        elements: {
+            backToBooksButton: {
+                addEventListener: (event, handler) => {
+                    assert.equal(event, 'click');
+                    returnToBooks = handler;
+                }
+            }
+        },
+        renderBookList: () => actions.push('renderBookList'),
+        showView: (view) => actions.push(view)
+    });
+    const returnCode = controller.slice(
+        controller.indexOf('elements.backToBooksButton.addEventListener('),
+        controller.indexOf('\nelements.myCoachSourceButton.addEventListener(')
+    );
+    vm.runInContext(returnCode, context);
+    returnToBooks();
+    assert.deepEqual(actions, ['renderBookList', 'bookListView'], '返回册列表必须先刷新已保存的草稿状态');
+}
+
+function verifyEmptyReportClearsPreviousReport() {
+    const copies = [];
+    const downloads = [];
+    const context = vm.createContext({
+        currentReportText: '',
+        elements: { reportOutput: { textContent: '' }, reportStatus: { textContent: '' } },
+        copyToClipboard: (text) => { copies.push(text); return true; },
+        downloadText: (text, fileName) => downloads.push({ text, fileName })
+    });
+    const reportCode = controller.slice(
+        controller.indexOf('function showReportText('),
+        controller.indexOf('\nfunction setActiveButton(')
+    );
+    vm.runInContext(reportCode, context);
+    context.publishReport('previous report', 'previous.txt');
+    assert.equal(context.elements.reportOutput.textContent, 'previous report');
+    context.publishReport('', 'empty.txt');
+    assert.equal(context.elements.reportOutput.textContent, '', '无记录日期必须清除上一份报告内容');
+    assert.equal(context.currentReportText, '', '无记录日期必须清除内部旧报告文本');
+    assert.equal(context.elements.reportStatus.textContent, '该日期暂无已完成复习记录');
+    assert.deepEqual(copies, ['previous report'], '空报告不得复制旧报告');
+    assert.deepEqual(downloads, [{ text: 'previous report', fileName: 'previous.txt' }], '空报告不得下载旧报告');
+    context.publishReport('next report', 'next.txt');
+    assert.equal(context.elements.reportOutput.textContent, 'next report', '重新选择有记录日期后应正常生成报告');
+    assert.equal(context.currentReportText, 'next report');
+    assert.equal(copies.length, 2);
+    assert.equal(downloads.length, 2);
+}
+
+verifySourceController().then(() => {
+    verifyBackToBooksRefresh();
+    verifyEmptyReportClearsPreviousReport();
+    console.log('test-yang-kaidi-word-review-ui passed');
+}).catch((error) => {
     console.error(error);
     process.exitCode = 1;
 });
