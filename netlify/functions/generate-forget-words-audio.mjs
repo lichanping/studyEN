@@ -44,10 +44,27 @@ async function synthesize(text, voice, rate, retries = 2) {
             await ttsInstance.synthesize(text, voice, { rate });
             return ttsInstance.toBuffer();
         } catch (err) {
-            if (attempt === retries) throw err;
+            if (attempt === retries) break;
             await new Promise(r => setTimeout(r, 1000));
         }
     }
+
+    const url = new URL('https://dict.youdao.com/dictvoice');
+    const language = voice.startsWith('zh-') ? 'zh' : 'eng';
+    url.search = new URLSearchParams({
+        audio: language === 'eng' ? `${text}.` : text,
+        le: language,
+        type: '2'
+    }).toString();
+    const response = await fetch(url, { signal: AbortSignal.timeout(10000) });
+    if (!response.ok || !response.headers.get('Content-Type')?.startsWith('audio/')) {
+        throw new Error(`Fallback TTS failed (${response.status})`);
+    }
+    const audio = Buffer.from(await response.arrayBuffer());
+    if (audio.length === 0) {
+        throw new Error('Fallback TTS returned empty audio');
+    }
+    return audio;
 }
 
 async function loadLocalAsset(assetPath, requestUrl) {
