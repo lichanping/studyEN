@@ -37,7 +37,7 @@ function corsHeaders() {
     };
 }
 
-async function synthesize(text, voice, rate, retries = 2) {
+async function synthesize(text, voice, rate, retries = 2, requestUrl) {
     for (let attempt = 0; attempt <= retries; attempt++) {
         try {
             const ttsInstance = new EdgeTTS();
@@ -49,22 +49,32 @@ async function synthesize(text, voice, rate, retries = 2) {
         }
     }
 
-    const url = new URL('https://dict.youdao.com/dictvoice');
     const language = voice.startsWith('zh-') ? 'zh' : 'eng';
-    url.search = new URLSearchParams({
-        audio: language === 'eng' ? `${text}.` : text,
-        le: language,
-        type: '2'
-    }).toString();
-    const response = await fetch(url, { signal: AbortSignal.timeout(10000) });
-    if (!response.ok || !response.headers.get('Content-Type')?.startsWith('audio/')) {
-        throw new Error(`Fallback TTS failed (${response.status})`);
+    const texts = language === 'zh'
+        ? text.split(/[；;，,、。！？\n]+/).map(part => part.trim()).filter(Boolean)
+        : [`${text}.`];
+    const chunks = [];
+    for (const part of texts) {
+        const url = new URL('https://dict.youdao.com/dictvoice');
+        url.search = new URLSearchParams({ audio: part, le: language, type: language === 'zh' ? '1' : '2' }).toString();
+        let response = await fetch(url, { signal: AbortSignal.timeout(10000) });
+        if (language === 'eng' && (!response.ok || !response.headers.get('Content-Type')?.startsWith('audio/'))) {
+            const assetUrl = new URL(`/sounds/${encodeURIComponent(text)}.mp3`, requestUrl);
+            response = await fetch(assetUrl, { signal: AbortSignal.timeout(10000) });
+        }
+        if (!response.ok || !response.headers.get('Content-Type')?.startsWith('audio/')) {
+            throw new Error(`Fallback TTS failed (${response.status})`);
+        }
+        const audio = Buffer.from(await response.arrayBuffer());
+        if (audio.length === 0) {
+            throw new Error('Fallback TTS returned empty audio');
+        }
+        chunks.push(audio);
     }
-    const audio = Buffer.from(await response.arrayBuffer());
-    if (audio.length === 0) {
-        throw new Error('Fallback TTS returned empty audio');
+    if (chunks.length === 0) {
+        throw new Error('Fallback TTS text is empty');
     }
-    return audio;
+    return Buffer.concat(chunks);
 }
 
 async function loadLocalAsset(assetPath, requestUrl) {
@@ -103,7 +113,7 @@ async function buildSingleWordAudioBuffer(wordPair, normalizedSpellingSpeedPrese
             const ttsText = getWordAudioTextForSegment(segment);
             const cacheKey = `${segment.kind}:${segment.lang}:${ttsText}:${rate}`;
             if (!audioCache.has(cacheKey)) {
-                audioCache.set(cacheKey, synthesize(ttsText, voice, rate));
+                audioCache.set(cacheKey, synthesize(ttsText, voice, rate, 2, requestUrl));
             }
             return audioCache.get(cacheKey);
         })
