@@ -162,6 +162,32 @@ function compareStoredDate(leftDate, rightDate) {
     return parseStoredDateToLocalDate(leftDate) - parseStoredDateToLocalDate(rightDate);
 }
 
+function updateAiToolNoticeButton() {
+    const button = document.getElementById('aiToolNoticeButton');
+    if (button) button.hidden = getCurrentPlatformId() !== 'baifendii';
+}
+
+export function handleAiToolNoticeClick() {
+    if (getCurrentPlatformId() !== 'baifendii') return;
+    const studentName = document.getElementById('userName').value.trim();
+    if (!studentName) {
+        displayToast('请先选择学员');
+        return;
+    }
+    const message = `${studentName}同学及家长好😊
+
+上海交付中心自研的【AI单词拆分工具】免费向在读学员开放，配套词表同步课程进度：
+
+✅ 音节、词根拆分与发音跟读，帮助记住读音和拼写；
+✅ 词义、常见搭配及易混词讲解，帮助理解和运用；
+✅ 即时自测、薄弱词标记与针对性复习，及时查漏补缺。
+
+每份练习都需要任课老师课外借助AI提取词表、导入页面并生成链接，并非全自动完成。请${studentName}同学珍惜老师的用心准备，课后认真练习10～15分钟，巩固课堂所学。
+
+使用中遇到工具问题，可请学管柚子老师帮忙反馈。感谢柚子老师的支持与协助，也感谢${studentName}同学及家长的配合！`;
+    displayToast(copyToClipboard(message) ? 'AI单词工具介绍已复制' : '复制失败，请重试');
+}
+
 function initPlatformSelector() {
     const select = document.getElementById("platformSelect");
     if (!select) return;
@@ -172,9 +198,11 @@ function initPlatformSelector() {
     }
     select.value = storedPlatformId;
     localStorage.setItem(CURRENT_PLATFORM_STORAGE_KEY, normalizePlatformId(select.value));
+    updateAiToolNoticeButton();
     select.addEventListener("change", () => {
         const next = normalizePlatformId(select.value);
         localStorage.setItem(CURRENT_PLATFORM_STORAGE_KEY, next);
+        updateAiToolNoticeButton();
         updateUserNameOptions();
     });
 }
